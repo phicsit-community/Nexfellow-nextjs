@@ -1,0 +1,371 @@
+.sidebar {
+  width: 220px;
+  height: calc(100vh - 80px);
+  border-right: 1px solid var(--color-sidebar-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--color-card);
+  box-sizing: border-box;
+  margin-top: 80px;
+  position: relative;
+  bottom: 0;
+  padding-top: 20px;
+  top: 0;
+}
+
+/* Dark mode sidebar */
+:global(.dark) .sidebar {
+  background-color: var(--color-card);
+  border-right-color: var(--color-border-white);
+}
+
+.menuItems {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: var(--color-sidebar-foreground);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0px;
+}
+
+.menuItems li {
+  box-sizing: border-box;
+  min-width: 160px;
+  margin: 5px;
+  padding: 10px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 5px;
+  background: none;
+  transition: all 0.3s cubic-bezier(0.32, 0, 0.67, 0);
+  color: var(--color-sidebar-foreground);
+}
+
+.menuItems li span {
+  color: var(--color-sidebar-foreground);
+}
+
+.menuItems li:hover {
+  background-color: var(--color-sidebar-accent);
+  border-left: 5px solid var(--color-sidebar-left);
+  color: var(--color-sidebar-primary);
+}
+
+:global(.dark) .menuItems li,
+:global(.dark) .menuItems li span {
+  color: var(--color-card-foreground);
+}
+
+:global(.dark) .menuItems li:hover {
+  background-color: var(--color-sidebar-accent);
+  border-left: 5px solid var(--color-sidebar-left);
+  color: var(--color-sidebar-primary);
+}
+
+.icon {
+  margin-right: 10px;
+  font-size: 18px;
+  color: var(--color-sidebar-primary);
+}
+
+:global(.dark) .icon {
+  color: var(--color-card-foreground);
+}
+
+.iconContainer {
+  /* (optional) change in dark mode if needed */
+}
+
+:global(.dark) .iconContainer {
+  filter: invert(1);
+}
+
+/* ---------------- Account Management ---------------- */
+.accountManagement {
+  margin-top: -10%;
+  padding: 10px 20px;
+}
+
+.accountManagement p {
+  padding: 10px 5px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--color-sidebar-foreground);
+}
+
+:global(.dark) .accountManagement p {
+  color: var(--color-card-foreground);
+}
+
+.accountManagement p img {
+  margin-right: 10px;
+}
+
+.am {
+  width: 200px;
+  font-size: 12px;
+  font-weight: 700;
+  pointer-events: none !important;
+  font-family: "Poppins";
+  color: var(--color-muted-foreground);
+}
+
+:global(.dark) .am {
+  color: var(--color-muted-foreground);
+}
+
+.am span {
+  font-size: 18px;
+}
+
+.amLink {
+  max-width: 160px;
+}
+
+.amLink p {
+  max-width: 160px;
+  margin-bottom: 5px;
+}
+
+.amItems {
+  border-radius: 5px;
+  color: var(--color-sidebar-foreground);
+}
+
+.amItems:hover {
+  background-color: var(--color-sidebar-accent);
+  border-left: 5px solid var(--color-sidebar-left);
+  transition: all 0.3s cubic-bezier(0.32, 0, 0.67, 0);
+  min-width: 170px;
+  width: 170px;
+  color: var(--color-sidebar-foreground);
+}
+
+:global(.dark) .amItems {
+  color: var(--color-card-foreground);
+}
+
+:global(.dark) .amItems:hover {
+  background-color: var(--color-sidebar-accent);
+  border-left: 5px solid var(--color-sidebar-left);
+  color: var(--color-sidebar-foreground);
+}
+
+.amRedItems {
+  border-radius: 5px;
+  max-width: 170px;
+  color: var(--color-destructive-foreground);
+}
+
+.amRedItems:hover {
+  background-color: var(--color-destructive);
+  border-left: 5px solid var(--color-destructive-foreground);
+  transition: all 0.3s cubic-bezier(0.32, 0, 0.67, 0);
+}
+
+/* setTab = selected menu state */
+.setTab {
+  background-color: var(--color-sidebar-accent);
+  border-left: 5px solid var(--color-sidebar-left);
+  color: var(--color-sidebar-primary);
+}
+
+:global(.dark) .setTab {
+  background-color: var(--color-sidebar-accent);
+  border-left: 5px solid var(--color-sidebar-left);
+  color: var(--color-sidebar-primary);
+}
+
+/* -------------------- Responsive -------------------- */
+
+@media only screen and (min-width: 1471px) {
+  .sidebar {
+    height: 100vh;
+    top: 0;
+  }
+
+  .menuItems {
+    margin-top: 80px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    padding: 10px;
+  }
+
+  .menuItems li {
+    padding: 5px 10px;
+  }
+
+  .menuItems li img {
+    margin-left: 8px;
+  }
+
+  .menuItems li span {
+    margin-left: 5px;
+  }
+
+  .sidebar .am {
+    display: none !important;
+  }
+
+  .accountManagement {
+    padding: 10px 10px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .accountManagementimg {
+    margin-left: 8px;
+  }
+
+  .amLink {
+    width: 160px;
+  }
+
+  .amRedItems {
+    width: 160px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    padding: 10px;
+  }
+
+  .menuItems li img {
+    margin-left: 8px;
+  }
+
+  .menuItems li span {
+    margin-left: 5px;
+  }
+
+  .sidebar .am {
+    display: none !important;
+  }
+
+  .accountManagement {
+    padding: 10px 10px;
+  }
+
+  .accountManagementimg {
+    margin-left: 8px;
+  }
+}
+
+@media (max-width: 640px) {
+  .sidebar {
+    margin: 0;
+    padding: 0;
+    flex-direction: row;
+    height: 60px;
+    width: 100%;
+    position: fixed;
+    background-color: var(--color-card);
+    bottom: 0;
+    top: auto;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    border-top: 1px solid var(--color-sidebar-border);
+    border-right: none;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :global(.dark) .sidebar {
+    background-color: var(--color-card);
+    border-top: 1px solid var(--color-sidebar-border);
+  }
+
+  .menuItems {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around !important;
+    align-items: center;
+  }
+
+  .menuItems li {
+    min-width: auto;
+    width: auto;
+    margin: 0;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 0;
+  }
+
+  .iconContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+  }
+
+  .menuItems a:hover {
+    background-color: var(--color-sidebar-accent);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+
+  .menuItems li img {
+    margin: 0;
+    width: 24px;
+    height: 24px;
+  }
+
+  .menuItems li:hover {
+    background-color: transparent;
+    border-left: none;
+  }
+
+  .setTab {
+    background-color: transparent !important;
+    border-left: none !important;
+    position: relative;
+  }
+
+  .setTab::after {
+    content: "";
+    position: absolute;
+    bottom: -0px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background-color: var(--color-primary);
+    border-radius: 50%;
+  }
+
+  .accountManagement {
+    display: none;
+  }
+}
+
+@media only screen and (min-width: 1471px) {
+  .sidebar {
+    margin-top: 0vh;
+    position: sticky;
+    top: 0px;
+  }
+}

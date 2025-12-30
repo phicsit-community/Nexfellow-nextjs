@@ -1,0 +1,237 @@
+.featuresSection {
+  width: 100%;
+  padding: 4rem 1rem;
+  font-family: 'Figtree', sans-serif;
+  margin: 0 auto;
+}
+
+.whyweexist {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 4rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.mainTitle {
+  font-size: 64px;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.subText {
+  font-size: 20px;
+  font-weight: 500;
+  color: #fff;
+  font-style: italic;
+  max-width: 800px;
+}
+
+.featureCard {
+  max-width: 1200px;
+  margin: 0 auto 4rem auto;
+  display: flex;
+  align-items: center;
+  gap: 8rem;
+  flex-direction: row;
+  text-align: left;
+}
+
+.featureCard.reversed {
+  flex-direction: row;
+  text-align: left;
+}
+
+.textContent {
+  flex: 1;
+  color: white;
+}
+
+.title,
+.titleReverse {
+  font-size: 72px;
+  font-weight: regular;
+  margin-bottom: 1.5rem;
+  color: white;
+  font-family: 'Figtree', sans-serif;
+}
+
+.titleReverse {
+  text-align: right;
+}
+
+.description {
+  font-size: 20px;
+  line-height: 1.6;
+  white-space: pre-line;
+  margin: 20% 0% 0% 0%;
+}
+
+.imageContent,
+.imageContentReverse {
+  flex: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.imageWrapper {
+  width: 350px;
+  height: 350px;
+  display: flex;
+}
+
+.featureImage {
+  width: 100%;
+  max-width: 350px;
+  height: auto;
+  /* animation: float 3s ease-in-out infinite; */
+}
+
+
+.imageContent,
+.imageContentReverse,
+.textContent {
+  order: unset;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+
+  .featureCard,
+  .featureCard.reversed {
+    flex-direction: column;
+    text-align: left;
+    gap: 2rem;
+  }
+
+  /* Force image always first, then text */
+  .imageContent,
+  .imageContentReverse {
+    order: 1;
+  }
+
+  .textContent {
+    order: 2;
+  }
+
+  .imageContent {
+    width: 95%;
+    align-items: flex-start;
+  }
+
+  .imageContentReverse {
+    width: 95%;
+    align-items: flex-end;
+  }
+
+  .imageContent,
+  .imageContentReverse {
+    /* align-items: center; */
+    text-align: center;
+  }
+
+  .title,
+  .titleReverse {
+    font-size: 36px;
+    text-align: center;
+    width: 40%;
+  }
+
+  .imageWrapper {
+    width: 200px;
+    height: 200px;
+  }
+
+  .featureImage {
+    max-width: 200px;
+  }
+
+  .description {
+    font-size: 16px;
+    margin: 0%;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .featuresSection {
+    padding: 2rem 1rem;
+  }
+
+  .mainTitle {
+    font-size: 42px;
+  }
+
+  .subText {
+    font-size: 18px;
+    min-width: 400px;
+  }
+
+  .title,
+  .titleReverse {
+    font-size: 28px;
+  }
+
+  .description {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .imageWrapper {
+    width: 180px;
+    height: 180px;
+  }
+
+  .featureImage {
+    max-width: 180px;
+  }
+}
+
+/* Small Mobile (extra safety for very small devices) */
+@media (max-width: 480px) {
+  .mainTitle {
+    font-size: 32px;
+  }
+
+  .subText {
+    font-size: 16px;
+  }
+
+  .title,
+  .titleReverse {
+    font-size: 24px;
+  }
+
+  .description {
+    font-size: 14px;
+  }
+
+  .imageWrapper {
+    width: 150px;
+    height: 150px;
+  }
+
+  .featureImage {
+    max-width: 150px;
+  }
+}

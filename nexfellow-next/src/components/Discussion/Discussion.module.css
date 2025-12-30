@@ -1,0 +1,1301 @@
+.discussionSection {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+  width: 100%;
+}
+
+/* Header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #ffffff;
+  border-bottom: 1px solid #eef0f3;
+  padding: 12px 16px;
+  display: flex;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  /* gap: 8px; */
+  margin-left: auto;
+}
+
+.hash {
+  color: #19AE9F;
+  font-weight: 600;
+  background-color: rgba(25, 174, 159, 0.1);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.metaOne {
+  margin-left: 6px;
+  font-size: 12px;
+  color: #19AE9F;
+  background-color: rgba(25, 174, 159, 0.1);
+  padding: 3px 8px;
+  border: 1px solid rgba(25, 174, 159, 0.2);
+  border-radius: 20px;
+}
+
+.metaSep {
+  margin: 0px;
+  /* opacity: 0.4; */
+  user-select: none;
+  color: #22C55E;
+  font-size: 20px;
+}
+
+.metaTwo {
+  margin-left: 6px;
+  font-size: 13px;
+  color: #8b95a5;
+  font-weight: 500;
+}
+
+/* scrollable middle pane */
+.messagesContainer {
+  flex: 1 1 auto;
+  height: calc(100% - 0px);
+  /* flex handles it; calc is safe if needed */
+  overflow-y: auto;
+  /* use 'scroll' to always show scrollbar */
+  overflow-x: hidden;
+  padding: 16px;
+  scrollbar-gutter: stable;
+  /* avoid layout shift when bar appears */
+}
+
+/* Optional: always-visible vertical scrollbar */
+.messagesContainer.alwaysScroll {
+  overflow-y: scroll;
+}
+
+/* Optional: custom scrollbar (WebKit) */
+.messagesContainer::-webkit-scrollbar {
+  width: 10px;
+}
+
+.messagesContainer::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.messagesContainer::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 8px;
+}
+
+.messagesContainer::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Firefox modern scrollbar */
+@supports (scrollbar-width: thin) {
+  .messagesContainer {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+  }
+}
+
+.loadingRow {
+  color: #8b95a5;
+  font-size: 14px;
+  padding: 8px 4px;
+}
+
+.dateDivider {
+  text-align: center;
+  font-size: 12px;
+  color: #8b95a5;
+  margin: 10px 0 14px;
+}
+
+/* Message */
+.messageRow {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.isReplyRow {
+  margin-left: 60px;
+}
+
+.replyConnector {
+  position: absolute;
+  left: -12px;
+  top: 22px;
+  bottom: 10px;
+  width: 2px;
+  background: #e5e7eb;
+  border-radius: 2px;
+}
+
+.messageCard {
+  background: #ffffff;
+  border: 1px solid #e6e8ec;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 1px 0 rgba(16, 24, 40, 0.02);
+  width: 65%;
+}
+
+.replyMessageCard {
+  background: #ffffff;
+  border: 1px solid #e6e8ec;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 1px 0 rgba(16, 24, 40, 0.02);
+  width: 90%;
+}
+
+.ownMessageCard {
+  background: #eafaf3;
+  /* soft green */
+  border-color: #dbefe5;
+}
+
+.headerLine {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+.nameTime {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.userName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+  max-width: 60%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.roleBadge {
+  background: #e7f3ff;
+  color: #1d4ed8;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid #cfe4ff;
+}
+
+.timeText {
+  font-size: 12px;
+  color: #8b95a5;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: #94a3b8;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.iconBtn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.replySnippet {
+  margin: 8px 0 6px;
+  padding: 8px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #475569;
+}
+
+.replyUser {
+  font-weight: 600;
+  margin-right: 4px;
+  color: #0f172a;
+}
+
+.replyContent {
+  color: #475569;
+}
+
+.messageText {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #0f172a;
+  line-height: 1.45;
+  word-wrap: break-word;
+}
+
+.mention {
+  color: #0ea5e9;
+  cursor: pointer;
+}
+
+/* Reactions */
+.reactionBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  position: relative;
+  /* NEW: anchor small emoji picker */
+}
+
+.reactionChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  color: #475569;
+  cursor: pointer;
+}
+
+.reactionChip:hover {
+  background: #eef2f7;
+}
+
+/* NEW: compact add-reaction (+) button */
+.reactionAddBtn {
+  margin-left: 6px;
+  padding: 2px 8px;
+  line-height: 1;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.reactionAddBtn:hover {
+  background: #f8fafc;
+}
+
+.reactionCount {
+  color: #64748b;
+}
+
+.replyInlineBtn {
+  margin-left: 2px;
+  font-size: 12px;
+  color: #2563eb;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* Replies block */
+.repliesBlock {
+  margin-left: 44px;
+}
+
+.repliesToggle {
+  margin: 6px 0 8px;
+  background: transparent;
+  border: none;
+  color: #475569;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.repliesToggle:hover {
+  color: #0f172a;
+  text-decoration: underline;
+}
+
+/* Typing */
+.typingIndicatorWrapper {
+  display: flex;
+  margin: 10px 0;
+  justify-content: flex-start;
+}
+
+.typingIndicatorBubble {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e6e8ec;
+  border-radius: 999px;
+  padding: 6px 10px;
+  gap: 8px;
+}
+
+.typingUserAvatar {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.typingUserImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.moreTyping {
+  font-size: 12px;
+  color: #8b95a5;
+}
+
+.typingText {
+  font-size: 12px;
+  color: #475569;
+}
+
+.typingDots {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.typingDots span {
+  width: 4px;
+  height: 4px;
+  background: #94a3b8;
+  border-radius: 999px;
+  display: inline-block;
+  animation: blink 1.4s infinite ease-in-out both;
+}
+
+.typingDots span:nth-child(2) {
+  animation-delay: .2s;
+}
+
+.typingDots span:nth-child(3) {
+  animation-delay: .4s;
+}
+
+@keyframes blink {
+
+  0%,
+  80%,
+  100% {
+    opacity: .3;
+  }
+
+  40% {
+    opacity: 1;
+  }
+}
+
+/* Scroll-to-bottom FAB */
+.scrollToBottom {
+  position: absolute;
+  right: 20px;
+  bottom: 92px;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: #19AE9F;
+  color: #ffffff;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.28);
+  cursor: pointer;
+}
+
+.scrollToBottomVisible {
+  display: flex;
+}
+
+.scrollToBottomWithReply {
+  bottom: 132px;
+}
+
+/* Reply preview */
+.replyPreview {
+  position: sticky;
+  bottom: 66px;
+  background: #f1f5f9;
+  border-top: 1px solid #e2e8f0;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cancelReplyButton {
+  margin-left: auto;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  line-height: 1;
+  color: #64748b;
+  cursor: pointer;
+}
+
+/* Composer (single row with end-adornment inside input) */
+.inputBar {
+  position: sticky;
+  bottom: 0;
+  background: #ffffff;
+  border-top: 1px solid #eef0f3;
+  padding: 10px 12px;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
+}
+
+.messageFormRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inputFieldWrap {
+  position: relative;
+  flex: 1 1 auto;
+}
+
+.messageInput {
+  width: 100%;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 12px;
+  padding-right: 148px;
+  outline: none;
+  font-size: 14px;
+}
+
+.messageInput:focus {
+  border-color: #cbd5e1;
+  background: #fff;
+}
+
+.endActions {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.endBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #475569;
+  cursor: pointer;
+}
+
+.endBtn:hover {
+  background: #eef2f7;
+}
+
+/* Mentions dropdown */
+.mentionSuggestions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 6px);
+  background: #ffffff;
+  border: 1px solid #e6e8ec;
+  border-radius: 10px;
+  box-shadow: 0 12px 24px rgba(2, 6, 23, 0.08);
+  max-height: 220px;
+  overflow: auto;
+  z-index: 20;
+}
+
+.mentionSuggestions li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.mentionSuggestions li:hover {
+  background: #f8fafc;
+}
+
+.mentionAvatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+/* Legacy toolbar hidden */
+.inputToolbar {
+  display: none;
+}
+
+/* Send button beside input */
+.sendButton {
+  margin-left: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(25, 174, 159, 0.5);
+  color: #fff;
+  cursor: pointer;
+}
+
+.sendButton:hover {
+  background: #19AE9F;
+}
+
+/* NEW: emoji pickers (composer + reaction) */
+.emojiPopover {
+  position: absolute;
+  right: 56px;
+  /* aligns with end actions */
+  bottom: 48px;
+  /* above input bar */
+  z-index: 40;
+  /* above mentionSuggestions (20) */
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.emojiPopoverSmall {
+  position: absolute;
+  bottom: 32px;
+  /* above reaction bar */
+  z-index: 40;
+  transform: translateY(-8px);
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* Accessible focus styles */
+.endBtn:focus-visible,
+.reactionChip:focus-visible,
+.reactionAddBtn:focus-visible,
+.replyInlineBtn:focus-visible,
+.iconBtn:focus-visible,
+.repliesToggle:focus-visible,
+.sendButton:focus-visible {
+  outline: 2px solid #0ea5e9;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ========== ≤ 1200px (large tablet / small desktop) ========== */
+@media (max-width: 1200px) {
+  .messagesContainer {
+    padding: 14px;
+  }
+
+  .messageCard {
+    width: 82%;
+    padding: 12px;
+  }
+
+  .replyMessageCard {
+    width: 90%;
+    padding: 12px;
+  }
+
+  .reactionChip {
+    padding: 4px 8px;
+    height: 28px;
+  }
+
+  .reactionAddBtn {
+    height: 28px;
+    padding: 4px 10px;
+  }
+
+  .repliesBlock {
+    margin-left: 40px;
+  }
+}
+
+/* ========== ≤ 992px (tablet landscape) ========== */
+@media (max-width: 992px) {
+  .header {
+    padding: 12px;
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+
+  .headerLeft {
+    gap: 8px;
+  }
+
+  .title {
+    font-size: 15px;
+  }
+
+  .metaTwo {
+    font-size: 12px;
+  }
+
+  .messagesContainer {
+    padding: 12px 14px;
+  }
+
+  .messageRow {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .messageCard {
+    width: 88%;
+    padding: 12px;
+  }
+
+  .replyMessageCard {
+    width: 94%;
+    padding: 12px;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .replySnippet {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  .messageText {
+    font-size: 14px;
+  }
+
+  .reactionBar {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .reactionChip {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  .replyInlineBtn {
+    flex-basis: 100%;
+    text-align: left;
+    margin-top: 4px;
+  }
+
+  .endActions {
+    right: 8px;
+  }
+
+  .messageInput {
+    padding-right: 132px;
+  }
+}
+
+/* ========== ≤ 768px (tablet portrait) ========== */
+@media (max-width: 768px) {
+  .header {
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+
+  .title {
+    font-size: 15px;
+  }
+
+  /* keep metaOne and metaSep visible; stack right side below */
+  .headerRight {
+    margin-left: 0;
+    flex: 1 0 100%;
+    justify-content: flex-start;
+  }
+
+  .metaTwo {
+    font-size: 12px;
+  }
+
+  .messagesContainer {
+    padding: 12px;
+  }
+
+  .messageRow {
+    gap: 8px;
+  }
+
+  .isReplyRow {
+    margin-left: 28px;
+  }
+
+  .messageCard {
+    width: 96%;
+    padding: 11px;
+  }
+
+  .replyMessageCard {
+    width: 95%;
+    padding: 10px;
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+  }
+
+  .userName {
+    max-width: 70%;
+  }
+
+  .timeText {
+    font-size: 11px;
+  }
+
+  .replySnippet {
+    font-size: 11px;
+    padding: 7px 9px;
+  }
+
+  .messageText {
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  .reactionBar {
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .reactionChip {
+    padding: 3px 8px;
+    height: 26px;
+    font-size: 12px;
+  }
+
+  .reactionAddBtn {
+    height: 26px;
+    padding: 3px 8px;
+  }
+
+  .replyInlineBtn {
+    flex-basis: 100%;
+    text-align: left;
+    margin-top: 4px;
+  }
+
+  .repliesToggle {
+    font-size: 12px;
+  }
+
+  .messageInput {
+    padding-right: 120px;
+  }
+
+  .endBtn {
+    width: 26px;
+    height: 26px;
+  }
+
+  .sendButton {
+    height: 32px;
+  }
+
+  .emojiPopover {
+    right: 16px;
+    bottom: 46px;
+  }
+
+  .emojiPopoverSmall {
+    bottom: 30px;
+  }
+}
+
+/* ========== ≤ 640px (large phones) ========== */
+@media (max-width: 640px) {
+  .header {
+    padding: 10px;
+  }
+
+  .hash {
+    padding: 4px 8px;
+  }
+
+  .title {
+    font-size: 14px;
+  }
+
+  .messagesContainer {
+    padding: 10px 12px;
+  }
+
+  .messageCard {
+    width: 98%;
+    padding: 10px;
+  }
+
+  .replyMessageCard {
+    width: 96%;
+    padding: 10px;
+  }
+
+  .avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .messageText {
+    font-size: 13px;
+  }
+
+  .replyPreview {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .repliesBlock {
+    margin-left: 24px;
+  }
+
+  .mentionSuggestions {
+    max-height: 200px;
+  }
+
+  .endActions {
+    gap: 4px;
+    right: 6px;
+  }
+
+  .messageInput {
+    padding-right: 112px;
+  }
+
+  .scrollToBottom {
+    bottom: 84px;
+    right: 16px;
+  }
+}
+
+/* ========== ≤ 480px (small phones) ========== */
+@media (max-width: 480px) {
+  .header {
+    padding: 8px 10px;
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+
+  .headerLeft {
+    gap: 6px;
+  }
+
+  .title {
+    font-size: 13.5px;
+  }
+
+  .metaTwo {
+    font-size: 11.5px;
+  }
+
+  .headerRight {
+    margin-left: 0;
+    flex: 1 0 100%;
+    justify-content: flex-start;
+  }
+
+  .messagesContainer {
+    padding: 10px;
+  }
+
+  .messageRow {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .messageCard {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .replyMessageCard {
+    width: 97%;
+    padding: 9px;
+    border-radius: 10px;
+  }
+
+  .replyConnector {
+    left: -10px;
+    top: 22px;
+    bottom: 10px;
+  }
+
+  .avatar {
+    width: 26px;
+    height: 26px;
+  }
+
+  .replySnippet {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .reactionBar {
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .reactionChip {
+    padding: 3px 7px;
+    height: 24px;
+    font-size: 11.5px;
+  }
+
+  .reactionAddBtn {
+    height: 24px;
+    padding: 2px 7px;
+    font-size: 13px;
+  }
+
+  .replyInlineBtn {
+    font-size: 11.5px;
+    flex-basis: 100%;
+    text-align: left;
+    margin-top: 4px;
+  }
+
+  .mentionAvatar {
+    width: 20px;
+    height: 20px;
+  }
+
+  .endBtn {
+    width: 24px;
+    height: 24px;
+  }
+
+  .messageInput {
+    padding-right: 102px;
+    font-size: 13.5px;
+  }
+
+  .emojiPopover {
+    right: 12px;
+    bottom: 44px;
+  }
+
+  .emojiPopoverSmall {
+    bottom: 28px;
+  }
+}
+
+/* ========== ≤ 360px (very small phones) ========== */
+@media (max-width: 360px) {
+  .title {
+    font-size: 13px;
+  }
+
+  /* keep metaTwo visible; just shrink spacing */
+  .metaTwo {
+    font-size: 11px;
+  }
+
+  .messageText {
+    font-size: 13px;
+  }
+
+  .reactionChip {
+    padding: 2px 6px;
+    height: 22px;
+    font-size: 11px;
+  }
+
+  .reactionAddBtn {
+    height: 22px;
+    padding: 2px 6px;
+    font-size: 12px;
+  }
+
+  .sendButton {
+    height: 30px;
+    padding: 0 10px;
+  }
+}
+
+/* ========== ≥ 1200px (large desktop polish) ========== */
+@media (min-width: 1200px) {
+  .messagesContainer {
+    padding: 18px 20px;
+  }
+
+  .messageCard {
+    width: 65%;
+  }
+
+  .replyMessageCard {
+    width: 84%;
+  }
+}
+
+/* ========== ≥ 1440px (xl desktops / wide) ========== */
+@media (min-width: 1440px) {
+  .messagesContainer {
+    padding: 20px 24px;
+  }
+
+  .messageCard {
+    width: 64%;
+  }
+
+  .replyMessageCard {
+    width: 76%;
+  }
+}
+
+/* ----------------- Dark theme (CSS Modules friendly) ----------------- */
+:global(.dark) .header {
+  background-color: var(--card);
+  border-bottom-color: var(--color-border);
+  color: var(--foreground);
+}
+
+:global(.dark) .title {
+  color: var(--foreground);
+}
+
+:global(.dark) .meta {
+  color: var(--muted-foreground);
+}
+
+/* :global(.dark) .hash {
+  color: var(--color-muted);
+} */
+
+:global(.dark) .messagesContainer {
+  scrollbar-color: var(--color-muted) transparent;
+  color: var(--foreground);
+  background: var(--background);
+}
+
+:global(.dark) .messagesContainer::-webkit-scrollbar-thumb {
+  background-color: var(--color-muted);
+}
+
+:global(.dark) .dateDivider {
+  color: var(--muted-foreground);
+}
+
+:global(.dark) .messageCard {
+  background-color: var(--background);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  color: var(--foreground);
+}
+
+:global(.dark) .ownMessageCard {
+  background-color: rgba(0, 191, 165, 0.12);
+  border-color: rgba(0, 191, 165, 0.35);
+}
+
+:global(.dark) .userName {
+  color: var(--foreground);
+}
+
+:global(.dark) .timeText {
+  color: var(--muted-foreground);
+}
+
+:global(.dark) .roleBadge {
+  background: var(--color-accent-muted);
+  color: var(--color-accent);
+  border-color: var(--color-accent-border);
+}
+
+:global(.dark) .messageText {
+  color: var(--color);
+}
+
+:global(.dark) .iconBtn {
+  color: var(--color-muted);
+}
+
+:global(.dark) .iconBtn:hover {
+  background: color-mix(in oklab, var(--foreground) 10%, transparent);
+  color: var(--foreground);
+}
+
+:global(.dark) .avatar {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
+  border: 2px solid var(--background);
+}
+
+:global(.dark) .replySnippet {
+  background-color: var(--card);
+  border-left: 4px solid var(--color-primary);
+  border-color: var(--color-border);
+  color: var(--color-primary);
+}
+
+:global(.dark) .replyUser {
+  color: var(--foreground);
+}
+
+:global(.dark) .replyContent {
+  color: var(--muted-foreground);
+}
+
+:global(.dark) .mention {
+  color: var(--color-primary);
+}
+
+:global(.dark) .reactionBar {
+  border-top: 1px solid var(--color-border);
+  padding-top: 8px;
+}
+
+:global(.dark) .reactionChip {
+  background: var(--card);
+  border: 1px solid var(--color-border);
+  color: var(--muted-foreground);
+}
+
+:global(.dark) .reactionChip:hover {
+  background: color-mix(in oklab, var(--foreground) 8%, transparent);
+}
+
+:global(.dark) .replyInlineBtn {
+  color: var(--color-primary);
+}
+
+:global(.dark) .repliesToggle {
+  color: var(--muted-foreground);
+}
+
+:global(.dark) .repliesToggle:hover {
+  color: var(--foreground);
+}
+
+:global(.dark) .typingIndicatorBubble {
+  background-color: rgba(20, 20, 20, 0.8);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  color: var(--foreground);
+}
+
+:global(.dark) .typingUserAvatar {
+  border: 2px solid var(--background);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+:global(.dark) .typingDots span {
+  background-color: var(--muted-foreground);
+}
+
+:global(.dark) .inputBar {
+  background: var(--card);
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+}
+
+:global(.dark) .messageInput {
+  background-color: var(--background);
+  border: 1px solid var(--color-border);
+  color: var(--foreground);
+}
+
+:global(.dark) .messageInput::placeholder {
+  color: var(--muted-foreground);
+}
+
+:global(.dark) .messageInput:focus {
+  border-color: var(--color-primary);
+  background-color: var(--card);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 30%, transparent);
+}
+
+:global(.dark) .mentionSuggestions {
+  background: var(--card);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+:global(.dark) .mentionSuggestions li {
+  color: var(--foreground);
+}
+
+:global(.dark) .mentionSuggestions li:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+:global(.dark) .replyPreview {
+  background-color: var(--card);
+  border-left: 4px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+:global(.dark) .cancelReplyButton {
+  color: var(--foreground);
+}
+
+:global(.dark) .cancelReplyButton:hover {
+  color: var(--destructive);
+}
+
+:global(.dark) .scrollToBottom {
+  background-color: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 191, 165, 0.7);
+}
+
+:global(.dark) .emojiPopover {
+  scrollbar-color: var(--muted-foreground) transparent;
+}

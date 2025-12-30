@@ -1,0 +1,177 @@
+.container {
+  background-color: #16252f;
+  width: 100%;
+  height: auto;
+  padding: 80px 0px;
+  overflow: hidden;
+
+}
+
+.heading {
+  margin: 0px 0px 40px 80px;
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  color: #ffffff;
+  line-height: normal;
+}
+
+.heading1 {
+  font-family: "figtree" sans-serif;
+  font-weight: bold;
+  font-size: 64px;
+}
+
+.heading2 {
+  font-family: "figtree" sans-serif;
+  font-weight: bold;
+  font-size: 64px;
+  color: #f3629d;
+  position: relative;
+  bottom: 10px;
+}
+
+.heading img {
+  position: relative;
+  left: 180px;
+  bottom: 20px;
+  width: 212px;
+  height: 19px;
+}
+
+/* Card Line Styling */
+.line1,
+.line2 {
+  /* overflow: hidden; */
+  width: 100%;
+}
+
+.line1 {
+  margin-bottom: 2%;
+}
+
+.marqueeContent,
+.marqueeContentReverse {
+  display: flex;
+  gap: 30px;
+  width: fit-content;
+  animation: scrollLeft 60s linear infinite;
+}
+
+.marqueeContentReverse {
+  animation: scrollRight 60s linear infinite;
+}
+
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scrollRight {
+  0% {
+    transform: translateX(-50%);
+  }
+
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.marqueeContent:hover,
+.marqueeContentReverse:hover {
+  animation-play-state: paused;
+}
+
+@media (max-width: 500px) {
+  .container {
+    /* height: 450px; */
+    padding: 15px 0px;
+  }
+
+  .heading {
+    margin-top: 20px;
+    margin-left: 40px;
+  }
+
+  .heading1 {
+    font-size: 28px;
+  }
+
+  .heading2 {
+    font-size: 28px;
+    /* margin-left: 5px; */
+  }
+
+  .heading img {
+    width: 200px;
+    height: 11px;
+    left: 10px;
+    bottom: 15px;
+  }
+
+  .line1 {
+    margin-top: 20px;
+    right: 20px;
+  }
+
+  .line2 {
+    position: relative;
+    right: 150px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 80px 0px;
+  }
+
+  /* .heading {
+    margin-left: 100px;
+  } */
+
+  .heading1,
+  .heading2 {
+    font-size: 72px;
+  }
+
+  .heading img {
+    width: 240px;
+    height: 22px;
+    left: 200px;
+    bottom: 25px;
+  }
+}
+
+@media (min-width: 3000px) {
+  .container {
+    max-width: 100%;
+    padding: 100px 0;
+  }
+
+  .heading {
+    margin-left: 120px;
+  }
+
+  .heading1,
+  .heading2 {
+    font-size: 88px;
+  }
+
+  .heading img {
+    width: 280px;
+    height: 26px;
+    left: 240px;
+    bottom: 30px;
+  }
+}

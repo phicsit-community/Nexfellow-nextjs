@@ -1,0 +1,877 @@
+.dashboardContainer {
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.dashboardHeader {
+  margin-bottom: 24px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  text-align: left;
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.breadcrumb {
+  padding-left: 0;
+}
+
+.headerTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.headerTitleWrap h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.headerTitleWrap p {
+  color: #777;
+  font-size: 16px;
+  margin: 0;
+}
+
+.dashboardHeader h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.dashboardHeader p {
+  color: #777;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.statsRow {
+  margin-bottom: 24px;
+}
+
+/* Let card styling be controlled by inline styles for exact design matching */
+.statsRow :global(.ant-card) {
+  transition: all 0.2s;
+}
+
+.statsRow :global(.ant-card):hover {
+  transform: translateY(-2px);
+}
+
+.tabContent {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.filterRow {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.submissionDetails {
+  margin-bottom: 20px;
+}
+
+.submissionContent {
+  margin: 16px 0;
+}
+
+.textContent {
+  background-color: #f5f5f5;
+  padding: 16px;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  font-family: "Courier New", Courier, monospace;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.attachments {
+  margin: 16px 0;
+}
+
+.attachmentList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.attachment {
+  max-width: 200px;
+  position: relative;
+}
+
+.attachment img {
+  max-width: 100%;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  transition: transform 0.2s;
+}
+
+.attachment img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.analyticsSection {
+  padding: 16px 0;
+}
+
+.chartPlaceholder {
+  height: 300px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #999;
+  font-size: 18px;
+}
+
+.chartPlaceholder :global(.anticon) {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  gap: 16px;
+}
+
+.tabs :global(.ant-tabs-tab) {
+  padding: 12px 16px;
+}
+
+/* Table responsive adjustments */
+.tabContent :global(.ant-table-content) {
+  overflow-x: auto;
+}
+
+.tabContent :global(.ant-table-cell) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .dashboardContainer {
+    padding: 16px 12px;
+  }
+
+  .tabContent {
+    padding: 16px 12px;
+  }
+
+  .dashboardHeader h1 {
+    font-size: 24px;
+  }
+
+  .filterRow {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .filterRow>* {
+    width: 100% !important;
+  }
+
+  .tabContent :global(.ant-table-thead > tr > th),
+  .tabContent :global(.ant-table-tbody > tr > td) {
+    padding: 10px 8px;
+  }
+
+  .tabs :global(.ant-tabs-tab) {
+    padding: 10px 12px;
+    margin: 0 8px 0 0;
+  }
+
+  .submissionDetails {
+    font-size: 14px;
+  }
+
+  .submissionContent h3 {
+    font-size: 16px;
+  }
+
+  .textContent {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .attachmentList {
+    gap: 8px;
+  }
+
+  .attachment {
+    max-width: 150px;
+  }
+
+  .chartPlaceholder {
+    height: 250px;
+    font-size: 16px;
+  }
+
+  .chartPlaceholder :global(.anticon) {
+    font-size: 36px;
+  }
+
+  .analyticsSection h2 {
+    font-size: 20px;
+  }
+
+  .analyticsSection h3 {
+    font-size: 16px;
+  }
+
+  /* Enhanced card layout for mobile */
+  .statsRow :global(.ant-card) {
+    margin-bottom: 12px;
+  }
+
+  .statsRow :global(.ant-statistic-title) {
+    font-size: 14px;
+  }
+
+  .statsRow :global(.ant-statistic-content-value) {
+    font-size: 18px;
+  }
+
+  /* Make tabs full width and adjust padding */
+  .tabs :global(.ant-tabs-nav) {
+    width: 100%;
+  }
+
+  .tabs :global(.ant-tabs-tab-btn) {
+    font-size: 14px;
+  }
+
+  /* Adjust modals for small screens */
+  :global(.ant-modal-body) {
+    padding: 16px;
+  }
+
+  :global(.ant-form-item) {
+    margin-bottom: 16px;
+  }
+
+  .headerActions {
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .headerActions .ant-space {
+    width: 100%;
+  }
+
+  .headerActions .ant-space>.ant-space-item {
+    width: 100%;
+  }
+
+  .headerActions .ant-btn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .dashboardHeader {
+    padding: 15px;
+  }
+
+  .dashboardHeader>div {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .managementButtons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .managementButtons .ant-btn {
+    width: 100%;
+  }
+
+  .challengeDetails .detailItem {
+    padding: 6px 0;
+  }
+
+  .challengeDetails .detailItem strong {
+    font-size: 13px;
+  }
+
+  .settingsGrid .settingItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .filterRow {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .filterRow>* {
+    width: 100% !important;
+  }
+
+  /* Bulk action buttons on mobile */
+  .tabContent .ant-table-title {
+    padding: 8px !important;
+  }
+
+  .tabContent .ant-table-title>div {
+    flex-direction: column !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+  }
+
+  .tabContent .ant-table-title .ant-space {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboardHeader h1 {
+    font-size: 20px;
+  }
+
+  .dashboardHeader p {
+    font-size: 14px;
+  }
+
+  .tabContent {
+    padding: 12px 8px;
+  }
+
+  .statsRow {
+    margin-bottom: 16px;
+  }
+
+  .loadingContainer {
+    min-height: 200px;
+  }
+
+  .tabContent :global(.ant-table-thead > tr > th),
+  .tabContent :global(.ant-table-tbody > tr > td) {
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+
+  .tabContent :global(.ant-table-cell .ant-btn) {
+    font-size: 12px;
+    padding: 0 8px;
+    height: 28px;
+  }
+
+  .textContent {
+    max-height: 150px;
+    font-size: 12px;
+  }
+
+  .attachment {
+    max-width: 120px;
+  }
+
+  .tabs :global(.ant-tabs-tab) {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+
+  /* Enhanced mobile table styles */
+  .tabContent :global(.ant-table) {
+    font-size: 12px;
+  }
+
+  .tabContent :global(.ant-table-thead > tr > th) {
+    font-weight: 600;
+  }
+
+  /* Stack buttons in table cells for better usability */
+  .tabContent :global(.ant-table-cell .ant-space) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tabContent :global(.ant-table-cell .ant-space-item) {
+    margin-bottom: 6px !important;
+    margin-right: 0 !important;
+  }
+
+  /* Adjust form elements in modals */
+  :global(.ant-form-item-label) {
+    padding-bottom: 4px;
+  }
+
+  :global(.ant-modal-footer) {
+    padding: 10px 16px;
+  }
+
+  /* Improve chart legibility on small screens */
+  .analyticsSection {
+    padding: 8px 0;
+  }
+
+  /* Make sure modals don't overflow screen */
+  :global(.ant-modal) {
+    max-width: 95vw;
+    margin: 8px auto;
+  }
+
+  :global(.ant-modal-title) {
+    font-size: 16px;
+  }
+}
+
+/* Challenge Management Styles */
+.deleteModalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.managementButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.statusTag {
+  font-weight: 600;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.headerActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+/* Status-specific styling */
+.statusOngoing {
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  color: #52c41a;
+}
+
+.statusUpcoming {
+  background-color: #e6f7ff;
+  border: 1px solid #91d5ff;
+  color: #1890ff;
+}
+
+.statusCompleted {
+  background-color: #f9f0ff;
+  border: 1px solid #d3adf7;
+  color: #722ed1;
+}
+
+.statusUnpublished {
+  background-color: #fff2e8;
+  border: 1px solid #ffbb96;
+  color: #fa8c16;
+}
+
+/* Challenge Overview Styles */
+.challengeDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detailItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detailItem:last-child {
+  border-bottom: none;
+}
+
+.detailItem strong {
+  min-width: 140px;
+  color: #333;
+  font-weight: 600;
+}
+
+.settingsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.settingItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e1e5e9;
+}
+
+.settingItem span {
+  font-weight: 500;
+  color: #495057;
+}
+
+.statusInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.currentStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusDescription {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 4px solid #007bff;
+}
+
+.deleteModalActions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.errorContainer {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  margin: 20px;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  gap: 16px;
+  color: #666;
+}
+
+/* Enhanced responsive design */
+@media (max-width: 1024px) {
+  .settingsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .detailItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .detailItem strong {
+    min-width: unset;
+  }
+
+  .headerTitleRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
+
+:global(.dark) {
+
+  /* Container and common surfaces */
+  .dashboardContainer {
+    background: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  .dashboardHeader {
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+    box-shadow: 0 2px 10px color-mix(in oklab, var(--color-foreground) 14%, transparent);
+    border: 1px solid var(--color-border);
+  }
+
+  .headerTitleWrap h1,
+  .dashboardHeader h1 {
+    color: var(--color-foreground);
+  }
+
+  .headerTitleWrap p,
+  .dashboardHeader p {
+    color: var(--color-muted-foreground);
+  }
+
+  .tabContent {
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+    box-shadow: 0 2px 10px color-mix(in oklab, var(--color-foreground) 12%, transparent);
+    border: 1px solid var(--color-border);
+  }
+
+  /* Ant cards (stats) */
+  .statsRow :global(.ant-card) {
+    background: var(--color-card) !important;
+    color: var(--color-foreground) !important;
+    border: 1px solid var(--color-border) !important;
+    box-shadow: 0 1px 6px color-mix(in oklab, var(--color-foreground) 10%, transparent) !important;
+  }
+
+  .statsRow :global(.ant-card:hover) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px color-mix(in oklab, var(--color-foreground) 16%, transparent) !important;
+  }
+
+  /* Text blocks and placeholders */
+  .textContent {
+    background-color: var(--color-secondary);
+    color: var(--color-foreground);
+    border: 1px solid var(--color-border);
+  }
+
+  .chartPlaceholder {
+    background-color: var(--color-secondary);
+    color: var(--color-muted-foreground);
+    box-shadow: inset 0 0 0 1px var(--color-border);
+  }
+
+  .chartPlaceholder :global(.anticon) {
+    color: var(--color-muted-foreground);
+  }
+
+  .loadingContainer {
+    color: var(--color-muted-foreground);
+  }
+
+  /* Attachments */
+  .attachment img {
+    border: 1px solid var(--color-border);
+    box-shadow: none;
+  }
+
+  .attachment img:hover {
+    box-shadow: 0 2px 10px color-mix(in oklab, var(--color-foreground) 18%, transparent);
+  }
+
+  /* Tabs */
+  .tabs :global(.ant-tabs-tab) {
+    color: var(--color-muted-foreground) !important;
+  }
+
+  .tabs :global(.ant-tabs-tab:hover) {
+    color: var(--color-primary) !important;
+  }
+
+  .tabs :global(.ant-tabs-ink-bar) {
+    background-color: var(--color-primary) !important;
+  }
+
+  /* Tables */
+  .tabContent :global(.ant-table-content) {
+    background: transparent;
+  }
+
+  .tabContent :global(.ant-table) {
+    color: var(--color-foreground);
+    background: transparent;
+  }
+
+  .tabContent :global(.ant-table-thead > tr > th) {
+    background: var(--color-secondary) !important;
+    color: var(--color-foreground) !important;
+    border-bottom: 1px solid var(--color-border) !important;
+  }
+
+  .tabContent :global(.ant-table-tbody > tr > td) {
+    background: var(--color-card);
+    color: var(--color-foreground);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* Status tags and chips */
+  .statusTag {
+    color: var(--color-primary);
+    background: color-mix(in oklab, var(--color-primary) 12%, transparent);
+    border: 1px solid var(--color-primary);
+  }
+
+  .statusOngoing,
+  .statusUpcoming,
+  .statusCompleted,
+  .statusUnpublished {
+    background-color: var(--color-secondary);
+    border: 1px solid var(--color-border);
+    color: var(--color-foreground);
+  }
+
+  /* Overview and settings */
+  .detailItem {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .detailItem strong {
+    color: var(--color-foreground);
+  }
+
+  .settingsGrid .settingItem {
+    background-color: var(--color-secondary);
+    border: 1px solid var(--color-border);
+  }
+
+  .settingItem span {
+    color: var(--color-foreground);
+  }
+
+  .statusDescription {
+    color: var(--color-muted-foreground);
+    background-color: var(--color-secondary);
+    border-left-color: var(--color-primary);
+  }
+
+  /* Errors/empty states */
+  .errorContainer {
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 2px 10px color-mix(in oklab, var(--color-foreground) 12%, transparent);
+  }
+
+  .emptyState {
+    background: var(--color-secondary);
+    border: 2px dashed var(--color-border);
+    color: var(--color-muted-foreground);
+  }
+
+  /* Analytics section headings */
+  .analyticsSection h2,
+  .analyticsSection h3 {
+    color: var(--color-foreground);
+  }
+
+  /* Breadcrumbs and subtle text */
+  .breadcrumb,
+  .submissionDetails,
+  .submissionContent,
+  .submissionContent h3,
+  .activityTimestamp {
+    color: var(--color-muted-foreground);
+  }
+
+  /* Attachments and files */
+  .submissionFile {
+    color: var(--color-primary);
+    background: var(--color-secondary);
+    border: 1px solid var(--color-border);
+  }
+
+  .submissionFile:hover {
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
+  }
+
+  /* Header actions area */
+  .headerActions {
+    color: var(--color-foreground);
+  }
+
+  /* Challenge overview surface */
+  .challengeDetails {
+    color: var(--color-foreground);
+  }
+
+  /* Spinner container text */
+  .spinner {
+    color: var(--color-muted-foreground);
+  }
+
+  /* Mobile/tablet inherited surfaces */
+  @media (max-width: 768px) {
+    .dashboardHeader {
+      background-color: var(--color-card);
+    }
+
+    .tabContent {
+      background-color: var(--color-card);
+    }
+
+    :global(.ant-modal-body) {
+      background: var(--color-card);
+      color: var(--color-foreground);
+    }
+
+    :global(.ant-form-item) {
+      color: var(--color-foreground);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .tabContent {
+      background-color: var(--color-card);
+    }
+
+    .tabContent :global(.ant-table) {
+      background: transparent;
+      color: var(--color-foreground);
+    }
+
+    :global(.ant-form-item-label),
+    :global(.ant-modal-title) {
+      color: var(--color-foreground);
+    }
+
+    :global(.ant-modal-footer) {
+      background: var(--color-card);
+    }
+  }
+
+  /* Misc shadows tuned for dark */
+  .dashboardHeader,
+  .tabContent,
+  .attachment img:hover,
+  .activityItem:hover {
+    /* increase shadow opacity slightly for dark */
+    box-shadow: 0 6px 20px color-mix(in oklab, var(--color-foreground) 18%, transparent);
+  }
+}

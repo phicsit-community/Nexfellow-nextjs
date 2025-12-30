@@ -1,0 +1,68 @@
+/* LikeSummary.module.css */
+.container {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #333;
+  padding: 8px 0;
+  width: fit-content;
+  /* border: 1px solid black; */
+}
+
+.profileImages {
+  display: flex;
+  margin-right: 10px;
+}
+
+.profileImageWrapper {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  overflow: hidden;
+  margin-right: -10px;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+
+}
+
+.profileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.text {
+  font-size: 14px;
+  margin-left: 10px;
+  color: #6a6a6a;
+}
+
+:global(.dark) {
+  .container {
+    color: var(--foreground, #ddd);
+    /* You can add a subtle background if needed, e.g.: */
+    /* background-color: var(--card, #1e1e1e); */
+  }
+
+  .profileImages {
+    /* No changes needed unless background or spacing differs in dark */
+  }
+
+  .profileImageWrapper {
+    border: 2px solid var(--background, #121212);
+    /* If you want a subtle shadow or highlight, add here */
+    /* box-shadow: 0 0 4px rgba(36, 178, 180, 0.7); */
+  }
+
+  .profileImage {
+    /* No change - images are as is */
+  }
+
+  .text {
+    color: var(--muted-foreground, #999);
+    font-size: 14px;
+    margin-left: 10px;
+  }
+}

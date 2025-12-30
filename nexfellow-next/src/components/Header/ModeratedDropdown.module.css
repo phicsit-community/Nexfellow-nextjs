@@ -1,0 +1,355 @@
+.moderatedDropdownWrapper {
+    position: relative;
+    width: 100%;
+    margin: 8px 0px;
+}
+
+.moderatedDropdownButton {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f2937;
+    /* background-color: white; */
+    /* border: 1px solid #e5e7eb; */
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.moderatedDropdownButton:hover,
+.moderatedDropdownButton:focus {
+    background-color: rgba(36, 178, 180, 0.05);
+    color: #24b2b4;
+    outline: 1px solid rgb(36, 178, 180, 0.2);
+}
+
+.moderatedDropdownButton .icon {
+    width: 18px;
+    height: 18px;
+    color: inherit;
+    flex-shrink: 0;
+}
+
+.chevronIcon {
+    margin-left: auto;
+    width: 16px;
+    height: 16px;
+    color: #6b7280;
+    transition: transform 0.3s ease;
+}
+
+.rotated {
+    transform: rotate(180deg);
+}
+
+/* Floating dropdown container */
+.moderatedDropdownContent {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 6px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    max-height: 320px;
+    overflow-y: auto;
+    width: 280px;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.moderatedDropdownContent.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.moderatedDropdownItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    color: #1f2937;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+    border-radius: 8px;
+}
+
+.moderatedDropdownItem:hover {
+    background-color: rgba(36, 178, 180, 0.07);
+    color: #24b2b4;
+}
+
+.communityAvatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.communityAvatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatarInitials {
+    background: linear-gradient(135deg, #24b2b4, #1a8486);
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.communityInfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.communityName {
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.communityRole {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.emptyMessage {
+    padding: 12px 16px;
+    color: #9ca3af;
+    font-style: italic;
+    font-size: 14px;
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .moderatedDropdownButton {
+        font-size: 14px;
+        padding: 10px 14px;
+    }
+
+    .moderatedDropdownItem {
+        font-size: 13px;
+        padding: 8px 14px;
+    }
+
+    .communityAvatar,
+    .avatarInitials {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    .moderatedDropdownContent {
+        width: 100%;
+        max-height: 240px;
+    }
+}
+
+:global(.dark) {
+    .moderatedDropdownWrapper {
+        position: relative;
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .moderatedDropdownButton {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--foreground);
+        background-color: var(--card);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+        border: 1px solid var(--color-border);
+    }
+
+    .moderatedDropdownButton:hover,
+    .moderatedDropdownButton:focus {
+        background-color: rgba(36, 178, 180, 0.15);
+        color: var(--color-primary);
+        outline: 1px solid rgba(36, 178, 180, 0.3);
+    }
+
+    .moderatedDropdownButton .icon {
+        width: 18px;
+        height: 18px;
+        color: inherit;
+        flex-shrink: 0;
+    }
+
+    .chevronIcon {
+        margin-left: auto;
+        width: 16px;
+        height: 16px;
+        color: var(--muted-foreground);
+        transition: transform 0.3s ease;
+    }
+
+    .rotated {
+        transform: rotate(180deg);
+    }
+
+    /* Floating dropdown container */
+    .moderatedDropdownContent {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        margin-top: 6px;
+        background: var(--card);
+        border: 1px solid var(--color-border);
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        max-height: 320px;
+        overflow-y: auto;
+        width: 280px;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(10px);
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        color: var(--foreground);
+    }
+
+    .moderatedDropdownContent.open {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .moderatedDropdownItem {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 16px;
+        color: var(--foreground);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color 0.2s, color 0.2s;
+        border-radius: 8px;
+    }
+
+    .moderatedDropdownItem:hover {
+        background-color: rgba(36, 178, 180, 0.15);
+        color: var(--color-primary);
+    }
+
+    .communityAvatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--background);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .communityAvatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .avatarInitials {
+        background: linear-gradient(135deg, var(--color-primary), #1a8486);
+        color: white;
+        font-weight: 600;
+        font-size: 16px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    }
+
+    .communityInfo {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .communityName {
+        font-weight: 600;
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--foreground);
+    }
+
+    .communityRole {
+        font-size: 12px;
+        color: var(--muted-foreground);
+    }
+
+    .emptyMessage {
+        padding: 12px 16px;
+        color: var(--muted-foreground);
+        font-style: italic;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    @media (max-width: 640px) {
+        .moderatedDropdownButton {
+            font-size: 14px;
+            padding: 10px 14px;
+        }
+
+        .moderatedDropdownItem {
+            font-size: 13px;
+            padding: 8px 14px;
+        }
+
+        .communityAvatar,
+        .avatarInitials {
+            width: 32px;
+            height: 32px;
+            font-size: 14px;
+        }
+
+        .moderatedDropdownContent {
+            width: 100%;
+            max-height: 240px;
+        }
+    }
+}

@@ -1,0 +1,212 @@
+.card {
+  width: 100%;
+  height: fit-content;
+  background: var(--color-card);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  position: relative;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover {
+  border: 1px solid var(--color-input);
+}
+
+/* Status Tag */
+.statusTag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: color-mix(in oklab, var(--color-destructive) 12%, transparent);
+  border: 1px solid var(--color-destructive);
+  border-radius: 6px;
+  padding: 4px 8px;
+  z-index: 10;
+}
+
+.statusTag span {
+  color: var(--color-destructive);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Trophy Icon */
+.trophyContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.trophyBackground {
+  width: 48px;
+  height: 48px;
+  background-color: var(--color-secondary);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trophyIcon {
+  width: 24px;
+  height: 24px;
+  color: var(--color-primary);
+}
+
+/* Card Content */
+.cardContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin: 0;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.description {
+  font-size: 14px;
+  color: var(--color-muted-foreground);
+  margin: 0;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Details Section */
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.detailLabel {
+  color: var(--color-muted-foreground);
+  font-weight: 400;
+}
+
+.detailValue {
+  color: var(--color-foreground);
+  font-weight: 500;
+}
+
+.participantsLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-muted-foreground);
+  font-weight: 400;
+}
+
+.participantsIcon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+}
+
+.progressValue {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* Progress Bar */
+.progressContainer {
+  margin-top: 4px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background-color: var(--color-secondary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Action Button */
+.actionButton {
+  width: 100%;
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: filter 0.2s ease, box-shadow 0.2s ease;
+  margin-top: auto;
+}
+
+.actionButton:hover {
+  filter: brightness(0.95);
+  box-shadow: 0 4px 12px color-mix(in oklab, var(--color-primary) 22%, transparent);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .card {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    min-height: 280px;
+  }
+}
+
+:global(.dark) {
+  .card {
+    box-shadow: 0 2px 10px color-mix(in oklab, var(--color-foreground) 10%, transparent);
+  }
+
+  .card:hover {
+    border-color: var(--color-border);
+    box-shadow: 0 6px 18px color-mix(in oklab, var(--color-foreground) 18%, transparent);
+  }
+
+  .statusTag {
+    background-color: color-mix(in oklab, var(--color-destructive) 16%, transparent);
+    border-color: var(--color-destructive);
+  }
+
+  .trophyBackground {
+    background-color: color-mix(in oklab, var(--color-secondary) 85%, transparent);
+  }
+
+  .progressBar {
+    background-color: color-mix(in oklab, var(--color-secondary) 85%, transparent);
+  }
+
+  .actionButton {
+    box-shadow: 0 6px 18px color-mix(in oklab, var(--color-primary) 28%, transparent);
+  }
+
+  .actionButton:hover {
+    filter: brightness(1.05);
+    box-shadow: 0 10px 24px color-mix(in oklab, var(--color-primary) 34%, transparent);
+  }
+}

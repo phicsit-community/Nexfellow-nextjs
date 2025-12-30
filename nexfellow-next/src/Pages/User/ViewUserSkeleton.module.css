@@ -1,0 +1,825 @@
+/* DashboardSkeleton.module.css */
+
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--background, #fff);
+    color: var(--foreground, #000);
+}
+
+.layoutContainer {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    width: 100%;
+    background-color: var(--background, #fff);
+}
+
+.mainContentContainer {
+    flex: 2;
+    overflow-y: auto;
+    scrollbar-width: none;
+    max-width: 65%;
+    position: relative;
+    border-right: 1px solid var(--color-border, #e6e6e6);
+    padding-top: 0;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: var(--card, #fff);
+    color: var(--card-foreground, #000);
+}
+
+.mainContentContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.mainContentContainer::-webkit-scrollbar-track {
+    background: var(--background, #fff);
+}
+
+.mainContentContainer::-webkit-scrollbar-thumb {
+    background-color: var(--muted, #ccc);
+    border-radius: 10px;
+}
+
+.mainContent {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 0 20px;
+    align-items: center;
+    color: var(--card-foreground, #000);
+}
+
+/* ======== Buttons ======== */
+.backButtonContainer {
+    background: none;
+    border: none;
+    font-size: 20px;
+    font-weight: 500;
+    display: flex;
+    width: 90%;
+    align-items: center;
+    padding: 5px 0;
+    transition: color 0.3s ease;
+    margin-top: 10px;
+    justify-content: space-between;
+    height: 5%;
+    color: var(--foreground, #000);
+}
+
+.backButton {
+    cursor: pointer;
+    color: var(--muted-foreground, #6a6a6a);
+    display: flex;
+    width: 150px;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.moreButton {
+    background: none;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    align-items: flex-end;
+    color: var(--foreground, #000);
+}
+
+.backIcon {
+    margin-top: 2px;
+}
+
+/* ======== Banner Section ======== */
+.bannerSection {
+    position: relative;
+    width: 90%;
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: var(--card, #fff);
+    color: var(--card-foreground, #000);
+}
+
+.bannerImgContainer {
+    width: 100%;
+    height: 35%;
+    border-radius: 8px;
+    display: flex;
+    background-color: var(--card, #fff);
+}
+
+.bannerImage {
+    width: 680px;
+    height: 180px;
+    border-radius: 8px;
+    position: relative;
+    object-fit: fill;
+}
+
+/* ======== Community Info ======== */
+.communityHeader {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    position: relative;
+    color: var(--foreground, #000);
+}
+
+.badge {
+    width: 24px;
+    height: 24px;
+    filter: brightness(1);
+}
+
+.communityDetails {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    bottom: 4%;
+    gap: 2px;
+    margin: 0;
+    width: 100%;
+    color: var(--muted-foreground, #6a6a6a);
+}
+
+.communityName {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--foreground, #000);
+    line-height: 29px;
+    margin: 0;
+}
+
+.communityNameContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.username {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted-foreground, #6a6a6a);
+    line-height: 20px;
+    margin: 0;
+}
+
+.description {
+    font-size: 14px;
+    font-weight: 400;
+    width: 100%;
+    color: var(--muted-foreground, #6a6a6a);
+    line-height: 17px;
+    margin: 0 0 4% 0;
+}
+
+.toggleDescriptionButton {
+    background: none;
+    border: none;
+    color: var(--primary, #007bff);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* ======== Members ======== */
+.members {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+
+.communityActions {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    cursor: default;
+}
+
+.avatarIcon {
+    width: 80px;
+    height: 80px;
+}
+
+.memberImages {
+    display: flex;
+}
+
+.memberImageWrapper {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--background, #fff);
+    overflow: hidden;
+    margin-right: -10px;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+
+.memberImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.membersCount {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted-foreground, #6a6a6a);
+    cursor: pointer;
+}
+
+.actionButtons {
+    display: flex;
+    gap: 10px;
+    width: 50%;
+    max-width: 300px;
+}
+
+.iconButton,
+.inviteButton,
+.editButton {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--foreground, #000);
+}
+
+.iconButton {
+    width: 18%;
+}
+
+.inviteButton,
+.editButton {
+    width: 45%;
+}
+
+/* ======== Skeleton core styles ======== */
+@keyframes shimmer {
+    0% {
+        background-position: -468px 0;
+    }
+
+    100% {
+        background-position: 468px 0;
+    }
+}
+
+.skeleton {
+    background: var(--skeleton-base, #f0f0f0);
+    background-image: linear-gradient(to right,
+            var(--skeleton-base, #f0f0f0) 0%,
+            var(--skeleton-highlight, #e0e0e0) 20%,
+            var(--skeleton-base, #f0f0f0) 40%,
+            var(--skeleton-base, #f0f0f0) 100%);
+    background-repeat: no-repeat;
+    background-size: 800px 100%;
+    animation: shimmer 3s infinite linear;
+}
+
+.skeletonBanner {
+    width: 100%;
+    height: 170px;
+    border-radius: 8px;
+}
+
+.profileImageWrapper {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--background, #fff);
+    position: relative;
+    top: 0;
+    left: 40px;
+}
+
+.skeletonProfileImage {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.skeletonText {
+    height: 20px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.skeletonTextLarge {
+    width: 70%;
+    height: 24px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.skeletonTextSmall {
+    width: 40%;
+    height: 16px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.skeletonDescription {
+    width: 100%;
+    height: 60px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.skeletonButton {
+    width: 50px;
+    height: 30px;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.skeletonAvatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.skeletonActionBar {
+    display: flex;
+    width: 100%;
+    margin-top: 15px;
+}
+
+/* Post skeleton */
+.skeletonPost {
+    background-color: var(--card, #fff);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    min-height: fit-content;
+}
+
+.skeletonHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.skeletonAvatar {
+    background-color: var(--skeleton-highlight, #e0e0e0);
+}
+
+.skeletonDetails {
+    flex: 1;
+}
+
+.skeletonText {
+    background-color: var(--skeleton-highlight, #e0e0e0);
+    height: 12px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    width: 80%;
+}
+
+.skeletonDetails .skeletonText:last-child {
+    width: 60%;
+}
+
+.skeletonContent {
+    margin-bottom: 16px;
+}
+
+.skeletonContent .skeletonText {
+    background-color: var(--skeleton-highlight, #e0e0e0);
+    height: 14px;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+.skeletonContent .skeletonText:last-child {
+    width: 70%;
+}
+
+.skeletonImageGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 8px;
+    width: 100%;
+    height: 560px;
+    margin: 16px 0;
+}
+
+.skeletonImageItem {
+    background-color: var(--skeleton-highlight, #e0e0e0);
+    border-radius: 8px;
+    width: 100%;
+    height: 100%;
+}
+
+.skeletonImage {
+    width: 100%;
+    height: 200px;
+    background-color: var(--skeleton-highlight, #e0e0e0);
+    border-radius: 8px;
+    margin: 12px 0;
+}
+
+.skeletonActions {
+    display: flex;
+}
+
+.skeletonAction {
+    width: 40px;
+    height: 20px;
+    background-color: var(--skeleton-highlight, #e0e0e0);
+    border-radius: 4px;
+    margin-right: 12px;
+}
+
+/* Shimmer effect */
+.skeletonPost::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0,
+            rgba(255, 255, 255, 0.2) 20%,
+            rgba(255, 255, 255, 0.5) 60%,
+            rgba(255, 255, 255, 0));
+    animation: shimmer 3s infinite;
+}
+
+.sidebarBlock {
+    width: 80%;
+    margin-top: 30px;
+    border: 1px solid var(--color-border, #e6e6e6);
+    border-radius: 8px;
+    padding: 20px;
+    background-color: var(--card, #fff);
+    color: var(--card-foreground, #000);
+}
+
+/* Title placeholder */
+.skeletonBlockTitle {
+    width: 60%;
+    height: 24px;
+    border-radius: 6px;
+    background: linear-gradient(90deg,
+            var(--skeleton-base, #f0f0f0) 0%,
+            var(--skeleton-highlight, #e0e0e0) 20%,
+            var(--skeleton-base, #f0f0f0) 40%,
+            var(--skeleton-base, #f0f0f0) 100%);
+    margin-bottom: 20px;
+    animation: shimmer 3s infinite linear;
+}
+
+/* Each sidebar item container */
+.sidebarSkeletonItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Round avatar circle */
+.skeletonCircle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(90deg,
+            var(--skeleton-base, #f0f0f0) 0%,
+            var(--skeleton-highlight, #e0e0e0) 20%,
+            var(--skeleton-base, #f0f0f0) 40%,
+            var(--skeleton-base, #f0f0f0) 100%);
+    animation: shimmer 3s infinite linear;
+}
+
+/* Text container with two lines */
+.skeletonTextGroup {
+    flex: 1;
+    margin: 0 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Short text line */
+.skeletonTextShort {
+    width: 40%;
+    height: 16px;
+    border-radius: 4px;
+    background: linear-gradient(90deg,
+            var(--skeleton-base, #f0f0f0) 0%,
+            var(--skeleton-highlight, #e0e0e0) 20%,
+            var(--skeleton-base, #f0f0f0) 40%,
+            var(--skeleton-base, #f0f0f0) 100%);
+    animation: shimmer 3s infinite linear;
+}
+
+/* Long text line */
+.skeletonTextLong {
+    width: 100%;
+    height: 20px;
+    border-radius: 4px;
+    background: linear-gradient(90deg,
+            var(--skeleton-base, #f0f0f0) 0%,
+            var(--skeleton-highlight, #e0e0e0) 20%,
+            var(--skeleton-base, #f0f0f0) 40%,
+            var(--skeleton-base, #f0f0f0) 100%);
+    animation: shimmer 3s infinite linear;
+}
+
+/* Rectangular button */
+.skeletonButton {
+    width: 60px;
+    height: 28px;
+    border-radius: 6px;
+    background: linear-gradient(90deg,
+            var(--skeleton-base, #f0f0f0) 0%,
+            var(--skeleton-highlight, #e0e0e0) 20%,
+            var(--skeleton-base, #f0f0f0) 40%,
+            var(--skeleton-base, #f0f0f0) 100%);
+    animation: shimmer 3s infinite linear;
+}
+
+@media screen and (max-width: 768px) {
+    .mainContentContainer {
+        max-width: 100%;
+    }
+
+    .sidebar {
+        display: none !important;
+    }
+
+    .sidebarBlock {
+        display: none !important;
+    }
+}
+
+/* ------------ Dark Mode Styles ------------ */
+:global(.dark) {
+
+    /* Page containers */
+    .pageContainer {
+        background-color: var(--background);
+        color: var(--foreground);
+    }
+
+    .layoutContainer {
+        background-color: var(--background);
+    }
+
+    .mainContentContainer {
+        border-right-color: var(--color-border);
+        background-color: var(--background);
+        color: var(--foreground);
+    }
+
+    .mainContent {
+        color: var(--foreground);
+    }
+
+    /* Buttons and interactive elements */
+    .backButtonContainer {
+        color: var(--foreground);
+    }
+
+    .backButton {
+        color: var(--muted-foreground);
+    }
+
+    .moreButton {
+        color: var(--foreground);
+    }
+
+    /* Banner and header sections */
+    .bannerSection {
+        background-color: var(--card);
+        color: var(--card-foreground);
+    }
+
+    .bannerImgContainer {
+        background-color: var(--card);
+    }
+
+    .communityHeader {
+        color: var(--foreground);
+    }
+
+    .badge {
+        filter: brightness(0.8);
+    }
+
+    .communityDetails {
+        color: var(--muted-foreground);
+    }
+
+    .communityName {
+        color: var(--foreground);
+    }
+
+    .username {
+        color: var(--muted-foreground);
+    }
+
+    .description {
+        color: var(--muted-foreground);
+    }
+
+    .toggleDescriptionButton {
+        color: var(--primary);
+    }
+
+    .membersCount {
+        color: var(--muted-foreground);
+    }
+
+    /* Action buttons */
+    .iconButton,
+    .inviteButton,
+    .editButton {
+        color: var(--foreground);
+    }
+
+    /* Member image wrapper border */
+    .memberImageWrapper {
+        border-color: var(--background);
+    }
+
+    /* Hover effect on posts */
+    .post:hover {
+        background-color: var(--color-muted);
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    /* ===== Skeleton Loader Styling for Dark Mode ===== */
+    .skeletonPost {
+        background-color: var(--card);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Use darker grey placeholders for skeletons */
+    .skeleton,
+    .skeletonBanner,
+    .skeletonButton,
+    .skeletonProfileImage,
+    .skeletonText,
+    .skeletonTextLarge,
+    .skeletonTextSmall,
+    .skeletonDescription,
+    .skeletonAvatar,
+    .skeletonImageItem,
+    .skeletonImage,
+    .skeletonAction {
+        background: #222;
+        background-image: linear-gradient(90deg,
+                #222 0px,
+                #2e2e2e 40px,
+                #3a3a3a 100px,
+                #222 180px);
+        background-repeat: no-repeat;
+        background-size: 800px 100%;
+        animation: shimmer 3s infinite linear;
+    }
+
+    /* BackIcon and MoreButton adjustments for dark */
+    .backIcon,
+    .moreButton {
+        color: var(--foreground);
+        background-color: rgba(255 255 255 / 0.15);
+    }
+
+    /* Scrollbar styling for WebKit */
+    .mainContentContainer::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .mainContentContainer::-webkit-scrollbar-track {
+        background: var(--background);
+    }
+
+    .mainContentContainer::-webkit-scrollbar-thumb {
+        background-color: var(--muted);
+        border-radius: 10px;
+    }
+
+    .sidebarBlock {
+        width: 80%;
+        margin-top: 30px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        padding: 20px;
+        background-color: var(--card);
+    }
+
+    /* Title placeholder */
+    .skeletonBlockTitle {
+        width: 60%;
+        height: 24px;
+        border-radius: 6px;
+        background: linear-gradient(90deg, #222 0px, #292929 40px, #3a3a3a 100px);
+        margin-bottom: 20px;
+        animation: shimmer 3s infinite linear;
+    }
+
+    /* Each sidebar item container */
+    .sidebarSkeletonItem {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    /* Round avatar circle */
+    .skeletonCircle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(90deg, #222 0px, #292929 40px, #3a3a3a 100px);
+        animation: shimmer 3s infinite linear;
+    }
+
+    /* Text container with two lines */
+    .skeletonTextGroup {
+        flex: 1;
+        margin: 0 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    /* Short text line */
+    .skeletonTextShort {
+        width: 40%;
+        height: 16px;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #222 0px, #292929 40px, #3a3a3a 100px);
+        animation: shimmer 3s infinite linear;
+    }
+
+    /* Long text line */
+    .skeletonTextLong {
+        width: 100%;
+        height: 20px;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #222 0px, #292929 40px, #3a3a3a 100px);
+        animation: shimmer 3s infinite linear;
+    }
+
+    /* Rectangular button */
+    .skeletonButton {
+        width: 60px;
+        height: 28px;
+        border-radius: 6px;
+        background: linear-gradient(90deg, #222 0px, #292929 40px, #3a3a3a 100px);
+        animation: shimmer 3s infinite linear;
+    }
+
+    /* Shimmer animation */
+    @keyframes shimmer {
+        0% {
+            background-position: -468px 0;
+        }
+
+        100% {
+            background-position: 468px 0;
+        }
+    }
+
+}
+
+
+
+/* ===== Shimmer animation - shared light/dark ===== */
+@keyframes shimmer {
+    0% {
+        background-position: -468px 0;
+    }
+
+    100% {
+        background-position: 468px 0;
+    }
+}

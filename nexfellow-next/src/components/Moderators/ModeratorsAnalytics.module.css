@@ -1,0 +1,393 @@
+.card {
+    min-height: auto;
+    background: #fff;
+    border: 1.5px solid #E5EAF1;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 16px rgba(31, 58, 134, 0.07);
+    font-family: 'Inter', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    max-width: 22rem;
+    /* smaller default width */
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem;
+    /* instead of 32px */
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    /* ~15px */
+    color: #23303f;
+    gap: 0.5rem;
+}
+
+.analyticsIcon {
+    width: 1rem;
+    height: 1rem;
+    color: #24b2b4;
+}
+
+.analyticsFilter {
+    font-family: inherit;
+    background: #F6FFFF;
+    padding: 0.4rem 0.8rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: 1.2px solid #24b2b4;
+    color: #24b2b4;
+    border-radius: 0.4rem;
+    margin-left: 0.5rem;
+    cursor: pointer;
+    min-width: 7rem;
+}
+
+.time {
+    color: #7a869a;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0 1rem;
+}
+
+.statsRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    gap: 0.5rem;
+}
+
+.statCol {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 4rem;
+}
+
+.statValue {
+    font-size: 1.4rem;
+    /* smaller numbers */
+    font-weight: 800;
+    color: #24b2b4;
+}
+
+.statLabel {
+    font-size: 0.75rem;
+    color: #5f6774;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.growth {
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.tabs {
+    display: flex;
+    margin-top: 1rem;
+    padding: 0 1rem;
+    gap: 0.5rem;
+}
+
+.tabBtn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #7a869a;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.6rem 0;
+    cursor: pointer;
+}
+
+.tabActive {
+    color: #24b2b4 !important;
+    background: #f2fcfc !important;
+    box-shadow: 0 -1px 0 0 #24b2b4;
+}
+
+.chartWrap {
+    width: 100%;
+    height: 150px;
+    /* unchanged */
+    padding: 0 1rem;
+}
+
+.btnWrap {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.dashBtn {
+    display: flex;
+    align-items: center;
+    border: 1.4px solid #24b2b4;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 800;
+    padding: 0.6rem;
+    color: #24b2b4;
+    width: 100%;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.loader {
+    min-width: 12rem;
+    min-height: 14rem;
+    font-size: 0.9rem;
+    padding: 1rem;
+}
+
+.error {
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.5rem;
+}
+
+/* Large screens (desktops) */
+@media (min-width: 1200px) {
+    .card {
+        max-width: 24rem;
+        /* slightly larger */
+    }
+
+    .statValue {
+        font-size: 1.6rem;
+    }
+
+    .chartWrap {
+        height: 180px;
+    }
+}
+
+/* Medium screens (tablets landscape & small laptops) */
+@media (max-width: 992px) {
+    .card {
+        max-width: 20rem;
+    }
+
+    .statValue {
+        font-size: 1.3rem;
+    }
+
+    .analyticsFilter {
+        font-size: 0.8rem;
+        min-width: 6.5rem;
+        padding: 0.35rem 0.7rem;
+    }
+
+    .chartWrap {
+        height: 150px;
+    }
+}
+
+/* Small screens (tablets portrait, large mobiles) */
+@media (max-width: 768px) {
+    .card {
+        max-width: 18rem;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .statsRow {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .statCol {
+        min-width: 45%;
+    }
+
+    .statValue {
+        font-size: 1.2rem;
+    }
+
+    .tabs {
+        flex-wrap: wrap;
+    }
+
+    .tabBtn {
+        flex: 0 0 48%;
+        text-align: center;
+    }
+
+    .dashBtn {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+    }
+}
+
+/* Extra small screens (mobiles <576px) */
+@media (max-width: 576px) {
+    .card {
+        max-width: 100%;
+        border-radius: 0.6rem;
+    }
+
+    .header {
+        padding: 0.8rem;
+    }
+
+    .title {
+        font-size: 0.85rem;
+    }
+
+    .analyticsFilter {
+        font-size: 0.75rem;
+        min-width: 5.5rem;
+    }
+
+    .statValue {
+        font-size: 1rem;
+    }
+
+    .statLabel {
+        font-size: 0.7rem;
+    }
+
+    .tabs {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .tabBtn {
+        flex: 1;
+        width: 100%;
+        padding: 0.5rem;
+    }
+
+    .chartWrap {
+        height: 120px;
+        padding: 0 0.5rem;
+    }
+
+    .btnWrap {
+        padding: 0.5rem;
+    }
+
+    .dashBtn {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+    }
+}
+
+:global(.dark) {
+    .card {
+        background: var(--card);
+        border-color: var(--color-border);
+        color: var(--foreground);
+    }
+
+    .header {
+        color: var(--foreground);
+    }
+
+    .title {
+        color: var(--foreground);
+    }
+
+    .analyticsIcon {
+        color: var(--color-primary);
+    }
+
+    .analyticsFilter {
+        background: var(--background);
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+    }
+
+    .analyticsFilter:focus {
+        border-color: var(--color-primary);
+        background: var(--card);
+        color: var(--color-primary);
+    }
+
+    .analyticsFilter option {
+        color: var(--color-primary);
+        background: var(--background);
+    }
+
+    .time {
+        color: var(--muted-foreground);
+    }
+
+    .statValue {
+        color: var(--color-primary);
+    }
+
+    .statLabel {
+        color: var(--muted-foreground);
+    }
+
+    .growth.up {
+        color: var(--color-primary);
+    }
+
+    .growth.down {
+        color: #f55766;
+    }
+
+    .growth.flat {
+        color: #555a66;
+    }
+
+    .tabBtn {
+        color: var(--muted-foreground);
+    }
+
+    .tabBtn:hover,
+    .tabBtn:focus-visible {
+        color: var(--color-primary);
+    }
+
+    .tabActive {
+        color: #24b2b4 !important;
+        background: var(--card) !important;
+        box-shadow: 0 -1px 0 0 #24b2b4 !important;
+    }
+
+    .tabLine {
+        background: #24b2b4;
+    }
+
+    .dashBtn {
+        border-color: var(--color-primary);
+        background: var(--background);
+        color: var(--color-primary);
+    }
+
+    .dashBtn:hover {
+        background: var(--color-muted);
+        border-color: var(--color-primary);
+    }
+
+    .loader {
+        background: var(--card);
+        border-color: var(--color-border);
+        color: var(--muted-foreground);
+    }
+
+    .error {
+        color: #f55766;
+    }
+}

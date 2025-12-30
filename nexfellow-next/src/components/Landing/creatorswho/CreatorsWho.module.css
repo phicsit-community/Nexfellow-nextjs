@@ -1,0 +1,202 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+  background-color: #00181f;
+  overflow: hidden;
+  padding-top: 3rem;
+  font-family: "figtree", sans-serif;
+}
+
+.heading {
+  margin-bottom: 20px;
+}
+
+.creators {
+  /* font-family: 'Abhaya Libre'; */
+  color: #0b98bb;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 36px;
+}
+
+.remaining {
+  /* font-family: 'Abhaya Libre'; */
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 36px;
+  color: #ffffff;
+}
+
+.twoLineImg {
+  width: 212px;
+  position: relative;
+  bottom: 15px;
+  left: 35px;
+}
+
+.content {
+  /* font-family: 'Klee One'; */
+  font-weight: 500;
+  font-size: 16px;
+  color: #cbcbcb;
+  max-width: 600px;
+  text-align: center;
+  position: relative;
+  bottom: 20px;
+}
+
+.cards {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  white-space: nowrap;
+  padding-top: 1rem;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.cards::-webkit-scrollbar {
+  display: none;
+}
+
+.moveLeftRightDiv {
+  display: flex;
+  gap: 30px;
+  padding: 2.5rem;
+}
+
+.moveLeftRightDiv img {
+  cursor: pointer;
+}
+
+@media (max-width: 500px) {
+  .cards {
+    gap: 10px;
+    /* Reduce gap for smaller screens */
+  }
+
+  .creators {
+    font-size: 24px;
+  }
+
+  .remaining {
+    font-size: 24px;
+  }
+
+  .content {
+    margin-top: 10px;
+    font-size: 14px;
+    width: 400px;
+  }
+
+  .twoLineImg {
+    width: 94px;
+    /* top:1px */
+    bottom: 9px;
+    right: 8px;
+    left: 0px;
+  }
+
+  .moveLeftRightDiv {
+    gap: 20px;
+  }
+
+  .moveLeftRightDiv img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .container {
+    height: auto;
+    padding-bottom: 30px;
+    padding-top: 30px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .creators {
+    font-size: 80px;
+  }
+
+  .remaining {
+    font-size: 80px;
+  }
+
+  .content {
+    font-size: 24px;
+    width: 800px;
+  }
+
+  .cards {
+    gap: 24px;
+    padding-top: 2rem;
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    white-space: nowrap;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    align-items: baseline;
+  }
+
+  .moveLeftRightDiv {
+    gap: 40px;
+    padding: 3rem;
+  }
+
+  .moveLeftRightDiv img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .twoLineImg {
+    width: 260px;
+    bottom: 20px;
+    left: 45px;
+  }
+}
+
+@media (min-width: 2400px) {
+  .creators {
+    font-size: 100px;
+  }
+
+  .remaining {
+    font-size: 100px;
+  }
+
+  .content {
+    font-size: 28px;
+    width: 1000px;
+  }
+
+  .cards {
+    gap: 32px;
+    padding-top: 2.5rem;
+  }
+
+  .moveLeftRightDiv {
+    gap: 50px;
+    padding: 4rem;
+  }
+
+  .moveLeftRightDiv img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .twoLineImg {
+    width: 300px;
+    bottom: 25px;
+    left: 55px;
+  }
+}

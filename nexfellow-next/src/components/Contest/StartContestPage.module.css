@@ -1,0 +1,213 @@
+.container {
+    display: flex;
+    /* background: #f6fbfd; */
+    border-radius: 16px;
+    /* box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04); */
+    padding: 0px;
+    max-width: 980px;
+    margin: 40px;
+    align-items: center;
+    gap: 40px;
+}
+
+.leftPanel {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.illustration {
+    max-width: 100%;
+    width: 100%;
+}
+
+.rightPanel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20%;
+    justify-content: space-between;
+}
+
+.category {
+    background-color: #24B2B5;
+    color: #fff;
+    padding: 6px 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.contestTotalRegistered {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.contestAvatarGroup {
+    display: flex;
+    position: relative;
+}
+
+.contestAvatarWrapper {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #fff;
+    margin-left: -8px;
+    position: relative;
+    background: #f0f0f0;
+}
+
+.contestAvatarWrapper:first-child {
+    margin-left: 0;
+}
+
+.contestAvatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.moreCount {
+    width: 100%;
+    height: 100%;
+    background-color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    border-radius: 50%;
+}
+
+.contestJoined {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+.title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.description {
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 24px;
+}
+
+.infoGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 40px;
+    margin-bottom: 24px;
+}
+
+.infoBlock {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.infoIcon {
+    font-size: 50px;
+    color: #00bcd4;
+    background-color: #e0f7fa;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.infoLabel {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 2px;
+}
+
+.infoValue {
+    font-size: 15px;
+    font-weight: 600;
+    color: #222;
+}
+
+.beforeStart {
+    background: #f5fcff;
+    border: 1px solid #d4eefb;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 24px;
+}
+
+.beforeStartTitle {
+    font-weight: 600;
+    font-size: 15px;
+    color: #0288d1;
+    margin-bottom: 8px;
+}
+
+.beforeStart ul {
+    padding-left: 20px;
+    font-size: 14px;
+    color: #222;
+    margin: 0;
+}
+
+.beforeStart li {
+    margin-bottom: 6px;
+}
+
+.rulesList {
+    list-style: none;
+    padding-left: 0;
+}
+
+.rulesList li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: #222;
+}
+
+.ruleIcon {
+    font-size: 18px;
+    color: #1ca1f1;
+}
+
+
+.startBtn {
+    background-color: #00bcd4;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.startBtn:hover {
+    background-color: #0197ab;
+}
+
+.loading,
+.error {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 80px;
+}

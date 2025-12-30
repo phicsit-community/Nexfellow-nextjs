@@ -1,0 +1,412 @@
+/* Container Styles */
+.container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  background-color: #00181F;
+  min-height: 90dvh;
+}
+
+.mainContainer {
+  display: flex;
+  justify-content: left;
+  align-items: stretch;
+  margin: 20px 130px;
+  gap: 60px;
+}
+
+@media (max-width: 1200px) {
+  .mainContainer {
+    margin: 20px 60px;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 992px) {
+  .mainContainer {
+    margin: 20px 40px;
+    gap: 30px;
+  }
+}
+
+/* Left Side Styles */
+.leftside {
+  display: flex;
+  width: 35%;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  color: #ffffff;
+}
+
+.topContainer {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.icon {
+  width: 80px;
+  height: 50px;
+}
+
+.iconImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.title {
+  font-size: 62px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.highlight {
+  color: #24b2b4;
+  font-weight: 600;
+  font-size: 62px;
+}
+
+.subtitle {
+  font-size: 16px;
+  font-weight: regular;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.middleContainer {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid #87bebc;
+  background-color: #0c1c26;
+  border-radius: 12px;
+}
+
+.heading {
+  margin: 20px 20px 0 20px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.commitments {
+  display: flex;
+  margin: 0 20px 20px 20px;
+  flex-direction: column;
+}
+
+.commitmentText {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+  background-color: #0c1c26;
+  border-radius: 100px;
+  padding-left: 10px;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.bottomContainer {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #87bebc;
+  background-color: #0c1c26;
+  border-radius: 12px;
+  padding: 20px 0;
+}
+
+.info {
+  margin-left: 20px;
+  gap: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.text {
+  font-size: 16px;
+  font-weight: 400;
+  color: #ffffff;
+}
+
+.email {
+  font-size: 18px;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.rightIcon {
+  position: relative;
+  margin-right: 20px;
+  display: flex;
+  height: 50px;
+  width: 50px;
+  cursor: pointer;
+}
+
+.rightIconImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rightIconBefore {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid rgba(135, 190, 188, 0.6);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.3);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1.6);
+    opacity: 0;
+  }
+}
+
+/* Right Side Styles */
+.rightside {
+  display: flex;
+  width: 40%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.formContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border: 1px solid #87bebc;
+  background-color: #16252f;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.form {
+  width: 100%;
+  max-width: 800px;
+  margin: 30px;
+}
+
+.formPart {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .formPart {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-bottom: 20px;
+}
+
+.inputContainerLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.inputContainerInput,
+.inputContainerTextarea {
+  width: 100%;
+  padding: 15px 12px;
+  border: 1px solid #87bebc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+  color: #ffffff;
+  background-color: #0c1c26;
+}
+
+.inputContainerInput::placeholder,
+.inputContainerTextarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.inputContainerInput:focus,
+.inputContainerTextarea:focus {
+  border-color: #24b2b4;
+  outline: none;
+}
+
+.inputContainerTextarea {
+  height: 120px;
+  resize: vertical;
+  min-height: 80px;
+  max-height: 200px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 32px;
+  background-color: #4ca9a7;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: 20px;
+  font-weight: 500;
+  min-height: 50px;
+}
+
+.button img {
+  width: 25px;
+  height: 25px;
+  transition: transform 0.2s ease;
+}
+
+.button:hover {
+  background-color: #3b8c87;
+  transform: translateY(-2px);
+}
+
+.button:hover img {
+  transform: translateX(2px);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+/* Mobile (480px) Specific Styles */
+@media (max-width: 768px) {
+  .mainContainer {
+    flex-direction: column;
+    margin: 20px;
+    gap: 30px;
+  }
+
+  .leftside {
+    width: 100%;
+  }
+
+  .topContainer {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .icon {
+    width: 60px;
+    height: 40px;
+  }
+
+  .title {
+    font-size: 42px;
+  }
+
+  .highlight {
+    font-size: 42px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .middleContainer {
+    margin-top: 20px;
+  }
+
+  .heading {
+    font-size: 14px;
+  }
+
+  .commitmentText {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 8px 12px;
+  }
+
+  .commitmentTextImg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .bottomContainer {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .rightside {
+    width: 100%;
+  }
+
+  .rightIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .rightIconImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .form {
+    margin: 20px;
+  }
+
+  .inputContainerLabel {
+    font-size: 12px;
+  }
+
+  .inputContainerInput,
+  .inputContainerTextarea {
+    font-size: 14px;
+    padding: 12px 10px;
+  }
+
+  .button {
+    padding: 14px 24px;
+    font-size: 14px;
+    min-height: 48px;
+  }
+}

@@ -1,0 +1,94 @@
+/* Base skeleton style */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+}
+
+/* Shimmer effect */
+/* Shimmer effect (background-position animation) */
+.shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.2) 30%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0.2) 70%,
+      rgba(255, 255, 255, 0) 100%);
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+  animation: shimmer 4.5s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Specific skeleton types for followers modal */
+.skeleton.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.skeleton.text-sm {
+  height: 12px;
+  width: 80px;
+  margin-bottom: 8px;
+}
+
+.skeleton.text-md {
+  height: 16px;
+  width: 140px;
+  margin-bottom: 8px;
+}
+
+.skeleton.text {
+  height: 20px;
+  margin-bottom: 8px;
+}
+
+.skeleton.button {
+  height: 36px;
+  width: 80px;
+  border-radius: 4px;
+}
+
+.skeleton.search {
+  height: 40px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+
+.skeleton.follower-item {
+  height: 60px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+}
+
+/* Dashboard analytics skeletons */
+.skeleton.analytic-card {
+  height: 140px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.skeleton.feed-post {
+  height: 200px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.skeleton.heatmap {
+  height: 180px;
+  border-radius: 8px;
+  margin-top: 16px;
+}

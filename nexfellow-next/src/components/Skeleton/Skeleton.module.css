@@ -1,0 +1,189 @@
+.postSkeleton {
+  background-color: var(--color-card);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px color-mix(in oklab, var(--color-foreground) 10%, transparent);
+}
+
+.postHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+/* Base skeleton blocks use muted surface */
+.avatar,
+.userName,
+.timestamp,
+.postContent,
+.postImageContainer,
+.action,
+.skeleton,
+.quizCard,
+.questionText,
+.option,
+.title,
+.text,
+.button,
+.mailCard,
+.progressBar,
+.circular {
+  background-color: var(--color-muted);
+  border-radius: 4px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.userName {
+  height: 18px;
+  width: 150px;
+  margin-bottom: 8px;
+}
+
+.timestamp {
+  height: 14px;
+  width: 100px;
+}
+
+.postContent {
+  height: 80px;
+  margin-bottom: 16px;
+}
+
+.postImageContainer {
+  height: 200px;
+  margin-bottom: 16px;
+}
+
+.postActions {
+  display: flex;
+  justify-content: space-around;
+}
+
+.action {
+  height: 24px;
+  width: 80px;
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+/* Shimmer stripe (light + dark friendly by default) */
+.shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+      transparent,
+      color-mix(in oklab, var(--color-card) 60%, var(--color-background) 40%),
+      transparent);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Sizes for variants */
+.quizCard {
+  height: 180px;
+  border-radius: 10px;
+}
+
+.questionText {
+  height: 120px;
+  margin-bottom: 20px;
+}
+
+.option {
+  height: 50px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.title {
+  height: 30px;
+  width: 60%;
+  margin-bottom: 20px;
+}
+
+.text {
+  height: 20px;
+  margin-bottom: 10px;
+}
+
+.button {
+  height: 42px;
+  width: 150px;
+  border-radius: 5px;
+}
+
+.mailCard {
+  height: 70px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.progressBar {
+  height: 8px;
+  width: 100%;
+  border-radius: 5px;
+}
+
+.circular {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* Dark-mode refinements: deeper base and subtler shimmer */
+:global(.dark) {
+  .postSkeleton {
+    box-shadow: 0 1px 3px color-mix(in oklab, var(--color-foreground) 22%, transparent);
+  }
+
+  .avatar,
+  .userName,
+  .timestamp,
+  .postContent,
+  .postImageContainer,
+  .action,
+  .skeleton,
+  .quizCard,
+  .questionText,
+  .option,
+  .title,
+  .text,
+  .button,
+  .mailCard,
+  .progressBar,
+  .circular {
+    /* slightly deepen muted for dark to improve contrast */
+    background-color: color-mix(in oklab, var(--color-muted) 85%, var(--color-card) 15%);
+  }
+
+  .shimmer {
+    background: linear-gradient(90deg,
+        transparent,
+        color-mix(in oklab, var(--color-foreground) 12%, transparent),
+        transparent);
+  }
+}

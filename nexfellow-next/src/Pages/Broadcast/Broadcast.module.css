@@ -1,0 +1,1369 @@
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  padding: 20px;
+  margin: 0px 20px;
+  background: var(--color-card);
+  color: var(--color-foreground);
+}
+
+.recipientSourceSelector {
+  margin-bottom: 1.5rem;
+}
+
+.pageTitle {
+  color: var(--color-primary);
+  font-size: 2.1rem;
+  font-weight: 600;
+  margin-bottom: 0;
+  letter-spacing: 0.5px;
+}
+
+.sectionTitle {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--color-foreground);
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  padding: 60px;
+  background: var(--color-card);
+  color: var(--color-foreground);
+}
+
+.mailSection {
+  flex: 2;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding: 2rem 4rem;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-card);
+  color: var(--color-foreground);
+}
+
+.backNavigation {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  color: var(--color-muted-foreground);
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+/* Custom Dropdown */
+.customDropdown {
+  position: relative;
+  width: 100%;
+}
+
+.dropdownButton {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: 4px;
+  background-color: var(--color-card);
+  color: var(--color-foreground);
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.dropdownContent {
+  position: absolute;
+  width: 100%;
+  background: var(--color-card);
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 10px;
+  box-shadow: 0px 4px 10px color-mix(in oklch, var(--color-foreground) 20%, transparent);
+  z-index: 100;
+  scrollbar-width: none;
+}
+
+/* Recipient List */
+.recipientItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+  padding: 12px;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  color: var(--color-foreground);
+}
+
+.recipientItem:last-child {
+  border-bottom: none;
+}
+
+.recipientItem:hover {
+  background: var(--color-accent);
+  color: var(--color-accent-foreground);
+}
+
+.recipientItem span {
+  font-weight: 500;
+  color: var(--color-foreground);
+}
+
+.recipientItem input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+}
+
+/* Input Fields */
+.mainContainer input {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-foreground);
+  background: var(--color-card);
+  margin-top: 5px;
+}
+
+.subjectInput :global(.ant-input) {
+  background: var(--color-card);
+  color: var(--color-foreground);
+  border-color: var(--color-border);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+/* Email Content Button */
+.emailContentBox {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.inputBox {
+  padding: 10px 6px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  border: 2px solid var(--color-border);
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 400;
+  background: var(--color-card);
+  color: var(--color-foreground);
+}
+
+.avatarWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--color-muted);
+  margin-right: 10px;
+}
+
+.avatarIcon {
+  color: var(--color-muted-foreground);
+}
+
+.emailPlaceholder {
+  color: var(--color-muted-foreground);
+  font-size: 16px;
+}
+
+.mailCardContainer {
+  position: relative;
+  background-color: var(--color-card);
+  padding: 0.4rem 2rem;
+  max-width: 100%;
+  border-radius: 6px;
+  margin-bottom: 1.6rem;
+  height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+}
+
+.mailContentOut {
+  color: var(--color-foreground);
+  width: 90%;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.mailDateTime {
+  color: var(--color-muted-foreground);
+  font-size: 14px;
+  margin: 0;
+}
+
+.mailCardContainer img {
+  position: absolute;
+  top: 50%;
+  right: 2%;
+  transform: translate(-50%, -50%);
+  width: 26px;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modalContent {
+  background: var(--color-card);
+  color: var(--color-foreground);
+  padding: 20px;
+  border-radius: 10px;
+  width: 600px;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 10px;
+  gap: 20px;
+}
+
+.scheduleContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--color-foreground);
+  cursor: pointer;
+  user-select: none;
+}
+
+.scheduleContainer input {
+  appearance: none;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--color-foreground);
+  border-radius: 4px;
+  background-color: transparent;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  padding: 8px;
+}
+
+.scheduleContainer input:checked {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.scheduleContainer input:checked::after {
+  content: "";
+  position: absolute;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -60%) rotate(45deg);
+}
+
+.cancelBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--color-muted);
+  padding: 10px 24px;
+  color: var(--color-foreground);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.cancelBtn:disabled {
+  background: var(--color-border);
+  color: var(--color-muted-foreground);
+  cursor: not-allowed;
+}
+
+.sendBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--color-primary);
+  padding: 10px 24px;
+  color: var(--color-primary-foreground);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  flex-direction: row-reverse;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.sendBtn:disabled {
+  background: color-mix(in oklch, var(--color-primary) 50%, transparent);
+  color: var(--color-primary-foreground);
+  cursor: not-allowed;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.modalPopup {
+  background: var(--color-card);
+  color: var(--color-foreground);
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  padding: 24px;
+  box-shadow: 0 10px 40px color-mix(in oklch, var(--color-foreground) 30%, transparent);
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: slideUp 0.25s ease-out;
+  position: relative;
+}
+
+.modalTopBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalCloseIcon {
+  font-size: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-muted-foreground);
+  transition: color 0.2s;
+}
+
+.modalCloseIcon:hover {
+  color: var(--color-primary);
+}
+
+.fullMailContent {
+  margin-top: 16px;
+  line-height: 1.6;
+  word-break: break-word;
+  color: var(--color-foreground);
+}
+
+@keyframes fadeIn {
+  from {
+    background-color: rgba(0, 0, 0, 0);
+  }
+
+  to {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+/* Sidebar Skeleton */
+.sidebarSkeleton {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: var(--color-card);
+  color: var(--color-foreground);
+}
+
+.noMailsMessage {
+  color: var(--color-muted-foreground);
+  text-align: center;
+  padding: 20px;
+  border-radius: 6px;
+  background-color: var(--color-card);
+  font-size: 16px;
+}
+
+.recentMail {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-foreground);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px 0 color-mix(in oklch, var(--color-primary) 8%, transparent);
+  padding: 24px 18px 18px 18px;
+  margin: 0;
+  min-width: 320px;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+  height: 580px;
+  overflow-y: auto;
+}
+
+.broadcastStatsCard {
+  margin-top: 10px;
+  width: 100%;
+  z-index: 2;
+  background: linear-gradient(270deg, #00989a 0%, #24b2b4 100%);
+  border-radius: 8px;
+  padding: 22px 24px 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px 0 color-mix(in oklch, var(--color-primary) 16%, transparent);
+  color: #fff;
+  min-height: 90px;
+}
+
+.recentActivityHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.recentActivityIcon {
+  background: color-mix(in oklch, var(--color-primary) 11%, transparent);
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.recentActivityTitle {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--color-foreground);
+}
+
+.recentActivitySubtitle {
+  color: var(--color-muted-foreground);
+  font-size: 14px;
+}
+
+.notificationCard {
+  background: var(--color-card);
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px 0 color-mix(in oklch, var(--color-primary) 8%, transparent);
+  padding: 18px 20px 14px 20px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notificationCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-card);
+  color: var(--color-foreground);
+}
+
+.notificationCardIcon {
+  background: var(--color-muted);
+  color: var(--color-primary);
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notificationCardTitle {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--color-foreground);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notificationCardBadge {
+  border-radius: 8px;
+  padding: 2px 12px;
+  font-weight: 600;
+  font-size: 13px;
+  margin-left: 8px;
+  background: var(--color-muted);
+  color: var(--color-primary);
+  display: inline-block;
+}
+
+.notificationCardMessage {
+  color: var(--color-muted-foreground);
+  font-size: 15px;
+  margin: 4px 0 0 0;
+}
+
+.notificationCardTime {
+  color: var(--color-muted-foreground);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.headerSection {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  background: color-mix(in oklch, var(--color-primary) 10%, transparent);
+  color: var(--color-foreground);
+  border-radius: 12px;
+  position: relative;
+  margin-bottom: 30px;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.backButtonWrapper {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 3px 10px;
+  width: fit-content;
+  margin-bottom: 10px;
+}
+
+.headerTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
+  color: var(--color-foreground);
+}
+
+.headerIconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  border-radius: 12px;
+  color: #fff;
+  width: 50px;
+  height: 50px;
+  padding: 12px;
+}
+
+.pageSubtitle {
+  color: var(--color-muted-foreground);
+  font-size: 16px;
+  margin-bottom: 0;
+}
+
+.draftsButton {
+  color: var(--color-muted-foreground);
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  font-size: 15px;
+  transition: background 0.2s, border 0.2s;
+}
+
+.draftsButton:hover {
+  background: var(--color-muted);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.mainContentWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  margin-bottom: 20px;
+  padding-bottom: 60px;
+  color: var(--color-foreground);
+}
+
+.mailSectionWrapper {
+  flex: 2;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  color: var(--color-foreground);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.activitySectionWrapper {
+  flex: 1;
+  min-width: 320px;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--color-card);
+  color: var(--color-foreground);
+}
+
+/* React Quill Dark Mode Overrides */
+:global(.dark) .ql-toolbar.ql-snow {
+  background: var(--color-card);
+  color: var(--color-foreground);
+  border-color: var(--color-border);
+}
+
+:global(.dark) .ql-container.ql-snow {
+  background: var(--color-card);
+  color: var(--color-foreground);
+  border-color: var(--color-border);
+}
+
+:global(.dark) .ql-editor {
+  color: var(--color-foreground);
+}
+
+:global(.dark) .ql-editor.ql-blank::before {
+  color: var(--color-muted-foreground);
+  opacity: 1;
+}
+
+:global(.dark) .ql-snow .ql-stroke {
+  stroke: currentColor !important;
+}
+
+:global(.dark) .ql-snow .ql-fill {
+  fill: currentColor !important;
+}
+
+:global(.dark) .ql-snow .ql-picker,
+:global(.dark) .ql-toolbar .ql-picker-label,
+:global(.dark) .ql-toolbar button svg {
+  color: var(--color-foreground) !important;
+  opacity: 0.85;
+}
+
+:global(.dark) .ql-snow .ql-tooltip {
+  background: var(--color-card);
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+}
+
+/* Ant Design Dark Mode Overrides */
+:global(.dark .ant-input),
+:global(.dark .ant-input-affix-wrapper),
+:global(.dark .ant-input:hover),
+:global(.dark .ant-input:focus) {
+  background: var(--color-card) !important;
+  color: var(--color-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+
+:global(.dark .ant-select .ant-select-selector) {
+  background: var(--color-card) !important;
+  color: var(--color-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+
+:global(.dark .ant-select-dropdown) {
+  background: var(--color-card) !important;
+  color: var(--color-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+
+:global(.dark .ant-select-item) {
+  color: var(--color-foreground) !important;
+}
+
+:global(.dark .ant-select-item-option-active),
+:global(.dark .ant-select-item-option-selected) {
+  background: var(--color-accent) !important;
+  color: var(--color-accent-foreground) !important;
+}
+
+:global(.dark .ant-select-tree),
+:global(.dark .ant-select-tree-list) {
+  background: var(--color-card) !important;
+  color: var(--color-foreground) !important;
+}
+
+:global(.dark .ant-select-tree-node-content-wrapper:hover),
+:global(.dark .ant-select-tree-node-selected) {
+  background: var(--color-accent) !important;
+  color: var(--color-accent-foreground) !important;
+}
+
+:global(.dark .ant-modal),
+:global(.dark .ant-modal-content) {
+  background: var(--color-card) !important;
+  color: var(--color-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+
+:global(.dark .ant-modal-header) {
+  background: var(--color-card) !important;
+  color: var(--color-foreground) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+}
+
+:global(.dark .ant-modal-title) {
+  color: var(--color-foreground) !important;
+}
+
+:global(.dark .ant-modal-close) {
+  color: var(--color-muted-foreground) !important;
+}
+
+:global(.dark .ant-modal-close:hover) {
+  color: var(--color-foreground) !important;
+}
+
+:global(.dark .ant-list),
+:global(.dark .ant-list-item),
+:global(.dark .ant-card),
+:global(.dark .ant-card-body) {
+  background: var(--color-card) !important;
+  color: var(--color-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+
+:global(.dark .ant-list-item-meta-title) {
+  color: var(--color-foreground) !important;
+}
+
+:global(.dark .ant-list-item-meta-description) {
+  color: var(--color-muted-foreground) !important;
+}
+
+:global(.dark .ant-btn-default) {
+  background: var(--color-card) !important;
+  color: var(--color-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+
+:global(.dark .ant-btn-default:hover) {
+  background: var(--color-accent) !important;
+  color: var(--color-accent-foreground) !important;
+  border-color: var(--color-primary) !important;
+}
+
+:global(.dark .ant-btn-primary) {
+  background: var(--color-primary) !important;
+  color: var(--color-primary-foreground) !important;
+  border-color: var(--color-primary) !important;
+}
+
+:global(.dark .ant-btn-dangerous) {
+  background: var(--color-destructive) !important;
+  color: var(--color-destructive-foreground) !important;
+  border-color: var(--color-destructive) !important;
+}
+
+/* AntD Select + TreeSelect placeholder colors (light baseline) */
+:global(.ant-select-selection-placeholder),
+:global(.ant-select-selection-item[title=""]),
+:global(.ant-select-selection-search-input::placeholder),
+:global(.ant-select .ant-select-selection-placeholder),
+:global(.ant-select .ant-select-selection-search-input::placeholder),
+:global(.ant-select .ant-select-selection-item[title=""]) {
+  color: var(--color-muted-foreground);
+  opacity: 1;
+  /* Firefox */
+}
+
+:global(.ant-select .ant-select-selection-search-input) {
+  color: var(--color-foreground);
+}
+
+/* TreeSelect shares Select internals; include both */
+:global(.ant-select-tree .ant-select-selection-placeholder),
+:global(.ant-select-tree .ant-select-selection-search-input::placeholder) {
+  color: var(--color-muted-foreground);
+  opacity: 1;
+}
+
+/* Dark mode: ensure placeholder is visible on dark cards */
+:global(.dark) {
+
+  .ant-select-selection-placeholder,
+  .ant-select .ant-select-selection-placeholder,
+  .ant-select-selection-search-input::placeholder,
+  .ant-select .ant-select-selection-search-input::placeholder,
+  .ant-select .ant-select-selection-item[title=""],
+  .ant-select-selection-item[title=""],
+  .ant-select-tree .ant-select-selection-placeholder,
+  .ant-select-tree .ant-select-selection-search-input::placeholder {
+    color: var(--color-muted-foreground) !important;
+    opacity: 1 !important;
+    /* Firefox */
+  }
+
+  /* The input node AntD uses inside Select/TreeSelect */
+  .ant-select .ant-select-selection-search-input,
+  .ant-select-tree .ant-select-selection-search-input {
+    color: var(--color-foreground) !important;
+  }
+}
+
+/* Also apply to plain inputs used in this section if any */
+:global(.dark input::placeholder),
+:global(.dark textarea::placeholder) {
+  color: var(--color-muted-foreground) !important;
+  opacity: 1 !important;
+}
+
+/* Loading states */
+:global(.dark .ant-spin) {
+  color: var(--color-primary) !important;
+}
+
+:global(.dark .ant-spin-dot-item) {
+  background-color: var(--color-primary) !important;
+}
+
+/* Enhanced Dark Mode Block */
+:global(.dark) {
+
+  .mainContainer,
+  .container,
+  .mailSection,
+  .mailSectionWrapper,
+  .activitySectionWrapper,
+  .recentMail,
+  .notificationCard,
+  .modalContent,
+  .modalPopup,
+  .sidebarSkeleton,
+  .headerSection {
+    background: var(--color-card) !important;
+    color: var(--color-foreground) !important;
+    border-color: var(--color-border) !important;
+  }
+
+  .pageTitle {
+    color: var(--color-primary) !important;
+  }
+
+  .sectionTitle,
+  .recipientSourceSelector,
+  .headerTitleRow,
+  .mainContentWrapper,
+  .fullMailContent {
+    color: var(--color-foreground) !important;
+  }
+
+  .backNavigation {
+    color: var(--color-muted-foreground) !important;
+  }
+
+  .draftsButton {
+    background: var(--color-card) !important;
+    color: var(--color-muted-foreground) !important;
+    border-color: var(--color-border) !important;
+  }
+
+  .draftsButton:hover {
+    background: var(--color-muted) !important;
+    color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+  }
+
+  .headerIconBox {
+    background: var(--color-primary) !important;
+    color: #fff !important;
+  }
+
+  .pageSubtitle,
+  .noMailsMessage,
+  .recentActivitySubtitle,
+  .mailDateTime,
+  .notificationCardMessage,
+  .notificationCardTime {
+    color: var(--color-muted-foreground) !important;
+  }
+
+  .mainContainer input,
+  .inputBox {
+    background: var(--color-card) !important;
+    color: var(--color-foreground) !important;
+    border-color: var(--color-border) !important;
+  }
+
+  .mainContainer input:focus,
+  .inputBox:focus-within {
+    border-color: var(--color-primary) !important;
+    background: var(--color-card) !important;
+    color: var(--color-foreground) !important;
+  }
+
+  .dropdownButton,
+  .dropdownContent {
+    background: var(--color-card) !important;
+    color: var(--color-foreground) !important;
+    border-color: var(--color-border) !important;
+  }
+
+  .dropdownContent::-webkit-scrollbar-thumb {
+    background: var(--color-muted);
+  }
+
+  .recipientItem {
+    color: var(--color-foreground) !important;
+    border-bottom: 1px solid var(--color-border) !important;
+  }
+
+  .recipientItem:hover {
+    background: var(--color-accent) !important;
+  }
+
+  .recipientItem span {
+    color: var(--color-foreground) !important;
+  }
+
+  .recipientItem input {
+    accent-color: var(--color-primary) !important;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--color-primary);
+  }
+
+  .avatarWrapper {
+    background: var(--color-muted) !important;
+  }
+
+  .avatarIcon,
+  .emailPlaceholder,
+  .inputBox::placeholder {
+    color: var(--color-muted-foreground) !important;
+  }
+
+  .mailCardContainer {
+    background: var(--color-card) !important;
+    color: var(--color-foreground) !important;
+    border-radius: 6px !important;
+    border: 1px solid var(--color-border) !important;
+  }
+
+  .mailContentOut {
+    color: var(--color-foreground) !important;
+  }
+
+  .mailDateTime {
+    color: var(--color-muted-foreground) !important;
+  }
+
+  .mailCardContainer img {
+    filter: brightness(0.8);
+  }
+
+  .modal,
+  .modalOverlay {
+    background: rgba(0, 0, 0, 0.7) !important;
+  }
+
+  .modalContent,
+  .modalPopup {
+    background: var(--color-card) !important;
+    color: var(--color-foreground) !important;
+  }
+
+  .modalCloseIcon {
+    color: var(--color-muted-foreground) !important;
+  }
+
+  .modalCloseIcon:hover {
+    color: var(--color-primary) !important;
+  }
+
+  .modalButtons .cancelBtn {
+    background: var(--color-muted) !important;
+    color: var(--color-foreground) !important;
+  }
+
+  .modalButtons .sendBtn,
+  .sendBtn,
+  .followButton {
+    background: var(--color-primary) !important;
+    color: #fff !important;
+  }
+
+  .sendBtn:disabled,
+  .modalButtons .sendBtn:disabled {
+    background: color-mix(in oklch, var(--color-primary) 50%, transparent) !important;
+    color: var(--color-primary-foreground) !important;
+  }
+
+  .cancelBtn:disabled {
+    background: var(--color-border) !important;
+    color: var(--color-muted-foreground) !important;
+  }
+
+  .fullMailContent {
+    color: var(--color-foreground) !important;
+  }
+
+  .scheduleContainer {
+    color: var(--color-foreground) !important;
+  }
+
+  .scheduleContainer input {
+    border-color: var(--color-foreground) !important;
+    background: var(--color-card) !important;
+  }
+
+  .scheduleContainer input:checked {
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+  }
+
+  .notificationCard,
+  .notificationCardHeader {
+    background: var(--color-card) !important;
+    color: var(--color-foreground) !important;
+    border-color: var(--color-border) !important;
+  }
+
+  .broadcastStatsCard {
+    background: linear-gradient(270deg, #00989a 0%, #24b2b4 100%) !important;
+    color: #fff !important;
+  }
+
+  .recentActivityIcon {
+    background: color-mix(in oklch, var(--color-primary) 11%, transparent) !important;
+  }
+
+  .notificationCardIcon {
+    background: var(--color-muted) !important;
+    color: var(--color-primary) !important;
+  }
+
+  .notificationCardBadge {
+    background: var(--color-muted) !important;
+    color: var(--color-primary) !important;
+  }
+
+  .sidebarSkeleton,
+  .skeletonPost,
+  .skeletonAvatar,
+  .skeletonImageItem,
+  .skeletonImage,
+  .skeletonAction {
+    background: var(--color-muted) !important;
+    color: var(--color-muted-foreground) !important;
+  }
+
+  .noMailsMessage {
+    background: var(--color-card) !important;
+    color: var(--color-muted-foreground) !important;
+  }
+}
+
+/* Media Queries */
+@media (max-width: 1100px) {
+  .mainContentWrapper {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .activitySectionWrapper {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .mainContainer {
+    padding: 1rem;
+    margin: 0;
+  }
+
+  .container {
+    flex-direction: row;
+    height: auto;
+    overflow: visible;
+  }
+
+  .mailSection {
+    max-width: 100%;
+    padding: 1.5rem;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    height: auto;
+  }
+
+  .backNavigation {
+    font-size: 1rem;
+  }
+
+  .dropdownButton,
+  input,
+  .inputBox {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  .recipientItem {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+
+  .recipientItem input {
+    width: 16px;
+    height: 16px;
+  }
+
+  .avatarWrapper {
+    width: 30px;
+    height: 30px;
+    margin-right: 8px;
+  }
+
+  .emailPlaceholder {
+    font-size: 14px;
+  }
+
+  .mailCardContainer {
+    padding: 0.5rem 1rem;
+    height: auto;
+    min-height: 60px;
+  }
+
+  .mailContentOut {
+    font-size: 15px;
+    width: 100%;
+  }
+
+  .mailDateTime {
+    font-size: 13px;
+  }
+
+  .mailCardContainer img {
+    right: 4%;
+    width: 22px;
+  }
+}
+
+@media (max-width: 900px) {
+  .mainContentWrapper {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .mailSectionWrapper,
+  .activitySectionWrapper {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .headerSection {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .draftsButton {
+    position: static;
+    margin-top: 12px;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .mailSection {
+    overflow-y: auto;
+    scrollbar-width: none;
+    max-width: 100%;
+    min-width: 100%;
+    position: relative;
+    border-right: 1px solid var(--color-border);
+    padding: 0px 0px 0px 0px;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+
+  .dropdownButton,
+  input,
+  .inputBox {
+    font-size: 0.875rem;
+    padding: 0.625rem;
+  }
+
+  .mailSection {
+    padding: 1rem;
+  }
+
+  .avatarWrapper {
+    width: 28px;
+    height: 28px;
+  }
+
+  .mailContentOut {
+    font-size: 14px;
+  }
+
+  .mailDateTime {
+    font-size: 12px;
+  }
+
+  .mailCardContainer img {
+    width: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .mainContentWrapper {
+    padding: 2px;
+    gap: 8px;
+  }
+
+  .headerSection {
+    padding: 6px;
+  }
+
+  .headerTitleRow {
+    gap: 8px;
+  }
+
+  .headerIconBox {
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+    font-size: 18px;
+  }
+
+  .pageTitle {
+    font-size: 22px;
+  }
+
+  .pageSubtitle {
+    font-size: 13px;
+  }
+
+  .draftsButton {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .buttonRow {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .sendMail {
+    padding: 0 2px;
+  }
+
+  .subjectInput {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .recentMail,
+  .broadcastStatsCard {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  :global(.ant-modal-content) {
+    padding: 8px !important;
+  }
+
+  :global(.ant-list-item) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+/* Remove unused mailCardContainer styles */
+.mailCardContainer {
+  display: none;
+}

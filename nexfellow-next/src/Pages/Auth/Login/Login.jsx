@@ -1,0 +1,436 @@
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { toast } from "sonner";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { FaGithub, FaFacebook } from "react-icons/fa";
+
+// style
+import styles from "./Login.module.css";
+
+// redux
+import { login } from "../../../store/slices/authSlice";
+import { useTheme } from "../../../hooks/useTheme";
+
+// assets
+import google from "../assets/google.png";
+import navbarlogo from "./assets/NexFellowLogo.svg";
+
+// components
+import AuthSide from "../../../components/authSide/AuthSide";
+
+const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordVisible, setPasswordVisibility] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpRequired, setOtpRequired] = useState(false);
+  const [showOtpField, setShowOtpField] = useState(false);
+  const [resending, setResending] = useState(false);
+  const { setTheme } = useTheme();
+
+  // Timer states
+  const [timer, setTimer] = useState(300); // 5 minutes in seconds
+  const [resendAvailable, setResendAvailable] = useState(false);
+
+  const authCheckCompleted = useRef(false);
+
+  useEffect(() => {
+    // Check for stale token data on mount
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      const expiresIn = localStorage.getItem("expiresIn");
+      if (expiresIn) {
+        const expiresAt = new Date(expiresIn);
+        if (isNaN(expiresAt) || expiresAt <= new Date()) {
+          // If token is expired, don't immediately log out
+          // Instead, let the token service try to refresh first
+          console.log("Login: Found expired token, will attempt refresh");
+        }
+      }
+    }
+
+    // Auto-check if user is already logged in
+    if (authCheckCompleted.current) return;
+
+    const checkAuth = async () => {
+      try {
+        authCheckCompleted.current = true;
+        const response = await axios.get("/auth/getDetails", {
+          withCredentials: true,
+        });
+
+        if (response.status === 200) {
+          const { payload, expiresIn, redirect } = response.data;
+
+          localStorage.setItem("user", JSON.stringify(payload));
+          localStorage.setItem("expiresIn", expiresIn);
+          localStorage.setItem("isLoggedIn", "true");
+
+          dispatch(login({ user: payload, expiresIn }));
+
+          setTimeout(() => {
+            if (redirect?.startsWith("http")) {
+              window.location.href = redirect;
+            } else {
+              navigate(redirect || "/feed");
+            }
+          }, 300);
+        }
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+        // Don't clear auth state on network errors
+        if (
+          error.response &&
+          (error.response.status === 401 || error.response.status === 403)
+        ) {
+          localStorage.setItem("isLoggedIn", "false");
+        }
+      }
+    };
+
+    checkAuth();
+  }, [dispatch, navigate]);
+
+  useEffect(() => {
+    if (showOtpField && timer > 0) {
+      const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
+      return () => clearInterval(interval);
+    } else if (timer <= 0) {
+      setResendAvailable(true);
+    }
+  }, [showOtpField, timer]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "email") setEmail(value);
+    else if (name === "password") setPassword(value);
+    else if (name === "otp") setOtp(value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await axios.post("/user/login", { email, password });
+
+      if (response.data.otpRequired) {
+        toast.info("OTP sent to your email", {
+          position: "bottom-right",
+          richColors: true,
+        });
+        setOtpRequired(true);
+        setShowOtpField(true);
+        setTimer(Math.floor((response.data.expiresAt - Date.now()) / 1000));
+        console.log("OTP required:", response.data);
+        setLoading(false);
+        return;
+      }
+
+      const { payload, expiresIn, redirect } = response.data;
+
+      localStorage.setItem("user", JSON.stringify(payload));
+      localStorage.setItem("expiresIn", expiresIn);
+      localStorage.setItem("isLoggedIn", "true");
+
+      dispatch(login({ user: payload, expiresIn }));
+      if (payload.themePreference) {
+        setTheme(payload.themePreference);
+      } toast.success("Login successful", {
+        position: "bottom-right",
+        richColors: true,
+      });
+
+      setTimeout(() => {
+        if (redirect?.startsWith("http")) {
+          window.location.href = redirect;
+        } else {
+          navigate(redirect || "/feed");
+        }
+      }, 300);
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error(
+        error.response?.data?.message || "Login failed. Please try again.",
+        { position: "bottom-right", richColors: true }
+      );
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await axios.post("/user/otp/verify", { email, otp });
+
+      const { payload, expiresIn, redirect, expiresAt } = response.data;
+
+      localStorage.setItem("user", JSON.stringify(payload));
+      localStorage.setItem("expiresIn", expiresIn);
+      localStorage.setItem("isLoggedIn", "true");
+
+      dispatch(login({ user: payload, expiresIn }));
+
+      toast.success("Login successful", {
+        position: "bottom-right",
+        richColors: true,
+      });
+
+      setTimeout(() => {
+        if (redirect?.startsWith("http")) {
+          window.location.href = redirect;
+        } else {
+          navigate(redirect || "/feed");
+        }
+      }, 300);
+    } catch (error) {
+      console.error("OTP verification error:", error);
+      toast.error(
+        error.response?.data?.message ||
+        "OTP verification failed. Please try again.",
+        { position: "bottom-right", richColors: true }
+      );
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (!email) return;
+
+    setResending(true);
+    setResendAvailable(false);
+    setTimer(300); // Reset timer to 5 minutes
+
+    try {
+      await axios.post("/user/otp/resend", { email });
+      toast.info("New OTP sent to your email", {
+        position: "bottom-right",
+        richColors: true,
+      });
+    } catch (error) {
+      console.error("Error resending OTP:", error);
+      toast.error(
+        error.response?.data?.message ||
+        "Failed to resend OTP. Please try again.",
+        { position: "bottom-right", richColors: true }
+      );
+    } finally {
+      setResending(false);
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisibility(!passwordVisible);
+  };
+
+  const googleAuth = () => {
+    const link = import.meta.env.DEV
+      ? import.meta.env.VITE_LOCALHOST
+      : import.meta.env.VITE_SERVER_URL;
+    window.open(`${link}/auth/google/callback`, "_self");
+  };
+
+  const githubAuth = () => {
+    const link = import.meta.env.DEV
+      ? import.meta.env.VITE_LOCALHOST
+      : import.meta.env.VITE_SERVER_URL;
+    window.open(`${link}/auth/github/callback`, "_self");
+  };
+  const facebookAuth = () => {
+    const link = import.meta.env.DEV
+      ? import.meta.env.VITE_LOCALHOST
+      : import.meta.env.VITE_SERVER_URL;
+    window.open(`${link}/auth/facebook/callback`, "_self");
+  };
+
+  const linkedinAuth = () => {
+    const link = import.meta.env.DEV
+      ? import.meta.env.VITE_LOCALHOST
+      : import.meta.env.VITE_SERVER_URL;
+    window.open(`${link}/auth/linkedin/`, "_self");
+  };
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s < 10 ? "0" + s : s}`;
+  };
+
+  return (
+    <div className={styles.loginFormContainer}>
+      <div className={styles.loginForm}>
+        <div className={styles.card}>
+          <div className={styles.logo}
+            onClick={() => navigate("/")}
+          >
+            <img src={navbarlogo} alt="NexFellow Logo"
+              className={styles.logoImage}
+            />
+          </div>
+          <div className={styles.loginFormCard}>
+            <h1 className={styles.title}>Login</h1>
+            <p className={styles.titleSubheading}>
+              Welcome back! Please log in to access your account.
+            </p>
+
+            {/* Social Login Buttons - Moved to top */}
+            <div className={styles.socialLogin}>
+              <button
+                className={styles.socialBtn}
+                onClick={googleAuth}
+                disabled={loading}
+              >
+                <img alt="Google" src={google} />
+                <p className={styles.btnText}>Login with Google</p>
+              </button>
+              <button
+                className={styles.socialBtn}
+                onClick={linkedinAuth}
+                disabled={loading}
+              >
+                <img
+                  alt="LinkedIn"
+                  src="https://cdn-icons-png.flaticon.com/512/174/174857.png"
+                  width={20}
+                />
+                <p className={styles.btnText}>Login with LinkedIn</p>
+              </button>
+              <button
+                className={styles.socialBtn}
+                onClick={githubAuth}
+                disabled={loading}
+              >
+                <FaGithub size={20} />
+                <p className={styles.btnText}>Login with GitHub</p>
+              </button>
+              <button
+                className={styles.socialBtn}
+                onClick={facebookAuth}
+                disabled={loading}
+              >
+                <FaFacebook size={20} className="text-blue-600" />
+                <p className={styles.btnText}>Login with Facebook</p>
+              </button>
+            </div>
+
+            <div className={styles.divider}>
+              <span className={styles.dividerText}>or</span>
+            </div>
+
+            <form onSubmit={handleSubmit} className={styles.form}>
+              <input
+                className={styles.loginInputs}
+                type="email"
+                placeholder="Enter your email address"
+                name="email"
+                value={email}
+                onChange={handleChange}
+                required
+                disabled={loading}
+              />
+
+              <div className={styles.passwordInputContainer}>
+                <input
+                  className={styles.loginInputs}
+                  type={passwordVisible ? "text" : "password"}
+                  placeholder="Enter your password"
+                  name="password"
+                  value={password}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                />
+                {passwordVisible ? (
+                  <AiOutlineEye
+                    className={styles.togglePasswordVisibility}
+                    onClick={togglePasswordVisibility}
+                  />
+                ) : (
+                  <AiOutlineEyeInvisible
+                    className={styles.togglePasswordVisibility}
+                    onClick={togglePasswordVisibility}
+                  />
+                )}
+              </div>
+
+              {!showOtpField && (
+                <button
+                  className={styles.ctaBtn}
+                  type="submit"
+                  disabled={loading}
+                >
+                  {loading ? <div className={styles.spinner}></div> : "Login"}
+                </button>
+              )}
+            </form>
+
+            {showOtpField && (
+              <div className={styles.otpContainer}>
+                <input
+                  type="text"
+                  placeholder="Enter OTP"
+                  name="otp"
+                  value={otp}
+                  onChange={handleChange}
+                  className={styles.loginInputs}
+                />
+                <div className={styles.otpActions}>
+                  <button
+                    className={styles.otpBtn}
+                    type="button"
+                    onClick={handleVerifyOtp}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <div className={styles.spinner}></div>
+                    ) : (
+                      "Verify OTP"
+                    )}
+                  </button>
+                  <p className={styles.otpTimer}>
+                    {resendAvailable ? (
+                      <button
+                        type="button"
+                        className={styles.resendOtpBtn}
+                        onClick={handleResendOtp}
+                        disabled={resending}
+                      >
+                        {resending ? (
+                          <div className={styles.smallSpinner}></div>
+                        ) : (
+                          "Resend OTP"
+                        )}
+                      </button>
+                    ) : (
+                      `Resend in ${formatTime(timer)}`
+                    )}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <Link to="/forgotpassword" className={styles.forgetPass}>
+              Forgot password?
+            </Link>
+            <p className={styles.subtitle}>
+              Don&apos;t have an account? <Link to="/signup">Sign Up</Link>
+            </p>
+          </div>
+        </div>
+
+        <div className={styles.loginFormPhoto}>
+          <AuthSide />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;

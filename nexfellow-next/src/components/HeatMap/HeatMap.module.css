@@ -1,0 +1,133 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 60px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  .container {
+    padding: 15px 10px;
+  }
+}
+
+.monthlyHeatMapsWrapper {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 15px;
+  width: 100%;
+  justify-content: center;
+}
+
+.monthlyHeatMap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Legend styles */
+.legendContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.legendBox {
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+}
+
+.legendLabel {
+  font-size: 14px;
+  color: #555;
+  margin: 0 8px;
+}
+
+@media (max-width: 480px) {
+  .legendContainer {
+    gap: 2px;
+  }
+  .legendBox {
+    width: 16px;
+    height: 16px;
+  }
+  .legendLabel {
+    font-size: 12px;
+    margin: 0 4px;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .monthlyHeatMapsWrapper {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, auto);
+  }
+}
+
+@media (max-width: 992px) {
+  .monthlyHeatMapsWrapper {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(6, auto);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+  .monthlyHeatMapsWrapper {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+}
+
+.loading,
+.error {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1.2rem;
+}
+
+@media (max-width: 480px) {
+  .loading,
+  .error {
+    font-size: 1rem;
+    margin-top: 15px;
+  }
+}
+
+.loading {
+  color: #007bff;
+}
+
+.error {
+  color: #dc3545;
+}

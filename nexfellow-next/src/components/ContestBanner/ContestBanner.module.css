@@ -1,0 +1,468 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 30px;
+  max-width: 100%;
+  /* border: 1px solid green; */
+}
+
+.maincontainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 20px;
+  /* max-width: 1200px; */
+  gap: 20px;
+  height: 264px;
+  width: 100%;
+
+  @media screen and (max-width: 1205px) {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    height: 100%;
+  }
+
+  @media screen and (max-width: 670px) {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    height: 100%;
+  }
+
+  @media screen and (max-width: 470px) {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    height: 100%;
+    margin: 0px;
+  }
+}
+
+.challenges {
+  display: flex;
+  height: 100%;
+  justify-content: space-between;
+  max-width: 860px;
+  border-radius: 16px;
+  background-image: url("./assets/ContestBackground.jpeg");
+
+  @media screen and (max-width: 1205px) {
+    width: 100%;
+    max-width: 100%;
+    height: 283px;
+    flex-direction: row;
+  }
+
+  @media screen and (max-width: 670px) {
+    width: 100%;
+    height: 283px;
+  }
+
+  @media screen and (max-width: 470px) {
+    width: 100%;
+    max-height: 283px;
+    height: 100%;
+  }
+}
+
+.challengesLeft {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-content: flex-start;
+  padding: 20px 20px;
+  width: 70%;
+  gap: 10px;
+
+  @media screen and (max-width: 1205px) {
+    width: 70%;
+  }
+
+  @media screen and (max-width: 670px) {
+    width: 70%;
+  }
+
+  @media screen and (max-width: 470px) {
+    width: 60%;
+    padding: 20px 0px 20px 10px;
+    justify-content: space-around;
+    gap: 10px;
+  }
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: start;
+  gap: 10px;
+
+  @media screen and (max-width: 1205px) {}
+
+
+  @media screen and (max-width: 670px) {}
+
+  @media screen and (max-width: 470px) {
+    gap: 10px;
+  }
+}
+
+.challengesHeading {
+  font-size: 32px;
+  font-weight: 600;
+  color: #050505;
+  margin: 0;
+
+  @media screen and (max-width: 1205px) {
+    font-size: 40px;
+  }
+
+  @media screen and (max-width: 670px) {
+    font-size: 24px;
+  }
+
+  @media screen and (max-width: 470px) {
+    font-size: 18px;
+  }
+}
+
+.challengesText {
+  font-size: 14px;
+  font-weight: 400;
+  color: #4C4C4C;
+  font-family: poppins;
+  margin: 0;
+
+  @media screen and (max-width: 1205px) {
+    font-size: 16px;
+  }
+
+  @media screen and (max-width: 670px) {
+    font-size: 16px;
+  }
+
+  @media screen and (max-width: 470px) {
+    font-size: 12px;
+  }
+}
+
+.roadmapbtn {
+  width: 170px;
+  height: 40px;
+  display: flex;
+  border: 1px solid #ffffff;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  color: var(--color-primary);
+  background-color: #ffffff;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+
+  @media screen and (max-width: 1205px) {
+    width: 200px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  @media screen and (max-width: 670px) {
+    width: 180px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+
+  @media screen and (max-width: 470px) {
+    width: 120px;
+    height: 30px;
+    font-size: 12px;
+  }
+}
+
+.star {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+
+  @media screen and (max-width: 1205px) {
+    width: 30%;
+  }
+
+  @media screen and (max-width: 670px) {
+    width: 30%;
+  }
+
+  @media screen and (max-width: 470px) {
+    width: 40%;
+    padding: 10px;
+  }
+}
+
+.imgcontainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 10px;
+  max-width: 100%;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.bannerRight {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  width: 538px;
+  gap: 15px;
+
+  @media screen and (max-width: 1205px) {
+    width: 100%;
+    flex-direction: row;
+  }
+
+  @media screen and (max-width: 670px) {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  @media screen and (max-width: 470px) {
+    width: 100%;
+    flex-direction: column;
+  }
+}
+
+.upcomingContest {
+  background-color: #0F3742;
+  height: 150px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  border-radius: 16px;
+  cursor: pointer;
+
+  @media screen and (max-width: 1205px) {
+    height: 140px;
+  }
+
+  @media screen and (max-width: 670px) {
+    height: 120px;
+  }
+
+  @media screen and (max-width: 470px) {
+    height: 120px;
+  }
+}
+
+
+
+.upcomingContestHeading {
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 600;
+  color: #C0E7EA;
+  margin: 10px;
+
+  @media screen and (max-width: 1205px) {
+    font-size: 30px;
+  }
+
+  @media screen and (max-width: 670px) {
+    font-size: 30px;
+  }
+
+  @media screen and (max-width: 470px) {
+    font-size: 24px;
+    margin: 10px;
+  }
+}
+
+.participates {
+  display: flex;
+  margin: 10px;
+  flex-direction: row;
+  width: calc(100% - 20px);
+  justify-content: space-between;
+  align-items: center;
+
+  @media screen and (max-width: 1205px) {}
+
+  @media screen and (max-width: 670px) {}
+
+  @media screen and (max-width: 470px) {
+    margin: 10px;
+    width: calc(100% - 20px);
+  }
+}
+
+.dateTime {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: start;
+}
+
+.date {
+  font-size: 14px;
+  font-weight: 500;
+  color: #DAF2F1;
+
+  @media screen and (max-width: 1205px) {
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: 670px) {
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: 470px) {
+    font-size: 12px;
+  }
+}
+
+.timing {
+  font-size: 12px;
+  font-weight: 500;
+  color: #CEDEDD;
+}
+
+.joined {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+
+  @media screen and (max-width: 1205px) {}
+
+  @media screen and (max-width: 670px) {}
+
+  @media screen and (max-width: 470px) {
+    gap: 5px;
+  }
+
+  img {
+    height: 30px;
+  }
+}
+
+
+.joined span {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.blogs {
+  background-image: url("../../assets/Contestimages/BlogBackground.jpeg");
+  background-color: #DAF2F1;
+  background-blend-mode: overlay;
+  height: 111px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  border-radius: 16px;
+
+  @media screen and (max-width: 1205px) {
+    height: 140px;
+    width: 70%;
+  }
+
+  @media screen and (max-width: 670px) {
+    height: 111px;
+    width: 100%;
+    justify-content: space-between;
+
+  }
+
+  @media screen and (max-width: 470px) {
+    height: 111px;
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+
+
+.typingLaptop {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imageLaptop {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+.blogTextContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: start;
+  gap: 5px;
+  margin: 10px 0px 10px 10px;
+
+  p {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  @media screen and (max-width: 470px) {
+    p{
+      font-size: 15px;
+    }
+  }
+}
+
+.blogbtn {
+  color: #20808A;
+  font-size: 20px;
+  font-weight: 600;
+
+  @media screen and (max-width: 1205px) {
+    font-size: 24px;
+  }
+
+  @media screen and (max-width: 670px) {
+    font-size: 24px;
+  }
+
+  @media screen and (max-width: 470px) {
+    font-size: 20px;
+  }
+}
+
+.navlink {
+  color: #20808A;
+}
+
+.noContestTest{
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  padding-left: 1rem;
+}

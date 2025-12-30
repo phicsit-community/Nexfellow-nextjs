@@ -1,0 +1,496 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+}
+
+/* Redirecting container styles */
+.redirectingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f9fafb;
+  text-align: center;
+}
+
+.redirectCard {
+  max-width: 550px;
+  width: 90%;
+  background-color: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeSlideUp 0.5s ease-out forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pulseLoader {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: rgba(51, 85, 204, 0.15);
+  margin-bottom: 1.5rem;
+  position: relative;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.pulseLoader:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #3355cc;
+  opacity: 0.8;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(51, 85, 204, 0.5);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 15px rgba(51, 85, 204, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(51, 85, 204, 0);
+  }
+}
+
+.redirectCard h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.urlPreview {
+  display: flex;
+  align-items: center;
+  background-color: #f0f5ff;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e0e8ff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.linkIcon {
+  color: #3355cc;
+  margin-right: 0.8rem;
+  flex-shrink: 0;
+}
+
+.targetUrl {
+  color: #3355cc;
+  margin: 0;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.95rem;
+}
+
+.progressContainer {
+  width: 100%;
+  height: 6px;
+  background-color: #eaeef6;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #3355cc, #6366f1);
+  border-radius: 8px;
+  width: 0;
+  transition: width 0.1s linear;
+}
+
+.redirectInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.redirectInfo p {
+  color: #666;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.arrowIcon {
+  color: #3355cc;
+  animation: moveRight 1.5s infinite ease-in-out;
+  font-size: 1.2rem;
+}
+
+@keyframes moveRight {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.linkBox {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.linkUrl {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f0f5ff;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border: 1px solid #e0e8ff;
+  font-weight: 500;
+  color: #3355cc;
+  word-break: break-all;
+}
+
+.copyButton {
+  background-color: transparent;
+  border: none;
+  color: #3355cc;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.copyButton:hover {
+  background-color: rgba(51, 85, 204, 0.1);
+}
+
+.originalLink {
+  display: block;
+  color: #666;
+  font-size: 0.875rem;
+  text-decoration: none;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.originalLink:hover {
+  color: #3355cc;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.statIcon {
+  background-color: #e0e8ff;
+  color: #3355cc;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  font-size: 1.25rem;
+}
+
+.statContent {
+  flex: 1;
+}
+
+.statContent h3 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 0.25rem 0;
+}
+
+.statContent p {
+  color: #666;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.chartsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.chartCard {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chartCard h3 {
+  font-size: 1.125rem;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.barChart {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.barChartItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.barLabel {
+  width: 100px;
+  font-size: 0.875rem;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.barWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 24px;
+}
+
+.bar {
+  height: 24px;
+  background-color: #6366f1;
+  border-radius: 4px;
+  min-width: 2px;
+  transition: width 0.5s ease-in-out;
+}
+
+.barValue {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.recentClicks {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.recentClicks h3 {
+  font-size: 1.125rem;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.clicksTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.clicksTable th,
+.clicksTable td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.clicksTable th {
+  background-color: #f5f5f5;
+  font-weight: 500;
+  color: #555;
+}
+
+.clicksTable tr {
+  border-bottom: 1px solid #eee;
+}
+
+.clicksTable tr:last-child {
+  border-bottom: none;
+}
+
+.clicksTable td {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3355cc;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  text-align: center;
+}
+
+.errorContainer h2 {
+  color: #e53e3e;
+  margin-bottom: 1rem;
+}
+
+.errorContainer p {
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.homeButton {
+  display: inline-block;
+  background-color: #3355cc;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.homeButton:hover {
+  background-color: #2a46b8;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .chartsContainer {
+    grid-template-columns: 1fr;
+  }
+
+  .barLabel {
+    width: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chartCard {
+    padding: 1rem;
+  }
+
+  .statCard {
+    padding: 1rem;
+  }
+
+  .barLabel {
+    width: 60px;
+  }
+
+  .redirectCard {
+    padding: 1.5rem;
+  }
+
+  .urlPreview {
+    padding: 0.6rem 0.8rem;
+  }
+
+  .redirectCard h2 {
+    font-size: 1.3rem;
+  }
+}

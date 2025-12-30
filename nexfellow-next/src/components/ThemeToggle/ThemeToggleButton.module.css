@@ -1,0 +1,103 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background-color: transparent;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  color: var(--color-foreground);
+}
+
+.button:hover {
+  background-color: rgba(36, 178, 180, 0.05);
+  color: var(--color-primary);
+  outline: 1px solid rgb(36, 178, 180, 0.2);
+}
+
+:global(.dark) .button:hover {
+  background-color: rgba(36, 178, 180, 0.1);
+  color: var(--color-primary);
+  outline: 1px solid rgb(36, 178, 180, 0.3);
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-foreground);
+  transition: color 0.2s ease-in-out;
+}
+
+.label:hover,
+.toggleKnob:hover,
+.togglePill:hover {
+  color: var(--color-primary);
+}
+
+.togglePill {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  border-radius: 999px;
+  background-color: var(--color-muted);
+  transition: background-color 0.3s ease-in-out;
+}
+
+.toggleKnob {
+  position: absolute;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  transition: all 0.3s ease-in-out;
+}
+
+.light {
+  left: 2px;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+}
+
+.dark {
+  left: 22px;
+  background-color: var(--color-foreground);
+}
+
+.system {
+  left: 12px;
+  background-color: var(--color-primary);
+}
+
+:global(.dark) .system {
+  background-color: #22d3ee;
+}
+
+.sun {
+  color: #facc15;
+}
+
+:global(.dark) .sun {
+  color: #fbbf24;
+}
+
+.moon {
+  color: var(--color-foreground);
+}
+
+:global(.dark) .moon {
+  color: #e5e7eb;
+}
+
+.monitor {
+  color: var(--color-primary);
+}
+
+:global(.dark) .monitor {
+  color: #22d3ee;
+}

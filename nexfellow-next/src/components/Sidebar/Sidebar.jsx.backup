@@ -1,0 +1,158 @@
+import React, { useState, useEffect } from "react";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useMediaQuery } from "react-responsive";
+
+// styles
+import style from "./Sidebar.module.css";
+
+import { FiLogOut } from "react-icons/fi";
+
+// assets
+import Home from "./assets/Home.svg";
+import Explore from "./assets/Explore.svg";
+import Contest from "./assets/Contests.svg";
+import LeaderBoard from "./assets/Leaderboard.svg";
+import Community from "./assets/Community.svg";
+import Messenger from "./assets/Messenger.svg";
+import Help from "./assets/Help.svg";
+import Profile from "./assets/Profile.svg";
+import Inbox from "./assets/Inbox.svg";
+
+function Sidebar() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState(location.pathname);
+  const [loading, setLoading] = useState(false); // Track loading state for logout
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
+  const isMobile = useMediaQuery({ maxWidth: 640 });
+
+  useEffect(() => {
+    setActiveTab(location.pathname);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const userData = JSON.parse(localStorage.getItem("user"));
+        const userId = userData?.id;
+
+        if (!userId) {
+          throw new Error("User ID is missing");
+        }
+
+        // Fetch user profile
+        const response = await axios.get(`/user/profile`);
+        setUser(response.data);
+      } catch (err) {
+        setError("Failed to load user data: " + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  const menuItems = [
+    { path: "/feed", icon: Home, label: "Home" },
+    { path: "/explore", icon: Explore, label: "Explore" },
+    // { path: "/contests", icon: Contest, label: "Contests" },
+    { path: "/leaderboard", icon: LeaderBoard, label: "Leaderboard" },
+    { path: "/communities", icon: Community, label: "Communities" },
+    { path: "/inbox", icon: Messenger, label: "Inbox" },
+  ];
+
+  // const displayMenuItems = isMobile
+  //   ? menuItems.filter(item => item.label !== "Inbox")
+  // : menuItems;
+
+  const displayMenuItems = menuItems;
+
+  const isActive = (path) => {
+    return activeTab.startsWith(path);
+  };
+
+  const handleLogout = async () => {
+    if (loading) return; // Prevent multiple clicks during logout
+    setLoading(true);
+
+    try {
+      const response = await axios.get("/user/logout", {
+        withCredentials: true,
+      });
+
+      if (response.status === 200) {
+        localStorage.clear();
+        navigate("/login");
+      } else {
+        console.error("Logout failed:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error during logout:", error.message);
+    } finally {
+      setLoading(false); // Reset loading state
+    }
+  };
+
+  return (
+    <div className={style.sidebar}>
+      <ul className={style.menuItems}>
+        {displayMenuItems.map((item) => (
+          <Link
+            to={item.path}
+            key={item.path}
+            onClick={(e) => {
+              if (location.pathname === item.path) {
+                e.preventDefault();
+                window.location.reload();
+              } else {
+                setActiveTab(item.path);
+              }
+            }}
+          >
+            <li className={isActive(item.path) ? style.setTab : ""}>
+              <div className={`${style.iconContainer}`}>
+                <img src={item.icon} alt={item.label} width={20} height={20} />
+              </div>
+              {!isMobile && <span>{item.label}</span>}
+            </li>
+          </Link>
+        ))}
+      </ul>
+
+      {!isMobile && (
+        <div className={style.accountManagement}>
+          <p className={style.am}>ACCOUNT MANAGEMENT</p>
+          <Link
+            className={style.amLink}
+            to={`/dashboard/${user?.username}`}
+            onClick={() => setActiveTab("/profile")}
+          >
+            <p className={style.amItems}>
+              <div className="w-8" style={{ marginLeft: "10px" }}>
+                <img src={Profile} alt="Profile" />
+              </div>
+              <span>Profile</span>
+            </p>
+          </Link>
+          {/* <p
+            onClick={handleLogout}
+            className={`${style.amItems} ${style.amRedItems} ${
+              loading ? style.disabled : ""
+            }`}
+          >
+            <div className="w-8" style={{ marginLeft: "10px" }}>
+              <FiLogOut className={style.icon} />
+            </div>
+            <span>{loading ? "Logging out..." : "Logout"}</span>
+          </p> */}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default Sidebar;

@@ -1,0 +1,27 @@
+.contestCard {
+    background: #E5FFFE;
+    border-radius: 12px;
+    padding: 40px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    height: 40%;
+  }
+
+  .freeTag {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--color-primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .trophyImage {
+    width: 150px;
+    height: 150px;
+  }

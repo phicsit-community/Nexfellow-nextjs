@@ -1,0 +1,216 @@
+.container {
+  display: flex;
+  margin: 20px 0;
+  flex-direction: column;
+  /* Stack items on smaller screens */
+  align-items: center;
+  /* Center content horizontally */
+}
+
+.mainContainer {
+  max-width: 100%;
+  width: 100%;
+  margin: 20px;
+}
+
+.conteset_cont {
+  width: 100%;
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 20px;
+  /* Maintain a gap between elements */
+}
+
+.heading {
+  font-size: 24px;
+  margin: 0;
+  font-weight: 500;
+  /* white-space: nowrap; Prevent the heading from wrapping */
+  max-width: 30%;
+}
+
+.line {
+  height: 2px;
+  background-color: #5ebbbd;
+  margin-left: 44px;
+  justify-self: end;
+  flex: 1;
+}
+
+.btnContainer {
+  margin-left: 30px;
+  width: 150px;
+}
+
+.btn {
+  padding: 0.4rem 0.6rem;
+  background-color: white;
+  color: #5ebbbd;
+  border: 2px solid rgba(61, 159, 163, 0.75);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Hover effect for the button */
+.btn:hover {
+  background-color: #4ba1a2;
+  color: white;
+  cursor: pointer;
+}
+
+/* Responsive Design */
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+  .header {
+    gap: 15px;
+    /* Reduce gap between elements */
+  }
+
+  .heading {
+    font-size: 22px;
+    max-width: 50%;
+    /* Adjust heading size for tablet */
+  }
+
+  .line {
+    display: none;
+  }
+
+  .btnContainer {
+    margin-left: 10px;
+    /* Reduce button margin on tablets */
+  }
+
+  .btn {
+    font-size: 16px;
+    /* Slightly larger button text for better readability */
+    padding: 0.4rem 1rem;
+    /* Adjust padding for tablet */
+  }
+}
+
+/* Mobile (480px and below) */
+@media (max-width: 480px) {
+  .header {
+    gap: 10px;
+    /* Further reduce gap on mobile */
+  }
+
+  .heading {
+    font-size: 18px;
+    /* Adjust heading size for mobile */
+  }
+
+  .line {
+    display: none;
+  }
+
+  .btn {
+    font-size: 12px;
+    /* Adjust font size for mobile */
+  }
+}
+
+.icon {
+  /* Add custom icon styling if needed */
+}
+
+.btn:hover {
+  background-color: #4ba1a2;
+  color: white;
+  cursor: pointer;
+}
+
+.cardContainer {
+  /* max-height: 440px; */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto;
+  gap: 50px;
+  width: 100%;
+  justify-content: space-between;
+
+  @media (max-width: 1230px) {
+    grid-template-columns: repeat(3, 32%);
+    gap: 0px;
+  }
+
+  @media (max-width: 1100px) {
+    grid-template-columns: repeat(2, 48%);
+    /* 2 columns for tablets */
+    gap: 20px;
+    /* Reduce gap for tablets */
+  }
+
+  @media (max-width: 775px) {
+    grid-template-columns: 80%;
+    /* Single column for mobile */
+
+    justify-content: center;
+    gap: 20px;
+    /* Reduce gap for mobile */
+  }
+}
+
+/* Skeleton Loading */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg,
+      #f0f0f0 0%,
+      #e0e0e0 30%,
+      #ffffff 50%,
+      #e0e0e0 70%,
+      #f0f0f0 100%);
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+  animation: shimmer 5s linear infinite;
+  /* try 4–6s */
+  border-radius: 8px;
+}
+
+.skeletonTitle {
+  height: 24px;
+  width: 50%;
+  margin-bottom: 16px;
+}
+
+.skeletonCard {
+  height: 160px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.skeletonCardsContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+}
+
+.skeletonCardItem {
+  flex: 1;
+  height: 160px;
+  border-radius: 8px;
+}

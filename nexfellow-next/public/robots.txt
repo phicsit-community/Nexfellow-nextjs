@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://nexfellow.com/sitemap.xml

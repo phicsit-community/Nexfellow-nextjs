@@ -1,0 +1,96 @@
+.blockedUsersContainer {
+  padding: 20px;
+  background-color: var(--background);
+  border-radius: 8px;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--foreground);
+}
+
+.usersList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.userItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: var(--card);
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.userItem:hover {
+  background-color: var(--card-hover);
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.userAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.userData {
+  display: flex;
+  flex-direction: column;
+}
+
+.userName {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--foreground);
+}
+
+.userUsername {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.unblockButton {
+  padding: 8px 16px;
+  border: none;
+  background-color: #d32f2f;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.unblockButton:hover {
+  background-color: #b71c1c;
+}
+
+.loading {
+  padding: 20px;
+  text-align: center;
+  color: var(--muted-foreground);
+}
+
+.error {
+  padding: 20px;
+  text-align: center;
+  color: #d32f2f;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--muted-foreground);
+}

@@ -1,0 +1,223 @@
+================================================================================
+              NEXFELLOW - REACT TO NEXT.JS MIGRATION FEATURES
+================================================================================
+
+PROJECT: NexFellow - "Bringing Geeks Together"
+CURRENT: React.js + Vite | TARGET: Next.js (App Router)
+STYLING: Tailwind CSS v4 + CSS Modules (NO CHANGES)
+
+================================================================================
+                              FEATURES LIST
+================================================================================
+
+1. AUTHENTICATION
+   - Login/Signup with OTP verification
+   - OAuth: Google, GitHub, Facebook, LinkedIn
+   - Token refresh & session management
+   - Route protection (Private/Moderator routes)
+
+2. LANDING PAGE
+   - Hero, FAQ, Footer, Contact CTA
+   - Lazy-loaded sections
+
+3. FEED SYSTEM
+   - Posts with images/markdown
+   - Like, Bookmark, Share, Comment
+   - Infinite scroll, Pull-to-refresh
+
+4. COMMUNITY
+   - Explore/View communities
+   - Follow, Bookmark, Block
+   - Community posts, events, challenges
+
+5. CHALLENGES & EVENTS
+   - Create/Join challenges
+   - Checkpoint submissions
+   - Event registration & calendar export
+
+6. CONTESTS/QUIZZES
+   - Quiz creation & participation
+   - Leaderboard with filters
+   - All Contests listing page
+
+7. MESSAGING (Socket.io)
+   - Real-time DMs
+   - Typing indicators, Read receipts
+   - Message requests
+
+8. NOTIFICATIONS
+   - System & community notifications
+   - Mark read, Delete
+
+9. USER PROFILES
+   - Dashboard, Edit profile
+   - Activity heatmap, Follow system
+
+10. SETTINGS
+    - Privacy, Muted/Blocked users
+    - Hidden posts
+
+11. SEARCH & LEADERBOARD
+    - Global search (cmdk)
+    - Leaderboard with country filter
+
+12. BLOG & STATIC PAGES
+    - Blog listing & detail pages
+    - Privacy, Terms, Contact, Mission
+
+13. THEME SYSTEM
+    - Dark/Light mode toggle
+    - localStorage persistence
+
+================================================================================
+                     🆕 NEW FEATURE: DOCUMENTATION SYSTEM
+================================================================================
+
+14. DOCUMENTATION PORTAL (/docs)
+    - Dedicated docs layout with navigation
+    - 19 documentation pages:
+      * Home / Overview
+      * Account Setup
+      * Community Verification
+      * Creating Posts
+      * Challenges Guide
+      * Contest Setup
+      * Leaderboard Info
+      * Community Management
+      * Events Guide
+      * Broadcast Feature
+      * Bookmarks
+      * Feed Navigation
+      * Follow Communities
+      * Members Access
+      * Messaging Guide
+      * Edit Profile
+      * Member Discussions
+      * Account Settings
+
+================================================================================
+                         ⚠️ TRICKY PARTS
+================================================================================
+
+🔴 HIGH RISK:
+   1. Socket.io - Must persist across routes, client-only
+   2. Auth Hydration - localStorage not available in SSR
+   3. Conditional Routes - Same URL, different component by auth
+   4. Theme FOUC - Flash of wrong theme on load
+
+🟡 MEDIUM:
+   5. react-helmet → Next.js Metadata API
+   6. import.meta.env → process.env.NEXT_PUBLIC_*
+   7. React.lazy() → Next.js dynamic()
+   8. Docs Layout - Nested routing with sidebar
+
+🟢 EASY:
+   9. Link (to → href)
+   10. useNavigate → useRouter
+   11. useLocation → usePathname
+
+================================================================================
+                            MIGRATION SUMMARY
+================================================================================
+
+TOTAL PAGES: 32 directories (including new docs)
+TOTAL COMPONENTS: 536 files  
+DEPENDENCIES: 109 packages
+
+KEEP UNCHANGED:
+✓ All CSS/SCSS files
+✓ All component logic
+✓ Redux store
+✓ API calls (axios)
+✓ Socket.io client code
+
+CHANGE:
+✗ React Router → File-based routing
+✗ react-helmet → Metadata API
+✗ BrowserRouter wrapper → None needed
+✗ PrivateRoutes → middleware.ts
+✗ DocsRoutes → app/docs/ directory
+
+================================================================================
+                              💰 QUOTATION
+================================================================================
+
+PROJECT: NexFellow - React.js to Next.js Migration
+SCOPE: Frontend migration only (Backend unchanged)
+DATE: December 2024
+
+--------------------------------------------------------------------------------
+                              DELIVERABLES
+--------------------------------------------------------------------------------
+
+  1.  Project Setup & Next.js Configuration
+  2.  Auth System & Route Protection Middleware
+  3.  Layout System (Public/Private layouts)
+  4.  Core Pages (Home, Login, Signup, Feed)
+  5.  Dashboard & Profile Features
+  6.  Community System
+  7.  Messaging System (Socket.io Integration)
+  8.  Challenges, Events & Contests
+  9.  Notifications, Leaderboard, Search
+  10. Settings & Remaining Pages
+  11. Documentation Portal (/docs) - 19 pages
+  12. Testing & Bug Fixes
+
+--------------------------------------------------------------------------------
+                             PRICING 
+--------------------------------------------------------------------------------
+
+FIXED PRICE
+─────────────────────
+Total: ₹____
+Payment: 50% upfront, 50% on completion
+Includes: Up to 2 rounds of revisions
+
+--------------------------------------------------------------------------------
+                               TIMELINE
+--------------------------------------------------------------------------------
+
+Estimated Duration: 1.5 months
+Start Date: Upon agreement
+Delivery Date: February 2025
+
+--------------------------------------------------------------------------------
+                              INCLUDED
+--------------------------------------------------------------------------------
+
+✓ Migration of all features (including new docs)
+✓ All 32 page directories converted
+✓ All 536+ component files migrated
+✓ Socket.io real-time features preserved
+✓ Redux state management integration
+✓ Theme system (Dark/Light mode)
+✓ Documentation portal fully migrated
+✓ All styling preserved exactly as-is
+✓ SEO meta tags migration
+✓ Testing on Chrome, Firefox, Safari, Edge
+✓ Basic documentation
+
+--------------------------------------------------------------------------------
+                            NOT INCLUDED
+--------------------------------------------------------------------------------
+
+✗ Backend/API changes
+✗ New feature development
+✗ Hosting/Deployment configuration
+✗ Design or UI changes
+✗ Database modifications
+✗ Third-party API integrations (new ones)
+
+--------------------------------------------------------------------------------
+                              TERMS
+--------------------------------------------------------------------------------
+
+• Source code ownership transfers upon final payment
+• Communication via [Slack/Discord/Email]
+• Daily progress updates
+• Code delivered via Git repository
+• 30-day bug fix support after delivery
+
+================================================================================
+                          END OF DOCUMENT
+================================================================================

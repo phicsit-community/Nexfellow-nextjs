@@ -1,0 +1,11 @@
+.container {
+    /* margin: 2rem;    */
+    /* width: 100%; */
+    background-color: #00181F;
+}
+
+@media (max-width: 768px) {
+    .mission {
+        margin-top: 65px;
+    }
+}

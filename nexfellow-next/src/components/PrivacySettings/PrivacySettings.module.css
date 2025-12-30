@@ -1,0 +1,217 @@
+.privacySettings {
+  padding: 1rem;
+  width: 100%;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+:global(.dark) .sectionTitle {
+  color: var(--color-foreground);
+}
+
+.sectionDescription {
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+:global(.dark) .sectionDescription {
+  color: var(--color-muted-foreground);
+}
+
+.settingsGroup {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+:global(.dark) .settingsGroup {
+  background-color: var(--color-card);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.groupTitle {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  color: #444;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+:global(.dark) .groupTitle {
+  color: var(--color-foreground);
+  border-bottom-color: var(--color-border);
+}
+
+.settingItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+:global(.dark) .settingItem {
+  border-bottom-color: var(--color-border);
+}
+
+.settingInfo {
+  flex: 1;
+}
+
+.settingInfo h4 {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.settingInfo h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+:global(.dark) .settingInfo h3 {
+  color: var(--color-foreground);
+}
+
+.settingInfo p {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+:global(.dark) .settingInfo p {
+  color: var(--color-muted-foreground);
+}
+
+.switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 3rem;
+  height: 1.5rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.saveButton {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.6rem 1.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.saveButton:hover {
+  background-color: #1a8183;
+}
+
+.saveButton:disabled {
+  background-color: #c7c7c7;
+  cursor: not-allowed;
+}
+
+.loadingMessage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  color: #666;
+}
+
+:global(.dark) .loadingMessage {
+  color: var(--color-muted-foreground);
+}
+
+:global(.dark) {
+  .privacySettings {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  .sectionTitle {
+    color: var(--color-foreground);
+  }
+
+  .sectionDescription {
+    color: var(--color-muted-foreground);
+  }
+
+  .settingsGroup {
+    background-color: var(--color-card);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .groupTitle {
+    color: var(--color-foreground);
+    border-bottom-color: var(--color-border);
+  }
+
+  .settingItem {
+    border-bottom-color: var(--color-border);
+  }
+
+  .settingInfo h3,
+  .settingInfo h4 {
+    color: var(--color-foreground);
+  }
+
+  .settingInfo p {
+    color: var(--color-muted-foreground);
+  }
+
+  .switch {
+    background-color: var(--color-muted);
+  }
+
+  /* Optional: switch active background or colors can be refined here */
+
+  .formActions {
+    /* inherit default flex styling, no change needed */
+  }
+
+  .saveButton {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .saveButton:hover {
+    background-color: #1a8183;
+    /* similar dark hover shade */
+  }
+
+  .saveButton:disabled {
+    background-color: #555555;
+    cursor: not-allowed;
+    color: #ccc;
+  }
+
+  .loadingMessage {
+    color: var(--color-muted-foreground);
+  }
+}

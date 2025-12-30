@@ -1,0 +1,873 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 20px;
+}
+
+/* =============== Moderator Card =============== */
+.card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ownerCard {
+  border: 2px solid #00c2a8;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.name {
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.username {
+  color: #666;
+  font-size: 13px;
+}
+
+/* =============== Role & Privileges =============== */
+.roleSection {
+  margin-top: 12px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.roleLabel {
+  font-weight: 500;
+  color: #333;
+}
+
+.dropdown,
+.roleSelect {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 13px;
+}
+
+.memberTag,
+.ownerTag {
+  background: #00c2a8;
+  color: #fff;
+  padding: 2px 8px;
+  font-size: 12px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.ownerTag {
+  background: #00c2a8;
+}
+
+.privileges {
+  margin-top: 12px;
+}
+
+.privilegesTitle {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.privilegeList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.privilegeTag {
+  background: #f2f2f2;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #333;
+}
+
+/* =============== Buttons =============== */
+.buttonGroup {
+  margin-top: auto;
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.promoteButton,
+.transferButton {
+  background: #00c2a8;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.cancelButton {
+  background: #eee;
+  color: #333;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.transferBtn {
+  background: transparent;
+  border: 1px solid #00c2a8;
+  color: #00c2a8;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-top: 10px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* =============== UserCard (Follower List) =============== */
+.userCard {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.userTag {
+  color: #888;
+  font-size: 13px;
+}
+
+/* =============== Modal =============== */
+.modalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: #fff;
+  padding: 24px;
+  border-radius: 10px;
+  width: 400px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modalTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.modalText {
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* =============== Loading State =============== */
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #888;
+}
+
+.container {
+  padding: 28px 20px 20px 20px;
+  border-radius: 14px;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  border: 1px solid #ececec;
+  border-radius: 12px;
+  background: #fcfcfc;
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 750px;
+  background: transparent;
+  font-family: inherit;
+}
+
+/* Table Header */
+.table thead tr {
+  background: #f7fafc;
+  border-bottom: 1.5px solid #efefef;
+}
+
+.table th,
+.table td {
+  padding: 16px 18px;
+  font-size: 15px;
+  text-align: left;
+}
+
+.table th {
+  font-weight: 700;
+  color: #222;
+  letter-spacing: .03em;
+}
+
+.table tbody tr:hover {
+  background: #f6f9fb;
+}
+
+.table td {
+  vertical-align: middle;
+  border-bottom: 1px solid #f2f2f2;
+  /* ensures row height is defined by td, not inner elements */
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+/* User info cell */
+/* .userCell {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+} */
+
+/* Avatar is perfectly centered in its cell */
+.avatar {
+  display: block;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #e6e6e6;
+  box-shadow: 0px 2px 8px #eaeaea33;
+  margin: 0;
+}
+
+/* Name + owner badge are in a row */
+.name {
+  font-weight: 700;
+  color: #141618;
+  font-size: 15.7px;
+  margin: 0;
+  padding: 0;
+}
+
+.username {
+  font-size: 13px;
+  color: #6a7683;
+  margin: 0;
+  padding: 0;
+  letter-spacing: 0.01em;
+}
+
+.roleTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(90deg, #05c3a8 60%, #47d6b7 100%);
+  color: #fff;
+  font-size: 12.3px;
+  padding: 3px 12px 3px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+  box-shadow: 0 1px 8px #28afad22;
+  margin: 0;
+}
+
+/* Dropdown enhancements */
+.actionDropdown {
+  padding: 7px 40px 7px 10px;
+  border: 1.2px solid #e2e7eb;
+  border-radius: 7px;
+  font-size: 13px;
+  min-width: 140px;
+  background-color: #f9fafc;
+  color: #183440;
+  cursor: pointer;
+  margin: 0;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg fill='gray' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.293l3.71-4.06a.75.75 0 011.08 1.04l-4.25 4.66a.75.75 0 01-1.08 0l-4.25-4.66a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 17px;
+  transition: border-color 0.18s;
+}
+
+.actionDropdown:focus,
+.actionDropdown:hover {
+  border-color: #05c3a8;
+}
+
+.transferBtn {
+  background: #f5fffc;
+  border: 1.5px solid #05c3a8;
+  color: #05c3a8;
+  font-size: 13.5px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 7px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  transition: background 0.17s, border-color 0.16s;
+}
+
+.transferBtn:hover {
+  background: #baf1e7;
+  border-color: #00a896;
+}
+
+.noAction {
+  color: #b1b5bb;
+  font-size: 15px;
+  padding: 7px 0;
+}
+
+/* .actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+} */
+
+@media (max-width: 900px) {
+  .container {
+    max-width: 98vw;
+    padding: 14px 4px;
+  }
+
+  .tableWrapper {
+    border-radius: 8px;
+  }
+
+  .table {
+    min-width: 600px;
+  }
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  border-top: 2px solid #555;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+:global(.dark) {
+
+  /* Grid containers */
+  .grid,
+  .cardGrid {
+    /* Grids usually have transparent background, no dark change needed */
+  }
+
+  /* Moderator Card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+    color: var(--foreground);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .ownerCard {
+    border: 2px solid var(--color-primary);
+  }
+
+  .cardHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    color: var(--foreground);
+  }
+
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid var(--color-border);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  }
+
+  .name {
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--foreground);
+  }
+
+  .username {
+    color: var(--muted-foreground);
+    font-size: 13px;
+  }
+
+  /* Role & Privileges */
+  .roleSection {
+    margin-top: 12px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--foreground);
+  }
+
+  .roleLabel {
+    font-weight: 500;
+    color: var(--foreground);
+  }
+
+  .dropdown,
+  .roleSelect {
+    background: var(--background);
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    font-size: 13px;
+    color: var(--foreground);
+  }
+
+  .memberTag,
+  .ownerTag {
+    background: var(--color-primary);
+    color: white;
+    padding: 2px 8px;
+    font-size: 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: 0 1px 8px var(--color-primary)66;
+  }
+
+  .privileges {
+    margin-top: 12px;
+    color: var(--foreground);
+  }
+
+  .privilegesTitle {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .privilegeList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .privilegeTag {
+    background: var(--color-muted);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    color: var(--foreground);
+  }
+
+  /* Buttons */
+  .buttonGroup {
+    margin-top: 16px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .promoteButton,
+  .transferButton {
+    background: var(--color-primary);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .promoteButton:hover,
+  .transferButton:hover {
+    background: #1a8f90;
+  }
+
+  .cancelButton {
+    background: var(--background);
+    color: var(--foreground);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .cancelButton:hover {
+    background: var(--color-muted);
+  }
+
+  .transferBtn {
+    background: transparent;
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-top: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .transferBtn:hover {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+  }
+
+  /* UserCard (Follower List) */
+  .userCard {
+    background: var(--card);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: var(--foreground);
+  }
+
+  .userInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .userTag {
+    color: var(--muted-foreground);
+    font-size: 13px;
+  }
+
+  /* Modal */
+  .modalBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal {
+    background: var(--card);
+    padding: 24px;
+    border-radius: 10px;
+    width: 400px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+    color: var(--foreground);
+  }
+
+  .modalTitle {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .modalText {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .modalButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  /* Loading State */
+  .loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 16px;
+    color: var(--muted-foreground);
+  }
+
+  /* Container adjustments */
+  .container {
+    padding: 28px 20px 20px 20px;
+    border-radius: 14px;
+    background: var(--card);
+    color: var(--foreground);
+  }
+
+  /* Table Wrapper */
+  .tableWrapper {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--card);
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 750px;
+    background: transparent;
+    font-family: inherit;
+    color: var(--foreground);
+  }
+
+  /* Table Header */
+  .table thead tr {
+    background: var(--background);
+    border-bottom: 1.5px solid var(--color-border);
+  }
+
+  .table th {
+    background: var(--color-sidebar-left);
+  }
+
+  .table th,
+  .table td {
+    padding: 16px 18px;
+    font-size: 15px;
+    text-align: left;
+    color: var(--foreground);
+  }
+
+  .table th {
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  .table tbody tr:hover {
+    background: var(--color-muted);
+  }
+
+  .table td {
+    vertical-align: middle;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .avatar {
+    display: block;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid var(--color-border);
+    box-shadow: 0 2px 8px var(--color-border)33;
+    margin: 0;
+  }
+
+  .name {
+    font-weight: 700;
+    color: var(--foreground);
+    font-size: 15.7px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .username {
+    font-size: 13px;
+    color: var(--muted-foreground);
+    margin: 0;
+    padding: 0;
+    letter-spacing: 0.01em;
+  }
+
+  .roleTag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(90deg, var(--color-primary) 60%, #47d6b7 100%);
+    color: #fff;
+    font-size: 12.3px;
+    padding: 3px 12px 3px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    box-shadow: 0 1px 8px var(--color-primary)44;
+    margin: 0;
+  }
+
+  /* Dropdown enhancements */
+  .actionDropdown {
+    padding: 7px 40px 7px 10px;
+    border: 1.2px solid var(--color-border);
+    border-radius: 7px;
+    font-size: 13px;
+    min-width: 140px;
+    background-color: var(--background);
+    color: var(--foreground);
+    cursor: pointer;
+    margin: 0;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg fill='gray' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.293l3.71-4.06a.75.75 0 011.08 1.04l-4.25 4.66a.75.75 0 01-1.08 0l-4.25-4.66a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 17px;
+    transition: border-color 0.18s;
+  }
+
+  .actionDropdown:focus,
+  .actionDropdown:hover {
+    border-color: var(--color-primary);
+  }
+
+  .transferBtn {
+    background: var(--background);
+    border: 1.5px solid var(--color-primary);
+    color: var(--color-primary);
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 7px 14px;
+    border-radius: 7px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    transition: background 0.17s, border-color 0.16s;
+  }
+
+  .transferBtn:hover {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+  }
+
+  .noAction {
+    color: var(--muted-foreground);
+    font-size: 15px;
+    padding: 7px 0;
+  }
+
+  /* Responsive media */
+  @media (max-width: 900px) {
+    .container {
+      max-width: 98vw;
+      padding: 14px 4px;
+    }
+
+    .tableWrapper {
+      border-radius: 8px;
+    }
+
+    .table {
+      min-width: 600px;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+    }
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #fff;
+    border-top: 2px solid #555;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+  }
+}

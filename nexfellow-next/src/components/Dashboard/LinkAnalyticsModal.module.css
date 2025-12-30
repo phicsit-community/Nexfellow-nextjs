@@ -1,0 +1,280 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.modalContent {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.modalHeader h2 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.linkCount {
+  font-size: 1rem;
+  color: #777;
+  margin-left: 8px;
+  font-weight: normal;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #777;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.closeButton:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 10px 20px;
+  margin: 0;
+  text-align: left;
+  display: block;
+  transition: background-color 0.2s;
+}
+
+.backButton:hover {
+  background-color: #f0f0f0;
+  text-decoration: underline;
+}
+
+.linksContainer {
+  padding: 0 20px 20px 20px;
+}
+
+.linkTableHeader {
+  display: grid;
+  grid-template-columns: 3fr 2fr 0.8fr 1fr 0.8fr;
+  padding: 10px 15px;
+  font-weight: 600;
+  color: #555;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+.linksList {
+  margin-top: 10px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.linkItem {
+  display: grid;
+  grid-template-columns: 3fr 2fr 0.8fr 1fr 0.8fr;
+  padding: 12px 15px;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.linkItem:hover {
+  background-color: #f9f9f9;
+}
+
+.linkUrl {
+  font-weight: 500;
+  color: #333;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.linkShort {
+  color: var(--color-primary);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.linkClicks {
+  font-weight: 600;
+  color: #555;
+  text-align: center;
+}
+
+.linkDate {
+  color: #777;
+  text-align: center;
+}
+
+.linkActions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.actionButton {
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionButton:hover {
+  background-color: #f0f0f0;
+  color: var(--color-primary);
+}
+
+.loadingState,
+.errorState,
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.emptyState {
+  color: #777;
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+.emptySubtext {
+  font-size: 0.9rem;
+  color: #999;
+  margin-top: 10px;
+}
+
+.errorState {
+  color: #d32f2f;
+}
+
+.retryButton {
+  margin-top: 15px;
+  padding: 8px 16px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.retryButton:hover {
+  background-color: #1a9597;
+}
+
+.loader {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--color-primary);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .modalContent {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .linkTableHeader,
+  .linkItem {
+    grid-template-columns: 2.5fr 1.5fr 0.7fr 0.7fr;
+  }
+
+  .linkDate {
+    display: none;
+  }
+
+  .linkActions {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .modalHeader h2 {
+    font-size: 1.2rem;
+  }
+
+  .linkTableHeader,
+  .linkItem {
+    grid-template-columns: 2fr 1fr 0.5fr 0.5fr;
+    font-size: 0.8rem;
+    padding: 10px;
+  }
+
+  .actionButton {
+    padding: 3px;
+  }
+}

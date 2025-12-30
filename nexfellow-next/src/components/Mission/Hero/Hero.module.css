@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree&display=swap');
+
+.heroSection {
+  position: relative;
+  width: 100%;
+  min-height: 60vh;
+  background-color: #00181F;
+  overflow: hidden;
+  font-family: 'Figtree', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.subText {
+  font-size: 1.75rem;
+  /* 28px */
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+  /* 40px to 72px smoothly */
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0.5rem 0 2rem;
+  background: linear-gradient(90deg, #F8B64C, #F3629D, #0B98BB);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  word-break: break-word;
+}
+
+.imageContainer {
+  width: 100%;
+  max-width: 800px;
+  border-radius: 1.25rem;
+  /* 20px */
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  margin-top: 2rem;
+}
+
+.heroImage {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Responsive tweaks if needed */
+@media (max-width: 768px) {
+
+  .heroSection {
+    min-height: 30vh;
+  }
+
+  .subText {
+    font-size: 1.5rem;
+    /* 24px */
+  }
+
+  .imageContainer {
+    max-width: 90%;
+    margin-top: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .subText {
+    font-size: 1.25rem;
+    /* 20px */
+  }
+}

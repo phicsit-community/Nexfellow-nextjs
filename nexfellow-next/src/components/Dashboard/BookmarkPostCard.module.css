@@ -1,0 +1,500 @@
+.bookmarkFeedCard {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(36, 178, 180, 0.10), 0 1px 3px rgba(0, 0, 0, 0.03);
+    padding: 1.4rem 1.2rem 1.2rem 1.2rem;
+    margin-bottom: 1.3rem;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #f2f2f2;
+    transition: box-shadow 0.16s, transform 0.16s;
+    position: relative;
+}
+
+.bookmarkFeedCard:hover {
+    box-shadow: 0 8px 32px rgba(36, 178, 180, 0.13), 0 2px 8px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px) scale(1.012);
+    border-color: #e0f2f2;
+}
+
+.feedCardHeader {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 0.85rem;
+    position: relative;
+}
+
+.feedAvatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #0b1e33;
+    color: #fff;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-weight: 700;
+    box-shadow: 0 1px 4px rgba(36, 178, 180, 0.08);
+    border: 2px solid #fff;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.feedAvatarImg {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.feedHeaderMain {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 0;
+}
+
+.feedHeaderLeft {
+    display: flex;
+    flex-direction: row;
+    min-width: 0;
+}
+
+.feedMeta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.feedMetaTop {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 2px;
+}
+
+.feedAuthorDetails {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    min-width: 0;
+    flex-direction: column;
+}
+
+.feedAuthor {
+    font-weight: 700;
+    color: #3E4051;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    line-height: 0;
+}
+
+.feedDot {
+    color: #bbb;
+    font-size: 20px;
+}
+
+.feedTime {
+    color: #969CAD;
+    font-size: 1rem;
+    white-space: nowrap;
+    margin-left: 0px;
+    font-weight: 500;
+}
+
+.feedHandle {
+    color: #969CAD;
+    font-size: 0.97rem;
+    margin-top: 1px;
+    line-height: 1.1;
+    word-break: break-all;
+}
+
+.feedVerified {
+    width: 16px;
+    height: 16px;
+    color: var(--color-primary);
+    margin-left: 4px;
+}
+
+.feedTitle {
+    font-size: 1.08rem;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 0.3rem;
+    line-height: 1.32;
+    word-break: break-word;
+}
+
+.feedBookmarkIcon {
+    color: var(--color-primary);
+    font-size: 1.3rem;
+    margin-left: 10px;
+    margin-top: 2px;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+.feedContent {
+    margin-bottom: 0.7rem;
+}
+
+.feedText {
+    color: #222;
+    font-size: 1.02rem;
+    line-height: 1.45;
+    white-space: pre-line;
+    word-break: break-word;
+}
+
+.feedReadMore {
+    color: #8884ff;
+    font-weight: 500;
+    margin-left: 3px;
+    cursor: pointer;
+    font-size: 0.98rem;
+}
+
+.feedCardFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.7rem;
+}
+
+.feedActions {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+}
+
+.feedAction {
+    color: #888;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.23rem;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+}
+
+.feedViewBtn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: #f8fcff;
+    color: var(--color-primary);
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.97rem;
+    text-decoration: none;
+    transition: background 0.16s, color 0.16s;
+    border: 1px solid #d7f0f2;
+    box-shadow: none;
+}
+
+.feedViewBtn:hover {
+    background: #e8fcfd;
+    color: #1a8a8b;
+    border-color: #b6eaea;
+}
+
+.feedViewIcon {
+    font-size: 1.1rem;
+}
+
+@media (max-width: 700px) {
+    .bookmarkFeedCard {
+        padding: 1.1rem 0.7rem 1rem 0.7rem;
+    }
+
+    .feedAvatar {
+        width: 38px;
+        height: 38px;
+        font-size: 1.1rem;
+        margin-right: 0.7rem;
+    }
+
+    .feedTitle {
+        font-size: 1rem;
+    }
+
+    .feedText {
+        font-size: 0.97rem;
+    }
+}
+
+:global(.dark) {
+    .bookmarkFeedCard {
+        background: var(--card);
+        border-radius: 14px;
+        box-shadow:
+            0 2px 8px rgba(0, 0, 0, 0.7),
+            0 1px 4px rgba(0, 0, 0, 0.3);
+        padding: 1.4rem 1.2rem 1.2rem 1.2rem;
+        margin-bottom: 1.3rem;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--color-border);
+        transition: box-shadow 0.16s, transform 0.16s;
+        position: relative;
+        color: var(--foreground);
+    }
+
+    .bookmarkFeedCard:hover {
+        box-shadow:
+            0 8px 32px rgba(36, 178, 180, 0.3),
+            0 2px 8px rgba(0, 0, 0, 0.5);
+        transform: translateY(-2px) scale(1.012);
+        border-color: var(--color-primary);
+    }
+
+    .feedCardHeader {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 0.85rem;
+        position: relative;
+    }
+
+    .feedAvatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--muted);
+        color: var(--muted-foreground);
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-weight: 700;
+        box-shadow: 0 1px 4px rgba(36, 178, 180, 0.2);
+        border: 2px solid var(--card);
+        overflow: hidden;
+        flex-shrink: 0;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .feedAvatarImg {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        filter: none;
+        /* Adjust if needed for dark mode */
+    }
+
+    .feedHeaderMain {
+        display: flex;
+        flex: 1;
+        justify-content: space-between;
+        align-items: center;
+        min-width: 0;
+        color: var(--foreground);
+    }
+
+    .feedHeaderLeft {
+        display: flex;
+        flex-direction: row;
+        min-width: 0;
+        color: var(--foreground);
+    }
+
+    .feedMeta {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        color: var(--foreground);
+    }
+
+    .feedMetaTop {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-bottom: 2px;
+        color: var(--muted-foreground);
+    }
+
+    .feedAuthorDetails {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+        min-width: 0;
+        flex-direction: column;
+        color: var(--foreground);
+    }
+
+    .feedAuthor {
+        font-weight: 700;
+        color: var(--foreground);
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        line-height: 0;
+    }
+
+    .feedDot {
+        color: var(--color-muted);
+        font-size: 20px;
+    }
+
+    .feedTime {
+        color: var(--muted-foreground);
+        font-size: 1rem;
+        white-space: nowrap;
+        margin-left: 0;
+        font-weight: 500;
+    }
+
+    .feedHandle {
+        color: var(--muted-foreground);
+        font-size: 0.97rem;
+        margin-top: 1px;
+        line-height: 1.1;
+        word-break: break-all;
+    }
+
+    .feedVerified {
+        width: 16px;
+        height: 16px;
+        color: var(--color-primary);
+        margin-left: 4px;
+    }
+
+    .feedTitle {
+        font-size: 1.08rem;
+        font-weight: 600;
+        color: var(--foreground);
+        margin-bottom: 0.3rem;
+        line-height: 1.32;
+        word-break: break-word;
+    }
+
+    .feedBookmarkIcon {
+        color: var(--color-primary);
+        font-size: 1.3rem;
+        margin-left: 10px;
+        margin-top: 2px;
+        cursor: pointer;
+        align-self: flex-start;
+        transition: color 0.2s;
+    }
+
+    .feedBookmarkIcon:hover {
+        color: #1fa0a2;
+    }
+
+    .feedContent {
+        margin-bottom: 0.7rem;
+    }
+
+    .feedText {
+        color: var(--foreground);
+        font-size: 1.02rem;
+        line-height: 1.45;
+        white-space: pre-line;
+        word-break: break-word;
+    }
+
+    .feedReadMore {
+        color: #8884ff;
+        font-weight: 500;
+        margin-left: 3px;
+        cursor: pointer;
+        font-size: 0.98rem;
+    }
+
+    .feedCardFooter {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0.7rem;
+    }
+
+    .feedActions {
+        display: flex;
+        gap: 1.2rem;
+        align-items: center;
+    }
+
+    .feedAction {
+        color: var(--muted-foreground);
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.23rem;
+        font-weight: 500;
+        cursor: pointer;
+        user-select: none;
+        transition: color 0.2s;
+    }
+
+    .feedAction:hover {
+        color: var(--color-primary);
+    }
+
+    .feedViewBtn {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: var(--background);
+        color: var(--color-primary);
+        padding: 7px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.97rem;
+        text-decoration: none;
+        transition: background 0.16s, color 0.16s, border-color 0.16s;
+        border: 1px solid var(--color-muted);
+        box-shadow: none;
+    }
+
+    .feedViewBtn:hover {
+        background: var(--color-muted);
+        color: #1a8a8b;
+        border-color: var(--color-primary);
+    }
+
+    .feedViewIcon {
+        font-size: 1.1rem;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 700px) {
+        .bookmarkFeedCard {
+            padding: 1.1rem 0.7rem 1rem 0.7rem;
+        }
+
+        .feedAvatar {
+            width: 38px;
+            height: 38px;
+            font-size: 1.1rem;
+            margin-right: 0.7rem;
+            background: var(--muted);
+            color: var(--muted-foreground);
+            border-color: var(--card);
+        }
+
+        .feedTitle {
+            font-size: 1rem;
+            color: var(--foreground);
+        }
+
+        .feedText {
+            font-size: 0.97rem;
+            color: var(--foreground);
+        }
+    }
+}

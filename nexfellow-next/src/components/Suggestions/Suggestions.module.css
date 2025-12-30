@@ -1,0 +1,345 @@
+.suggestions {
+  width: 84%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  box-sizing: border-box;
+  gap: 1rem;
+  z-index: 0;
+  margin-bottom: 1.5rem;
+
+  /* margin-left: 50px;  */
+  height: 100%;
+
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+
+  &::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari and Opera */
+  }
+}
+
+.imgContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40px;
+  gap: 20px;
+}
+
+.image {
+  width: 100%;
+  height: 160px;
+  border-radius: 8px;
+  /* background-color: #e8e4e4; */
+  object-fit: cover;
+}
+
+.suggestion {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+  box-sizing: border-box;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e8e4e4;
+}
+
+:global(.dark) .suggestion {
+  background-color: var(--color-card);
+  border-color: var(--color-border);
+}
+
+.suggestionTitle {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* suggestion card */
+
+.suggestionCard {
+  width: 100%;
+  display: flex;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.suggestionCard:hover {
+  background-color: #f6f6f6;
+  cursor: pointer;
+}
+
+:global(.dark) .suggestionCard:hover {
+  background-color: var(--color-accent);
+}
+
+.left {
+  width: 70%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.right {
+  width: 30%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.suggestionCardImg {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e8e4e4;
+}
+
+.suggestionCardInfo {
+  h4 {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 12px;
+    color: #a0a0a0;
+  }
+}
+
+:global(.dark) .suggestionCardInfo p {
+  color: var(--color-muted-foreground);
+}
+
+.suggestionCardName {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 400;
+  width: max-content;
+}
+
+.suggestionCardUsername {
+  font-size: 14px;
+  margin: 0;
+  color: #a0a0a0;
+}
+
+:global(.dark) .suggestionCardUsername {
+  color: var(--color-muted-foreground);
+}
+
+.suggestionCardBtn {
+  display: flex;
+  box-sizing: border-box;
+  height: 32px;
+  padding: 6px 15px;
+  font-size: 12px;
+  border-radius: 8px;
+  background-color: #22b2b4;
+  color: white;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 85px;
+}
+
+.unfollowSuggestionCardBtn {
+  display: flex;
+  box-sizing: border-box;
+  height: 32px;
+  padding: 6px 15px;
+  font-size: 12px;
+  border-radius: 8px;
+  background-color: white;
+  color: #22b2b4;
+  border: 1px solid #22b2b4;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 85px;
+}
+
+:global(.dark) .unfollowSuggestionCardBtn {
+  background-color: var(--color-card);
+  border-color: var(--color-primary);
+}
+
+.footer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  color: #22b2b4;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.error {
+  color: #e74c3c;
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+/* Skeleton loading styles */
+.skeletonCard {
+  width: 100%;
+  display: flex;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.skeletonLeft {
+  width: 70%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.skeletonRight {
+  width: 50%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.skeletonAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e8e8e8;
+}
+
+.skeletonInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.skeletonName {
+  height: 14px;
+  width: 120px;
+  background-color: #e8e8e8;
+  border-radius: 4px;
+}
+
+.skeletonUsername {
+  height: 10px;
+  width: 80px;
+  background-color: #e8e8e8;
+  border-radius: 4px;
+}
+
+.skeletonButton {
+  height: 32px;
+  width: 65px;
+  background-color: #e8e8e8;
+  border-radius: 8px;
+}
+
+/* Shimmer effect */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -100%;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent);
+  animation: shimmerAnimation 3s infinite;
+}
+
+@keyframes shimmerAnimation {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (max-width: 1200px) {
+  .suggestionCardInfo {
+    width: fit-content;
+
+    h4 {
+      font-size: 13px;
+    }
+
+    p {
+      font-size: 11px;
+    }
+  }
+
+  .suggestionCardName {
+    width: max-content;
+    font-size: 16px;
+  }
+
+  .suggestionCardUsername {
+    font-size: 16px;
+    width: max-content;
+  }
+
+  .suggestionCardImg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .suggestionCardBtn {
+    /* width: 65%; */
+    /* font-size: 10px; */
+  }
+}
+
+:global(.dark) {
+  .suggestionCard:hover {
+    background-color: color-mix(in oklab, var(--color-accent) 18%, var(--color-card) 82%);
+  }
+
+  /* Slightly deeper skeleton base in dark for contrast */
+  .skeletonAvatar,
+  .skeletonName,
+  .skeletonUsername,
+  .skeletonButton {
+    background-color: color-mix(in oklab, var(--color-muted) 85%, var(--color-card) 15%);
+  }
+
+  /* Shimmer stripe tuned for dark surfaces */
+  .shimmer::after {
+    background: linear-gradient(90deg,
+        transparent,
+        color-mix(in oklab, var(--color-foreground) 15%, transparent),
+        transparent);
+  }
+
+  .suggestionCardBtn {
+    box-shadow: 0 2px 8px color-mix(in oklab, var(--color-primary) 26%, transparent);
+  }
+
+  .suggestionCardBtn:hover {
+    filter: brightness(1.05);
+    box-shadow: 0 4px 12px color-mix(in oklab, var(--color-primary) 32%, transparent);
+  }
+}

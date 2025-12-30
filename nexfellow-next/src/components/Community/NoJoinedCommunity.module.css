@@ -1,0 +1,214 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.content {
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease-out;
+}
+
+.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.illustration {
+  width: min(500px, 90%);
+  height: auto;
+  /* margin-bottom: 1.5rem; */
+  /* filter: drop-shadow(0 5px 15px rgba(36, 178, 180, 0.2)); */
+  transition: transform 0.3s ease;
+}
+
+.illustration:hover {
+  transform: scale(1.03);
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #0f0f0f;
+  margin-bottom: 1rem;
+  font-family: "Inter", sans-serif;
+}
+
+.text {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 2rem;
+  font-weight: 400;
+  font-family: "Inter", sans-serif;
+  line-height: 1.6;
+  text-align: center;
+  max-width: 90%;
+}
+
+.joinButton {
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-primary);
+  background-color: transparent;
+  border: 1.5px solid var(--color-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(36, 178, 180, 0.3);
+}
+
+.joinButton:hover {
+  background-color: #1c9ea0;
+  transform: translateY(-2px);
+  color: #fff;
+  box-shadow: 0 6px 15px rgba(36, 178, 180, 0.4);
+}
+
+.joinButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(36, 178, 180, 0.35);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+    min-height: 60vh;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .text {
+    font-size: 16px;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .text {
+    font-size: 15px;
+  }
+
+  .joinButton {
+    padding: 12px 24px;
+    font-size: 15px;
+  }
+}
+
+:global(.dark) {
+  .container {
+    background-color: var(--background, #121212);
+    /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8); */
+  }
+
+  .content {
+    color: var(--foreground, #eee);
+  }
+
+  .illustration {
+    filter: drop-shadow(0 5px 15px rgba(36, 178, 180, 0.6));
+    transition: transform 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    margin-bottom: 4%;
+  }
+
+  .illustration:hover {
+    transform: scale(1.03);
+  }
+
+  .title {
+    color: var(--foreground, #eee);
+    font-family: "Inter", sans-serif;
+  }
+
+  .text {
+    color: var(--muted-foreground, #aaa);
+    font-family: "Inter", sans-serif;
+  }
+
+  .joinButton {
+    color: var(--color-primary);
+    background-color: transparent;
+    border: 1.5px solid var(--color-primary);
+    box-shadow: 0 4px 12px rgba(36, 178, 180, 0.7);
+    transition: all 0.3s ease;
+  }
+
+  .joinButton:hover {
+    background-color: var(--color-primary);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(36, 178, 180, 0.9);
+  }
+
+  .joinButton:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(36, 178, 180, 0.7);
+  }
+
+  /* Responsive adjustments for dark mode remain similar */
+  @media (max-width: 768px) {
+    .container {
+      padding: 1.5rem;
+      min-height: 60vh;
+      background-color: var(--background, #121212);
+    }
+
+    .title {
+      font-size: 24px;
+      color: var(--foreground, #eee);
+    }
+
+    .text {
+      font-size: 16px;
+      margin-bottom: 1.5rem;
+      color: var(--muted-foreground, #aaa);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .container {
+      padding: 1rem;
+      background-color: var(--background, #121212);
+    }
+
+    .title {
+      font-size: 22px;
+      color: var(--foreground, #eee);
+    }
+
+    .text {
+      font-size: 15px;
+      color: var(--muted-foreground, #aaa);
+    }
+
+    .joinButton {
+      padding: 12px 24px;
+      font-size: 15px;
+    }
+  }
+}

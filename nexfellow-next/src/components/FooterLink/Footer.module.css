@@ -1,0 +1,20 @@
+.listContainer {
+  /* border: 1px solid black; */
+  width: 300px;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.list .listItem {
+  margin-left: 25px;
+  list-style-type: disc;
+  font-size: 14px;
+  font-weight: 400;
+  color: #6a6a6a;
+}
+

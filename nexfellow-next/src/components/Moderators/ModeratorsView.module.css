@@ -1,0 +1,1304 @@
+.CommunityBodyContainer {
+  /* height: 100vh; */
+  margin-top: -12%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin-bottom: 0;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1.5px solid #e6e6e6;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+.tab {
+  padding: 7px 10px 7px 10px;
+  font-weight: 500;
+  color: #000000;
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: color 0.3s ease;
+  font-size: 18px;
+  height: 100%;
+}
+
+.tab:hover {
+  color: #24b2b4;
+}
+
+.activeTab {
+  color: #24b2b4;
+  border-bottom: 2px solid #24b2b4;
+}
+
+.contentSection {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  overflow: hidden;
+}
+
+.comingSoonPost {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+  margin: 40px;
+  max-width: 500px;
+}
+
+.createPostBox {
+  margin-bottom: 0px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  width: 100%;
+  margin: 20px 0px;
+  border-radius: 20%;
+}
+
+.inputBox {
+  padding: 4px 6px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  /* height: 30%; */
+  position: relative;
+  border: 1px solid #e6e6e6;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.avatarWrapper {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: block;
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  box-sizing: content-box;
+}
+
+.avatarPlaceholder {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.postInput {
+  padding-left: 50px;
+  padding: 8px;
+  font-size: 18px;
+  outline: none;
+  width: 100%;
+  min-height: 40px;
+  border: none;
+  margin: 0;
+}
+
+.postInput::placeholder {
+  color: black;
+}
+
+.postButton {
+  background-color: #0073b1;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 8px;
+  align-self: flex-start;
+}
+
+.postButton:hover {
+  background-color: #005f8f;
+}
+
+.feedSection {
+  padding-left: 0px;
+  padding-top: 0px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.feedContainer {
+  width: 98%;
+  margin-top: 1%;
+}
+
+.post {
+  position: relative;
+  width: 100%;
+}
+
+.errorBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 30px;
+  margin: 60px auto;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  max-width: 600px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.errorIcon {
+  font-size: 20px;
+}
+
+.icon {
+  font-size: 1.5rem;
+  color: #007bff;
+  margin-right: 0.5rem;
+}
+
+.comingSoonTitle {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.membersList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 10px;
+  width: 100%;
+}
+
+.memberItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+}
+
+.memberItem:hover {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.memberProfile {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+}
+
+.profileImage {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profileDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profileName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #000000;
+  margin: 0;
+}
+
+.profileUsername {
+  font-size: 12px;
+  color: #6a6a6a;
+  margin: 0;
+}
+
+.followButton {
+  background-color: #24b2b4;
+  color: white;
+  border-radius: 10px;
+  border: none;
+  padding: 10px 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 80%;
+  font-size: 85%;
+}
+
+.unFollowButton {
+  background-color: #fff;
+  color: #24b2b4;
+  border-radius: 10px;
+  border: 1px solid #24b2b4;
+  padding: 10px 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 80%;
+  font-size: 85%;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.unFollowButton:hover {
+  background-color: #24b2b4;
+  color: white;
+  border: none;
+}
+
+.sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 35%;
+  align-items: center;
+  overflow-y: auto;
+  scrollbar-width: none;
+  margin: 30px 0px 20px 0px;
+  height: 95%;
+  padding-bottom: 30px;
+  /* margin-left: 30px; */
+}
+
+.topMembers {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+  box-sizing: border-box;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e8e4e4;
+}
+
+.ongoingEvents,
+.activeChallenges {
+  padding: 18px 0px;
+  border-radius: 8px;
+  width: 80%;
+  /* height: 250; */
+  padding-right: 6px;
+  gap: 20px;
+  border: 1px solid #e6e6e6;
+}
+
+.contests {
+  padding: 10px 0px;
+  border-radius: 8px;
+  width: 80%;
+  /* height: 250; */
+  padding-right: 6px;
+  gap: 20px;
+  border: 1px solid #e6e6e6;
+}
+
+.contest {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  /* height: 52px; */
+  border: 1px solid #e6e6e6;
+  width: 90%;
+  align-content: center;
+}
+
+.eventsList,
+.challengesList,
+.contestsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  align-items: center;
+}
+
+.suggestionWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 96%;
+  padding: 10px;
+  align-items: center;
+}
+
+.suggestionTitle {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 500;
+}
+
+.sidebarTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: -5px;
+  padding: 5px;
+  padding-left: 20px;
+  color: #000000;
+  line-height: 20px;
+}
+
+.topMembers .sidebarTitle {
+  margin: 0px;
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  /* background-color: #fafafa; */
+}
+
+.memberDetails {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.memberImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.memberName {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  color: #000;
+}
+
+.memberUsername {
+  font-size: 12px;
+  color: #6a6a6a;
+  margin: 2px 0 0;
+}
+
+.memberDetails>div {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarFollowButton {
+  background-color: #24b2b4;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.sidebarFollowButton:hover {
+  background-color: #1a9c9e;
+}
+
+.eventDetails,
+.challengeDetails,
+.contestDetails {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  margin: 0;
+}
+
+.showMore {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  color: #22b2b4;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* .showMore:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+} */
+
+.event,
+.challenge {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 10px 20px 10px 20px;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  /* height: 52px; */
+  width: 90%;
+  align-content: center;
+}
+
+.eventImage,
+.challengeImage {
+  width: 25%;
+  /* height: 32px; */
+  border-radius: 3px;
+}
+
+.contestImage {
+  width: 30%;
+  height: auto;
+  border-radius: 3px;
+  /* aspect-ratio: 1 / 1; */
+  object-fit: cover;
+}
+
+.contestParticipants,
+.contestDuration,
+.challengeParticipants {
+  border-radius: 50px;
+  margin-top: 4px;
+  padding: 2px 8px;
+  font-size: 9px;
+  font-weight: 500;
+  color: #24b2b4;
+  background-color: #24b2b43e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  gap: 4px;
+}
+
+.eventName,
+.challengeName,
+.contestName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #000000;
+  line-height: 17px;
+  margin: 0;
+}
+
+.eventDate,
+.challengeDate,
+.contestDate {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 15px;
+  color: #6a6a6a;
+  margin: 0;
+}
+
+.noPostsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+  margin-top: 30px;
+  color: #6a6a6a;
+}
+
+.noPostsImage {
+  width: 180px;
+  height: auto;
+  margin-bottom: 15px;
+}
+
+.noPostsHead {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: black;
+  margin: 0.5em;
+}
+
+.noPostsMessage {
+  margin: 0px;
+}
+
+.discussionSection {
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+  margin-top: 20px;
+  height: 100%;
+}
+
+.discussionForm {
+  display: flex;
+  gap: 10px;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  bottom: 20px;
+}
+
+.discussionInput {
+  flex: 1;
+  height: 40px;
+  padding: 8px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+}
+
+.discussionInput:focus {
+  border-color: #24b2b4;
+}
+
+.sendButton {
+  background-color: #24b2b4;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 14px;
+  width: auto;
+  transition: background-color 0.3s ease;
+}
+
+.sendButton:hover {
+  background-color: #1c8a8c;
+}
+
+.messagesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+}
+
+.messageItem {
+  background-color: #f5f5f5;
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin: 5px 0;
+}
+
+.messageItem p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.discussionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.discussionItem {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.discussionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.authorInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.authorName {
+  font-weight: 500;
+  margin: 0;
+}
+
+.discussionTime {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.discussionContent {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.discussionActions {
+  display: flex;
+  gap: 16px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 12px;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.actionButton:hover {
+  background-color: #f5f5f5;
+  color: #24b2b4;
+}
+
+.noDiscussions {
+  text-align: center;
+  padding: 40px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.emptyIcon {
+  font-size: 48px;
+  color: #24b2b4;
+  margin-bottom: 16px;
+}
+
+.chatSection {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  width: 100%;
+  background-color: #fff;
+  padding: 20px;
+}
+
+.messagesList {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.messageItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.profileImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.messageContent {
+  flex: 1;
+}
+
+.messageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.authorName {
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+.messageTime {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.messageText {
+  margin: 0;
+  color: #4a4a4a;
+  line-height: 1.5;
+}
+
+.messageForm {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 25px;
+}
+
+.messageInput {
+  flex: 1;
+  border: none;
+  padding: 8px;
+  font-size: 14px;
+  resize: none;
+  background: transparent;
+  min-height: 24px;
+}
+
+.messageInput:focus {
+  outline: none;
+}
+
+.dateDivider {
+  text-align: center;
+  margin: 20px 0;
+  position: relative;
+}
+
+.dateDivider span {
+  background-color: #f1f1f1;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #666;
+}
+
+.pinnedPostHeader {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #6a6a6a;
+  background-color: #e5fffe;
+  border-radius: 8px;
+}
+
+.pinnedHeaderIcon {
+  margin-right: 8px;
+  color: #6a6a6a;
+  transform: rotate(45deg);
+}
+
+.pinnedHeaderText {
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  font-weight: 400;
+}
+
+.regularPostsDivider {
+  height: 1px;
+  background-color: #e6e6e6;
+  margin: 15px 0;
+  width: 100%;
+}
+
+.hiddenMembersMessage {
+  margin-top: 20px;
+  padding: 12px 16px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  background-color: #f5f7fa;
+  border-radius: 8px;
+  border: 1px dashed #ddd;
+}
+
+@media (max-width: 1024px) {
+  .member {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sidebarFollowButton {
+    margin-top: 6px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: flex;
+    max-width: 100%;
+    padding: 0px;
+  }
+
+  .topMembers,
+  .ongoingEvents,
+  .activeChallenges,
+  .contests {
+    width: 90%;
+    padding: 10px;
+  }
+
+  .tab {
+    font-size: 14px;
+  }
+
+  .tabs {
+    background-color: #f5f5f5;
+  }
+
+  /* .followButton {
+    width: 30%;
+  } */
+
+  .suggestionWrapper {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    padding: 10px;
+    align-items: center;
+  }
+}
+
+/* Skeleton loading styles */
+.skeletonPost {
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  height: auto;
+  min-height: fit-content;
+}
+
+.skeletonHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.skeletonAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  margin-right: 12px;
+}
+
+.skeletonDetails {
+  flex: 1;
+}
+
+.skeletonText {
+  height: 12px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  width: 80%;
+}
+
+.skeletonDetails .skeletonText:last-child {
+  width: 60%;
+}
+
+.skeletonContent {
+  margin-bottom: 16px;
+}
+
+.skeletonContent .skeletonText {
+  height: 14px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.skeletonContent .skeletonText:last-child {
+  width: 70%;
+}
+
+.skeletonImageContainer {
+  width: 100%;
+  padding-bottom: 16px;
+}
+
+.skeletonImageGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 8px;
+  width: 100%;
+  height: 560px;
+  margin: 16px 0;
+}
+
+.skeletonImageItem {
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  width: 100%;
+  height: 100%;
+}
+
+.skeletonImage {
+  width: 100%;
+  height: 200px;
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  margin: 12px 0;
+}
+
+.skeletonActions {
+  display: flex;
+}
+
+.skeletonAction {
+  width: 40px;
+  height: 20px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  margin-right: 12px;
+}
+
+/* Shimmer effect */
+.skeletonPost::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(255, 255, 255, 0.5) 60%,
+      rgba(255, 255, 255, 0));
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+:global(.dark) {
+  .CommunityBodyContainer {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  .tabs {
+    border-bottom-color: var(--color-border);
+    background-color: var(--color-card);
+  }
+
+  .tab {
+    color: var(--color-foreground);
+    background: none;
+  }
+
+  .tab:hover {
+    color: var(--color-primary);
+  }
+
+  .activeTab {
+    color: var(--color-primary);
+    border-bottom: 2px solid var(--color-primary);
+  }
+
+  .contentSection {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  .comingSoonPost {
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+    box-shadow: 0px 4px 10px rgba(255 255 255 / 0.05);
+  }
+
+  .createPostBox {
+    background: transparent;
+  }
+
+  .inputBox {
+    border: 1px solid var(--color-border);
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+  }
+
+  .avatarPlaceholder {
+    background-color: var(--color-muted);
+    color: var(--color-foreground);
+  }
+
+  .postInput {
+    background: transparent;
+    color: var(--color-foreground);
+    border: none;
+  }
+
+  .postInput::placeholder {
+    color: var(--color-muted-foreground);
+  }
+
+  .postButton {
+    background-color: var(--color-primary);
+    color: white;
+  }
+
+  .postButton:hover {
+    background-color: #005f8f;
+  }
+
+  .feedSection,
+  .feedContainer,
+  .post {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  .errorBox {
+    background-color: #661920;
+    color: #f8d7da;
+    border-color: #b02a37;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  }
+
+  .errorIcon {
+    color: #f8d7da;
+  }
+
+  .icon {
+    color: var(--color-primary);
+  }
+
+  .comingSoonTitle {
+    color: var(--color-foreground);
+  }
+
+  .membersList,
+  .memberItem,
+  .memberProfile,
+  .profileImage,
+  .profileDetails,
+  .profileName,
+  .profileUsername {
+    color: var(--color-foreground);
+  }
+
+  .profileUsername,
+  .membersCount {
+    color: var(--color-muted-foreground);
+  }
+
+  .followButton {
+    background-color: var(--color-primary);
+    color: white;
+  }
+
+  .unFollowButton {
+    background-color: var(--color-card);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .unFollowButton:hover {
+    background-color: var(--color-primary);
+    color: var(--color-card-foreground);
+    border: none;
+  }
+
+  .sidebar {
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+  }
+
+  .topMembers,
+  .ongoingEvents,
+  .activeChallenges,
+  .contests,
+  .contest {
+    background-color: var(--color-card);
+    border-color: var(--color-border);
+    color: var(--color-foreground);
+  }
+
+  .eventsList,
+  .challengesList,
+  .contestsList,
+  .suggestionWrapper,
+  .suggestionTitle,
+  .sidebarTitle,
+  .member,
+  .memberDetails,
+  .memberName {
+    color: var(--color-foreground);
+  }
+
+  .memberUsername {
+    color: var(--color-muted-foreground);
+  }
+
+  .sidebarFollowButton {
+    background-color: var(--color-primary);
+    color: white;
+  }
+
+  .sidebarFollowButton:hover {
+    background-color: #1a9c9e;
+  }
+
+  .event,
+  .challenge {
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+  }
+
+  .eventImage,
+  .challengeImage,
+  .contestImage {
+    background-color: var(--color-card);
+  }
+
+  .contestParticipants,
+  .contestDuration,
+  .challengeParticipants {
+    background-color: rgba(36, 178, 180, 0.25);
+    color: var(--color-primary);
+  }
+
+  .eventName,
+  .challengeName,
+  .contestName {
+    color: var(--color-foreground);
+  }
+
+  .eventDate,
+  .challengeDate,
+  .contestDate {
+    color: var(--color-muted-foreground);
+  }
+
+  .noPostsContainer,
+  .noPostsHead,
+  .discussionSection,
+  .discussionForm,
+  .discussionInput,
+  .sendButton,
+  .messagesContainer,
+  .messageItem,
+  .discussionsList,
+  .discussionItem,
+  .discussionHeader,
+  .authorInfo,
+  .authorName,
+  .discussionTime,
+  .discussionContent,
+  .discussionActions,
+  .actionButton,
+  .noDiscussions,
+  .emptyIcon,
+  .chatSection,
+  .messagesList,
+  .messageContent,
+  .messageHeader,
+  .authorName,
+  .messageTime,
+  .messageText,
+  .messageForm,
+  .messageInput,
+  .dateDivider,
+  .dateDivider span,
+  .pinnedPostHeader,
+  .pinnedHeaderIcon,
+  .pinnedHeaderText,
+  .regularPostsDivider,
+  .hiddenMembersMessage {
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+  }
+
+  .memberItem:hover,
+  .actionButton:hover,
+  .discussionItem:hover {
+    background-color: var(--color-accent);
+    color: var(--color-primary);
+  }
+
+  /* Scrollbar styling */
+  .feedContainer::-webkit-scrollbar,
+  .messagesContainer::-webkit-scrollbar,
+  .messagesList::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .feedContainer::-webkit-scrollbar-thumb,
+  .messagesContainer::-webkit-scrollbar-thumb,
+  .messagesList::-webkit-scrollbar-thumb {
+    background-color: rgba(36, 178, 180, 0.5);
+    border-radius: 3px;
+  }
+
+  .feedContainer::-webkit-scrollbar-track,
+  .messagesContainer::-webkit-scrollbar-track,
+  .messagesList::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Skeleton loading */
+  .skeletonPost,
+  .skeletonHeader,
+  .skeletonAvatar,
+  .skeletonDetails,
+  .skeletonText,
+  .skeletonContent,
+  .skeletonImageContainer,
+  .skeletonImageGrid,
+  .skeletonImageItem,
+  .skeletonImage,
+  .skeletonActions,
+  .skeletonAction {
+    background-color: #222;
+  }
+}

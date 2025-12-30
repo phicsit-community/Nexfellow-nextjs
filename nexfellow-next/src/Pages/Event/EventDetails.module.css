@@ -1,0 +1,564 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  overflow: hidden;
+  padding: 30px 50px 0px 50px;
+  margin: 0 auto;
+}
+
+:global(.dark) .container {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+.backButtonContainer {
+  background: none;
+  border: none;
+  font-size: 20px;
+  font-weight: 500;
+  display: flex;
+  /* width: 90%; */
+  align-items: center;
+  /* padding: 5px 0px 5px 30px; */
+  transition: color 0.3s ease;
+  /* margin-top: 10px; */
+  justify-content: space-between;
+  height: 5%;
+  margin-bottom: 20px;
+}
+
+:global(.dark) .backButtonContainer {
+  color: var(--color-foreground);
+}
+
+.moreButton {
+  background: none;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 0%;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  flex-direction: row;
+  align-items: flex-end;
+}
+
+:global(.dark) .moreButton {
+  color: var(--color-foreground);
+}
+
+.shareButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  font-size: 18px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+:global(.dark) .shareButton {
+  color: var(--color-foreground);
+}
+
+.registerButton {
+  padding: 8px 20px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 300;
+}
+
+.contestCard {
+  background: #e5fffe;
+  border-radius: 12px;
+  /* padding: 40px; */
+  position: relative;
+  /* display: flex;
+    justify-content: center;
+    align-items: center; */
+  width: 100%;
+  overflow: hidden;
+  /* height: 16vw; */
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20%;
+  justify-content: space-between;
+}
+
+.parent {
+  width: 100% !important;
+}
+
+.contestCardInfo {
+  padding-bottom: 15px;
+  /* width: 100%; */
+}
+
+.contestCardInfoText {
+  font-size: 24px;
+}
+
+.seeYouAtTheEvent h3 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.layoutContainer {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  width: 100%;
+}
+
+.mainContentContainer {
+  flex: 2;
+  overflow-y: auto;
+  scrollbar-width: none;
+  position: relative;
+  padding: 10px 0px 0px 0px;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  /* height: 100%; */
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0px 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.headerLeft,
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  color: #333;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.shareText {
+  font-size: 18px;
+  color: #6a6a6a;
+}
+
+.freeTag {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: var(--color-primary);
+  color: white;
+  padding: 2px 20px;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 300;
+}
+
+.trophyImage {
+  width: 100%;
+  height: 100%;
+}
+
+.contestInfo {
+  /* padding: 30px; */
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); */
+  border: 1px solid #e0e0e0;
+  /* width: 40%; */
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.hostProfile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 15px;
+}
+
+.contestHeading {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+}
+
+.hostAvatar {
+  font-size: 12px;
+  width: 20px;
+  height: 20px;
+  background: #e0e0e0;
+  border-radius: 50%;
+  /* display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: #666; */
+  overflow: hidden;
+}
+
+.hostName {
+  font-size: 14px;
+  color: #666;
+}
+
+.dateTimeContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 15px;
+}
+
+.dateTime {
+  display: flex;
+  gap: 8px;
+  align-items: start;
+  font-size: 14px;
+}
+
+.time {
+  color: #666;
+  padding-top: 2px;
+}
+
+.description {
+  color: #666;
+  line-height: 1.5;
+  font-size: 14px;
+  margin: 0;
+}
+
+.eventTimer {
+  background: var(--color-primary) 1A;
+  padding: 20px;
+  border-radius: 8px;
+  color: black;
+}
+
+.eventTimer h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.timerGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.timerBox {
+  /* background: rgba(255, 255, 255, 0.1); */
+  background-color: var(--color-primary) 33;
+  padding: 8px 10px;
+  border-radius: 8px;
+  text-align: center;
+  width: fit-content;
+  margin: auto;
+}
+
+.number {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.unit {
+  font-size: 14px;
+  font-weight: 500;
+  /* opacity: 0.8; */
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.calendarButton,
+.cancelButton {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  /* border: 1px solid #e0e0e0; */
+  border-radius: 8px;
+  border: none;
+  background: white;
+  cursor: pointer;
+  font-size: 15px;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.calendarButton:hover,
+.cancelButton:hover {
+  background: #f5f5f5;
+}
+
+.calendarButtonContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  font-size: 18px;
+}
+
+.arrow {
+  width: 24px;
+  height: 24px;
+}
+
+.attendees {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatarGroup {
+  display: flex;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  background: #e0e0e0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: -8px;
+  border: 2px solid white;
+  font-weight: 500;
+  color: #666;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.attendeeCount {
+  color: #666;
+  font-size: 14px;
+}
+
+.hr {
+  margin-top: 15px;
+  border-color: #e6e6e6f5;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.seeYouAtTheEventContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.seeYouAtTheEventAvatar {
+  width: 40px;
+  height: 40px;
+  background: #e0e0e0;
+  border-radius: 50%;
+  /* display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    font-weight: 500;
+    color: #666; */
+  overflow: hidden;
+}
+
+:global(.dark) {
+
+  /* Container and header */
+  .container {
+    background: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  .backButtonContainer {
+    color: var(--color-foreground);
+  }
+
+  .moreButton {
+    color: var(--color-foreground);
+  }
+
+  .shareButton {
+    color: var(--color-foreground);
+  }
+
+  /* Header actions and text */
+  .backButton {
+    color: var(--color-foreground);
+  }
+
+  .shareText {
+    color: var(--color-muted-foreground);
+  }
+
+  /* Primary CTAs */
+  .registerButton {
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
+  }
+
+  .freeTag {
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
+  }
+
+  /* Contest card surface */
+  .contestCard {
+    background: color-mix(in oklch, var(--color-primary) 12%, transparent);
+  }
+
+  /* Content text */
+  .contestCardInfoText {
+    color: var(--color-foreground);
+  }
+
+  .seeYouAtTheEvent h3 {
+    color: var(--color-foreground);
+  }
+
+  /* Main content */
+  .mainContent {
+    color: var(--color-foreground);
+  }
+
+  .header {
+    color: var(--color-foreground);
+  }
+
+  .headerLeft,
+  .headerRight {
+    color: var(--color-foreground);
+  }
+
+  /* Info panel surface */
+  .contestInfo {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    color: var(--color-foreground);
+  }
+
+  /* Host info */
+  .hostAvatar {
+    background: var(--color-muted);
+  }
+
+  .hostName {
+    color: var(--color-muted-foreground);
+  }
+
+  .contestHeading {
+    color: var(--color-foreground);
+  }
+
+  /* Datetime and description */
+  .dateTime {
+    color: var(--color-foreground);
+  }
+
+  .time {
+    color: var(--color-muted-foreground);
+  }
+
+  .description {
+    color: var(--color-muted-foreground);
+  }
+
+  /* Event timer */
+  .eventTimer {
+    background: color-mix(in oklch, var(--color-primary) 12%, transparent);
+    color: var(--color-foreground);
+  }
+
+  .timerBox {
+    background-color: color-mix(in oklch, var(--color-primary) 20%, transparent);
+  }
+
+  .number,
+  .unit {
+    color: var(--color-foreground);
+  }
+
+  /* Actions */
+  .calendarButton,
+  .cancelButton {
+    background: var(--color-card);
+    color: var(--color-muted-foreground);
+  }
+
+  .calendarButton:hover,
+  .cancelButton:hover {
+    background: var(--color-accent);
+    color: var(--color-accent-foreground);
+  }
+
+  /* Avatars */
+  .avatar {
+    background: var(--color-muted);
+    border-color: var(--color-background);
+    color: var(--color-muted-foreground);
+  }
+
+  .avatar img {
+    /* no color changes */
+  }
+
+  .attendeeCount {
+    color: var(--color-muted-foreground);
+  }
+
+  /* Rules and separators */
+  .hr {
+    border-color: var(--color-border);
+  }
+
+  /* See you section */
+  .seeYouAtTheEventContainer {
+    color: var(--color-foreground);
+  }
+
+  .seeYouAtTheEventAvatar {
+    background: var(--color-muted);
+  }
+}

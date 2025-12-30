@@ -1,0 +1,697 @@
+/* Updated CSS with improved responsiveness and UI/UX */
+.container {
+  padding: 1rem;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  background-color: #f9fafb;
+}
+
+.card {
+  max-width: 1200px;
+  width: 100%;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.searchInput {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  width: 280px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #22b2b4;
+  box-shadow: 0 0 0 3px rgba(34, 178, 180, 0.2);
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.5rem;
+}
+
+.table th {
+  background-color: #f5f7fa;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #4b5563;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.table td {
+  background-color: #fff;
+  padding: 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.profileImage {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e5e5e5;
+  transition: transform 0.2s ease;
+}
+
+.profileImage:hover {
+  transform: scale(1.05);
+  border-color: #22b2b4;
+}
+
+.badge {
+  height: 20px;
+  margin-right: 0.5rem;
+}
+
+.badgePill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 999px;
+  background-color: #e6f4ea;
+  color: #2e7d32;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.badgePill img {
+  width: 18px;
+  height: 18px;
+  margin-right: 0.5rem;
+}
+
+.badgeGrey {
+  background-color: #f0f0f0;
+  color: #6b7280;
+}
+
+.table td input[type="checkbox"],
+.table th input[type="checkbox"] {
+  width: 5px;
+  height: 5px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 2px solid #22b2b4;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  background-color: #fff;
+  transition: all 0.2s ease;
+  display: inline-block;
+  box-sizing: border-box;
+  padding: 8px;
+}
+
+.table td input[type="checkbox"]:checked {
+  background-color: #22b2b4;
+}
+
+.table td input[type="checkbox"]:checked::after {
+  content: "✓";
+  font-size: 14px;
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.table td input[type="checkbox"]:hover {
+  background-color: #e0f7fa;
+}
+
+/* Improved Buttons */
+.button {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-width: 110px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  color: #22b2b4;
+  background-color: #e0f7fa;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+.buttonGreen {
+  background-color: #22b2b4d8;
+  color: white;
+}
+
+.buttonGreen:hover {
+  background-color: #15787ad8;
+}
+
+.buttonRed {
+  background-color: #ef4444;
+  color: white;
+}
+
+.buttonRed:hover {
+  background-color: #dc2626;
+}
+
+.bulkActions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border-radius: 8px;
+}
+
+.bulkCount {
+  font-weight: 600;
+  color: #4b5563;
+  background: #e0f7fa;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0px;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.pagination button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 35px;
+  height: 35px;
+  padding: 4px 10px;
+  margin: 0 3px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #e5e7eb;
+  outline: none;
+  border-radius: 6px;
+  background-color: white;
+  cursor: pointer;
+  gap: 5px;
+  transition: all 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.pagination button.active {
+  background-color: #22b2b4;
+  color: #ffffff;
+  border-color: #22b2b4;
+}
+
+.pagination button:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.pagination .dots {
+  cursor: pointer;
+  background-color: transparent;
+  color: #4b5563;
+}
+
+/* Skeleton Loading Styles */
+.skeletonRow {
+  height: 70px;
+}
+
+.skeletonCheckbox {
+  width: 20px;
+  height: 20px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+}
+
+.skeletonProfileImage {
+  width: 50px;
+  height: 50px;
+  background-color: #e5e7eb;
+  border-radius: 50%;
+}
+
+.skeletonText {
+  width: 120px;
+  height: 20px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+}
+
+.skeletonBadge {
+  width: 80px;
+  height: 26px;
+  background-color: #e5e7eb;
+  border-radius: 999px;
+}
+
+.skeletonButton {
+  width: 120px;
+  height: 36px;
+  background-color: #e5e7eb;
+  border-radius: 8px;
+}
+
+.skeletonPagination {
+  width: 80px;
+  height: 36px;
+  background-color: #e5e7eb;
+  border-radius: 8px;
+}
+
+.skeletonTitle {
+  width: 200px;
+  height: 36px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+}
+
+.skeletonSearch {
+  width: 280px;
+  height: 42px;
+  background-color: #e5e7eb;
+  border-radius: 8px;
+}
+
+/* Shimmer Animation */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(255, 255, 255, 0.5) 60%,
+      rgba(255, 255, 255, 0));
+  animation: shimmer 3s infinite;
+  content: "";
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Mobile and Tablet Responsive Styles */
+@media (max-width: 1024px) {
+  .card {
+    padding: 1.5rem;
+  }
+
+  .header {
+    margin-bottom: 1.25rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0.75rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+    border-radius: 10px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .searchInput {
+    width: 100%;
+  }
+
+  .bulkActions {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.75rem;
+  }
+
+  .button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0.5rem;
+  }
+
+  .card {
+    padding: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Table transformations for mobile */
+  .table,
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tr {
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    padding: 1rem;
+    background-color: white;
+    position: relative;
+  }
+
+  .table td {
+    padding: 0.5rem 0;
+    border: none;
+    position: relative;
+  }
+
+  .table td:before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #4b5563;
+    margin-right: 0.5rem;
+  }
+
+  .table td:first-child {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: auto;
+    padding: 0;
+  }
+
+  /* Profile Info Layout */
+  .mobileProfileSection {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.5rem 0;
+  }
+
+  .mobileProfileInfo {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .badgeSection {
+    margin: 0.75rem 0;
+  }
+
+  .actionSection {
+    margin-top: 0.75rem;
+  }
+
+  .pagination {
+    gap: 2px;
+  }
+
+  .pagination button {
+    min-width: 32px;
+    height: 32px;
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+}
+
+:global(.dark) {
+  .container {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  .card {
+    background-color: var(--color-card);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+    color: var(--color-foreground);
+  }
+
+  .title {
+    color: var(--color-foreground);
+  }
+
+  .searchInput {
+    border: 1px solid var(--color-border);
+    transition: all 0.3s ease;
+    box-shadow: none;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  .searchInput:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(34, 178, 180, 0.4);
+    background-color: var(--color-card);
+  }
+
+  .table th {
+    background-color: var(--color-card);
+    color: var(--color-muted-foreground);
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+
+  .table td {
+    background-color: var(--color-background);
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-foreground);
+  }
+
+  .profileImage {
+    border: 2px solid var(--color-border);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .profileImage:hover {
+    transform: scale(1.05);
+    border-color: var(--color-primary);
+  }
+
+  .badgePill {
+    background-color: rgba(46, 125, 50, 0.2);
+    color: #a5d6a7;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .badgeGrey {
+    background-color: var(--color-card);
+    color: var(--color-muted-foreground);
+  }
+
+  /* Checkboxes */
+  .table td input[type="checkbox"],
+  .table th input[type="checkbox"] {
+    border: 2px solid var(--color-primary);
+    background-color: var(--color-background);
+  }
+
+  .table td input[type="checkbox"]:checked {
+    background-color: var(--color-primary);
+  }
+
+  .table td input[type="checkbox"]:checked::after {
+    color: white;
+  }
+
+  .table td input[type="checkbox"]:hover {
+    background-color: rgba(34, 178, 180, 0.15);
+  }
+
+  /* Buttons */
+  .button {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    color: var(--color-primary);
+    background-color: rgba(34, 178, 180, 0.15);
+  }
+
+  .button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    background-color: rgba(34, 178, 180, 0.3);
+  }
+
+  .button:active {
+    transform: translateY(0);
+  }
+
+  .buttonGreen {
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+    box-shadow: 0 2px 6px rgba(21, 120, 122, 0.6);
+  }
+
+  .buttonGreen:hover {
+    background-color: #15787a;
+    box-shadow: 0 4px 12px rgba(21, 120, 122, 0.8);
+  }
+
+  .buttonRed {
+    background-color: #ef4444;
+    color: white;
+    box-shadow: 0 2px 6px rgba(200, 40, 40, 0.6);
+  }
+
+  .buttonRed:hover {
+    background-color: #dc2626;
+    box-shadow: 0 4px 12px rgba(200, 40, 40, 0.8);
+  }
+
+  .bulkActions {
+    background-color: var(--color-card);
+  }
+
+  .bulkCount {
+    color: var(--color-muted-foreground);
+    background: rgba(34, 178, 180, 0.15);
+  }
+
+  .pagination button {
+    border: 1px solid var(--color-border);
+    background-color: var(--color-card);
+    transition: all 0.2s ease;
+    color: var(--color-foreground);
+  }
+
+  .pagination button:hover:not(:disabled) {
+    background-color: var(--color-muted);
+    border-color: var(--color-primary);
+  }
+
+  .pagination button.active {
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+    border-color: var(--color-primary);
+  }
+
+  .pagination button:disabled {
+    background-color: var(--color-muted);
+    color: var(--color-border);
+    cursor: not-allowed;
+  }
+
+  .pagination .dots {
+    cursor: pointer;
+    background-color: transparent;
+    color: var(--color-muted-foreground);
+  }
+
+  /* Skeleton Loading */
+  .skeletonRow {
+    height: 70px;
+  }
+
+  .skeletonCheckbox,
+  .skeletonProfileImage,
+  .skeletonText,
+  .skeletonBadge,
+  .skeletonButton,
+  .skeletonPagination,
+  .skeletonTitle,
+  .skeletonSearch {
+    background-color: var(--color-border);
+    border-radius: 4px;
+  }
+
+  /* Shimmer Animation */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-border);
+  }
+
+  .shimmer::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg,
+        rgba(255, 255, 255, 0) 0,
+        rgba(255, 255, 255, 0.15) 20%,
+        rgba(255, 255, 255, 0.3) 60%,
+        rgba(255, 255, 255, 0));
+    animation: shimmer 3s infinite;
+    content: "";
+  }
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
