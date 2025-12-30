@@ -1,0 +1,395 @@
+/* Base (light) ------------------------------------------------------------- */
+.skeleton {
+  background: #e0e0e0;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+/* Shared shimmer keyframes (constant-speed sweep across any width) */
+@keyframes shimmerMove {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Child shimmer layer (if you render a .shimmer div inside .skeleton) */
+.shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+      #e0e0e0 0%,
+      #e0e0e0 35%,
+      #ffffff 50%,
+      #e0e0e0 65%,
+      #e0e0e0 100%);
+  background-size: 200% 100%;
+  animation: shimmerMove 5s linear infinite;
+}
+
+/* If you prefer ::after shimmer on a block like .skeletonPost */
+.skeletonPost {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonPost::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.2) 30%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0.2) 70%,
+      rgba(255, 255, 255, 0) 100%);
+  background-size: 200% 100%;
+  animation: shimmerMove 5s linear infinite;
+}
+
+/* ChallengeCard Skeletons */
+.challengeCard {
+  width: 318px;
+  height: 292px;
+}
+
+.challengeCardImage {
+  width: 100%;
+  height: 180px;
+}
+
+.challengeCardTitle {
+  width: 70%;
+  height: 24px;
+  margin: 10px 0;
+}
+
+.challengeCardText {
+  width: 50%;
+  height: 18px;
+  margin: 8px 0;
+}
+
+.challengeCardFooter {
+  width: 100%;
+  height: 25px;
+  margin-top: 10px;
+}
+
+/* Post Skeletons */
+.postCard {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 20px;
+}
+
+.postHeader {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.postAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.postUserInfo {
+  flex: 1;
+}
+
+.postUserName {
+  width: 120px;
+  height: 18px;
+  margin-bottom: 8px;
+}
+
+.postUsername {
+  width: 80px;
+  height: 14px;
+}
+
+.postContent {
+  width: 100%;
+  height: 100px;
+  margin-bottom: 15px;
+}
+
+.postActions {
+  width: 100%;
+  height: 30px;
+}
+
+/* Community Card Skeletons */
+.communityCard {
+  width: 100%;
+  height: 120px;
+  margin-bottom: 15px;
+  display: flex;
+  gap: 16px;
+}
+
+.communityImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+}
+
+.communityInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+.communityTitle {
+  width: 70%;
+  height: 20px;
+}
+
+.communityDesc {
+  width: 90%;
+  height: 16px;
+}
+
+.communityButton {
+  width: 80px;
+  height: 36px;
+  border-radius: 6px;
+}
+
+/* Member Skeletons */
+.memberItem {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.memberAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.memberInfo {
+  flex: 1;
+  margin: 0 16px;
+}
+
+.memberName {
+  width: 120px;
+  height: 18px;
+  margin-bottom: 8px;
+}
+
+.memberUsername {
+  width: 80px;
+  height: 14px;
+}
+
+.memberButton {
+  width: 80px;
+  height: 36px;
+  border-radius: 6px;
+}
+
+/* Sidebar Item Skeletons */
+.sidebarItem {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0;
+}
+
+.sidebarImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+}
+
+.sidebarInfo {
+  flex: 1;
+}
+
+.sidebarTitle {
+  width: 120px;
+  height: 18px;
+  margin-bottom: 8px;
+}
+
+.sidebarSubtitle {
+  width: 80px;
+  height: 14px;
+}
+
+/* NoJoinedCommunity skeleton */
+.noJoinedIllustration {
+  width: 40%;
+  height: 200px;
+  margin-bottom: 10px;
+}
+
+.noJoinedText {
+  width: 60%;
+  height: 30px;
+  margin-bottom: 30px;
+}
+
+.noJoinedButton {
+  width: 150px;
+  height: 45px;
+  border-radius: 6px;
+}
+
+/* Community card skeleton */
+.card {
+  width: 30%;
+  height: 150px;
+  border-radius: 8px;
+}
+
+.cardImage {
+  width: 95%;
+  height: 100px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.cardTitle {
+  width: 70%;
+  height: 18px;
+  margin-bottom: 8px;
+}
+
+.cardSubtitle {
+  width: 50%;
+  height: 14px;
+}
+
+/* Community list skeletons */
+.communityItem {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  margin-bottom: 30px;
+}
+
+.communityImage {
+  width: 40%;
+  height: 100px;
+  border-radius: 8px;
+}
+
+.communityDetails {
+  width: 55%;
+  height: 100px;
+  margin-left: 16px;
+}
+
+.communityTitle {
+  width: 70%;
+  height: 18px;
+  margin-bottom: 8px;
+}
+
+.communityUsername {
+  width: 40%;
+  height: 14px;
+  margin-bottom: 12px;
+}
+
+.communityDescription {
+  width: 90%;
+  height: 14px;
+}
+
+/* ------------------------------------------------------------------------ */
+/* Dark Mode (class-based) — ensure .dark is added to html/body globally    */
+/* CSS Modules require :global() for document-level selectors               */
+/* ------------------------------------------------------------------------ */
+:global(.dark) {
+
+  /* Base skeleton with dark gradient */
+  .skeleton {
+    background: #222;
+    /* fallback surface under shimmer */
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  /* Dark-mode shimmer for child .shimmer */
+  .shimmer {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+        #444444 0%,
+        #444444 35%,
+        rgba(255, 255, 255, 0.28) 50%,
+        #444444 65%,
+        #444444 100%);
+    background-size: 200% 100%;
+    animation: shimmerMove 5s linear infinite;
+  }
+
+  /* Dark-mode ::after shimmer for blocks like .skeletonPost */
+  .skeletonPost {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--card, #222);
+  }
+
+  .skeletonPost::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(90deg,
+        rgba(255 255 255 / 0) 0%,
+        rgba(255 255 255 / 0.10) 30%,
+        rgba(255 255 255 / 0.30) 50%,
+        rgba(255 255 255 / 0.10) 70%,
+        rgba(255 255 255 / 0) 100%);
+    background-size: 200% 100%;
+    animation: shimmerMove 5s linear infinite;
+  }
+
+  /* Optional: keep your existing dark surfaces where needed */
+  .skeletonAnalytic {
+    background-color: var(--card, #222);
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(255 255 255 / 0.1);
+  }
+
+  .skeletonAvatar {
+    background-color: #444;
+  }
+
+  .skeletonText {
+    background-color: #444;
+  }
+
+  .skeletonImageItem {
+    background-color: #444;
+  }
+
+  .skeletonImage {
+    background-color: #444;
+  }
+
+  .skeletonAction {
+    background-color: #444;
+  }
+}

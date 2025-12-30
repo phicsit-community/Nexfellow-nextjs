@@ -1,0 +1,364 @@
+.container {
+  position: relative;
+  display: inline-block;
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0px 10px 0px 0px;
+  border-radius: 20px;
+  height: 100%;
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.iconContainer .info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #64748b;
+  width: 16px;
+  transition: color 0.3s ease;
+}
+
+/* Hover effects - only change icon and text color */
+.iconContainer:hover .shareIcon {
+  color: #24b2b4;
+  background-color: rgba(1, 230, 255, 0.1);
+  .icon {
+    color: #24b2b4;
+  }
+}
+
+/* .iconContainer:hover .info {
+  color: #24b2b4;
+} */
+
+.iconContainer p {
+  font-size: 16px;
+  margin: 0;
+  color: #000000;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  color: #64748b;
+}
+
+.menu {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 16px;
+  width: fit-content;
+}
+
+:global(.dark) .menu {
+  background: var(--color-card);
+  border-color: var(--color-border);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.menuBottom {
+  top: 100%; /* Position below the icon */
+  margin-top: 8px;
+}
+
+.menuTop {
+  bottom: 100%; /* Position above the icon */
+  margin-bottom: 8px;
+}
+
+.menuContent h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  text-align: center;
+  color: #333;
+}
+
+:global(.dark) .menuContent h3 {
+  color: var(--color-foreground);
+}
+
+.socialButtons {
+  display: flex;
+  gap: 12px;
+  width: fit-content;
+}
+
+.socialButtonWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.label {
+  font-size: 0.75rem;
+  color: #666;
+  text-transform: capitalize;
+  transition: all 0.3s ease-in-out;
+  align-self: center;
+  text-wrap: none;
+  width: fit-content;
+  white-space: nowrap;
+}
+
+:global(.dark) .label {
+  color: var(--color-muted-foreground);
+}
+
+.socialButtonWrapper:hover .label {
+  color: #333;
+}
+
+:global(.dark) .socialButtonWrapper:hover .label {
+  color: var(--color-foreground);
+}
+
+.copyUrlWrapper {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.closeButton {
+  margin-top: 16px;
+  padding: 8px 16px;
+  background: #000000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 14px;
+  transition: all 0.3s ease-in-out;
+}
+
+.closeButton:hover {
+  background: #171717;
+}
+
+/* Enhanced Mobile Modal Styles */
+.mobileModal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  z-index: 2002;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+:global(.dark) .mobileModal {
+  background-color: var(--color-card);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 2001;
+  touch-action: none; /* Prevent scrolling on mobile */
+}
+
+:global(.dark) .modalOverlay {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+:global(.dark) .modalHeader {
+  border-bottom-color: var(--color-border);
+}
+
+.modalHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+:global(.dark) .modalHeader h3 {
+  color: var(--color-foreground);
+}
+
+.closeModalBtn {
+  background: none;
+  border: none;
+  color: #777;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+  padding: 0;
+}
+
+:global(.dark) .closeModalBtn {
+  color: var(--color-muted-foreground);
+}
+
+.closeModalBtn:hover {
+  color: #333;
+}
+
+:global(.dark) .closeModalBtn:hover {
+  color: var(--color-foreground);
+}
+
+.modalBody {
+  padding: 16px 20px;
+}
+
+.modalText {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+}
+
+:global(.dark) .modalText {
+  color: var(--color-muted-foreground);
+}
+
+.linkPreview {
+  display: flex;
+  align-items: center;
+  background-color: #f8f8f8;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+:global(.dark) .linkPreview {
+  background-color: var(--color-accent);
+}
+
+.linkIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  background-color: rgba(36, 178, 180, 0.1);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+}
+
+.linkText {
+  flex-grow: 1;
+  font-size: 14px;
+  color: #444;
+  word-break: break-all;
+  overflow: hidden;
+}
+
+:global(.dark) .linkText {
+  color: var(--color-foreground);
+}
+
+/* Bottom sharing buttons container */
+.shareButtonsContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 16px 20px 24px; /* Extra padding at bottom for better tap targets */
+  background-color: #f9f9f9;
+  border-top: 1px solid #f0f0f0;
+  width: 100%;
+}
+
+:global(.dark) .shareButtonsContainer {
+  background-color: var(--color-background);
+  border-top-color: var(--color-border);
+}
+
+.shareButtonsContainer .socialButtonWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.shareButtonsContainer .label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+}
+
+:global(.dark) .shareButtonsContainer .label {
+  color: var(--color-muted-foreground);
+}
+
+.copyButton {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.copyButton:hover,
+.copyButton:active {
+  background-color: #000;
+  /* transform: scale(0.95); */
+}
+
+.shareIcon {
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+/* Media queries for responsive layout */
+@media screen and (max-width: 480px) {
+  .socialButtons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .socialButtonWrapper {
+    width: calc(50% - 12px);
+    margin-bottom: 16px;
+  }
+}

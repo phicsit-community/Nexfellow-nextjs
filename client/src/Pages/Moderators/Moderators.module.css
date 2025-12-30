@@ -1,0 +1,147 @@
+/* Moderators.module.css */
+
+/* =============== Base Container =============== */
+.container {
+  padding: 24px 32px;
+  max-width: 1200px;
+  margin: auto;
+  font-family: "Inter", sans-serif;
+  color: #111;
+  background: #fff;
+}
+
+/* =============== Back Button =============== */
+.back {
+  margin-bottom: 12px;
+}
+
+/* =============== Title & Subtitle =============== */
+.title {
+  display: flex;
+  align-items: center;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  color: #555;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+/* =============== Search Bar =============== */
+.searchWrapper {
+  position: relative;
+  margin-bottom: 24px;
+  max-width: 40%;
+}
+
+.searchIcon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #aaa;
+}
+
+.search {
+  width: 100%;
+  padding: 10px 12px 10px 36px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* =============== Tabs =============== */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 24px;
+}
+
+.tab {
+  padding: 10px 16px;
+  font-size: 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.tab:hover {
+  color: #000;
+}
+
+.active {
+  color: #000;
+  border-bottom: 2px solid #00c2a8;
+  font-weight: 600;
+}
+
+:global(.dark) {
+
+  /* Base Container */
+  .container {
+    background: var(--card, #1e1e1e);
+    color: var(--foreground, #eee);
+  }
+
+  /* Back Button */
+  .back {
+    /* no color changes needed, presumed text inherits container color */
+  }
+
+  /* Title & Subtitle */
+  .title {
+    color: var(--foreground, #eee);
+  }
+
+  .subtitle {
+    color: var(--muted-foreground, #999);
+  }
+
+  /* Search Bar */
+  .searchWrapper {
+    /* no background, just position */
+  }
+
+  .searchIcon {
+    color: var(--muted-foreground, #777);
+  }
+
+  .search {
+    background-color: var(--card, #2a2a2a);
+    border: 1px solid var(--color-border, #444);
+    color: var(--foreground, #eee);
+  }
+
+  .search::placeholder {
+    color: var(--muted-foreground, #777);
+  }
+
+  /* Tabs */
+  .tabs {
+    border-bottom: 1px solid var(--color-border, #444);
+    margin-bottom: 24px;
+  }
+
+  .tab {
+    color: var(--muted-foreground, #888);
+    transition: color 0.2s;
+  }
+
+  .tab:hover {
+    color: var(--foreground, #eee);
+  }
+
+  .active {
+    color: var(--color-primary, #00c2a8);
+    border-bottom: 2px solid var(--color-primary, #00c2a8);
+    font-weight: 600;
+  }
+}

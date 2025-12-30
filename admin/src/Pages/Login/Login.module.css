@@ -1,0 +1,140 @@
+.container {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  background-color: #e5fffe;
+}
+
+.infoContainer {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background-color: #1f2937; */
+  color: black;
+}
+
+.info {
+  width: 500px;
+  height: 450px;
+  /* border: 3px solid black; */
+  object-fit: contain;
+  margin: 0 auto;
+  margin-right: 4rem;
+}
+
+.logo {
+  width: 275px;
+  /* border: 3px solid black; */
+  
+}
+.loginContainer {
+  background-color: white;
+  color: black;
+  height: 100%;
+  border-radius: 0 40px 40px 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* padding-left: 100px; */
+  gap: 5rem;
+}
+
+.loginFormContainer {
+  /* width: 400px; */
+  /* background-color: #f3f4f6; */
+  border-radius: 0 4rem 3rem 0;
+  border-radius: 10px;
+  /* border: 1px solid #d1d5db; */
+}
+
+.loginInfo {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+  padding: 1.5rem;
+
+  h3 {
+    letter-spacing: -0.025em;
+    font-weight: 600;
+    font-size: 1.5rem;
+    line-height: 2rem;
+    text-align: center;
+    margin: 0;
+  }
+  p {
+    color: #6a6a6a;
+    font-weight: 400;
+    /* font-size: ; */
+  }
+}
+
+.loginInputContainer {
+  padding-top: 0px;
+  padding-bottom: 1rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  display: grid;
+  gap: 4rem;
+}
+
+.inputContainer {
+  display: grid;
+  /* gap: 0.2rem; */
+  width: 521px;
+  height: 38px;
+  color: rgb(0, 0, 0);
+
+  label {
+    font-size: 0.875rem;
+    line-height: 1;
+    font-weight: 500;
+  }
+  .imp {
+    color: red;
+    margin-left: 5px;
+  }
+  input {
+    padding: 0.5rem 0.5rem;
+    border-radius: 5px;
+    border: 1px solid #d1d5db;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+}
+
+.inputContainer input::placeholder {
+  color: #6a6a6a;
+}
+
+.loginButtonContainer {
+  width: 570px;
+  padding-top: 2rem;
+  padding-bottom: 1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  display: flex;
+  justify-content: center;
+
+  button {
+    width: 100%;
+    height: 38px;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    /* width: 100%; */
+    border: none;
+    background-color: #24b2b4;
+    color: white;
+    font-size: 1.2rem;
+    line-height: 1.25rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    &:hover {
+      background-color: #24b2b4;
+    }
+  }
+}

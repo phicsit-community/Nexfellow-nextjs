@@ -1,0 +1,154 @@
+.popover {
+  position: absolute;
+  width: 300px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  z-index: 10;
+  /* transition: top 0.2s ease-in-out, bottom 0.2s ease-in-out; */
+}
+
+:global(.dark) .popover {
+  background-color: var(--color-card);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.profilePic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.right {
+  width: 30%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.followBtn {
+  display: flex;
+  box-sizing: border-box;
+  height: 32px;
+  padding: 6px 15px;
+  font-size: 12px;
+  border-radius: 8px;
+  background-color: #22b2b4;
+  color: white;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 85px;
+}
+
+.unfollowBtn {
+  display: flex;
+  box-sizing: border-box;
+  height: 32px;
+  padding: 6px 15px;
+  font-size: 12px;
+  border-radius: 8px;
+  background-color: white;
+  color: #22b2b4;
+  border: 1px solid #22b2b4;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 85px;
+}
+
+:global(.dark) .unfollowBtn {
+  background-color: var(--color-card);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.spinner {
+  border: 2px solid transparent;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 0.6s linear infinite;
+  margin: auto;
+}
+
+.spinner.follow {
+  border-color: rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+}
+
+.spinner.unfollow {
+  border-color: rgba(34, 178, 180, 0.3);
+  border-top-color: #22b2b4;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.followNo {
+  color: #6a6a6a;
+}
+
+:global(.dark) .followNo {
+  color: var(--color-muted-foreground);
+}
+
+.communityName {
+  font-weight: 500;
+  font-size: 18px;
+}
+
+:global(.dark) .communityName {
+  color: var(--color-foreground);
+}
+
+.username {
+  color: #6a6a6a;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+:global(.dark) .username {
+  color: var(--color-muted-foreground);
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.bio {
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 18px;
+  font-weight: 400;
+}
+
+:global(.dark) .bio {
+  color: var(--color-foreground);
+}
+
+.viewProfileButton {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}

@@ -1,0 +1,293 @@
+/* @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+.maintable {
+  width: 1020px;
+  height: 500px;
+
+  -webkit-scrollbar: none;
+  padding: 1rem;
+}
+
+.tablebody {
+  width: 100%;
+  height: 90%;
+  overflow-y: scroll;
+  margin: 0 auto;
+}
+
+.tablebody::-webkit-scrollbar {
+  display: none;
+}
+.headtable {
+  width: 955px;
+  height: 48px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 10rem;
+
+  border-radius: 8px;
+  background-color: #ededed;
+  margin: 0 auto;
+  font-family: "Inter", serif;
+  font-size: 18px;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+
+  padding-right: 1.4rem;
+}
+
+.tablerow {
+  width: 941px;
+  display: flex;
+  align-items: start;
+  justify-content: space-around;
+  gap: 10rem;
+
+  background-color: #ffff;
+  margin: 2% auto;
+  font-family: "Inter", serif;
+  font-size: 18px;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.text {
+  padding-right: 1rem;
+} */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+.maintable {
+  width: 1020px;
+  height: 500px;
+  overflow: hidden;
+  padding: 1rem;
+  margin: 0 auto;
+}
+
+.tablebody {
+  width: 100%;
+  height: 90%;
+  overflow-y: auto;
+  margin: 0 auto;
+}
+
+.tablebody::-webkit-scrollbar {
+  display: none;
+}
+
+.headtable {
+  width: 955px;
+  height: 48px;
+  display: flex;
+  justify-content: space-between; /* Adjusted for even spacing */
+  align-items: center;
+  gap: 2rem; /* Reduced for better fit */
+  border-radius: 8px;
+  background-color: #ededed;
+  margin: 0 auto;
+  font-family: "Inter", serif;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 0 1.4rem;
+  text-align: center; /* Ensures proper alignment */
+}
+.headtable div {
+  width: 20%;
+  text-align: start;
+  /* border: 2px solid black; */
+}
+
+.tablerow {
+  width: 955px; /* Matches headtable width */
+  display: flex;
+  justify-content: space-between; /* Adjusted for even spacing */
+  align-items: center;
+  gap: 2rem; /* Matches headtable spacing */
+  background-color: #ffffff;
+  margin: 10px auto; /* Increased margin for clarity */
+  font-family: "Inter", serif;
+  font-size: 16px; /* Reduced slightly for better readability */
+  font-weight: 500;
+  border-radius: 6px; /* Added for consistency */
+  padding: 0.5rem 1.4rem;
+}
+
+.tablerow div {
+  width: 20%;
+  text-align: start;
+  /* border: 2px solid black; */
+}
+
+.headtable1 {
+  width: 955px; /* Matches tablerow1 width */
+  height: auto; /* Adjust height to fit content */
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Adjusted to match 4 columns */
+  border-radius: 6px; /* Matches tablerow1 */
+  background-color: #ededed;
+  margin: 10px auto; /* Matches tablerow1 margin */
+  text-align: center;
+  padding: 0.5rem 1rem; /* Matches tablerow1 padding */
+  align-items: center; /* Aligns grid items vertically */
+}
+
+.headtable1 div {
+  width: 100%; /* Ensures full width in each grid cell */
+  text-align: start;
+  /* border: 2px solid black; */
+  font-family: "Inter", serif;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 0.5rem; /* Matches tablerow1 child padding */
+  box-sizing: border-box;
+  display: flex;
+  justify-content: start; /* Centers content horizontally */
+  align-items: center; /* Centers content vertically */
+  /* text-align: start; */
+}
+
+.headtable1 div:last-child {
+  width: 70%;
+  margin-left: 5rem;
+  padding-left: 3rem;
+  /* border: 2px solid rgb(101, 2, 2); */
+  background-color: #f0f0f0; /* Example style */
+}
+
+.headtable1 div:nth-child(3) {
+  width: 130%;
+  /* border: 2px solid rgb(5, 233, 43); */
+}
+.tablerow1 {
+  width: 955px; /* Matches headtable width */
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Adjusted to match 4 equal columns */
+
+  background-color: #ffffff;
+  margin: 10px auto; /* Increased margin for clarity */
+  font-family: "Inter", serif;
+  font-size: 16px; /* Adjusted for better readability */
+  font-weight: 500;
+  border-radius: 6px; /* Added for consistency */
+  padding: 0.5rem 1.4rem;
+  /* border: 2px solid black; */
+}
+
+.tablerow1 div {
+  width: 100%;
+  display: flex;
+  justify-content: start; /* Centers the content horizontally */
+  align-items: center; /* Centers the content vertically */
+  padding: 0.5rem; /* Added padding for better readability */
+  box-sizing: border-box; /* Ensures padding does not affect width */
+  /* border: 2px solid black; */
+}
+
+.tablerow1 div:nth-child(3) {
+  width: 130%;
+  /* margin-left: 4rem; */
+  /* border: 2px solid rgb(5, 233, 43); */
+}
+.tablerow1 div:last-child {
+  width: 70%;
+  margin-left: 5rem;
+  padding-left: 3rem;
+  /* border: 2px solid rgb(101, 2, 2); */
+}
+.text {
+  padding-right: 1rem;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 1366px) {
+  .maintable {
+    width: 95%;
+    height: auto;
+    padding: 0.5rem;
+  }
+
+  .headtable,
+  .tablerow {
+    width: 100%;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .headtable {
+    font-size: 16px;
+  }
+
+  .tablerow {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .maintable {
+    width: 100%;
+    padding: 0.5rem;
+  }
+
+  .headtable,
+  .tablerow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem;
+  }
+
+  .headtable {
+    font-size: 14px;
+  }
+
+  .tablerow {
+    font-size: 12px;
+  }
+}
+
+.modalContainer {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 32rem;
+  width: 100%;
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.modalContent {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.modalLabel {
+  font-weight: 500;
+}
+
+.modalList {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.modalParagraph {
+  margin-bottom: 1rem;
+}
+
+.actionBtn {
+  display: flex;
+  flex-direction: row !important;
+  justify-content: start;
+  gap: 0.1rem;
+}

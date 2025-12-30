@@ -1,0 +1,348 @@
+.getGeeky {
+    background-color: #D3FFD0;
+    position: relative;
+    width: 100%;
+    min-height: 450px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+    box-sizing: border-box;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    text-align: center;
+    gap: 1rem;
+    position: relative;
+}
+
+.content {
+    flex: 2;
+    max-width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+}
+
+.content h2 {
+    font-size: 36px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    max-width: 900px;
+    color: #09090F;
+    font-family: 'Abhaya Libre ExtraBold', serif;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+    text-align: center;
+}
+
+.features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    font-size: 16px;
+    font-weight: 500;
+    color: #26252C;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.illustrationLeft,
+.illustrationRight {
+    flex: 1;
+    width: 300px;
+    height: auto;
+    gap: 1rem;
+    position: absolute;
+}
+
+.illustrationLeft {
+    align-self: flex-start;
+    left: -220px;
+    top: -110px;
+    width: 355px;
+}
+
+.illustrationRight {
+    align-self: flex-end;
+    right: -220px;
+    width: 250px;
+    top: 30px;
+}
+
+@media (max-width: 3000px) {
+    .container {
+        max-width: 1600px;
+    }
+
+    .illustrationLeft {
+        left: -200px;
+        top: -130px;
+    }
+
+    .illustrationRight {
+        right: -165px;
+        top: 10px;
+    }
+
+    .content h2 {
+        max-width: 1100px;
+    }
+}
+
+@media (max-width: 1600px) {
+    .container {
+        max-width: 1600px;
+    }
+
+    .illustrationLeft {
+        top: -127px;
+    }
+
+    .illustrationRight {
+        top: 12px;
+    }
+
+    .content h2 {
+        max-width: 1200px;
+    }
+}
+
+@media (max-width: 1400px) {
+    .container {
+        max-width: 1200px;
+    }
+
+    .illustrationLeft {
+        top: -105px;
+        left: -285px;
+    }
+
+    .illustrationRight {
+        top: 34px;
+        right: -280px;
+
+    }
+
+    .content h2 {
+        max-width: 800px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .container {
+        max-width: 700px;
+        flex: auto;
+    }
+
+    .illustrationLeft {
+        left: -225px;
+        top: -110px;
+        width: 350px;
+    }
+
+    .illustrationRight {
+        right: -225px;
+        bottom: -110px;
+    }
+
+    .content h2 {
+        font-size: 30px;
+        max-width: 800px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .container {
+        max-width: 700px;
+        flex: auto;
+    }
+
+    .illustrationLeft {
+        left: -225px;
+        top: -110px;
+        width: 350px;
+    }
+
+    .illustrationRight {
+        right: -225px;
+        bottom: -110px;
+    }
+
+    .content h2 {
+        font-size: 26px;
+        max-width: 700px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .container {
+        max-width: 1000px;
+        flex-wrap: nowrap;
+        z-index: 1;
+    }
+
+    .illustrationLeft,
+    .illustrationRight {
+        max-width: 200px;
+        width: 200px;
+        z-index: 0;
+    }
+
+    .illustrationLeft {
+        position: relative;
+        left: -16px;
+        top: -95px;
+    }
+
+    .illustrationRight {
+        position: relative;
+        right: -15px;
+        top: 96px;
+    }
+
+    .content {
+        max-width: 100%;
+        z-index: 2;
+    }
+
+    .content h2 {
+        font-size: 20px;
+        max-width: 800px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+        padding: 0 1rem;
+        flex-wrap: wrap;
+        z-index: 1;
+    }
+
+    .illustrationLeft,
+    .illustrationRight {
+        max-width: 150px;
+        width: 150px;
+        z-index: 0;
+    }
+
+    .illustrationLeft {
+        position: absolute;
+        left: -3%;
+        top: -140px;
+    }
+
+    .illustrationRight {
+        position: absolute;
+        right: -3%;
+        bottom: -141px;
+    }
+
+    .content {
+        max-width: 100%;
+        z-index: 2;
+    }
+
+    .content h2 {
+        font-size: 20px;
+        max-width: 90%;
+    }
+
+    .features {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        max-width: 100%;
+        padding: 0 1rem;
+        flex-wrap: wrap;
+        z-index: 1;
+    }
+
+    .illustrationLeft,
+    .illustrationRight {
+        max-width: 150px;
+        width: 150px;
+        z-index: 0;
+    }
+
+    .illustrationLeft {
+        position: absolute;
+        left: -5%;
+        top: -123px;
+    }
+
+    .illustrationRight {
+        position: absolute;
+        right: -5%;
+        bottom: -124px;
+    }
+
+    .content {
+        max-width: 95%;
+        z-index: 2;
+    }
+
+    .content h2 {
+        font-size: 18px;
+        max-width: 100%;
+    }
+
+    .features {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+        max-width: 100%;
+        padding: 0 0.5rem;
+        flex-wrap: wrap;
+        z-index: 1;
+    }
+
+    .illustrationLeft,
+    .illustrationRight {
+        max-width: 100px;
+        width: 100px;
+        z-index: 0;
+    }
+
+    .illustrationLeft {
+        position: absolute;
+        left: -6%;
+        top: -132px;
+    }
+
+    .illustrationRight {
+        position: absolute;
+        right: -7%;
+        bottom: -132px;
+    }
+
+    .content {
+        max-width: 100%;
+        z-index: 2;
+    }
+
+    .content h2 {
+        font-size: 16px;
+        max-width: 100%;
+    }
+
+    .features {
+        font-size: 8px;
+    }
+}

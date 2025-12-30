@@ -1,0 +1,130 @@
+.hiddenPostItem {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  position: relative;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.hiddenPostItem:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.postContent {
+  opacity: 0.8;
+}
+
+.authorInfo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.authorAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.75rem;
+}
+
+.authorDetails {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.authorName {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.authorUsername {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.postDate {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.postText {
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #444;
+}
+
+.postMediaInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.mediaIcon {
+  font-size: 1rem;
+}
+
+.hiddenStatus {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #888;
+  font-size: 0.8rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.unhideButton {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.unhideButton:hover {
+  background-color: #e0e0e0;
+  border-color: #ccc;
+}
+
+@media (max-width: 768px) {
+  .hiddenPostItem {
+    padding: 0.75rem;
+  }
+
+  .authorAvatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .postText {
+    font-size: 0.9rem;
+  }
+
+  .unhideButton {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
+  }
+}

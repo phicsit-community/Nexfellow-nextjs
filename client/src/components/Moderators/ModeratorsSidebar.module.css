@@ -1,0 +1,238 @@
+.sidebar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 35%;
+    align-items: center;
+    overflow-y: auto;
+    scrollbar-width: none;
+    margin: 30px 0px 20px 0px;
+    height: 95%;
+    padding-bottom: 30px;
+    /* margin-left: 30px; optional, uncomment if needed */
+}
+
+.section {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+}
+
+.category {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 0%;
+    margin-right: 8px;
+}
+
+.category h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    color: #333333;
+}
+
+.item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #e6e6e6;
+    transition: border 0.3s ease, background 0.3s ease;
+    position: relative;
+    height: 85%;
+    width: 100%;
+}
+
+.item:hover {
+    border: 1px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+        linear-gradient(90deg,
+            #fa9595 0%,
+            #ffe139 21%,
+            #97ff7d 39%,
+            #4bc9ff 61.5%,
+            #c270f8 81.5%,
+            #6548e7 100%) border-box;
+}
+
+.icon {
+    font-size: 20px;
+    color: #333333;
+    display: flex;
+    align-items: center;
+    padding-top: 5px;
+}
+
+.title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    color: #333333;
+}
+
+.description {
+    font-size: 12px;
+    font-weight: 400;
+    color: #6a6a6a;
+    margin: 4px 0 0;
+}
+
+.itemWrapper {
+    width: 100%;
+    position: relative;
+}
+
+@media (max-width: 1024px) {
+    .item {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: flex;
+        max-width: 100%;
+        padding: 0px;
+        margin: 0px;
+    }
+
+    .section {
+        width: 90%;
+    }
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(36, 178, 180, 0.3);
+    border-radius: 3px;
+}
+
+:global(.dark) {
+    .sidebar {
+        background: var(--card);
+        color: var(--foreground);
+        scrollbar-width: thin;
+    }
+
+    .section {
+        width: 70%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .category h3 {
+        color: var(--foreground);
+    }
+
+    .dot {
+        /* If dot has background or border, can adjust, else no change */
+    }
+
+    .item {
+        background: var(--background);
+        border: 1px solid var(--color-border);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        position: relative;
+        height: 85%;
+        width: 100%;
+        transition: border 0.3s ease, background 0.3s ease;
+    }
+
+    .item:hover {
+        border: 1px solid transparent;
+        background: linear-gradient(var(--background), var(--background)) padding-box,
+            linear-gradient(90deg,
+                #fa9595 0%,
+                #ffe139 21%,
+                #97ff7d 39%,
+                #4bc9ff 61.5%,
+                #c270f8 81.5%,
+                #6548e7 100%) border-box;
+    }
+
+    .icon {
+        font-size: 20px;
+        color: var(--foreground);
+        display: flex;
+        align-items: center;
+        padding-top: 5px;
+    }
+
+    .title {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--foreground);
+    }
+
+    .description {
+        font-size: 12px;
+        font-weight: 400;
+        color: var(--muted-foreground);
+        margin: 4px 0 0;
+    }
+
+    .itemWrapper {
+        width: 100%;
+        position: relative;
+    }
+
+    /* Scrollbar styling for dark mode */
+    .sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+        background-color: rgba(36, 178, 180, 0.5);
+        border-radius: 3px;
+    }
+
+    /* Responsive adjustments - no change needed for dark mode */
+    @media (max-width: 1024px) {
+        .item {
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            display: flex;
+            max-width: 100%;
+            padding: 0px;
+            margin: 0px;
+            background: var(--card);
+            color: var(--foreground);
+        }
+
+        .section {
+            width: 90%;
+        }
+    }
+}

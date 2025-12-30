@@ -1,0 +1,244 @@
+/* Modal Overlay */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal Container */
+.modalContainer {
+  background: #ffffff;
+  width: 400px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+  margin: 0 20px;
+}
+
+:global(.dark) .modalContainer {
+  background: var(--color-card);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Close Button */
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.3s ease;
+}
+
+.closeButton:hover {
+  color: #ff4b5c;
+}
+
+/* Title */
+.title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+:global(.dark) .title {
+  color: var(--color-foreground);
+}
+
+/* Description */
+.description {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 15px;
+}
+
+:global(.dark) .description {
+  color: var(--color-muted-foreground);
+}
+
+/* Generate Secure Link Button */
+.secureButton {
+  background: linear-gradient(135deg, var(--color-primary), #187d7e);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  transition: all 0.3s ease;
+}
+
+.secureButton:hover {
+  background: linear-gradient(135deg, #1e9da0, #0f6768);
+  transform: translateY(-2px);
+  box-shadow: 0px 5px 15px #0e474877;
+}
+
+.secureButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Link Container */
+.linkContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f5f5f5;
+  padding: 8px;
+  border-radius: 8px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+}
+
+:global(.dark) .linkContainer {
+  background: var(--color-input);
+  border-color: var(--color-border);
+}
+
+/* Input Field */
+.linkInput {
+  width: 85%;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  outline: none;
+  padding: 5px;
+  color: #333;
+}
+
+:global(.dark) .linkInput {
+  color: var(--color-foreground);
+}
+
+/* Copy Button */
+.copyButton {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.copyButton:hover {
+  background: var(--color-primary);
+}
+
+.copyButton.copied {
+  background: var(--color-primary);
+}
+
+/* Copy Feedback */
+.copyFeedback {
+  color: #28a745;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* QR Code Button */
+.qrButton {
+  background: #111;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 15px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.qrButton:hover {
+  background: #222;
+}
+
+/* QR Code */
+.qrCode {
+  margin: 15px 0;
+  border: 5px solid #eee;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+:global(.dark) .qrCode {
+  border-color: var(--color-border);
+}
+
+/* Social Share Icons */
+.shareOptions {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.shareIcon {
+  font-size: 22px;
+  margin: 0 10px;
+  color: #555;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.shareIcon:hover {
+  transform: scale(1.05);
+}
+
+.shareIcon:nth-child(1) {
+  color: #3b5998;
+}
+
+/* Facebook */
+.shareIcon:nth-child(2) {
+  color: #1da1f2;
+}
+
+/* Twitter */
+.shareIcon:nth-child(3) {
+  color: #25d366;
+}
+
+/* WhatsApp */
+.shareIcon:nth-child(4) {
+  color: #0077b5;
+}
+
+/* LinkedIn */
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

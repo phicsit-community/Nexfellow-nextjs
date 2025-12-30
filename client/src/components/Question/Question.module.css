@@ -1,0 +1,396 @@
+.quizContainer {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  border: 1px solid #e6e6e6;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+}
+
+.quizContainer:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.questionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.questionMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.questionNumber {
+  font-weight: 600;
+  font-size: 12px;
+  background-color: #24b2b4;
+  color: #fff;
+  border-radius: 999px;
+  padding: 1px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.difficultyBadge {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: capitalize;
+}
+
+.easy {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.medium {
+  background-color: #fef9c3;
+  color: #854d0e;
+}
+
+.hard {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.questionActions {
+  display: flex;
+  gap: 8px;
+}
+
+.iconButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.iconButton:hover {
+  background-color: #f3f4f6;
+  color: #0f172a;
+}
+
+.question {
+  margin-bottom: 20px;
+}
+
+.questionText {
+  font-size: 15px;
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.optionsList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.option:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.optionCircle {
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+.checkmark {
+  color: #10b981;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.optionText {
+  flex: 1;
+}
+
+.optionCorrect {
+  background-color: rgba(16, 185, 129, 0.05);
+  border-color: #10b981;
+}
+
+.optionCorrect .optionCircle {
+  background-color: #d1fae5;
+  color: #10b981;
+  border: none;
+}
+
+.optionSelected {
+  background-color: #f1f5f9;
+  border-color: #3b82f6;
+}
+
+.optionSelected .optionCircle {
+  background-color: #e0f2fe;
+  color: #3b82f6;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+
+.editButton,
+.deleteButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.editButton {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.deleteButton {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.editButton:hover {
+  background-color: #e2e8f0;
+}
+
+.deleteButton:hover {
+  background-color: #1c8f90;
+}
+
+.typeBadge {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background-color: #e0f2fe;
+  color: #0284c7;
+  text-transform: capitalize;
+}
+
+/* Make multiple checkboxes look different */
+.option[data-type="checkbox"] .optionCircle {
+  border-radius: 4px;
+}
+
+@media (width <=800px) {
+  .questionText {
+    font-size: 16px;
+    letter-spacing: 0.03em;
+  }
+
+  .option {
+    font-size: 14px;
+    line-height: 19.36px;
+  }
+}
+
+:global(.dark) {
+  .quizContainer {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 1px 3px rgba(0 0 0 / 0.5);
+    color: var(--color-foreground);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .quizContainer:hover {
+    box-shadow: 0 4px 8px rgba(36, 178, 180, 0.3);
+  }
+
+  .questionHeader {
+    color: var(--color-foreground);
+  }
+
+  .questionMeta {
+    color: var(--color-muted-foreground);
+  }
+
+  .questionNumber {
+    background-color: var(--color-primary);
+    color: white;
+  }
+
+  .difficultyBadge {
+    color: inherit;
+    background-color: transparent;
+    font-weight: 500;
+  }
+
+  .easy {
+    background-color: #14532d;
+    /* Darker green */
+    color: #a7f3d0;
+    /* Lighter green text */
+  }
+
+  .medium {
+    background-color: #525214;
+    /* Darker yellow */
+    color: #fef08a;
+    /* Light yellow text */
+  }
+
+  .hard {
+    background-color: #7f1d1d;
+    /* Dark red */
+    color: #fecaca;
+    /* Light red text */
+  }
+
+  .questionActions {
+    /* Colors inherit */
+  }
+
+  .iconButton {
+    color: var(--color-muted-foreground);
+    transition: all 0.2s ease;
+  }
+
+  .iconButton:hover {
+    background-color: var(--color-muted);
+    color: var(--color-foreground);
+  }
+
+  .questionText {
+    color: var(--color-foreground);
+  }
+
+  .optionsList {
+    /* no background */
+  }
+
+  .option {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    color: var(--color-foreground);
+    transition: all 0.2s ease;
+  }
+
+  .option:hover {
+    background-color: var(--color-muted);
+    border-color: var(--color-primary);
+  }
+
+  .optionCircle {
+    background-color: var(--color-muted);
+    color: var(--color-muted-foreground);
+  }
+
+  .checkmark {
+    color: #10b981;
+    /* same as light mode */
+  }
+
+  .optionText {
+    color: var(--color-foreground);
+  }
+
+  .optionCorrect {
+    background-color: rgba(16, 185, 129, 0.15);
+    border-color: #10b981;
+  }
+
+  .optionCorrect .optionCircle {
+    background-color: #064e3b;
+    color: #10b981;
+    border: none;
+  }
+
+  .optionSelected {
+    background-color: var(--color-muted);
+    border-color: #3b82f6;
+  }
+
+  .optionSelected .optionCircle {
+    background-color: #1e40af;
+    color: #3b82f6;
+  }
+
+  .buttonGroup {
+    justify-content: flex-end;
+  }
+
+  .editButton {
+    background-color: var(--color-card);
+    color: var(--color-muted-foreground);
+    border: none;
+  }
+
+  .editButton:hover {
+    background-color: var(--color-muted);
+  }
+
+  .deleteButton {
+    background-color: var(--color-primary);
+    color: white;
+  }
+
+  .deleteButton:hover {
+    background-color: #1c8f90;
+  }
+
+  .typeBadge {
+    background-color: #0c4a6e;
+    /* Dark blue */
+    color: #bae6fd;
+    /* Light blue */
+  }
+
+  /* Checkbox style */
+  .option[data-type="checkbox"] .optionCircle {
+    background-color: var(--color-muted);
+    color: var(--color-muted-foreground);
+  }
+}

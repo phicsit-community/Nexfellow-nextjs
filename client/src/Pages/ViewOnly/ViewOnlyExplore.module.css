@@ -1,0 +1,636 @@
+/* Global box-sizing and body settings */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: "Inter", Arial, sans-serif;
+  background: #000;
+}
+
+/* Main container with full viewport coverage and background */
+.mainContainer {
+  min-height: 100vh;
+  width: 100vw;
+  background: url("./assets/bg.svg") center center no-repeat;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Central content container */
+.container {
+  max-width: 450px;
+  /* was 665px */
+  margin: 0 auto;
+  padding: 1.2rem 0.4rem 1.8rem 0.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 87vh;
+  width: 100%;
+}
+
+.bannerSection {
+  position: relative;
+  padding: 0;
+  width: 100%;
+  margin-bottom: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: #000;
+  border-radius: 6px 6px 0 0;
+}
+
+.bannerImgContainer {
+  width: 100%;
+  height: 30%;
+  border-radius: 6px;
+  display: flex;
+}
+
+.bannerImage {
+  width: 440px;
+  height: 110px;
+  border-radius: 6px 6px 0 0;
+  position: relative;
+  object-fit: fill;
+}
+
+/* Profile image wrapper */
+.profileImageWrapper {
+  position: absolute;
+  left: 1rem;
+  bottom: -35px;
+  z-index: 2;
+}
+
+/* Profile image */
+.profileImage {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid #000;
+  background: #000;
+  object-fit: contain;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo circle */
+.logoCircle {
+  position: absolute;
+  bottom: 0;
+  right: -12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1.5px solid #000;
+}
+
+/* Profile card */
+.profileCard {
+  background: #000;
+  border-radius: 0 0 0.7rem 0.7rem;
+  padding: 1.3rem 1.2rem 1.1rem 1.2rem;
+  width: 100%;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* Header row */
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-top: 25px;
+  flex-wrap: wrap;
+}
+
+/* Community name */
+.communityName {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 2px 0;
+  word-break: break-word;
+}
+
+/* Username */
+.username {
+  color: #6A6A6A;
+  font-size: 0.82rem;
+  margin: 0 0 7px 0;
+  display: block;
+  word-break: break-all;
+}
+
+/* Badges */
+.badges {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  margin-top: 3px;
+  flex-wrap: wrap;
+}
+
+.featuredBadge {
+  background: var(--color-primary);
+  color: #fff;
+  padding: 3px 12px;
+  border-radius: 1rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.verifiedBadge {
+  background: #000;
+  color: #24B2B4;
+  padding: 3px 12px;
+  border-radius: 1rem;
+  border: 1px solid #24B2B4;
+  font-size: 0.72rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.verifiedIcon {
+  color: #24B2B4;
+  font-size: 0.8rem;
+}
+
+/* Description */
+.description {
+  color: #fff;
+  margin: 0.8rem 0 0.8rem 0;
+  font-size: 0.9rem;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* Stats row */
+.statsRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+  flex-wrap: nowrap;
+}
+
+/* Stat card */
+.statCard {
+  background: rgba(21, 214, 205, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.65rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1 1 65px;
+  min-width: 65px;
+  flex-direction: row;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* Stat icon box */
+.statIconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: rgba(36, 178, 180, 0.1);
+  border-radius: 50%;
+}
+
+.statIcon {
+  font-size: 1.05rem;
+  color: #24B2B4;
+  flex-shrink: 0;
+}
+
+.statLabel {
+  color: #08AAA2;
+  font-size: 0.7rem;
+  margin-bottom: 1px;
+}
+
+.statValue {
+  color: #fff;
+  font-size: 0.91rem;
+  font-weight: 600;
+  margin-top: 1px;
+}
+
+/* View community button */
+.viewCommunityButton {
+  margin: 9px 0 0 0;
+  background: #24B2B4;
+  color: #fff;
+  padding: 0.65rem 0;
+  border: none;
+  border-radius: 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(30, 210, 175, 0.08);
+}
+
+.viewCommunityButton:hover {
+  background: #1a9e9d;
+}
+
+/* Login prompt and button */
+.loginPrompt {
+  margin-top: 1.1rem;
+  text-align: center;
+  color: #6A6A6A;
+  font-size: 0.88rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.loginButton {
+  background: none;
+  color: #24B2B4;
+  border: 1.5px solid #24B2B4;
+  border-radius: 5px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 3px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.loginButton:hover {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* Private message */
+.privateMessage {
+  text-align: center;
+  padding: 1.5rem 0.7rem;
+  background-color: #f8f9fa;
+  border-radius: 0.61rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Loading and error states */
+.loading,
+.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 220px;
+  font-size: 0.96rem;
+  color: #555;
+}
+
+.error {
+  color: #d32f2f;
+}
+
+/* Responsive styles */
+
+@media (min-width: 2560px) {
+  .mainContainer {
+    width: 100%;
+  }
+
+  .container {
+    justify-content: center;
+    min-height: 100vh;
+  }
+}
+
+/* Tablet and below */
+@media (max-width: 1024px) {
+  .container {
+    padding: 1.5rem 1rem 2.5rem;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .headerRow {
+    flex-direction: row;
+    align-items: flex-start;
+    margin-top: 30px;
+  }
+
+  .communityName {
+    font-size: 1.8rem;
+  }
+
+  .username {
+    font-size: 1rem;
+  }
+
+  .description {
+    font-size: 1rem;
+  }
+
+  .statCard {
+    flex: 1 1 45%;
+  }
+
+  .bannerImage {
+    width: 680px;
+    height: 180px;
+    /* border-radius: 8px; */
+    position: relative;
+    /* left: 5%; */
+    object-fit: fill;
+  }
+
+  .profileImageWrapper {
+    left: 1.5rem;
+    bottom: -45px;
+  }
+
+  .profileImage {
+    width: 90px;
+    height: 90px;
+  }
+
+  .logoCircle {
+    width: 32px;
+    height: 32px;
+    right: -16px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem 0.5rem 2rem;
+  }
+
+  .bannerSection {
+    width: 100%;
+    padding: 0px;
+    display: flex;
+    align-items: center;
+  }
+
+  .bannerImgContainer {
+    width: 100%;
+    border-radius: 0px;
+  }
+
+  .bannerImage {
+    width: 100%;
+    left: 0%;
+    /* border-radius: 0px; */
+  }
+
+  .profileImageWrapper {
+    left: 1rem;
+    bottom: -40px;
+  }
+
+  .profileImage {
+    width: 80px;
+    height: 80px;
+  }
+
+  .logoCircle {
+    width: 28px;
+    height: 28px;
+    right: -10px;
+  }
+
+  .headerRow {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 20px;
+  }
+
+  .communityName {
+    font-size: 1.4rem;
+  }
+
+  .username {
+    font-size: 0.95rem;
+  }
+
+  .description {
+    font-size: 0.9rem;
+  }
+
+  .statCard {
+    flex: 1 1 100%;
+    padding: 0.75rem;
+  }
+
+  .statsRow {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
+  .statIconBox {
+    width: 32px;
+    height: 32px;
+  }
+
+  .badges {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .viewCommunityButton {
+    font-size: 1rem;
+    padding: 0.75rem 0;
+  }
+
+  .loginButton {
+    font-size: 0.95rem;
+    padding: 0.4rem 1rem;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .container {
+    padding: 1.5rem 1rem 1.5rem 1rem;
+  }
+
+  .profileImageWrapper {
+    left: 1.5rem;
+    bottom: -35px;
+  }
+
+  .profileImage {
+    width: 80px;
+    height: 80px;
+  }
+
+  .logoCircle {
+    width: 20px;
+    height: 20px;
+    right: -6px;
+  }
+
+  .headerRow {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 20px;
+  }
+
+  .communityName {
+    font-size: 1.1rem;
+  }
+
+  .username {
+    font-size: 0.85rem;
+  }
+
+  .description {
+    font-size: 0.8rem;
+  }
+
+  .statCard {
+    padding: 0.5rem;
+    min-width: 80px;
+  }
+
+  .statIconBox {
+    width: 24px;
+    height: 24px;
+  }
+
+  .statIcon {
+    font-size: 1.5rem;
+  }
+
+  .statLabel {
+    font-size: 0.8rem;
+    display: none;
+  }
+
+  .statValue {
+    font-size: 0.95rem;
+  }
+
+  .viewCommunityButton {
+    font-size: 0.9rem;
+    padding: 0.5rem 0;
+  }
+
+  .loginButton {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.7rem;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 360px) {
+  .container {
+    padding: 1.5rem 1rem 1.5rem 1rem;
+  }
+
+  .profileImageWrapper {
+    left: 1.2rem;
+    bottom: -40px;
+  }
+
+  .profileImage {
+    width: 80px;
+    height: 80px;
+  }
+
+  .logoCircle {
+    width: 14px;
+    height: 14px;
+    right: -2px;
+  }
+
+  .communityName {
+    font-size: 0.9rem;
+  }
+
+  .username {
+    font-size: 0.7rem;
+  }
+
+  .description {
+    font-size: 0.7rem;
+  }
+
+  .statCard {
+    padding: 0.3rem;
+    min-width: 60px;
+  }
+
+  .statIconBox {
+    width: 16px;
+    height: 16px;
+  }
+
+  .statIcon {
+    font-size: 0.7rem;
+  }
+
+  .statLabel {
+    font-size: 0.7rem;
+  }
+
+  .statValue {
+    font-size: 0.7rem;
+  }
+
+  .viewCommunityButton {
+    font-size: 0.7rem;
+    padding: 0.3rem 0;
+  }
+
+  .loginButton {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+@media (max-width: 425px) {
+
+  .bannerImage {
+    min-width: 201px;
+    min-height: 53px;
+    height: 100%;
+    object-fit: fill;
+  }
+}
+
+@media (max-width: 375px) {
+  .bannerImage {
+    min-width: 178px;
+    min-height: 47px;
+    height: 100%;
+    object-fit: fill;
+  }
+}
+
+@media (max-width: 320px) {
+  .bannerImage {
+    width: 390px;
+    height: 110px;
+    /* height: 100%; */
+    object-fit: fill;
+  }
+}

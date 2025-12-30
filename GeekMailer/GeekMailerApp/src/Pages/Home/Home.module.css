@@ -1,0 +1,110 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+.container {
+  /* background-color: bisque; */
+  /* height: auto; */
+  position: relative;
+  overflow-x: hidden;
+  /* border: 1px solid black; */
+  width: 1100px;
+  height: 600px;
+  /* top: 50px; */
+  /* left: 300px; */
+  gap: 0px;
+  opacity: 0px;
+}
+
+.back {
+  position: absolute;
+  top: 20px;
+  left: 60px;
+  width: 80px;
+  height: 24px;
+  font-size: 18px;
+  font-family: "Inter", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  color: #6a6a6a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 13px;
+  cursor: pointer;
+}
+.heading {
+  /* border: 2px solid black; */
+  width: 90%;
+  height: 40px;
+  position: absolute;
+  top: 70px;
+  left: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.interhead {
+  font-size: 24px;
+  font-family: "Inter", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.addContact {
+  width: 150px;
+  height: 40px;
+  border-radius: 8px;
+  padding-right: 4px;
+  padding-left: 4px;
+  background-color: #24b2b4;
+  color: white;
+  font-size: 16px;
+  font-family: "Inter", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.mainBox {
+  width: 1020px;
+  height: 400px;
+  /* border: 1px solid black; */
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: absolute;
+  top: 140px;
+  left: 60px;
+}
+
+.cc1 {
+  width: 406px;
+  height: 305px;
+  /* border: 1px solid black; */
+  position: absolute;
+  top: 15%;
+  left: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: space-between;
+  justify-content: center;
+  gap: 25px;
+}
+
+.cc2 {
+  width: 406px;
+  height: 305px;
+  /* border: 1px solid black; */
+  position: absolute;
+  top: 15%;
+  right: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: space-between;
+  justify-content: center;
+  gap: 25px;
+}

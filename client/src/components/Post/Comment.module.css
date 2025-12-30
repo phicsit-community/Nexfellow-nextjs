@@ -1,0 +1,434 @@
+* {
+  box-sizing: border-box;
+}
+
+.commentSection {
+  width: 100%;
+  font-family: "Inter", sans-serif;
+  padding: 12px;
+}
+
+/* Add Comment Container */
+.addCommentContainer {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-right: 5px;
+  vertical-align: middle;
+  font-size: 1em;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Input Wrapper */
+.inputWrapper {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  /* Make sure autocomplete dropdown is positioned relative to input */
+}
+
+/* Comment input styles */
+.commentInput {
+  width: 100%;
+  min-height: 20px;
+  max-height: 40px;
+  padding: 10px 12px;
+  border: 2px solid rgba(0, 0, 0, 0.7);
+  border-radius: 20px;
+  outline: none;
+  font-size: 14px;
+  margin: 10px 0;
+  color: black;
+  resize: none;
+  overflow-y: auto;
+  transition: all 0.2s cubic-bezier(.33, .99, .62, .99);
+  background: #fff;
+  box-sizing: border-box;
+}
+
+/* When focused or has value, expand and add space for Send button */
+.commentInput.expanded {
+  min-height: 70px;
+  border-radius: 12px;
+  padding-right: 68px;
+  /* space for send button when expanded */
+}
+
+:global(.dark) .commentInput {
+  background-color: var(--color-input);
+  border-color: var(--color-border);
+  color: var(--color-foreground);
+}
+
+/* Placeholder */
+.commentInput::placeholder {
+  color: rgba(100, 100, 100, 0.92);
+}
+
+:global(.dark) .commentInput::placeholder {
+  color: rgba(200, 200, 200, 0.7);
+  /* light gray for dark mode */
+}
+
+/* Hide send button by default, show only when focused or typing */
+.sendInside {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0px;
+  border-radius: 99px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: auto;
+  height: 30px;
+  width: 80px;
+  position: absolute;
+  right: 10px;
+  bottom: 20px;
+  z-index: 2;
+  line-height: 1.2;
+  transition: opacity 0.2s;
+  opacity: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sendInside:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Legacy post button (for rare other cases) */
+.postButton {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 99px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: auto;
+  height: 40px;
+  width: 60px;
+}
+
+.postButton:disabled {
+  background-color: #a0d8d9;
+  cursor: not-allowed;
+}
+
+/* Cancel Button */
+.cancelButton {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 8px;
+}
+
+/* Comment Container */
+.commentContainer {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px;
+  position: relative;
+}
+
+.commentThread {
+  position: relative;
+  overflow-x: scroll;
+}
+
+.replyLine {
+  position: absolute;
+  left: 30px;
+  top: 60px;
+  height: calc(100% - 20px);
+  width: 30px;
+  border-width: 0px 0px 2px 2px;
+  border-style: solid;
+  border-color: #ddd;
+  border-radius: 0% 0% 0% 14px;
+}
+
+:global(.dark) .replyLine {
+  border-color: var(--color-border);
+  width: 30px;
+}
+
+.userImage {
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  margin: 10px 0px;
+}
+
+.commentContent {
+  flex-grow: 1;
+  margin-left: 12px;
+  min-width: 0;
+}
+
+.commentHeader {
+  display: flex;
+  align-items: start;
+  font-size: 14px;
+}
+
+.communityName {
+  font-weight: bold;
+}
+
+.userName {
+  font-weight: normal;
+  color: #6a6a6a;
+}
+
+:global(.dark) .userName {
+  color: var(--color-muted-foreground);
+}
+
+.timestamp {
+  color: #6a6a6a;
+  font-size: 12px;
+  margin-left: 14px;
+}
+
+:global(.dark) .timestamp {
+  color: var(--color-muted-foreground);
+}
+
+.moreOptions {
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.threeDot {
+  padding: 4px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.threeDot:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.commentText {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #333;
+  word-break: break-word;
+}
+
+:global(.dark) .commentText {
+  color: var(--color-foreground);
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #6a6a6a;
+  transition: color 0.2s;
+  padding: 2px 4px;
+}
+
+.actions button:hover {
+  color: #333;
+}
+
+.heartIcon {
+  color: rgba(128, 128, 128, 0.601);
+  transition: color 0.2s;
+}
+
+.heartIconFill {
+  color: rgba(255, 0, 0, 0.649);
+}
+
+.heartButton {
+  display: flex;
+  align-items: center;
+}
+
+.likeCount {
+  font-size: 14px;
+  margin-left: 6px;
+}
+
+.repliesContainer {
+  position: relative;
+}
+
+.editCommentContainer {
+  width: 100%;
+}
+
+.editButtons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+/* Mention Autocomplete Dropdown */
+.mentionSuggestions {
+  position: relative;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 280px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
+  padding: 0;
+  margin: 2px 0 0 0;
+  list-style: none;
+}
+
+:global(.dark) .mentionSuggestions {
+  background: var(--color-input);
+  border-color: var(--color-border);
+  box-shadow: 0 2px 8px rgb(255 255 255 / 0.1);
+}
+
+.mentionSuggestions li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: #222;
+}
+
+:global(.dark) .mentionSuggestions li {
+  color: var(--color-foreground);
+}
+
+.mentionSuggestions li:hover {
+  background-color: #f0f0f0;
+}
+
+:global(.dark) .mentionSuggestions li:hover {
+  background-color: var(--color-hover);
+}
+
+.mentionAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Mention Highlight in Text */
+.mentionHighlight {
+  color: #0366d6;
+  font-weight: 600;
+  /* background-color: #eaf5ff; */
+  padding: 2px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.mentionHighlight:hover {
+  background-color: #d0e6ff;
+  text-decoration: underline;
+}
+
+:global(.dark) .mentionHighlight {
+  color: #61a0ff;
+  /* background-color: #1a2d45; */
+}
+
+:global(.dark) .mentionHighlight:hover {
+  background-color: #2a3d55;
+  text-decoration: underline;
+}
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+  .commentInput {
+    font-size: 13px;
+  }
+
+  .sendInside {
+    font-size: 12px;
+  }
+
+  .postButton {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  .commentHeader,
+  .commentText,
+  .actions button {
+    font-size: 13px;
+  }
+
+  .timestamp {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .commentInput {
+    font-size: 12px;
+  }
+
+  .sendInside {
+    font-size: 10px;
+  }
+
+  .postButton {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  .commentHeader,
+  .commentText,
+  .actions button {
+    font-size: 12px;
+  }
+
+  .timestamp {
+    font-size: 10px;
+  }
+
+  .userImage {
+    width: 32px;
+    height: 32px;
+  }
+}

@@ -1,0 +1,176 @@
+.mutedUsersContainer {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+:global(.dark) .mutedUsersContainer {
+  background-color: var(--color-card);
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+:global(.dark) .title {
+  color: var(--color-foreground);
+  border-bottom-color: var(--color-border);
+}
+
+.emptyState {
+  color: #666;
+  font-size: 1rem;
+  text-align: center;
+  padding: 30px 0;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  font-style: italic;
+}
+
+:global(.dark) .emptyState {
+  color: var(--color-muted-foreground);
+  background-color: var(--color-accent);
+}
+
+.usersList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.userItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: background-color 0.2s ease;
+}
+
+:global(.dark) .userItem {
+  background-color: var(--color-accent);
+}
+
+.userItem:hover {
+  background-color: #f0f0f0;
+}
+
+:global(.dark) .userItem:hover {
+  background-color: var(--color-muted);
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.userAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+:global(.dark) .userAvatar {
+  border-color: var(--color-card);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.userData {
+  display: flex;
+  flex-direction: column;
+}
+
+.userName {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+:global(.dark) .userName {
+  color: var(--color-foreground);
+}
+
+.userUsername {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+:global(.dark) .userUsername {
+  color: var(--color-muted-foreground);
+}
+
+.unmuteButton {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.unmuteButton:hover {
+  background-color: #d32f2f;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}
+
+:global(.dark) .loading {
+  color: var(--color-muted-foreground);
+}
+
+.error {
+  text-align: center;
+  padding: 20px;
+  color: #d32f2f;
+  background-color: #ffebee;
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .mutedUsersContainer {
+    padding: 0 20px;
+  }
+
+  .userItem {
+    padding: 10px;
+  }
+
+  .userAvatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .userName {
+    font-size: 0.9rem;
+  }
+
+  .userUsername {
+    font-size: 0.8rem;
+  }
+
+  .unmuteButton {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+}

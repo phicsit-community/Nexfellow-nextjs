@@ -1,0 +1,76 @@
+.container {
+  position: relative;
+  overflow-x: hidden;
+  width: 1100px;
+  height: 100%;
+  gap: 0px;
+  opacity: 0px;
+  /* border: 1px solid black; */
+  overflow-y: hidden;
+}
+
+.back {
+  position: absolute;
+  top: 20px;
+  left: 60px;
+  width: 80px;
+  height: 24px;
+  font-size: 18px;
+  font-family: "Inter", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  color: #6a6a6a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 13px;
+  cursor: pointer;
+  /* border: 1px solid black; */
+}
+.heading {
+  /* border: 2px solid black; */
+  width: 90%;
+  height: 40px;
+  position: absolute;
+  top: 70px;
+  left: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.interhead {
+  font-size: 24px;
+  font-family: "Inter", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.addContact {
+  width: 150px;
+  height: 40px;
+  border-radius: 8px;
+  padding-right: 4px;
+  padding-left: 4px;
+  background-color: #24b2b4;
+  color: white;
+  font-size: 16px;
+  font-family: "Inter", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.Viewtable {
+  width: 1020px;
+  height: 500px;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  position: absolute;
+  top: 130px;
+  left: 60px;
+}

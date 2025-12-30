@@ -1,0 +1,883 @@
+.container {
+  width: 95%;
+  padding: 0% 8% 3% 8%;
+}
+
+.backButtonContainer {
+  background: none;
+  border: none;
+  font-size: 20px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  transition: color 0.3s ease;
+  margin-top: 30px;
+  margin-left: -10px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.uploadSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-primary);
+  margin-bottom: 5px;
+}
+
+.dimensions {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.dropzone {
+  position: relative;
+  width: 100%;
+  max-width: 646px;
+  height: 196px;
+  border: 2px dashed #ccc;
+  background-color: #fafafa;
+  /* padding: 20px; */
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.bannerInput {
+  display: none;
+}
+
+.profileInput {
+  display: none;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #888;
+}
+
+.placeholder i {
+  font-size: 40px;
+  color: #6a6a6a;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Overlay */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0);
+  /* Transparent by default */
+  transition: background-color 0.3s ease;
+}
+
+.imageContainer .overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Dark overlay on hover */
+}
+
+.uploadedImage {
+  width: 100%;
+  height: 100%;
+  /* height: 200px; */
+  border-radius: 8px;
+  margin-top: 0px;
+  object-fit: cover;
+}
+
+.cameraFrame {
+  position: relative;
+  bottom: 35px;
+  left: 30px;
+  overflow: hidden;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: #e6e6e6;
+  color: #6a6a6a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.cameraFrame i {
+  font-size: 20px;
+}
+
+/* Center both icons side by side */
+.centerIcons {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  gap: 10px;
+  /* Space between icons */
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+}
+
+.cameraIcon,
+.crossIcon {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  opacity: 1;
+}
+
+.cameraIcon:hover,
+.crossIcon:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+/* Container for the form */
+.formContainer {
+  width: 100%;
+}
+
+/* Grid layout for the columns */
+.inputGrid {
+  display: flex;
+  gap: 20px;
+}
+
+/* Column styles */
+.column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Field container */
+.formField {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Label styling */
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+/* Required indicator */
+.required {
+  color: red;
+  margin-left: -4px;
+  font-size: 14px;
+}
+
+/* Input styles */
+.input,
+.textarea,
+.select {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.3s;
+  width: 80%;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus .websitePrefix {
+  border-color: var(--color-primary);
+}
+
+/* Textarea-specific styles */
+
+.textareaWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 80%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 4px 10px;
+  background: white;
+  min-height: 80px;
+  flex-direction: column;
+}
+
+.textarea {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 4px 10px;
+  background: white;
+  min-height: 80px;
+  flex-direction: column;
+  border: none;
+  resize: vertical;
+  scrollbar-color: auto;
+}
+
+.charCount {
+  position: relative;
+  left: 50%;
+  bottom: 0px;
+  font-size: 12px;
+  color: gray;
+  pointer-events: none;
+  background: white;
+  padding: 2px 5px;
+  margin-left: -100px;
+}
+
+/* Select-specific styles */
+.select {
+  cursor: pointer;
+}
+
+/* Add hover effects */
+.input:hover,
+.textarea:hover,
+.select:hover .websitePrefix {
+  border-color: var(--color-primary);
+}
+
+.websiteInputWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.websitePrefix {
+  padding: 8px 10px;
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  color: #888;
+  font-size: 14px;
+  /* height: 40px; */
+  display: flex;
+  align-items: center;
+}
+
+.websiteInput {
+  border-radius: 0 4px 4px 0;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-top: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  border-left: none;
+  outline: none;
+  transition: border-color 0.3s;
+  width: 65%;
+}
+
+.websiteInputWrapper:focus-within .websitePrefix {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.submitButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.submitButton {
+  width: 140px;
+  height: 40px;
+  background-color: var(--color-primary);
+  color: #fff;
+  padding: 8px 10px 8px 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #ffffff;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Skeleton loading animation */
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.skeleton {
+  background: #f0f0f0;
+  background-image: linear-gradient(to right,
+      #f0f0f0 0%,
+      #e0e0e0 20%,
+      #f0f0f0 40%,
+      #f0f0f0 100%);
+  background-repeat: no-repeat;
+  background-size: 800px 100%;
+  animation: shimmer 3s infinite linear;
+}
+
+.skeletonDropzone {
+  position: relative;
+  width: 100%;
+  max-width: 646px;
+  height: 196px;
+  border-radius: 8px;
+}
+
+.skeletonProfileImage {
+  position: relative;
+  bottom: 35px;
+  left: 30px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+
+.skeletonFormField {
+  height: 40px;
+  width: 80%;
+  margin-bottom: 15px;
+  border-radius: 4px;
+}
+
+.skeletonTextArea {
+  height: 80px;
+  width: 80%;
+  margin-bottom: 15px;
+  border-radius: 4px;
+}
+
+.skeletonButton {
+  width: 140px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+/* Crop Modal Styles */
+.cropModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.cropModal {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.cropModal h3 {
+  margin-top: 0;
+  color: var(--color-primary);
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.cropContainer {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  overflow: visible;
+  /* Changed from hidden to visible */
+  max-height: 500px;
+}
+
+/* Ensure ReactCrop component is fully visible */
+:global(.ReactCrop) {
+  max-width: 100%;
+  display: inline-block;
+}
+
+:global(.ReactCrop__image) {
+  max-height: 500px;
+  max-width: 100%;
+}
+
+:global(.ReactCrop__crop-selection) {
+  border: 1px solid #24b2b4;
+}
+
+.cropButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancelButton,
+.applyButton {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.cancelButton {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  color: #555;
+}
+
+.applyButton {
+  background-color: var(--color-primary);
+  border: none;
+  color: white;
+}
+
+.cancelButton:hover {
+  background-color: #e0e0e0;
+}
+
+.applyButton:hover {
+  background-color: #1c9ea0;
+}
+
+.applyButton:active,
+.cancelButton:active {
+  transform: scale(0.97);
+}
+
+/* Username status styles */
+.usernameStatus {
+  margin-top: 5px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.usernameStatus.checking {
+  color: #888;
+}
+
+.usernameStatus.available {
+  color: #28a745;
+}
+
+.usernameStatus.unavailable {
+  color: #dc3545;
+}
+
+.usernameStatus i {
+  font-size: 12px;
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    width: 100%;
+    padding: 0%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .backButtonContainer {
+    position: relative;
+    right: 29%;
+    margin-top: 12px;
+  }
+
+  .form {
+    gap: 0px;
+    width: 80%;
+  }
+
+  .dropzone {
+    height: 135px;
+    width: 88%;
+  }
+
+  .inputGrid {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .textareaWrapper,
+  .input,
+  .textarea,
+  .select {
+    width: 100%;
+  }
+
+  .textareaWrapper {
+    width: 93%;
+  }
+
+  .charCount {
+    left: 38%;
+    right: 0px;
+    bottom: 5px;
+    margin-left: -10%;
+  }
+
+  .submitButtonContainer {
+    justify-content: center;
+  }
+
+  .submitButton {
+    width: 100%;
+  }
+
+  .backButton {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .cropModal {
+    width: 95%;
+    padding: 15px;
+  }
+
+  .cropButtonContainer {
+    justify-content: center;
+  }
+
+  .cancelButton,
+  .applyButton {
+    flex: 1;
+    max-width: 120px;
+  }
+}
+
+:global(.dark) {
+  .container {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  .backButtonContainer {
+    color: var(--muted-foreground);
+  }
+
+  .form {
+    /* color inherits from container */
+  }
+
+  .uploadSection {
+    color: var(--foreground);
+    font-family: Arial, sans-serif;
+  }
+
+  .title {
+    color: var(--color-primary);
+  }
+
+  .dimensions {
+    color: var(--muted-foreground);
+  }
+
+  .dropzone {
+    background-color: var(--card);
+    border-color: var(--color-border);
+    color: var(--muted-foreground);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  /* On hover or focus, optionally use a slightly lighter background */
+  .dropzone:hover,
+  .dropzone:focus {
+    background-color: var(--color-muted);
+    border-color: var(--color-primary);
+    color: var(--foreground);
+  }
+
+  .placeholder {
+    color: var(--muted-foreground);
+  }
+
+  .placeholder i {
+    color: var(--muted-foreground);
+  }
+
+  .imageContainer {
+    background-color: var(--card);
+  }
+
+  .overlay {
+    /* Overlay already uses rgba black, it's fine */
+  }
+
+  .uploadedImage {
+    /* no changes needed */
+  }
+
+  .cameraFrame {
+    background-color: var(--card);
+    color: var(--muted-foreground);
+    box-shadow: 0 4px 6px rgba(0 0 0 / 0.6);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .cameraFrame:hover {
+    background-color: var(--color-muted);
+  }
+
+  .cameraFrame i {
+    color: var(--muted-foreground);
+  }
+
+  .centerIcons .cameraIcon,
+  .centerIcons .crossIcon {
+    background-color: rgba(255 255 255 / 0.15);
+    color: var(--foreground);
+  }
+
+  .cameraIcon:hover,
+  .crossIcon:hover {
+    background-color: rgba(255 255 255 / 0.3);
+  }
+
+  .formContainer {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  .inputGrid {
+    /* no additional color change needed */
+  }
+
+  .column {
+    /* inherits color */
+  }
+
+  .formField {
+    color: var(--foreground);
+  }
+
+  .label {
+    color: var(--foreground);
+  }
+
+  .required {
+    color: #ff6b6b;
+    /* slightly softer red than pure red */
+  }
+
+  .input,
+  .select {
+    background-color: var(--card);
+    border: 1px solid var(--color-border);
+    color: var(--foreground);
+  }
+
+  .input:focus,
+  .select:focus {
+    border-color: var(--color-primary);
+    outline: none;
+  }
+
+  .textarea {
+    background-color: var(--card);
+    border: none;
+    color: var(--foreground);
+  }
+
+  .textareaWrapper {
+    background-color: var(--card);
+    border: 1px solid var(--color-border);
+  }
+
+  .textareaWrapper:focus-within {
+    border-color: var(--color-primary);
+  }
+
+  .charCount {
+    color: var(--muted-foreground);
+    background: var(--card);
+  }
+
+  .websitePrefix {
+    background-color: var(--muted);
+    border-color: var(--color-border);
+    color: var(--muted-foreground);
+  }
+
+  .websiteInput {
+    background-color: var(--card);
+    border-color: var(--color-border);
+    color: var(--foreground);
+  }
+
+  .websiteInputWrapper:focus-within {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .submitButtonContainer {
+    /* no background needed */
+  }
+
+  .submitButton {
+    background-color: var(--color-primary);
+    color: var(--primary-foreground);
+  }
+
+  .submitButton:hover {
+    background-color: #1c9ea0;
+    /* or slightly lighter/darker adjustment */
+  }
+
+  .spinner {
+    border-top-color: var(--primary-foreground);
+  }
+
+  /* Skeleton loading */
+
+  .skeleton {
+    background: var(--card);
+    background-image: linear-gradient(to right,
+        var(--card) 0%,
+        var(--color-muted) 20%,
+        var(--card) 40%,
+        var(--card) 100%);
+  }
+
+  .skeletonDropzone,
+  .skeletonProfileImage,
+  .skeletonFormField,
+  .skeletonTextArea,
+  .skeletonButton {
+    background-color: var(--card);
+  }
+
+  /* Crop Modal */
+
+  .cropModalOverlay {
+    background-color: rgba(0, 0, 0, 0.85);
+  }
+
+  .cropModal {
+    background-color: var(--card);
+    color: var(--foreground);
+    box-shadow: 0 4px 20px rgba(0 0 0 / 0.7);
+  }
+
+  .cropModal h3 {
+    color: var(--color-primary);
+  }
+
+  .cropContainer {
+    /* no changes needed */
+  }
+
+  .cropButtonContainer {
+    /* inherits colors */
+  }
+
+  .cancelButton {
+    background-color: var(--card);
+    border: 1px solid var(--color-border);
+    color: var(--muted-foreground);
+  }
+
+  .cancelButton:hover {
+    background-color: var(--color-muted);
+    color: var(--foreground);
+  }
+
+  .applyButton {
+    background-color: var(--color-primary);
+    color: var(--primary-foreground);
+  }
+
+  .applyButton:hover {
+    background-color: #1c9ea0;
+  }
+
+  .applyButton:active,
+  .cancelButton:active {
+    transform: scale(0.97);
+  }
+
+  /* Username status */
+
+  .usernameStatus.checking {
+    color: var(--muted-foreground);
+  }
+
+  .usernameStatus.available {
+    color: #28a745;
+  }
+
+  .usernameStatus.unavailable {
+    color: #dc3545;
+  }
+}

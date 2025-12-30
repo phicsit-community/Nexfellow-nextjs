@@ -1,0 +1,1179 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+Leaderboard.module.css .leaderboard {
+  font-family: "Arial", sans-serif;
+  color: #333;
+  padding: 20px;
+  background-color: #fff;
+  margin-top: 7rem;
+}
+
+.mainContainer {
+  width: 70vw;
+  margin: 3% 7%;
+}
+
+.mainContainer p {
+  font-family: "Inter";
+}
+
+.leaderboardTitle {
+  font-size: 1.5rem;
+  padding-bottom: 20px;
+}
+
+.mainContainer p:first-of-type {
+  font-weight: 600;
+}
+
+.searchBar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.searchBar .search {
+  width: 60%;
+  max-width: 100%;
+  height: 42px;
+  border-radius: 8px;
+  padding-left: 15px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #e6e6e6;
+}
+
+.searchBar input {
+  width: 100%;
+  padding: 5px;
+  margin-left: 10px;
+  border: none;
+  font-size: 16px;
+  margin-top: 0;
+}
+
+.searchBar input:focus {
+  outline: none;
+  border: none;
+}
+
+.selectTrigger {
+  width: 150px !important;
+  height: 42px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-around !important;
+  border-radius: 6px !important;
+  padding: 4px 10px !important;
+  border: 1px solid #e6e6e6 !important;
+  background: #fff;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.selectContent {
+  width: 150px !important;
+  min-width: 0 !important;
+  max-height: 300px !important;
+  margin-top: 5px !important;
+  box-sizing: border-box !important;
+}
+
+.filters {
+  width: 110px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  padding: 4px 10px;
+  border: 1px solid #e6e6e6;
+  color: #99a2a5;
+  /* border: 2px solid black; */
+}
+
+.filters select {
+  position: relative;
+  z-index: 2;
+  /* width: 90%; */
+  min-width: fit-content;
+  height: 100%;
+  border-radius: 6px;
+  padding: 2px 6px;
+  /* border: 1px solid #e6e6e6; */
+  color: #6b6b6b;
+  font-size: 16px;
+  font-weight: 500;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: transparent;
+  outline: none;
+  border: none;
+}
+
+.filters select:focus {
+  outline: none;
+}
+
+.dropArrow {
+  position: absolute;
+  right: 10px;
+}
+
+.topThree {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 100px;
+  /* position: relative; */
+}
+
+.topThreeMobile {
+  display: none;
+}
+
+.topThreeMobile2nd3rd {
+  display: flex;
+  justify-content: space-between;
+}
+
+.scrollableTableContainer {
+  overflow-x: auto;
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  padding: 10px;
+  text-align: center;
+}
+
+.usernameTh {
+  padding: 0% 10%;
+  text-align: left;
+}
+
+td {
+  padding: 10px 0px 10px 0px;
+  text-align: center;
+  /* border:2px solid black; */
+}
+
+th {
+  background-color: #f4f4f4;
+}
+
+table th:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+table th:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0px;
+}
+
+.pagination button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: 30px;
+  padding: 4px 10px;
+  margin: 0 5px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #d8dae5;
+  outline: none;
+  border-radius: 4px;
+  background-color: transparent;
+  cursor: pointer;
+  gap: 5px;
+}
+
+.pagination button.active {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination .dots {
+  cursor: pointer;
+  background-color: transparent;
+  color: #000;
+}
+
+.pagination button svg {
+  margin-right: 5px;
+}
+
+.topCard,
+.topCard2 {
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.topCardUpper,
+.topCardUpper2 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.imageUsername img {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.rankBadge {
+  width: 30px;
+}
+
+.nameRating h3 {
+  font-size: 3rem;
+}
+
+.details p {
+  margin: 5px 0;
+}
+
+.firstPosition {
+  width: 220px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transform: translateY(-90px);
+  overflow: hidden;
+  z-index: 2;
+}
+
+.firstPosition .firstPosImg {
+  width: 74px;
+  height: 72px;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 50px;
+  object-fit: contain;
+  position: absolute;
+  top: 123px;
+  left: 109px;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.rank {
+  position: absolute;
+  top: 52%;
+  left: 44%;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.rankCard1 {
+  /* margin-top: 32%; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  /* transform: translateY(-70px); */
+  flex-direction: column;
+}
+
+.rankCard2 {
+  /* margin-top: 32%; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  /* transform: translateY(-70px); */
+  flex-direction: column;
+}
+
+.rankst {
+  position: absolute;
+  top: 34%;
+  left: 43%;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.STPositions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  max-width: 200px;
+  z-index: 1;
+}
+
+.STposImg {
+  width: 75px;
+  max-width: 100%;
+  height: 74px;
+  border-radius: 50%;
+  position: absolute;
+  top: 9%;
+  left: 50%;
+  transform: translate(-50%, -0%);
+  object-fit: cover;
+}
+
+.data1 {
+  margin: 0px;
+  font-weight: 600;
+}
+
+.data2 {
+  margin: 0px;
+  font-weight: 300;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5%;
+  width: 100%;
+  justify-content: center;
+}
+
+.dataST {
+  font-size: 0.8rem;
+  position: absolute;
+  top: 50%;
+  /* left: 25%; */
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dataFP {
+  font-size: 0.9rem;
+  position: absolute;
+  top: 70%;
+  /* left: 25%; */
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dataFP1 {
+  margin: 0px;
+  font-weight: 600;
+}
+
+.dataFP2 {
+  margin: 0px;
+  font-weight: 300;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5%;
+  width: 100%;
+  justify-content: center;
+}
+
+.scrollableTableContainerMobile {
+  display: none;
+}
+
+th,
+td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.userCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Center horizontally */
+  gap: 8px;
+}
+
+.userCellBox {
+  display: flex;
+  align-items: center;
+  max-width: 50%;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.userAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #eee;
+}
+
+.username {
+  font-weight: 500;
+  color: #333;
+  text-wrap-mode: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.reputationCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.countryCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wavyFlag {
+  width: 40px;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+}
+
+/* Skeleton Loading Styles */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.reputationWrapper {
+  position: relative;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.infoButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff9f5;
+  border: 1px solid #ffadad;
+  border-radius: 12px;
+  padding: 8px 14px;
+  color: #ff3030;
+  cursor: pointer;
+  font-weight: 600;
+  outline: none;
+  user-select: none;
+  transition: box-shadow 0.3s ease;
+  width: max-content;
+}
+
+.infoButton:focus,
+.infoButton:hover {
+  box-shadow: 0 0 8px 2px #ffadadcc;
+}
+
+.fireIcon {
+  font-size: 18px;
+}
+
+.infoIcon {
+  font-size: 16px;
+  color: #fa7a00;
+}
+
+.labelText {
+  white-space: nowrap;
+}
+
+.floatingPanel {
+  position: absolute;
+  top: 110%;
+  left: 25%;
+  background: #fff;
+  border: 1px solid #ffadad;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(255, 77, 77, 0.25);
+  padding: 16px 24px;
+  width: 480px;
+  z-index: 10;
+  font-size: 13px;
+  color: #333;
+}
+
+.floatingTitle {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ff3030;
+}
+
+.factorList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+.factorList li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.factorIcon {
+  color: #ff3030;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.tipText {
+  font-style: italic;
+  color: #777;
+  font-size: 12px;
+  margin: 10px 0 0 0;
+}
+
+.skeletonCell {
+  height: 20px;
+  background: #eee;
+  border-radius: 4px;
+  margin: 5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonCell::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0));
+  animation: shimmer 3s infinite;
+}
+
+
+.skeletonTopCard {
+  width: 200px;
+  height: 200px;
+  background: #eee;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 100px;
+}
+
+.skeletonTopImage {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background: #ddd;
+  margin-bottom: 15px;
+  overflow: hidden;
+  position: relative;
+}
+
+.skeletonTopDetails {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.skeletonTopName {
+  width: 80%;
+  height: 20px;
+  background: #ddd;
+  border-radius: 4px;
+}
+
+.skeletonTopRating {
+  width: 60%;
+  height: 16px;
+  background: #ddd;
+  border-radius: 4px;
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0));
+  animation: shimmer 3s infinite;
+}
+
+.skeletonRow td {
+  padding: 15px 10px;
+}
+
+.skeletonFlag {
+  width: 36px !important;
+  height: 24px !important;
+  margin: 0 auto;
+}
+
+.skeletonMobileCard {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 15px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.skeletonRank {
+  width: 30px;
+  height: 24px;
+}
+
+.skeletonUsername {
+  width: 120px;
+  height: 20px;
+  margin-bottom: 8px;
+}
+
+.skeletonRating {
+  width: 70px;
+  height: 16px;
+  margin-right: 10px;
+}
+
+.skeletonContests {
+  width: 80px;
+  height: 16px;
+}
+
+@media (max-width: 1200px) {
+  .floatingPanel {
+    left: 5%;
+    /* width: 90%; */
+  }
+}
+
+@media (max-width: 900px) {
+  .scrollableTableContainer {
+    display: none;
+  }
+
+  .scrollableTableContainerMobile {
+    display: block;
+  }
+
+  .mainContainer {
+    width: 60vw;
+  }
+
+  .searchBar .search {
+    width: 50%;
+    max-width: 100%;
+    height: 42px;
+    border-radius: 8px;
+    padding-left: 15px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #e6e6e6;
+  }
+
+  .selectTrigger {
+    width: 100px !important;
+    padding: 4px 6px !important;
+  }
+
+  .selectContent {
+    width: 100px !important;
+  }
+
+  .countryName {
+    display: none !important;
+  }
+
+  .topThree {
+    padding-bottom: 2rem;
+  }
+
+  .rankCard {
+    width: 125px;
+  }
+
+  .firstPosition {
+    width: 140px;
+    height: auto;
+    /* transform: translateY(-70px);
+    position: relative; */
+    /* z-index: 10; */
+    /* border: 2px solid blue; */
+  }
+
+  .firstPosition .firstPosImg {
+    width: 42px;
+    height: 42px;
+    top: 39%;
+    left: 49%;
+  }
+
+  .STPositions {
+    width: 115px;
+    height: auto;
+    transform: translateY(20px);
+    /* border: 2px solid blue; */
+  }
+
+  .STposImg {
+    width: 42px;
+    height: 42px;
+    top: 16px;
+    object-fit: cover;
+  }
+
+  .dataFP {
+    font-size: 9px;
+    top: 72%;
+    /* left: 35%; */
+    text-align: center;
+  }
+
+  .dataST {
+    font-size: 9px;
+    top: 56%;
+    /* left: 33%; */
+    text-align: center;
+  }
+
+  .rank {
+    font-size: 8px;
+    top: 52%;
+    left: 45%;
+  }
+
+  .rankst {
+    font-size: 8px;
+    top: 41%;
+    left: 45%;
+  }
+
+  .scoreCard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #a0a0a0;
+  }
+
+  .userDetails {
+    display: flex;
+    flex-direction: column;
+    width: 12rem;
+    gap: 0.3rem;
+  }
+
+  .profileImg {
+    display: none !important;
+  }
+
+  .username {
+    font-weight: 600;
+    display: flex;
+    gap: 5%;
+  }
+
+  .ratingAndTotal {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 0.9rem;
+    color: #505050;
+  }
+
+  .searchBar input {
+    width: 100%;
+    padding: 0.4rem;
+    border: none;
+    font-size: 0.8rem;
+    margin-left: 0px;
+  }
+
+  .selectTrigger {
+    width: 100px;
+  }
+
+  .filters {
+    border-radius: 0.5rem;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border: 1px solid #e6e6e6;
+    color: #99a2a5;
+    /* border: 2px solid black; */
+  }
+
+  .filters select {
+    border-radius: 1.5rem;
+    color: #6b6b6b;
+    font-size: 0.8rem;
+  }
+
+  .filters select:focus {
+    outline: none;
+  }
+
+  .dropArrow {
+    margin-left: -6px;
+    padding-top: 6px;
+  }
+
+  .skeletonTopCard {
+    width: 120px;
+    height: 150px;
+    transform: translateY(20px);
+  }
+
+  .skeletonTopImage {
+    width: 40px;
+    height: 40px;
+  }
+
+  .floatingPanel {
+    left: -2%;
+  }
+}
+
+@media (max-width: 640px) {
+  .mainContainer {
+    width: 86vw;
+  }
+
+  .wavyFlag {
+    width: 30px;
+  }
+
+  .reputationWrapper {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .infoButton {
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
+    font-size: 14px;
+    white-space: normal;
+  }
+
+  .fireIcon {
+    font-size: 16px !important;
+  }
+
+  .infoIcon {
+    font-size: 14px;
+  }
+
+  .floatingPanel {
+    width: 90vw;
+    padding: 16px 16px;
+    font-size: 12px;
+    left: -2%;
+  }
+
+  .factorList li {
+    font-size: 11px;
+    gap: 6px;
+  }
+
+  .tipText {
+    font-size: 9px;
+  }
+}
+
+:global(.dark) {
+
+  .leaderboard,
+  .mainContainer,
+  .container {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  .mainContainer p {
+    color: var(--color-foreground);
+  }
+
+  .leaderboardTitle {
+    color: var(--color-foreground);
+  }
+
+  .searchBar .search {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    color: var(--color-foreground);
+  }
+
+  .searchBar input {
+    background: transparent;
+    color: var(--color-foreground);
+    border: none;
+  }
+
+  .selectTrigger,
+  .selectContent,
+  .filters {
+    background: var(--color-card) !important;
+    color: var(--color-foreground) !important;
+    border: 1px solid var(--color-border) !important;
+  }
+
+  .filters select {
+    color: var(--color-foreground);
+    background: transparent;
+  }
+
+  .dropArrow {
+    color: var(--color-muted-foreground);
+  }
+
+  .scrollableTableContainer {
+    background: transparent;
+  }
+
+  /* Table Styling */
+  table {
+    background: var(--color-card);
+    color: var(--color-foreground);
+  }
+
+  th {
+    background-color: var(--color-muted);
+    color: var(--color-muted-foreground);
+  }
+
+  td {
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+  }
+
+  .usernameTh {
+    color: var(--color-foreground);
+  }
+
+  /* Pagination */
+  .pagination button {
+    border: 1px solid var(--color-border);
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+  }
+
+  .pagination button.active {
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+    border-color: var(--color-primary);
+  }
+
+  .pagination button:disabled {
+    background-color: var(--color-muted);
+    color: var(--color-border);
+  }
+
+  .pagination .dots {
+    color: var(--color-muted-foreground);
+  }
+
+  .topCard,
+  .topCard2 {
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+    border: 1px solid var(--color-border);
+  }
+
+  /* Avatars */
+  .imageUsername img,
+  .userAvatar,
+  .STposImg,
+  .firstPosition .firstPosImg {
+    border: 2px solid var(--color-border);
+    background: var(--color-background);
+  }
+
+  .userAvatar {
+    border: 2px solid var(--color-border);
+  }
+
+  /* Username and rating */
+  .username,
+  .nameRating h3 {
+    color: var(--color-foreground);
+  }
+
+  .rankCard1 p,
+  .rankCard2 p {
+    color: var(--color-secondary);
+  }
+
+  .data2 span,
+  .dataFP2 span {
+    color: var(--color-secondary);
+  }
+
+  /* Skeleton loading states */
+  .skeletonCell,
+  .skeletonTopCard,
+  .skeletonTopImage,
+  .skeletonTopName,
+  .skeletonTopRating,
+  .skeletonRow td,
+  .skeletonFlag,
+  .skeletonMobileCard,
+  .skeletonRank,
+  .skeletonUsername,
+  .skeletonRating,
+  .skeletonContests {
+    background: var(--color-border) !important;
+  }
+
+  .shimmer::after,
+  .skeletonCell::after {
+    background: linear-gradient(to right,
+        rgba(60, 60, 60, 0),
+        rgba(120, 120, 120, 0.4),
+        rgba(60, 60, 60, 0));
+  }
+
+  .skeletonTopDetails {
+    background: none;
+  }
+
+  /* User cells and countries */
+  .userCell,
+  .userCellBox {
+    color: var(--color-foreground);
+  }
+
+  .countryCell {
+    color: var(--color-foreground);
+  }
+
+  .wavyFlag {
+    background: var(--color-card);
+    border: var(--color-border);
+    filter: brightness(0.92);
+  }
+
+  .badgePill {
+    background-color: rgba(46, 125, 50, 0.18);
+    color: #a5d6a7;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  }
+
+  .badgeGrey {
+    background-color: var(--color-muted);
+    color: var(--color-muted-foreground);
+  }
+
+  /* Misc */
+  .rankCard1,
+  .rankCard2,
+  .STPositions,
+  .details p {
+    color: var(--color-foreground);
+  }
+
+  .reputationWrapper {
+    background: transparent;
+  }
+
+  .infoButton {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    color: var(--color-primary);
+  }
+
+  .infoButton:focus,
+  .infoButton:hover {
+    box-shadow: 0 0 10px 2px var(--color-border);
+  }
+
+  .infoIcon {
+    color: var(--color-accent);
+  }
+
+  .labelText {
+    color: var(--color-muted-foreground);
+  }
+
+  .floatingPanel {
+    background: var(--color-popover);
+    border: 1px solid var(--color-border);
+    color: var(--color-popover-foreground);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.36);
+  }
+
+  .floatingTitle {
+    color: var(--color-primary);
+  }
+
+  .factorList {
+    color: var(--color-popover-foreground);
+  }
+
+  .factorList li {
+    background: none;
+  }
+
+  .factorIcon {
+    color: var(--color-primary);
+  }
+
+  .tipText {
+    color: var(--color-muted-foreground);
+  }
+}

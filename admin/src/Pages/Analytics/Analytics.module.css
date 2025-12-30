@@ -1,0 +1,307 @@
+:root {
+    --primary: #0ea5e9;
+    --success: #10b981;
+    --warning: #fb923c;
+    --danger: #e11d48;
+    --purple: #8b5cf6;
+    --blue: #2563eb;
+    --sidebar-width: 220px;
+    --navbar-height: 64px;
+    --card-bg: #fff;
+    --main-bg: #f6f8fa;
+    --shadow: 0 4px 16px 0 rgba(16, 30, 54, 0.07), 0 1.5px 4px 0 rgba(14, 165, 233, 0.02);
+    --shadow-hover: 0 8px 24px rgba(14, 165, 233, 0.09);
+    --radius: 16px;
+    --font-main: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+
+/* Layout wrapper */
+.pageWrapper {
+    min-height: 100vh;
+    background: var(--main-bg);
+    font-family: var(--font-main);
+    margin-left: var(--sidebar-width);
+    padding-top: var(--navbar-height);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main Content Centered, Clean Width */
+.analyticsMain {
+    max-width: 1080px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 30px 28px 22px 28px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    position: relative;
+}
+
+/* Page Header */
+.pageHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: 17px;
+    margin-bottom: 10px;
+}
+
+.pageIcon {
+    background: #e6f6fa;
+    color: var(--primary);
+    font-size: 1.8rem;
+    border-radius: 10px;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px #0001;
+}
+
+.pageHeader h1 {
+    font-size: 1.28rem;
+    font-weight: 700;
+    color: #22293d;
+    margin: 0 0 3px 0;
+    letter-spacing: -0.33px;
+}
+
+.pageHeader p {
+    margin: 0;
+    font-size: 1.04rem;
+    font-weight: 500;
+    color: #64748b;
+}
+
+/* --- Metrics Card Grid --- */
+.metricsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 7px;
+    margin-bottom: 8px;
+}
+
+@media (max-width: 1000px) {
+    .metricsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .metricsGrid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+
+/* Metric Card (robust for any value/arrow size) */
+.metricCard {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--card-bg);
+    min-height: 90px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 15px 16px;
+    transition: box-shadow 0.15s, transform 0.1s;
+    user-select: none;
+    cursor: pointer;
+    max-height: 200px;
+}
+
+.metricCard:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-1.5px) scale(1.014);
+    z-index: 2;
+}
+
+.metricIcon {
+    min-width: 38px;
+    min-height: 38px;
+    width: 38px;
+    height: 38px;
+    background: #e6f6fa;
+    color: var(--primary);
+    border-radius: 10px;
+    font-size: 1.32rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Metric Content: flex-column for trend, value, label, adjusts for overflow */
+.metricContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+    align-items: flex-start;
+}
+
+/* Main Metric Value */
+.metricValue {
+    font-size: 1.32rem;
+    font-weight: 700;
+    color: #202536;
+    line-height: 1.16;
+    margin-bottom: 0;
+    word-break: break-all;
+}
+
+.metricLabel {
+    font-size: 1.04rem;
+    color: #8391b3;
+    font-weight: 500;
+    margin-top: -1.5px;
+    letter-spacing: 0;
+}
+
+/* Trend (delta: % up/down) — always wraps, never absolute! */
+.metricTrend {
+    font-size: 0.97rem;
+    font-weight: 600;
+    letter-spacing: -0.05px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    opacity: 0.87;
+    margin-top: 3px;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow-wrap: break-word;
+}
+
+.metricTrend[style*="#10b981"] {
+    color: #10b981;
+}
+
+.metricTrend[style*="#e11d48"] {
+    color: #e11d48;
+}
+
+/* --- Charts Section --- */
+.chartsSection {
+    display: flex;
+    flex-direction: column;
+    gap: 23px;
+}
+
+/* Main Chart Card */
+.chartCard {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px 28px 28px 28px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    transition: box-shadow 0.12s;
+}
+
+.chartCard:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+.chartTitle {
+    font-size: 1.11rem;
+    font-weight: 600;
+    color: #273457;
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.customChart {
+    width: 100%;
+    min-height: 240px;
+    height: 262px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+/* Prediction label/summary below chart */
+.predictionLabel {
+    font-size: 0.99rem;
+    color: #64748b;
+    margin-top: 8px;
+    font-weight: 500;
+}
+
+/* --- Bottom Distribution Charts --- */
+.bottomCharts {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 10px;
+    margin-top: 5px;
+}
+
+.bottomCard {
+    flex: 1 1 0;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 22px 22px 22px;
+    min-width: 170px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow: hidden;
+}
+
+@media (max-width: 900px) {
+    .bottomCharts {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .bottomCard {
+        min-width: 0;
+    }
+
+    .analyticsMain {
+        padding: 10px 2px 6px 2px;
+    }
+}
+
+/* Loading/error */
+.loading,
+.error {
+    font-size: 1.01rem;
+    color: var(--danger);
+    margin: .9rem 0;
+    font-weight: 600;
+}
+
+/* Chart.js tweaks */
+canvas {
+    border-radius: 0 0 14px 14px !important;
+    background: transparent;
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 7px;
+    background: #f4f7fa;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d4dde8;
+    border-radius: 7px;
+}
+
+body {
+    background: var(--main-bg);
+}

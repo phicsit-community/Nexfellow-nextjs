@@ -1,0 +1,835 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.layoutContainer {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  width: 100%;
+}
+
+.mainContentContainer {
+  flex: 2;
+  overflow-y: auto;
+  scrollbar-width: none;
+  max-width: 65%;
+  position: relative;
+  border-right: 1px solid #e6e6e6;
+  padding: 10px 0px 0px 0px;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+:global(.dark) .mainContentContainer {
+  border-right-color: var(--color-border);
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0px 20px;
+  align-items: center;
+  /* height: 100%; */
+}
+
+.backButtonContainer {
+  background: none;
+  border: none;
+  font-size: 20px;
+  font-weight: 500;
+  display: flex;
+  width: 90%;
+  align-items: center;
+  padding: 5px 0px 5px 0px;
+  transition: color 0.3s ease;
+  margin-top: 10px;
+  justify-content: space-between;
+  height: 5%;
+}
+
+.backButton {
+  cursor: pointer;
+  color: #6a6a6a;
+  display: flex;
+  width: 150px;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.moreButton {
+  background: none;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  /* right: 5px; */
+  padding: 0%;
+  display: flex;
+  /* width: 20px; */
+  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.backIcon {
+  margin-top: 2px;
+}
+
+.bannerSection {
+  position: relative;
+  padding: 0;
+  /* height: 100%; */
+  width: 90%;
+  margin-bottom: 40px;
+  /* padding-left: 30px; */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.bannerImgContainer {
+  width: 100%;
+  height: 35%;
+  border-radius: 8px;
+  display: flex;
+  /* padding-left: 20px; */
+}
+
+.bannerImage {
+  width: 680px;
+  height: 180px;
+  border-radius: 8px;
+  position: relative;
+  /* left: 5%; */
+  object-fit: fill;
+}
+
+/* .profileImageContainer {
+    position: relative;
+    left: 5%;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #fff;
+    position: relative;
+    top: 5px;
+} */
+
+/* .profileImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+} */
+
+.communityHeader {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  position: relative;
+  /* padding-left: 20px; */
+}
+
+.badge {
+  width: 24px;
+  height: 24px;
+}
+
+.communityDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  bottom: 8%;
+  gap: 2px;
+  margin: 0;
+  /* padding: 10px; */
+  width: 100%;
+}
+
+.communityName {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000000;
+  line-height: 29px;
+  margin: 0;
+}
+
+.communityNameContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.username {
+  font-size: 14px;
+  font-weight: 400;
+  color: #6a6a6a;
+  line-height: 20px;
+  margin: 0;
+  /* padding-left: 15px; */
+}
+
+.description {
+  font-size: 14px;
+  font-weight: 400;
+  width: 100%;
+  color: #6a6a6a;
+  line-height: 17px;
+  margin: 0 0 4% 0;
+  /* padding-left: 18px; */
+}
+
+.toggleDescriptionButton {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.members {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+}
+
+.communityActions {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  cursor: default;
+}
+
+.avatarIcon {
+  /* width: 100%; */
+  width: 80px;
+  height: 80px;
+}
+
+.memberImages {
+  display: flex;
+  /* width: 20%; */
+  /* margin-right: 10px; */
+}
+
+.memberImageWrapper {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  overflow: hidden;
+  margin-right: -10px;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+}
+
+.memberImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.membersCount {
+  font-size: 14px;
+  font-weight: 500;
+  color: #6a6a6a;
+  cursor: pointer;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 10px;
+  width: 50%;
+  max-width: 300px;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18%;
+}
+
+.svgIcon {
+  width: 100%;
+}
+
+.inviteButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45%;
+}
+
+.editButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45%;
+}
+
+/* Skeleton loading styles */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: #f0f0f0;
+  background-image: linear-gradient(90deg,
+      #f0f0f0 0%,
+      #e0e0e0 30%,
+      #ffffff 50%,
+      #e0e0e0 70%,
+      #f0f0f0 100%);
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+  /* use a larger surface */
+  animation: shimmer 5s linear infinite;
+  /* slower, constant speed */
+}
+
+.skeletonBanner {
+  width: 100%;
+  height: 170px;
+  border-radius: 8px;
+}
+
+.profileImageWrapper {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #fff;
+  position: relative;
+  top: 0px;
+  left: 40px;
+}
+
+/* mobile screen */
+@media screen and (max-width: 768px) {
+  .profileImageWrapper {
+    width: 80px;
+    height: 80px;
+    top: -20px;
+    left: 20px;
+  }
+
+  .skeletonProfileImage {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    /* margin: 10px; */
+    /* margin-left: 30px; */
+  }
+}
+
+.skeletonProfileImage {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  /* margin: 10px; */
+  /* margin-left: 30px; */
+}
+
+.skeletonText {
+  height: 20px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.skeletonTextLarge {
+  width: 70%;
+  height: 24px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.skeletonTextSmall {
+  width: 40%;
+  height: 16px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+}
+
+.skeletonDescription {
+  width: 100%;
+  height: 60px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+}
+
+.skeletonButton {
+  width: 50px;
+  height: 30px;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.skeletonAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.skeletonActionBar {
+  display: flex;
+  width: 100%;
+  margin-top: 15px;
+}
+
+@media (max-width: 1024px) {
+  .memberImageWrapper {
+    width: 25px;
+    height: 25px;
+  }
+
+  .bannerImage {
+    width: 680px;
+    height: 180px;
+    border-radius: 8px;
+    position: relative;
+    /* left: 5%; */
+    object-fit: fill;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainContentContainer {
+    flex: 2;
+    overflow-y: auto;
+    scrollbar-width: none;
+    max-width: 100%;
+    position: relative;
+    border-right: 1px solid #e6e6e6;
+    padding: 10px 0px 0px 0px;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .bannerSection {
+    width: 100%;
+    padding: 0px;
+    display: flex;
+    align-items: center;
+  }
+
+  .bannerImgContainer {
+    width: 100%;
+    border-radius: 0px;
+  }
+
+  .bannerImage {
+    width: 100%;
+    left: 0%;
+    border-radius: 0px;
+  }
+
+  .mainContent {
+    padding: 0px;
+  }
+
+  .backButtonContainer {
+    position: absolute;
+    z-index: 10;
+  }
+
+  .backIcon {
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    right: 40px;
+    position: relative;
+  }
+
+  .backText {
+    display: none;
+  }
+
+  .moreButton {
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+  }
+
+  .communityDetails {
+    bottom: 3%;
+    gap: 5px;
+    width: 90%;
+  }
+
+  /* .iconButton {
+        width: 30%;
+    }
+
+    .inviteButton {
+        width: 60%;
+    }
+
+    .editButton {
+        width: 60%;
+    } */
+
+  .actionButtons {
+    width: 90%;
+  }
+
+  .memberImageWrapper {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* Skeleton loading styles */
+.skeletonPost {
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  height: auto;
+  min-height: fit-content;
+}
+
+.skeletonHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.skeletonAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  margin-right: 12px;
+}
+
+.skeletonDetails {
+  flex: 1;
+}
+
+.skeletonText {
+  height: 12px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  width: 80%;
+}
+
+.skeletonDetails .skeletonText:last-child {
+  width: 60%;
+}
+
+.skeletonContent {
+  margin-bottom: 16px;
+}
+
+.skeletonContent .skeletonText {
+  height: 14px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.skeletonContent .skeletonText:last-child {
+  width: 70%;
+}
+
+.skeletonImageContainer {
+  width: 100%;
+  padding-bottom: 16px;
+}
+
+.skeletonImageGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 8px;
+  width: 100%;
+  height: 560px;
+  margin: 16px 0;
+}
+
+.skeletonImageItem {
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  width: 100%;
+  height: 100%;
+}
+
+.skeletonImage {
+  width: 100%;
+  height: 200px;
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  margin: 12px 0;
+}
+
+.skeletonActions {
+  display: flex;
+}
+
+.skeletonAction {
+  width: 40px;
+  height: 20px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  margin-right: 12px;
+}
+
+/* Shimmer effect */
+.skeletonPost::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.2) 30%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0.2) 70%,
+      rgba(255, 255, 255, 0) 100%);
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+  /* larger surface slows the pass */
+  animation: shimmer 5s linear infinite;
+  /* slower, constant speed */
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  /* start well off left */
+  100% {
+    background-position: 200% 0;
+  }
+
+  /* end well off right */
+}
+
+@media (max-width: 425px) {
+
+  .mainContentContainer {
+    padding: 0px;
+  }
+
+  .bannerSection {
+    margin-bottom: 20px;
+  }
+
+  .bannerImage {
+    min-width: 201px;
+    min-height: 53px;
+    height: 100%;
+    object-fit: fill;
+  }
+
+  .communityDetails {
+    bottom: 10%;
+  }
+}
+
+@media (max-width: 375px) {
+  .bannerImage {
+    min-width: 178px;
+    min-height: 47px;
+    height: 100%;
+    object-fit: fill;
+  }
+}
+
+@media (max-width: 320px) {
+  .bannerImage {
+    width: 390px;
+    height: 110px;
+    /* height: 100%; */
+    object-fit: fill;
+  }
+}
+
+:global(.dark) {
+  .pageContainer {
+    background-color: var(--background);
+    /* dark background */
+    color: var(--foreground);
+  }
+
+  .layoutContainer {
+    background-color: var(--background);
+  }
+
+  .mainContentContainer {
+    border-right-color: var(--color-border);
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  .mainContent {
+    color: var(--foreground);
+  }
+
+  .backButtonContainer {
+    color: var(--foreground);
+    background: none;
+  }
+
+  .backButton {
+    color: var(--muted-foreground);
+  }
+
+  .moreButton {
+    color: var(--foreground);
+    background: none;
+  }
+
+  .bannerSection {
+    background-color: var(--card);
+    color: var(--card-foreground);
+  }
+
+  .bannerImgContainer {
+    background-color: var(--card);
+  }
+
+  .bannerImage {
+    /* no special dark mode changes needed unless you want a filter */
+  }
+
+  .communityHeader {
+    color: var(--foreground);
+  }
+
+  .badge {
+    filter: brightness(0.8);
+  }
+
+  .communityDetails {
+    color: var(--muted-foreground);
+  }
+
+  .communityName {
+    color: var(--foreground);
+  }
+
+  .username {
+    color: var(--muted-foreground);
+  }
+
+  .description {
+    color: var(--muted-foreground);
+  }
+
+  .toggleDescriptionButton {
+    color: var(--primary);
+  }
+
+  .membersCount {
+    color: var(--muted-foreground);
+  }
+
+  .actionButtons {
+    /* Keep transparent/no bg for buttons or adjust */
+  }
+
+  .iconButton,
+  .inviteButton,
+  .editButton {
+    color: var(--foreground);
+    /* You can set buttons' backgrounds here if needed */
+  }
+
+  .memberImageWrapper {
+    border-color: var(--background);
+  }
+
+  /* Post hover effect similar to your previous request */
+  .post:hover {
+    background-color: var(--color-muted);
+    /* subtle highlight */
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  /* Skeleton loading adjusted for dark mode */
+  .skeletonPost {
+    background-color: var(--card);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  .skeletonAvatar,
+  .skeletonText,
+  .skeletonContent,
+  .skeletonAction {
+    background-color: #444;
+    /* dark grey placeholders */
+  }
+
+  /* Back icon and more button adjustments on mobile */
+  .backIcon,
+  .moreButton {
+    /* background-color: rgba(255 255 255 / 0.15); */
+    color: var(--foreground);
+  }
+
+  /* Adjust scrollbar styles if custom handling needed */
+  .mainContentContainer::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .mainContentContainer::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+
+  .mainContentContainer::-webkit-scrollbar-thumb {
+    background-color: var(--muted);
+    border-radius: 10px;
+  }
+}

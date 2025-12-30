@@ -1,0 +1,444 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.modalContainer {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  animation: modalFadeIn 0.2s ease-out;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+:global(.dark) .modalContainer {
+  background-color: var(--color-card);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.closeButton:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+:global(.dark) .closeButton:hover {
+  background-color: var(--color-accent);
+  color: var(--color-foreground);
+}
+
+.title {
+  margin: 0;
+  padding: 24px 24px 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+:global(.dark) .title {
+  color: var(--color-foreground);
+}
+
+.reportForm {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+:global(.dark) .label {
+  color: var(--color-foreground);
+}
+
+.select,
+.textarea {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s ease;
+}
+
+:global(.dark) .select,
+:global(.dark) .textarea {
+  background-color: var(--color-input);
+  border-color: var(--color-border);
+  color: var(--color-foreground);
+}
+
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: #666;
+  background-color: #fff;
+}
+
+:global(.dark) .select:focus,
+:global(.dark) .textarea:focus {
+  border-color: var(--color-primary);
+  background-color: var(--color-card);
+}
+
+.previewContainer {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.imagePreview {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.imagePreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.removeButton {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.uploadContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.uploadButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f2f2f2;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+:global(.dark) .uploadButton {
+  background-color: var(--color-muted);
+  color: var(--color-foreground);
+}
+
+.uploadButton:hover {
+  background-color: #e8e8e8;
+}
+
+:global(.dark) .uploadButton:hover {
+  background-color: var(--color-accent);
+}
+
+.uploadIcon {
+  font-size: 20px;
+}
+
+.uploadHint {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+:global(.dark) .uploadHint {
+  color: var(--color-muted-foreground);
+}
+
+.submitButton {
+  background-color: #fa6c6c;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 10px;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: #e65858;
+}
+
+.submitButton:disabled {
+  background-color: rgba(250, 108, 108, 0.7);
+  cursor: not-allowed;
+}
+
+.report_modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.modal_content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+:global(.dark) .modal_content {
+  background: var(--color-card);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.modal_header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.modal_title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+:global(.dark) .modal_title {
+  color: var(--color-foreground);
+}
+
+.modal_subtitle {
+  font-size: 14px;
+  color: #666;
+}
+
+:global(.dark) .modal_subtitle {
+  color: var(--color-muted-foreground);
+}
+
+.form_group {
+  margin-bottom: 15px;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+:global(.dark) .label {
+  color: var(--color-foreground);
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+  background: white;
+  transition: border-color 0.2s ease;
+}
+
+:global(.dark) .input,
+:global(.dark) .textarea {
+  background: var(--color-background);
+  border-color: var(--color-border);
+  color: var(--color-foreground);
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.upload_area {
+  border: 2px dashed #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #fafafa;
+}
+
+:global(.dark) .upload_area {
+  background: var(--color-background);
+  border-color: var(--color-border);
+}
+
+.upload_area:hover {
+  border-color: var(--color-primary);
+  background: #f0f8ff;
+}
+
+:global(.dark) .upload_area:hover {
+  border-color: var(--color-primary);
+  background: var(--color-accent);
+}
+
+.upload_text {
+  color: #666;
+  font-size: 14px;
+}
+
+:global(.dark) .upload_text {
+  color: var(--color-muted-foreground);
+}
+
+.file_hint {
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
+}
+
+:global(.dark) .file_hint {
+  color: var(--color-muted-foreground);
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.cancel_btn,
+.submit_btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.cancel_btn {
+  background: #f5f5f5;
+  color: #666;
+}
+
+:global(.dark) .cancel_btn {
+  background: var(--color-background);
+  color: var(--color-muted-foreground);
+}
+
+.cancel_btn:hover {
+  background: #ebebeb;
+}
+
+:global(.dark) .cancel_btn:hover {
+  background: var(--color-accent);
+}
+
+.submit_btn {
+  background: var(--color-primary);
+  color: white;
+}
+
+.submit_btn:hover {
+  background: var(--color-primary-dark);
+}
+
+.submit_btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+:global(.dark) .submit_btn:disabled {
+  background: var(--color-muted);
+}
+
+@media (max-width: 500px) {
+  .modalContainer {
+    width: 90%;
+    margin: 0 20px;
+  }
+
+  .title {
+    font-size: 1.2rem;
+  }
+}

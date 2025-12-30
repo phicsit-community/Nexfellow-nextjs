@@ -1,0 +1,171 @@
+.mainWrapper {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+    font-family: "Poppins", sans-serif;
+    width: 100%;
+}
+
+.card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    padding: 30px 20px;
+    width: 100%;
+    /* max-width: 900px; */
+    text-align: center;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #222;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.progressWrapper {
+    width: 200px;
+}
+
+.chartSection {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 40px;
+    width: 100%;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+}
+
+.chartBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-width: 260px;
+    max-width: 300px;
+}
+
+.legend {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    margin-top: 16px;
+    text-align: center;
+}
+
+.legend div {
+    flex: 1;
+}
+
+.legendLabel {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 4px;
+    min-width: max-content;
+}
+
+.legendValue {
+    font-size: 16px;
+    font-weight: 600;
+    color: #222;
+}
+
+.rankText {
+    font-size: 14px;
+    margin-top: 16px;
+    color: #333;
+}
+
+.submissionBox {
+    margin-top: 30px;
+    padding: 8px 16px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    font-size: 14px;
+    display: inline-block;
+    color: #333;
+}
+
+@media (max-width: 900px) {
+    .chartSection {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .legend {
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+    }
+}
+
+:global(.dark) {
+    .mainWrapper {
+        background-color: var(--color-background);
+        color: var(--color-foreground);
+    }
+
+    .card {
+        background: var(--color-card);
+        border: 1px solid var(--color-border);
+        color: var(--color-foreground);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .title {
+        color: var(--color-foreground);
+    }
+
+    .subtitle {
+        color: var(--color-muted-foreground);
+    }
+
+    .progressWrapper {
+        /* You can optionally add any background or border styling for dark mode here */
+    }
+
+    .chartSection {
+        /* No background change by default, text adapts */
+    }
+
+    .chartBlock {
+        /* No changes unless you want a card background or border */
+    }
+
+    .legend {
+        margin-top: 16px;
+        color: var(--color-muted-foreground);
+    }
+
+    .legend div {
+        color: var(--color-muted-foreground);
+    }
+
+    .legendLabel {
+        color: var(--color-muted-foreground);
+    }
+
+    .legendValue {
+        color: var(--color-foreground);
+    }
+
+    .rankText {
+        color: var(--color-foreground);
+    }
+
+    .submissionBox {
+        background-color: var(--color-card);
+        border-radius: 8px;
+        color: var(--color-foreground);
+        border: 1px solid var(--color-border);
+    }
+
+}

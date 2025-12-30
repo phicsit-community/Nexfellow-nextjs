@@ -1,0 +1,732 @@
+/* Container Styles */
+.container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  background-color: #00181f;
+  min-height: 100vh;
+}
+
+/* Header Section */
+.headerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 130px;
+  background: linear-gradient(135deg, #0c1c26 0%, #16252f 100%);
+  border-bottom: 1px solid #87bebc3f;
+}
+
+.contactLink {
+  color: #24b2b4;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 800px;
+  color: #ffffff;
+}
+
+.headerIcon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #24b2b4;
+  border-radius: 50%;
+  padding: 20px;
+}
+
+.headerIcon img {
+  width: 40px;
+  height: 40px;
+  filter: brightness(0) invert(1);
+}
+
+.headerTitle {
+  font-size: 72px;
+  font-weight: 700;
+  margin: 20px 0 10px 0;
+  line-height: 1.1;
+}
+
+.highlight {
+  color: #24b2b4;
+  font-weight: 700;
+}
+
+.headerSubtitle {
+  font-size: 18px;
+  font-weight: 500;
+  color: #87bebc3f;
+  margin-bottom: 20px;
+}
+
+.headerDescription {
+  font-size: 16px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Main Container */
+.mainContainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 0 130px;
+  gap: 60px;
+  padding: 60px 0;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  position: sticky;
+  top: 40px;
+  gap: 30px;
+}
+
+.tocContainer {
+  background-color: #0c1c26;
+  border: 1px solid #87bebc3f;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.tocTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #87bebc3f;
+}
+
+.tocNav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tocLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  transition: all 0.3s ease;
+}
+
+.tocLink:hover {
+  background-color: #16252f;
+  color: #24b2b4;
+  transform: translateX(4px);
+}
+
+.tocNumber {
+  color: #24b2b4;
+  font-weight: 600;
+  min-width: 20px;
+}
+
+/* Quick Actions */
+.quickActions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.actionCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background-color: #0c1c26;
+  border: 1px solid #87bebc3f;
+  border-radius: 12px;
+  color: #ffffff;
+}
+
+.actionCard img {
+  width: 24px;
+  height: 24px;
+  filter: invert(1);
+}
+
+.actionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.actionText {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  color: #ffffff;
+}
+
+.actionSubtext {
+  font-size: 12px;
+  font-weight: 400;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Content Styles */
+.content {
+  flex: 1;
+  max-width: 800px;
+  color: #ffffff;
+}
+
+.section {
+  margin-bottom: 48px;
+  scroll-margin-top: 100px;
+}
+
+.sectionTitle {
+  font-size: 28px;
+  font-weight: 600;
+  color: #24b2b4;
+  margin: 0 0 24px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #87bebc3f;
+}
+
+.subsectionTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 24px 0 16px 0;
+}
+
+.sectionContent {
+  line-height: 1.7;
+}
+
+.sectionContent p {
+  font-size: 16px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 16px 0;
+}
+
+/* List Styles */
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.listItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  background-color: #0c1c26;
+  border: 1px solid #87bebc3f;
+  border-radius: 8px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.listItem img {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  filter: invert(1);
+}
+
+.listItem strong {
+  color: #24b2b4;
+}
+
+/* Highlight Box */
+.highlightBox {
+  background: linear-gradient(135deg, #0c1c26 0%, #16252f 100%);
+  border: 1px solid #24b2b4;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 24px 0;
+}
+
+.highlightTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #24b2b4;
+  margin: 0 0 12px 0;
+}
+
+.highlightBox p {
+  margin: 0 0 12px 0;
+}
+
+.numberedList {
+  list-style: none;
+  counter-reset: item;
+  padding-left: 0;
+  margin: 12px 0 0 0;
+}
+
+.numberedList li {
+  counter-increment: item;
+  margin-bottom: 8px;
+  padding-left: 30px;
+  position: relative;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.numberedList li::before {
+  content: counter(item);
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: #24b2b4;
+  color: #ffffff;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Card Container */
+.cardContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 24px 0;
+}
+
+.infoCard {
+  background-color: #0c1c26;
+  border: 1px solid #87bebc3f;
+  border-radius: 12px;
+  padding: 20px;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.infoCard:hover {
+  transform: translateY(-4px);
+  border-color: #24b2b4;
+}
+
+.infoCard h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #24b2b4;
+  margin: 0 0 12px 0;
+}
+
+.infoCard p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Contact Section */
+.contactContainer {
+  margin: 24px 0;
+}
+
+.contactCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0c1c26;
+  border: 1px solid #87bebc3f;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contactLabel {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.contactValue {
+  font-size: 16px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.contactIcon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #24b2b4;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.contactIcon:hover {
+  transform: scale(1.1);
+}
+
+.contactIcon img {
+  width: 24px;
+  height: 24px;
+  filter: brightness(0) invert(1);
+}
+
+/* Back to Top */
+.backToTop {
+  display: flex;
+  justify-content: center;
+  margin: 40px 0 20px 0;
+}
+
+.backToTopLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background-color: #24b2b4;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.backToTopLink:hover {
+  background-color: #1e9498;
+  transform: translateY(-2px);
+}
+
+/* Floating TOC Button */
+.floatingTocButton {
+  display: none;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background-color: #24b2b4;
+  border: none;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(36, 178, 180, 0.3);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.floatingTocButton:hover {
+  background-color: #1e9498;
+  transform: scale(1.1);
+  box-shadow: 0 6px 25px rgba(36, 178, 180, 0.4);
+}
+
+/* Floating TOC Modal */
+.floatingTocModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1001;
+  backdrop-filter: blur(5px);
+}
+
+.floatingTocModal.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.floatingTocContent {
+  background-color: #0c1c26;
+  border: 1px solid #87bebc3f;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 90%;
+  max-height: 80%;
+  overflow-y: auto;
+  position: relative;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.floatingTocHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #87bebc3f;
+}
+
+.floatingTocTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.floatingTocClose {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.floatingTocClose:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.floatingTocNav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.floatingTocLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.floatingTocLink:hover {
+  background-color: #16252f;
+  color: #24b2b4;
+  border-color: #24b2b4;
+}
+
+.floatingTocNumber {
+  color: #24b2b4;
+  font-weight: 600;
+  min-width: 24px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .mainContainer {
+    margin: 0 60px;
+    gap: 40px;
+  }
+
+  .headerContainer {
+    padding: 40px 60px;
+  }
+}
+
+@media (max-width: 992px) {
+  .mainContainer {
+    margin: 0 40px;
+    gap: 30px;
+    flex-direction: column;
+  }
+
+  .headerContainer {
+    padding: 30px 40px;
+  }
+
+  .sidebar {
+    width: 100%;
+    position: static;
+    order: 2;
+  }
+
+  .content {
+    order: 1;
+    max-width: 100%;
+  }
+
+  .headerTitle {
+    font-size: 48px;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainContainer {
+    margin: 0 20px;
+    padding: 30px 0;
+  }
+
+  .headerContainer {
+    padding: 20px;
+  }
+
+  .headerTitle {
+    font-size: 36px;
+  }
+
+  .headerDescription {
+    font-size: 14px;
+  }
+
+  .sectionTitle {
+    font-size: 24px;
+  }
+
+  .subsectionTitle {
+    font-size: 18px;
+  }
+
+  .cardContainer {
+    grid-template-columns: 1fr;
+  }
+
+  .contactCard {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .tocContainer {
+    padding: 16px;
+  }
+
+  .tocTitle {
+    font-size: 16px;
+  }
+
+  .tocLink {
+    font-size: 13px;
+  }
+
+  /* Show floating TOC button on mobile */
+  .floatingTocButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Hide sidebar TOC on mobile */
+  .sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .mainContainer {
+    margin: 0 15px;
+  }
+
+  .headerContainer {
+    padding: 15px;
+  }
+
+  .headerTitle {
+    font-size: 28px;
+  }
+
+  .headerIcon {
+    width: 60px;
+    height: 60px;
+    padding: 15px;
+  }
+
+  .headerIcon img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .sectionContent p {
+    font-size: 14px;
+  }
+
+  .listItem {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .infoCard {
+    padding: 16px;
+  }
+
+  .contactCard {
+    padding: 16px;
+  }
+
+  .floatingTocButton {
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+
+  .floatingTocContent {
+    padding: 20px;
+    max-width: 95%;
+  }
+
+  .floatingTocTitle {
+    font-size: 18px;
+  }
+
+  .floatingTocLink {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+}

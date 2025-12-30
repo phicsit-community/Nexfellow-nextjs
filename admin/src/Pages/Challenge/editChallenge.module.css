@@ -1,0 +1,84 @@
+
+.container{
+    position: fixed;
+    top:0px;
+    right: 0px;
+    width:50%;
+    height: 100vh;
+    background-color: white;
+}
+.header{
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content:space-between;
+}
+
+.headerText{
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.form{
+    font-size: 18px;
+    font-weight: 300;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 20px;
+}
+.inputt{
+    display:flex;
+    justify-content:  space-around;
+}
+.inputDateTime{
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px 60px;
+    margin:5px 90px;
+}
+ .form p{
+    width: 100%;
+    padding: 0px 20px;
+    font-weight: 400;
+    margin: 5px 0px;
+ }
+
+.foot{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap:10px;
+}
+
+.footHead{
+    font-size: 20px;
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+
+    
+}
+.footContent{
+    padding-left: 20px;
+    font-size: 18px;
+    width: 100%;
+    font-weight: 200;
+
+}
+
+hr{
+    border-color:gray;
+}
+.updateCheckpoint{
+    background-color: #08AAA2;
+    color: white;
+    border-radius: 30px;
+    padding: 8px 50px;
+    width: 90%;
+}
+

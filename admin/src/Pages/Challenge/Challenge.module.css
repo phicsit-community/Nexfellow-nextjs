@@ -1,0 +1,53 @@
+.overlay{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.hero{
+    margin: 20px 40px;
+}
+.allChallenges{
+    color:gray;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.allChallenges:hover{
+    text-decoration: underline;
+}
+
+.challengeContainer{
+    margin-top: 30px;
+display: flex;
+justify-content: space-between;
+}
+.challengeName{
+    font-size: 32px;
+    font-weight:500;
+}
+
+.publishContainer{
+    display: flex;
+    align-items: center;
+    gap: 50px;
+}
+.publishButton{
+    background-color: #08AAA2;
+    color: white;
+    border-radius: 30px;
+    padding: 8px 50px;
+}
+
+.challengeDetails{
+    margin-top:30px;
+    color: gray;
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+}

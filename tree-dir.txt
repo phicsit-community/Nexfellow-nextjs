@@ -1,0 +1,49 @@
+.
+├── GeekMailer
+│   ├── GeekMailerApp
+│   │   ├── public
+│   │   └── src
+│   │       ├── Components
+│   │       ├── Pages
+│   │       ├── assets
+│   │       ├── slices
+│   │       ├── store
+│   │       └── utils
+│   └── email-scheduler-app
+├── admin
+│   ├── public
+│   └── src
+│       ├── Components
+│       ├── Pages
+│       ├── assests
+│       ├── slices
+│       ├── store
+│       └── utils
+├── backend
+│   ├── config
+│   ├── controllers
+│   ├── mail
+│   │   └── templates
+│   ├── models
+│   ├── postsAttachments
+│   ├── public
+│   │   ├── defaults
+│   │   └── temp
+│   ├── routes
+│   ├── utils
+│   └── views
+└── client
+    ├── assets
+    ├── public
+    └── src
+        ├── Pages
+        ├── assets
+        ├── components
+        ├── hooks
+        ├── lib
+        ├── store
+        │   └── slices
+        ├── styles
+        └── utils
+
+237 directories

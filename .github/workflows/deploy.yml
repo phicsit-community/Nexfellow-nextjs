@@ -1,0 +1,58 @@
+name: CI/CD Deploy to Hostinger
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install SSH Client
+        run: sudo apt-get install -y sshpass
+
+      - name: Deploy to Hostinger VPS
+        env:
+          HOST: ${{ secrets.HOSTINGER_HOST }}
+          USER: ${{ secrets.HOSTINGER_USER }}
+          PASS: ${{ secrets.HOSTINGER_PASSWORD }}
+        run: |
+          echo "🚀 Starting Nexfellow Deployment..."
+
+          sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
+          echo "🔧 Building Client..."
+          cd ~/nexfellow/client
+          npm install
+          npm run build
+
+          echo "📦 Copying Client to /var/www/nexfellow..."
+          rm -rf /var/www/nexfellow/*
+          cp -r dist/* /var/www/nexfellow/
+          chown -R www-data:www-data /var/www/nexfellow
+
+          echo "🔧 Building Admin Panel..."
+          cd ~/nexfellow/admin
+          npm install
+          npm run build
+
+          echo "📦 Copying Admin to /var/www/admin-nexfellow..."
+          rm -rf /var/www/admin-nexfellow/*
+          cp -r dist/* /var/www/admin-nexfellow/
+          chown -R www-data:www-data /var/www/admin-nexfellow
+
+          echo "🔁 Restarting Backend Server..."
+          cd ~/nexfellow/server
+          npm install
+          pm2 restart nexfellow-api || pm2 start index.js --name nexfellow-api
+          pm2 save
+
+          echo "🔁 Reloading Nginx..."
+          nginx -t && systemctl reload nginx
+
+          echo "✅ Deployment Complete!"
+          EOF
