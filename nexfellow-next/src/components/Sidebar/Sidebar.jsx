@@ -1,5 +1,8 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import axios from "axios";
 import { useMediaQuery } from "react-responsive";
 
@@ -17,9 +20,9 @@ import staticCommuntiy from "./animated/staticCommuntiy.png";
 import AnimatedSettings from "./animated/settings.json";
 
 function Sidebar() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState(location.pathname);
+  const pathname = usePathname();
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState(pathname);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
@@ -27,15 +30,15 @@ function Sidebar() {
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   useEffect(() => {
-    setActiveTab(location.pathname);
-  }, [location.pathname]);
+    setActiveTab(pathname);
+  }, [pathname]);
 
   useEffect(() => {
     const fetchUserData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const userData = JSON.parse(localStorage.getItem("user"));
+        const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
         const userId = userData?.id;
         if (!userId) throw new Error("User ID is missing");
         const response = await axios.get(`/user/profile`);
@@ -57,7 +60,7 @@ function Sidebar() {
       path: "/communities",
       icon: AnimatedCommunity,
       label: "Communities",
-      staticIcon: staticCommuntiy,
+      staticIcon: staticCommuntiy.src || staticCommuntiy,
     },
     { path: "/inbox", icon: AnimatedMessenger, label: "Inbox" },
   ];
@@ -73,7 +76,7 @@ function Sidebar() {
       const response = await axios.get("/user/logout", { withCredentials: true });
       if (response.status === 200) {
         localStorage.clear();
-        navigate("/login");
+        router.push("/login");
       } else {
         console.error("Logout failed:", response.data.message);
       }
@@ -89,10 +92,10 @@ function Sidebar() {
       <ul className={style.menuItems}>
         {displayMenuItems.map((item, idx) => (
           <Link
-            to={item.path}
+            href={item.path}
             key={item.path}
             onClick={(e) => {
-              if (location.pathname === item.path) {
+              if (pathname === item.path) {
                 e.preventDefault();
                 window.location.reload();
               } else {
@@ -125,7 +128,7 @@ function Sidebar() {
 
           <Link
             className={style.amLink}
-            to={`/dashboard/${user?.username}`}
+            href={`/dashboard/${user?.username}`}
             onClick={() => setActiveTab("/profile")}
           >
             <p
@@ -146,7 +149,7 @@ function Sidebar() {
 
           <Link
             className={style.amLink}
-            to={`/settings`}
+            href={`/settings`}
             onClick={() => setActiveTab("/settings")}
           >
             <p

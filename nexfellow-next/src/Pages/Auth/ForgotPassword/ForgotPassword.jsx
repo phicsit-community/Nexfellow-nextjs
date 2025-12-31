@@ -1,6 +1,9 @@
+"use client";
+
 import React, { useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
 
@@ -15,7 +18,7 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,9 +46,9 @@ const ForgotPassword = () => {
     <div className={styles.container}>
       <div className={styles.authForm}>
         <div className={styles.logo}
-          onClick={() => navigate("/")}
+          onClick={() => router.push("/")}
         >
-          <img src={navbarlogo} alt="NexFellow Logo"
+          <img src={navbarlogo.src || navbarlogo} alt="NexFellow Logo"
             className={styles.logoImage}
           />
         </div>
@@ -106,7 +109,7 @@ const ForgotPassword = () => {
             )}
 
             <div className={styles.redirect}>
-              <Link to="/login" className={styles.backButton}>
+              <Link href="/login" className={styles.backButton}>
                 <ArrowLeft size={16} /> Back to Login
               </Link>
             </div>

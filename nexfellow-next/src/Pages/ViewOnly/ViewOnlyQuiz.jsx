@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 
 // styles
@@ -9,8 +11,9 @@ import styles from "./ViewOnlyQuiz.module.css";
 import BackButton from "../../components/BackButton/BackButton";
 
 const ViewOnlyQuiz = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id;
+  const router = useRouter();
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,16 +36,11 @@ const ViewOnlyQuiz = () => {
   }, [id]);
 
   const handleBack = () => {
-    navigate(-1);
+    router.back();
   };
 
   const handleLoginPrompt = () => {
-    navigate("/login", {
-      state: {
-        returnUrl: `/quiz/${id}`,
-        message: "Login to participate in this quiz",
-      },
-    });
+    router.push(`/login?returnUrl=${encodeURIComponent(`/quiz/${id}`)}`);
   };
 
   if (loading) {
@@ -150,15 +148,13 @@ const ViewOnlyQuiz = () => {
               <div className={styles.authButtons}>
                 <button
                   className={styles.authLoginButton}
-                  onClick={() =>
-                    navigate("/login", { state: { returnUrl: `/quiz/${id}` } })
-                  }
+                  onClick={() => router.push(`/login?returnUrl=${encodeURIComponent(`/quiz/${id}`)}`)}
                 >
                   Login
                 </button>
                 <button
                   className={styles.authSignupButton}
-                  onClick={() => navigate("/signup")}
+                  onClick={() => router.push("/signup")}
                 >
                   Sign Up
                 </button>

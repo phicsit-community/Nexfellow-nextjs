@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 import styles from "./Event.module.css";
 import EventModal from "../../components/Event/EventModal";
@@ -7,11 +9,12 @@ import BackButton from "../../components/BackButton/BackButton";
 import EventCard from "./EventCard";
 import Tabs from "./Tabs";
 import EmptyState from "./EmptyState";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 const EventsPage = () => {
-  const navigate = useNavigate();
-  const { communityId } = useParams();
+  const router = useRouter();
+  const params = useParams();
+  const communityId = params?.communityId;
   const [events, setEvents] = useState({ upcoming: [], past: [] });
   const [activeTab, setActiveTab] = useState("upcoming");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,7 +22,7 @@ const EventsPage = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
-  const userData = JSON.parse(localStorage.getItem("user"));
+  const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
   const [userId, setUserId] = useState(null);
   const isAdmin = userId === communityId ? true : false;
   useEffect(() => {
@@ -59,7 +62,7 @@ const EventsPage = () => {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    router.back();
   };
 
   const handleCreateEventClick = () => {
@@ -107,7 +110,7 @@ const EventsPage = () => {
         style={{ padding: "3px 10px" }}
       >
         <BackButton
-          onClick={() => navigate(-1)}
+          onClick={() => router.back()}
           showText={true}
           smallText={true}
         />
@@ -140,7 +143,7 @@ const EventsPage = () => {
                 openDropdown={openDropdown}
                 setOpenDropdown={setOpenDropdown}
                 onCardClick={() =>
-                  navigate(`/create/events/details/${event.slug || event._id}`)
+                  router.push(`/create/events/details/${event.slug || event._id}`)
                 }
               />
             ))}

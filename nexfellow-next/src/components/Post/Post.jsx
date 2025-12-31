@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState, useRef } from "react";
 import { marked } from "marked";
 import { formatDistanceToNow } from "date-fns";
@@ -5,14 +7,13 @@ import { debounce } from "lodash";
 import { parseContent } from "../../utils/urlUtils";
 import LikesSummary from "./LikesSummary";
 import Comment from "./Comment";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useSwipeable } from "react-swipeable";
 import FeedImageGrid from "./FeedImageGrid";
 import { LinkPreview } from "../../components/ui/link-preview";
 import { useMediaQuery } from "react-responsive";
-
-//style
 import CommunityInfoPopover from "./CommunityInfoPopover";
 import Modal from "../ShareModal/MoreModal";
 import styles from "./Post.module.css";
@@ -51,7 +52,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
   const threeDotRef = useRef(null);
   const popoverRef = useRef(null);
   const postRef = useRef(null);
-  const navigate = useNavigate();
+  const router = useRouter();
   const [loaded, setLoaded] = useState(false);
   const PLACEHOLDER_IMG =
     "https://placehold.co/800x400?text=Image+Not+Available";
@@ -303,13 +304,13 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
     if (typeof onNavigateToPost === "function") {
       onNavigateToPost(post._id);
     } else {
-      navigate(`/post/${post._id}`);
+      router.push(`/post/${post._id}`);
     }
   };
 
   const isDesktop = useMediaQuery({ minWidth: 769 });
   function useWindowWidth() {
-    const [width, setWidth] = useState(window.innerWidth);
+    const [width, setWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
     useEffect(() => {
       const handleResize = () => setWidth(window.innerWidth);
       window.addEventListener("resize", handleResize);
@@ -351,7 +352,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
               alt="profile"
               className={styles.profilePic}
               loading="lazy"
-              onClick={() => navigate(`/explore/${post.author.username}`)}
+              onClick={() => router.push(`/explore/${post.author.username}`)}
               onMouseOver={handleMouseOver}
               onMouseLeave={handleMouseLeave}
             />
@@ -390,7 +391,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
                 <div className={styles.author}>
                   <div
                     className={styles.name}
-                    onClick={() => navigate(`/explore/${post.author.username}`)}
+                    onClick={() => router.push(`/explore/${post.author.username}`)}
                     title={post.author.name}
                   >
                     <div style={{

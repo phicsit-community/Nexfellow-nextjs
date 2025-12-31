@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "next/navigation";
 // styles
 import styles from "./CreateChallengeOverlay.module.css";
 
@@ -34,7 +36,8 @@ const CreateChallengeOverlay = ({
   setAllChallenge,
   selectedDuration,
 }) => {
-  const { communityId } = useParams();
+  const params = useParams();
+  const communityId = params?.communityId;
   const [activeTab, setActiveTab] = useState("1");
   const [challengeTitle, setChallengeTitle] = useState("");
   const [challengeDescription, setChallengeDescription] = useState("");
@@ -64,20 +67,20 @@ const CreateChallengeOverlay = ({
   const [startDateTime, setStartDateTime] = useState(
     dateAndTimeData?.startDate && dateAndTimeData?.startTime
       ? moment(
-          `${dateAndTimeData.startDate} ${dateAndTimeData.startTime}`,
-          "YYYY-MM-DD HH:mm"
-        )
+        `${dateAndTimeData.startDate} ${dateAndTimeData.startTime}`,
+        "YYYY-MM-DD HH:mm"
+      )
       : moment().add(1, "day").startOf("day")
   );
   const [endDateTime, setEndDateTime] = useState(
     dateAndTimeData?.endDate && dateAndTimeData?.endTime
       ? moment(
-          `${dateAndTimeData.endDate} ${dateAndTimeData.endTime}`,
-          "YYYY-MM-DD HH:mm"
-        )
+        `${dateAndTimeData.endDate} ${dateAndTimeData.endTime}`,
+        "YYYY-MM-DD HH:mm"
+      )
       : moment()
-          .add(selectedDuration || 7, "days")
-          .endOf("day")
+        .add(selectedDuration || 7, "days")
+        .endOf("day")
   );
 
   // Auto-generate daily tasks and default checkpoints based on duration
@@ -1054,10 +1057,10 @@ const CreateChallengeOverlay = ({
                         />
                         {errors.checkpointRewards?.[index]
                           ?.rewardDescription && (
-                          <div className={styles.errorText}>
-                            {errors.checkpointRewards[index].rewardDescription}
-                          </div>
-                        )}
+                            <div className={styles.errorText}>
+                              {errors.checkpointRewards[index].rewardDescription}
+                            </div>
+                          )}
                       </div>
                     </Space>
                   </Card>

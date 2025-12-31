@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -50,7 +52,7 @@ const DashboardBody = ({
   const [editingPost, setEditingPost] = useState(null);
   const [newPost, setNewPost] = useState("");
   const [analytics, setAnalytics] = useState(null);
-  const navigate = useNavigate();
+  const router = useRouter();
   const [verificationStatus, setVerificationStatus] = useState("");
   const [verificationLoading, setVerificationLoading] = useState(false);
   const [analyticsFilter, setAnalyticsFilter] = useState("all"); // Changed default to "all"
@@ -248,9 +250,7 @@ const DashboardBody = ({
   }, [communityId, analyticsFilter]); // Add analyticsFilter as dependency
 
   const handleVerifyClick = () => {
-    navigate(`/verification/${username}`, {
-      state: { userId },
-    });
+    router.push(`/verification/${username}`);
   };
 
   const handleEdit = (post) => {

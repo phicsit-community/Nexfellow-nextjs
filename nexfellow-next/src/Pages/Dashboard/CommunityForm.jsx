@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useRouter, usePathname } from "next/navigation";
 import axios from "axios";
 import { toast } from "react-toastify";
 import styles from "./CommunityForm.module.css";
@@ -49,9 +51,11 @@ export default function GetVerified() {
   const [submitted, setSubmitted] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const userId = location.state?.userId;
+  const router = useRouter();
+  const pathname = usePathname();
+  // Note: In Next.js App Router, location.state is not available
+  // The userId should be passed via URL params or context instead
+  const [userId, setUserId] = useState(null);
   const toastId = React.useRef();
 
   useEffect(() => {
@@ -152,7 +156,7 @@ export default function GetVerified() {
 
       await axios.post("/requests/", fd);
       toast.success("Request submitted for verification!");
-      navigate(-1);
+      router.back();
     } catch (error) {
       toast.error(
         `Failed to submit. ${error.response?.data?.error || "Please try again."
@@ -164,7 +168,7 @@ export default function GetVerified() {
   };
 
   const handleBackButtonClick = () => {
-    navigate(-1);
+    router.back();
   };
 
   // Skeleton Loader Component

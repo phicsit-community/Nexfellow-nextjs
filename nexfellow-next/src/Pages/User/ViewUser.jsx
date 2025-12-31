@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 
 // styles
@@ -29,11 +31,12 @@ import UserSidebar from "../../components/Users/UserSidebar";
 import ProfileImagePreview from "../../components/Preview/ProfileImagePreview";
 import BackButton from "../../components/BackButton/BackButton";
 import { toast } from "sonner";
-import UserSkeleton from "./ViewUserSkeleton"
+import UserSkeleton from "./ViewUserSkeleton";
 
 const User = () => {
-  const { username } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const username = params?.username;
+  const router = useRouter();
   const [userDetails, setUserDetails] = useState(null);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -41,7 +44,7 @@ const User = () => {
   const [followStatus, setFollowStatus] = useState(false);
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
 
   const fetchUserDetails = async () => {
     setLoading(true);
@@ -65,7 +68,7 @@ const User = () => {
   };
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("user"));
+    const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
     setCurrentUserId(userData?.id || null);
 
     fetchUserDetails();
@@ -103,7 +106,7 @@ const User = () => {
   };
 
   const handleBackButtonClick = () => {
-    navigate(-1);
+    router.back();
   };
 
   useEffect(() => {
@@ -139,7 +142,7 @@ const User = () => {
                 style={{ padding: "3px 10px" }}
               >
                 <BackButton
-                  onClick={() => navigate(-1)}
+                  onClick={() => router.back()}
                   showText={true}
                   smallText={true}
                 />

@@ -1,6 +1,8 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import htmr from "htmr";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import Commoncd from "../../components/Contest/Commoncd";
 import { toast } from "sonner";
 import axios from "axios";
@@ -11,7 +13,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import search from "./assets/search.svg";
 import UserPerformance from "../../components/Contest/UserPerformance";
 import countryCodeMap from "../../components/Constants/Country";
-import styles from "./ContestDetails.module.css"; // Import CSS module
+import styles from "./ContestDetails.module.css";
 import MetaTags from "../../components/MetaTags/MetaTags";
 import BackButton from "../../components/BackButton/BackButton";
 
@@ -183,14 +185,16 @@ const RewardsSkeleton = () => (
 const ContestDetails = () => {
   const [activeSection, setActiveSection] = useState("details");
   const [contestGiven, setContestGiven] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
+  const pathname = usePathname();
   const [quizData, setQuizData] = useState({});
   const [loading, setLoading] = useState(true);
-  const { id } = useParams();
+  const params = useParams();
+  const id = params?.id;
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
   const registeredQuizzes =
-    JSON.parse(localStorage.getItem("user"))?.registeredQuizzes || [];
+    typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user"))?.registeredQuizzes || [] : [];
   const isRegistered = registeredQuizzes.includes(id);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -208,7 +212,7 @@ const ContestDetails = () => {
   const communityId = location.state?.communityId;
   console.log("Community ID:", communityId);
   console.log("location state:", location.state);
-  const isCommunityQuiz = location.pathname.startsWith("/community/contests/");
+  const isCommunityQuiz = pathname?.startsWith("/community/contests/");
 
   const handleNavClick = (section) => {
     setActiveSection(section);
@@ -382,7 +386,7 @@ const ContestDetails = () => {
             style={{ padding: "3px 10px" }}
           >
             <BackButton
-              onClick={() => navigate(-1)}
+              onClick={() => router.back()}
               showText={true}
               smallText={true}
             />

@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import MetaTags from "../../components/MetaTags/MetaTags";
 
@@ -46,10 +48,11 @@ import { Share2 } from "lucide-react";
 import { UserCircle2 } from "lucide-react";
 
 const Community = () => {
-  const { username } = useParams();
-  const [searchParams] = useSearchParams();
-  const messageIdToScroll = searchParams.get("messageId");
-  const navigate = useNavigate();
+  const params = useParams();
+  const username = params?.username;
+  const searchParams = useSearchParams();
+  const messageIdToScroll = searchParams?.get("messageId");
+  const router = useRouter();
   const [community, setCommunity] = useState(null);
   const [communityOwnerId, setCommunityOwnerId] = useState(null);
   const [communityId, setCommunityId] = useState(null);
@@ -63,7 +66,7 @@ const Community = () => {
   const [isUnblocking, setIsUnblocking] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
@@ -79,7 +82,7 @@ const Community = () => {
   const toggleSidebarMobile = () => setShowSidebarMobile((prev) => !prev);
 
   const getAuthHeaders = () => ({
-    headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
+    headers: { Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("authToken") : null}` },
   });
 
   // Close dropdown when clicking outside
@@ -97,7 +100,7 @@ const Community = () => {
     setLoading(true);
     setError(null);
     try {
-      const userData = JSON.parse(localStorage.getItem("user"));
+      const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
       const currentUserId = userData?.id;
       if (!currentUserId) throw new Error("User ID is missing");
       const response = await axios.get(`/community/username/${username}`);
@@ -277,7 +280,7 @@ const Community = () => {
                 style={{ padding: "3px 10px" }}
               >
                 <BackButton
-                  onClick={() => navigate(-1)}
+                  onClick={() => router.back()}
                   showText={true}
                   smallText={true}
                 />
@@ -435,7 +438,7 @@ const Community = () => {
                       onClick={() => {
                         const owner = community?.owner;
                         if (!owner?._id) return;
-                        navigate("/inbox", {
+                        router.push("/inbox", {
                           state: {
                             dmTarget: {
                               _id: owner._id,

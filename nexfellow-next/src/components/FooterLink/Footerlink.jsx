@@ -1,32 +1,35 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
 import styles from "./Footer.module.css";
+
 const Footerlink = () => {
   return (
     <div className={styles.listContainer}>
       <ul className={styles.list}>
-        <Link to={"/terms"}>
+        <Link href={"/terms"}>
           <li className={styles.listItem}>Terms of Services</li>
         </Link>
-        <Link to={"/privacy"}>
+        <Link href={"/privacy"}>
           <li className={styles.listItem}>Privacy Policy</li>
         </Link>
-        <Link to={"/blog"}>
+        <Link href={"/blog"}>
           <li className={styles.listItem}>Blog</li>
         </Link>
         <Link
-          to={"https://docs.nexfellow.com/overview"}
+          href={"https://docs.nexfellow.com/overview"}
           rel="noopener noreferrer"
           target="_blank">
           <li className={styles.listItem}>Docs</li>
         </Link>
         <Link
-          to={"mailto:community@nexfellow.com"}
+          href={"mailto:community@nexfellow.com"}
           rel="noopener noreferrer"
           target="_blank"
         >
           <li className={styles.listItem}>Ads Info</li>
         </Link>
-        <Link to={"/help"}>
+        <Link href={"/help"}>
           <li className={styles.listItem}>Help</li>
         </Link>
       </ul>

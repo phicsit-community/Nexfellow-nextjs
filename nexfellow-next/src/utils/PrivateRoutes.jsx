@@ -1,12 +1,17 @@
-import { Navigate, Outlet } from "react-router-dom";
-import { useEffect, useState } from "react";
+"use client";
 
-const PrivateRoutes = () => {
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+const PrivateRoutes = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const checkAuth = () => {
+      if (typeof window === "undefined") return;
+
       const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
       const expiresInStr = localStorage.getItem("expiresIn");
 
@@ -20,6 +25,11 @@ const PrivateRoutes = () => {
 
       setIsAuthenticated(isValid);
       setIsLoading(false);
+
+      // Redirect if not authenticated
+      if (!isValid) {
+        router.replace("/login");
+      }
     };
 
     checkAuth();
@@ -34,7 +44,7 @@ const PrivateRoutes = () => {
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, []);
+  }, [router]);
 
   if (isLoading) {
     return (
@@ -69,8 +79,8 @@ const PrivateRoutes = () => {
     );
   }
 
-  // Return Outlet if authenticated, otherwise redirect to login
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
+  // Return children if authenticated
+  return isAuthenticated ? <>{children}</> : null;
 };
 
 export default PrivateRoutes;

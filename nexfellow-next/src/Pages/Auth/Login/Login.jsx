@@ -1,5 +1,8 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
@@ -22,7 +25,7 @@ import AuthSide from "../../../components/authSide/AuthSide";
 
 const Login = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,7 +45,7 @@ const Login = () => {
 
   useEffect(() => {
     // Check for stale token data on mount
-    if (localStorage.getItem("isLoggedIn") === "true") {
+    if (typeof window !== "undefined" && localStorage.getItem("isLoggedIn") === "true") {
       const expiresIn = localStorage.getItem("expiresIn");
       if (expiresIn) {
         const expiresAt = new Date(expiresIn);
@@ -77,7 +80,7 @@ const Login = () => {
             if (redirect?.startsWith("http")) {
               window.location.href = redirect;
             } else {
-              navigate(redirect || "/feed");
+              router.push(redirect || "/feed");
             }
           }, 300);
         }
@@ -94,7 +97,7 @@ const Login = () => {
     };
 
     checkAuth();
-  }, [dispatch, navigate]);
+  }, [dispatch, router]);
 
   useEffect(() => {
     if (showOtpField && timer > 0) {
@@ -150,7 +153,7 @@ const Login = () => {
         if (redirect?.startsWith("http")) {
           window.location.href = redirect;
         } else {
-          navigate(redirect || "/feed");
+          router.push(redirect || "/feed");
         }
       }, 300);
     } catch (error) {
@@ -187,7 +190,7 @@ const Login = () => {
         if (redirect?.startsWith("http")) {
           window.location.href = redirect;
         } else {
-          navigate(redirect || "/feed");
+          router.push(redirect || "/feed");
         }
       }, 300);
     } catch (error) {
@@ -231,29 +234,29 @@ const Login = () => {
   };
 
   const googleAuth = () => {
-    const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
-      : import.meta.env.VITE_SERVER_URL;
+    const link = process.env.NODE_ENV === "development"
+      ? process.env.NEXT_PUBLIC_LOCALHOST
+      : process.env.NEXT_PUBLIC_SERVER_URL;
     window.open(`${link}/auth/google/callback`, "_self");
   };
 
   const githubAuth = () => {
-    const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
-      : import.meta.env.VITE_SERVER_URL;
+    const link = process.env.NODE_ENV === "development"
+      ? process.env.NEXT_PUBLIC_LOCALHOST
+      : process.env.NEXT_PUBLIC_SERVER_URL;
     window.open(`${link}/auth/github/callback`, "_self");
   };
   const facebookAuth = () => {
-    const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
-      : import.meta.env.VITE_SERVER_URL;
+    const link = process.env.NODE_ENV === "development"
+      ? process.env.NEXT_PUBLIC_LOCALHOST
+      : process.env.NEXT_PUBLIC_SERVER_URL;
     window.open(`${link}/auth/facebook/callback`, "_self");
   };
 
   const linkedinAuth = () => {
-    const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
-      : import.meta.env.VITE_SERVER_URL;
+    const link = process.env.NODE_ENV === "development"
+      ? process.env.NEXT_PUBLIC_LOCALHOST
+      : process.env.NEXT_PUBLIC_SERVER_URL;
     window.open(`${link}/auth/linkedin/`, "_self");
   };
 
@@ -268,9 +271,9 @@ const Login = () => {
       <div className={styles.loginForm}>
         <div className={styles.card}>
           <div className={styles.logo}
-            onClick={() => navigate("/")}
+            onClick={() => router.push("/")}
           >
-            <img src={navbarlogo} alt="NexFellow Logo"
+            <img src={navbarlogo.src || navbarlogo} alt="NexFellow Logo"
               className={styles.logoImage}
             />
           </div>
@@ -287,7 +290,7 @@ const Login = () => {
                 onClick={googleAuth}
                 disabled={loading}
               >
-                <img alt="Google" src={google} />
+                <img alt="Google" src={google.src || google} />
                 <p className={styles.btnText}>Login with Google</p>
               </button>
               <button
@@ -416,11 +419,11 @@ const Login = () => {
               </div>
             )}
 
-            <Link to="/forgotpassword" className={styles.forgetPass}>
+            <Link href="/forgotpassword" className={styles.forgetPass}>
               Forgot password?
             </Link>
             <p className={styles.subtitle}>
-              Don&apos;t have an account? <Link to="/signup">Sign Up</Link>
+              Don&apos;t have an account? <Link href="/signup">Sign Up</Link>
             </p>
           </div>
         </div>

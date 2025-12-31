@@ -1,7 +1,9 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "./Suggestions.module.css";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import avatar from "../../../assets/avatar.svg";
 
 // Skeleton button component for loading state
@@ -13,12 +15,12 @@ const SuggestionCard = ({ user }) => {
   const [followStatus, setFollowStatus] = useState(false);
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchFollowStatus = async () => {
       try {
-        const userData = JSON.parse(localStorage.getItem("user"));
+        const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
         if (!userData || !userData.id) {
           setError("User ID missing");
           return;
@@ -59,9 +61,9 @@ const SuggestionCard = ({ user }) => {
 
   const handleProfileRedirect = () => {
     if (user.isCommunityAccount && user.createdCommunity) {
-      navigate(`/explore/${user.username}`);
+      router.push(`/explore/${user.username}`);
     } else {
-      navigate(`/user/${user.username}`);
+      router.push(`/user/${user.username}`);
     }
   };
 

@@ -50,34 +50,34 @@ const CreatorsWho = () => {
       </div>
       <div className={styles.cards} ref={cardsContainerRef}>
         <CreatorCard
-          img={creator1}
+          img={creator1.src || creator1}
           name="Ishita Raina"
           designation="Web Developer"
         />
         <CreatorCard
-          img={creator2}
+          img={creator2.src || creator2}
           name="Griffin Clive"
           designation="Investor"
         />
         <CreatorCard
-          img={creator3}
+          img={creator3.src || creator3}
           name="Minah Jeon"
           designation="Data Scientist"
         />
         <CreatorCard
-          img={creator4}
+          img={creator4.src || creator4}
           name="Harvey Leon"
           designation="Businessman"
         />
         <CreatorCard
-          img={creator5}
+          img={creator5.src || creator5}
           name="Jessica Wilson"
           designation="Content Creator"
         />
       </div>
       <div className={styles.moveLeftRightDiv}>
-        <img src={leftArrow} onClick={scrollLeft} alt="scroll-left" />
-        <img src={rightArrow} onClick={scrollRight} alt="scroll-right" />
+        <img src={leftArrow.src || leftArrow} onClick={scrollLeft} alt="scroll-left" />
+        <img src={rightArrow.src || rightArrow} onClick={scrollRight} alt="scroll-right" />
       </div>
     </div>
   );

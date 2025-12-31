@@ -1,4 +1,7 @@
-import { Outlet, useLocation } from "react-router-dom";
+"use client";
+
+import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 import clsx from "clsx";
 
 // components
@@ -10,8 +13,15 @@ import ViewOnlyHeader from "../ViewOnly/ViewOnlyHeader";
 // style
 import style from "./Layout.module.css";
 
-const Layout = ({ isPrivate = false }) => {
-  const location = useLocation();
+const Layout = ({ isPrivate = false, children }) => {
+  const pathname = usePathname();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
+    }
+  }, []);
 
   // Route patterns for view-only pages
   const VIEW_ONLY_ROUTES = [
@@ -26,23 +36,20 @@ const Layout = ({ isPrivate = false }) => {
   ];
   const isViewOnlyRoute = VIEW_ONLY_ROUTES.some((route) => {
     const regex = new RegExp(`^${route.replace(/:[^/]+/g, "[^/]+")}$`);
-    return regex.test(location.pathname);
+    return regex.test(pathname);
   });
-
-  // Auth check
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
   // Sidebar and header hiding logic (unchanged)
   const HIDE_SIDEBAR_ROUTES = ["/post/:postId", "/contest-question/:id"];
   const shouldHideSidebar = HIDE_SIDEBAR_ROUTES.some((route) => {
     const regex = new RegExp(`^${route.replace(/:[^/]+/g, "[^/]+")}$`);
-    return regex.test(location.pathname);
+    return regex.test(pathname);
   });
 
   const HIDE_HEADER_ROUTES = ["/contest-question/:id"];
   const shouldHideHeader = HIDE_HEADER_ROUTES.some((route) => {
     const regex = new RegExp(`^${route.replace(/:[^/]+/g, "[^/]+")}$`);
-    return regex.test(location.pathname);
+    return regex.test(pathname);
   });
 
   const HIDE_NAVBAR_ROUTES = [
@@ -61,7 +68,7 @@ const Layout = ({ isPrivate = false }) => {
   ];
   const shouldHideNavbar = HIDE_NAVBAR_ROUTES.some((route) => {
     const regex = new RegExp(`^${route.replace(/:[^/]+/g, "[^/]+")}$`);
-    return regex.test(location.pathname);
+    return regex.test(pathname);
   });
 
   return (
@@ -80,7 +87,7 @@ const Layout = ({ isPrivate = false }) => {
           "/forgotpassword",
           "/contact",
           "/mission",
-        ].includes(location.pathname),
+        ].includes(pathname),
       })}
     >
       {/* Show ViewOnlyHeader ONLY for view-only routes and when NOT logged in */}
@@ -101,14 +108,15 @@ const Layout = ({ isPrivate = false }) => {
             </div>
           )}
           <div className={style.content}>
-            <Outlet />
+            {children}
           </div>
         </div>
       ) : (
-        !isPrivate && <Outlet />
+        !isPrivate && <>{children}</>
       )}
     </div>
   );
 };
 
 export default Layout;
+

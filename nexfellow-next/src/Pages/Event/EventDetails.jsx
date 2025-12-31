@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 import styles from "./EventDetails.module.css";
 import BackButton from "../../components/BackButton/BackButton";
@@ -12,8 +14,9 @@ import { toast } from "sonner";
 import MetaTags from "../../components/MetaTags/MetaTags";
 
 const EventDetails = () => {
-  const navigate = useNavigate();
-  const { eventId } = useParams();
+  const router = useRouter();
+  const params = useParams();
+  const eventId = params?.eventId;
 
   const [event, setEvent] = useState(null);
   const [isRegistered, setIsRegistered] = useState(false);
@@ -26,7 +29,7 @@ const EventDetails = () => {
   });
 
   const handleBack = () => {
-    navigate(-1);
+    router.back();
   };
 
   const handleShare = () => {
@@ -218,7 +221,7 @@ const EventDetails = () => {
                 style={{ padding: "3px 10px" }}
               >
                 <BackButton
-                  onClick={() => navigate(-1)}
+                  onClick={() => router.back()}
                   showText={true}
                   smallText={true}
                 />

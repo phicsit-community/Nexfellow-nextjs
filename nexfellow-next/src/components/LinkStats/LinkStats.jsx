@@ -1,5 +1,8 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useLocation } from "react-router-dom";
+import { useParams, usePathname } from "next/navigation";
+import Link from "next/link";
 import axios from "axios";
 import { format } from "date-fns";
 import {
@@ -17,7 +20,8 @@ import { getIpAddress, getLocationByIp } from "../../utils/ipUtils";
 import styles from "./LinkStats.module.css";
 
 const LinkStats = () => {
-  const { shortCode } = useParams();
+  const params = useParams();
+  const shortCode = params?.shortCode;
   const [linkData, setLinkData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,7 +29,7 @@ const LinkStats = () => {
   const [countdown, setCountdown] = useState(1.5);
   const [originalUrl, setOriginalUrl] = useState("");
   const [progress, setProgress] = useState(0);
-  const location = useLocation();
+  const pathname = usePathname();
 
   useEffect(() => {
     let countdownInterval;
@@ -149,7 +153,7 @@ const LinkStats = () => {
     if (shortCode) {
       fetchLinkData();
     }
-  }, [shortCode, location.search]);
+  }, [shortCode]);
 
   const handleCopyLink = () => {
     if (linkData?.shortUrl) {
@@ -203,7 +207,7 @@ const LinkStats = () => {
       <div className={styles.errorContainer}>
         <h2>Link Not Found</h2>
         <p>{error}</p>
-        <Link to="/" className={styles.homeButton}>
+        <Link href="/" className={styles.homeButton}>
           Go to Home
         </Link>
       </div>
@@ -249,8 +253,8 @@ const LinkStats = () => {
       click.referrer === "Direct"
         ? "Direct"
         : click.referrer
-        ? new URL(click.referrer).hostname
-        : "Unknown";
+          ? new URL(click.referrer).hostname
+          : "Unknown";
     acc[referrer] = (acc[referrer] || 0) + 1;
     return acc;
   }, {});
@@ -426,8 +430,8 @@ const LinkStats = () => {
                       {click.referrer === "Direct"
                         ? "Direct"
                         : click.referrer
-                        ? new URL(click.referrer).hostname
-                        : "Unknown"}
+                          ? new URL(click.referrer).hostname
+                          : "Unknown"}
                     </td>
                   </tr>
                 ))}

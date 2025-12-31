@@ -1,10 +1,10 @@
 // src/hooks/useProfileRedirect.js
 import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 
 export default function useProfileRedirect() {
-    const navigate = useNavigate();
+    const router = useRouter();
 
     return useCallback(
         async (user, options = {}) => {
@@ -36,8 +36,12 @@ export default function useProfileRedirect() {
                         // if server gives absolute path or full url, use it directly
                         const redirectPath = res.data.redirect;
                         // close over options if you want replace behavior
-                        const { replace = false, state = undefined } = options;
-                        navigate(redirectPath, { replace, state });
+                        const { replace = false } = options;
+                        if (replace) {
+                            router.replace(redirectPath);
+                        } else {
+                            router.push(redirectPath);
+                        }
                         return;
                     }
 
@@ -74,9 +78,14 @@ export default function useProfileRedirect() {
                     ? `/explore/${username}`
                     : `/user/${username}`;
 
-            const { replace = false, state = undefined } = options;
-            navigate(path, { replace, state });
+            const { replace = false } = options;
+            if (replace) {
+                router.replace(path);
+            } else {
+                router.push(path);
+            }
         },
-        [navigate]
+        [router]
     );
 }
+

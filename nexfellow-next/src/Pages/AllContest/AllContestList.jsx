@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "next/navigation";
 import axios from "axios";
 
 //icons
@@ -16,7 +18,8 @@ import BackButton from "../../components/BackButton/BackButton";
 import styles from "./AllContestList.module.css";
 
 const Contest = () => {
-  const { type } = useParams();
+  const params = useParams();
+  const type = params?.type || "upcoming";
 
   const formatType = type.charAt(0).toUpperCase() + type.slice(1);
 

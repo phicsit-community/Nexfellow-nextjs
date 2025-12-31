@@ -1,5 +1,8 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import axios from "axios";
 import { useMediaQuery } from "react-responsive";
 import ThemeToggleButton from "../ThemeToggle/ThemeToggleButton";
@@ -44,7 +47,8 @@ function Header() {
   const [error, setError] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [moderated, setModerated] = useState([]);
-  const navigate = useNavigate();
+  const router = useRouter();
+  const pathname = usePathname();
   const [hoveredIndex, setHoveredIndex] = useState();
 
   const isMobile = useMediaQuery({ maxWidth: 640 });
@@ -57,7 +61,7 @@ function Header() {
       setLoading(true);
       setError(null);
       try {
-        const userData = JSON.parse(localStorage.getItem("user"));
+        const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
         const userId = userData?.id;
         const username = userData?.username;
 
@@ -110,7 +114,7 @@ function Header() {
 
       if (response.status === 200) {
         localStorage.clear();
-        navigate("/login");
+        router.push("/login");
       } else {
         console.error("Logout failed:", response.data.message);
         setIsLoggingOut(false);
@@ -122,7 +126,7 @@ function Header() {
   };
 
   const handleLogoClick = (e) => {
-    if (location.pathname === "/feed") {
+    if (pathname === "/feed") {
       e.preventDefault();
       window.location.reload();
     }
@@ -135,10 +139,10 @@ function Header() {
   return (
     <div className={styles.header}>
       <div className={styles.navbarLogo}>
-        <Link to="/feed" onClick={handleLogoClick}>
+        <Link href="/feed" onClick={handleLogoClick}>
           <img
             className={styles.navbarlogo}
-            src={effectiveTheme === "dark" ? navbarlogoDark : navbarlogo}
+            src={(effectiveTheme === "dark" ? navbarlogoDark.src || navbarlogoDark : navbarlogo.src || navbarlogo)}
             alt="NexFellow logo"
             onError={(e) => (e.target.src = "https://via.placeholder.com/150")}
           />
@@ -162,7 +166,7 @@ function Header() {
               play={hoveredIndex === 1}
               size={25}
               style={{ width: 25, height: 25 }}
-              staticIcon={announcementIconStatic}
+              staticIcon={announcementIconStatic.src || announcementIconStatic}
             />
           </div>
           {isWhatsNewOpen && <WhatsNewModal closeModal={toggleWhatsNew} />}
@@ -230,7 +234,7 @@ function Header() {
                 className={`${styles.menuContent} w-72 p-0 mt-3`}
               >
                 <Link
-                  to={`/dashboard/${user?.username}`}
+                  href={`/dashboard/${user?.username}`}
                   className={styles.profileHeader}
                 >
                   <div className={styles.avatar}>
@@ -266,7 +270,7 @@ function Header() {
                 <div className={styles.section}>
                   <div className={styles.sectionLabel}>Navigation</div>
                   <DropdownMenuItem asChild className={styles.menuItem}>
-                    <Link to={`/dashboard/${user?.username}`}>
+                    <Link href={`/dashboard/${user?.username}`}>
                       <LayoutDashboard
                         className={`dark:text-white ${styles.icon}`}
                       />
@@ -276,14 +280,14 @@ function Header() {
 
                   {user?.isCommunityAccount && user?.createdCommunity ? (
                     <DropdownMenuItem asChild className={styles.menuItem}>
-                      <Link to={`/community/${user?.username}`}>
+                      <Link href={`/community/${user?.username}`}>
                         <Users className={styles.icon} />
                         View as a member
                       </Link>
                     </DropdownMenuItem>
                   ) : (
                     <DropdownMenuItem asChild className={styles.menuItem}>
-                      <Link to={`/user/${user?.username}`}>
+                      <Link href={`/user/${user?.username}`}>
                         <Users className={`dark:text-white ${styles.icon}`} />
                         My Profile
                       </Link>
@@ -291,7 +295,7 @@ function Header() {
                   )}
 
                   {/* <DropdownMenuItem asChild className={styles.menuItem}>
-                    <Link to="/settings">
+                    <Link href="/settings">
                       <Settings className={styles.icon} />
                       Settings
                     </Link>

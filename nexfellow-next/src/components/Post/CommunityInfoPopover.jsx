@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import styles from "./CommunityInfoPopover.module.css";
 import profile from "../../assets/profile.jpg";
 import axios from "axios";
@@ -20,8 +22,8 @@ const CommunityInfoPopover = ({
   const [visible, setVisible] = useState(true);
   const [followStatus, setFollowStatus] = useState(isFollowing);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const router = useRouter();
+  const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [error, setError] = useState(null);
   console.log("User ID:", user?.id);
@@ -90,7 +92,7 @@ const CommunityInfoPopover = ({
   };
 
   const handleViewProfile = () => {
-    navigate(`/explore/${community.username}`);
+    router.push(`/explore/${community.username}`);
   };
 
   useEffect(() => {

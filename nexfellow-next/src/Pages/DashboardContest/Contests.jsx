@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -149,8 +151,9 @@ const SkeletonQuizCard = ({ count = 3 }) => {
 };
 
 const CommunityContests = () => {
-  const navigate = useNavigate();
-  const { communityId } = useParams();
+  const router = useRouter();
+  const params = useParams();
+  const communityId = params?.communityId;
 
   // Refs
   const dropdownContainerRef = useRef(null);
@@ -382,7 +385,7 @@ const CommunityContests = () => {
         style={{ padding: "3px 10px" }}
       >
         <BackButton
-          onClick={() => navigate(-1)}
+          onClick={() => router.back()}
           showText={true}
           smallText={true}
         />
@@ -402,7 +405,7 @@ const CommunityContests = () => {
             className={styles.contestBtn}
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/create-contest/${communityId}`);
+              router.push(`/create-contest/${communityId}`);
             }}
             style={{
               textWrap: "nowrap",
@@ -539,9 +542,7 @@ const CommunityContests = () => {
                     }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/contest/${quiz.slug}`, {
-                        state: { communityId },
-                      });
+                      router.push(`/contest/${quiz.slug}`);
                     }}
                   >
                     <Eye size={16} />

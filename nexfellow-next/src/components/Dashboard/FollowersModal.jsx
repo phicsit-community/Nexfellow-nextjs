@@ -1,10 +1,12 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
 import axios from "axios";
 import styles from "./FollowersModal.module.css";
 import ProfileImage from "./assets/profile_image.svg";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import Skeleton from "../common/Skeleton";
 
 const FollowersModal = ({ isOpen, onClose, communityId, userId }) => {
@@ -16,7 +18,7 @@ const FollowersModal = ({ isOpen, onClose, communityId, userId }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const modalRef = useRef(null);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
     if (isOpen) {
@@ -101,9 +103,9 @@ const FollowersModal = ({ isOpen, onClose, communityId, userId }) => {
 
   const handleProfileClick = (follower) => {
     if (follower.isCommunityAccount && follower.createdCommunity) {
-      navigate(`/community/${follower.username}`);
+      router.push(`/community/${follower.username}`);
     } else {
-      navigate(`/user/${follower.username}`);
+      router.push(`/user/${follower.username}`);
     }
   };
 
@@ -131,7 +133,7 @@ const FollowersModal = ({ isOpen, onClose, communityId, userId }) => {
       <div className={styles.skeletonContainer}>
         {/* Skeleton for search bar */}
         <Skeleton type="search" />
-        
+
         {/* Skeleton items for followers */}
         {[...Array(5)].map((_, index) => (
           <div key={index} className={styles.skeletonFollowerItem}>
@@ -213,9 +215,8 @@ const FollowersModal = ({ isOpen, onClose, communityId, userId }) => {
 
                   {/* Follow Button */}
                   <button
-                    className={`${styles.followButton} ${
-                      followStatus[follower._id] ? styles.following : ""
-                    }`}
+                    className={`${styles.followButton} ${followStatus[follower._id] ? styles.following : ""
+                      }`}
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleFollow(follower._id);
@@ -225,8 +226,8 @@ const FollowersModal = ({ isOpen, onClose, communityId, userId }) => {
                     {buttonLoading[follower._id]
                       ? "Loading..."
                       : followStatus[follower._id]
-                      ? "Unfollow"
-                      : "Follow"}
+                        ? "Unfollow"
+                        : "Follow"}
                   </button>
 
                   {/* Error message */}

@@ -46,7 +46,7 @@ const GetMoreWithCommunity = () => {
                 }`}
             >
               <div className={styles.imageWrapper}>
-                <img src={feature.image} alt={feature.tag} />
+                <img src={feature.image.src || feature.image} alt={feature.tag} />
               </div>
             </div>
           </div>

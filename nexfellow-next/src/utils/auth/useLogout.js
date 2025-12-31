@@ -1,7 +1,7 @@
 import axios from "axios";
 import { logout } from "../../store/slices/authSlice";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 
 /**
  * Hook to handle logout functionality
@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
  */
 const useLogout = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleLogout = async () => {
     try {
@@ -31,7 +31,7 @@ const useLogout = () => {
       dispatch(logout());
 
       // Navigate to login page
-      navigate("/login");
+      router.push("/login");
     } catch (error) {
       console.error("Logout error:", error);
 
@@ -43,7 +43,7 @@ const useLogout = () => {
       sessionStorage.clear();
 
       dispatch(logout());
-      navigate("/login");
+      router.push("/login");
     }
   };
 
@@ -51,3 +51,4 @@ const useLogout = () => {
 };
 
 export default useLogout;
+

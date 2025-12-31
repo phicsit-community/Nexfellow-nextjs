@@ -21,7 +21,7 @@ const MissonAndVision = () => {
         <div className={styles.card}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderLeft}>
-              <img src={mission} className={styles.icon} />
+              <img src={mission.src || mission} className={styles.icon} />
               <div>
                 <h3 className={styles.cardTitle}>Mission</h3>
                 <p className={`${styles.cardSubtitle} ${styles.missionsub} `}>
@@ -67,7 +67,7 @@ const MissonAndVision = () => {
         <div className={styles.card}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderLeft}>
-              <img src={vision} className={styles.icon} />
+              <img src={vision.src || vision} className={styles.icon} />
               <div>
                 <h3 className={styles.cardTitle}>Vision</h3>
                 <p className={`${styles.cardSubtitle} ${styles.visionsub}`}>

@@ -1,6 +1,7 @@
+"use client";
 // Enhanced challenge viewing functionality
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import MetaTags from "../../components/MetaTags/MetaTags";
 import {

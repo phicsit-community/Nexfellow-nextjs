@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 import MetaTags from "../../components/MetaTags/MetaTags";
 
@@ -18,8 +20,9 @@ const ViewOnlyChallenge = () => {
   const [activeComponent, setActiveComponent] = useState("Summary");
   const [challenge, setChallenge] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id;
+  const router = useRouter();
 
   useEffect(() => {
     const fetchChallenge = async () => {
@@ -40,16 +43,11 @@ const ViewOnlyChallenge = () => {
   }, [id]);
 
   const handleBack = () => {
-    navigate(-1);
+    router.back();
   };
 
   const handleLoginPrompt = () => {
-    navigate("/login", {
-      state: {
-        returnUrl: `/challenge/${id}`,
-        message: "Login to participate in this challenge",
-      },
-    });
+    router.push(`/login?returnUrl=${encodeURIComponent(`/challenge/${id}`)}`);
   };
 
   const renderComponent = () => {
@@ -129,7 +127,7 @@ const ViewOnlyChallenge = () => {
 };
 
 const PublicCheckpoints = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   return (
     <div className={styles.checkpointsDiv}>
@@ -148,14 +146,14 @@ const PublicCheckpoints = () => {
       </div>
       <div className={`${styles.checkpointsDivContent2} ${styles.publicNote}`}>
         <p>Login to see challenge checkpoints details</p>
-        <button onClick={() => navigate("/login")}>Login Now</button>
+        <button onClick={() => router.push("/login")}>Login Now</button>
       </div>
     </div>
   );
 };
 
 const PublicParticipants = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   return (
     <div className={styles.participantsDiv}>
@@ -166,7 +164,7 @@ const PublicParticipants = () => {
       </div>
       <button
         className={styles.loginParticipantsButton}
-        onClick={() => navigate("/login")}
+        onClick={() => router.push("/login")}
       >
         Login Now
       </button>
@@ -175,7 +173,7 @@ const PublicParticipants = () => {
 };
 
 const PublicSummary = ({ onLogin, challenge }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   return (
     <div className={styles.summaryDiv}>
@@ -201,8 +199,8 @@ const PublicSummary = ({ onLogin, challenge }) => {
             <li>Communicate with other participants</li>
           </ul>
           <div className={styles.publicLoginButtons}>
-            <button onClick={() => navigate("/login")}>Login</button>
-            <button onClick={() => navigate("/signup")}>Sign Up</button>
+            <button onClick={() => router.push("/login")}>Login</button>
+            <button onClick={() => router.push("/signup")}>Sign Up</button>
           </div>
         </div>
       </div>

@@ -10,7 +10,7 @@ const ExploreThousandCard = ({ category, img }) => {
   return (
     <div className={styles.cardContainer}>
       <img
-        src={img}
+        src={img?.src || img}
         className={styles.cardContainerImg}
         alt={category}
         aria-label={category}

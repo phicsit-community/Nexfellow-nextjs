@@ -1,6 +1,8 @@
+"use client";
+
 /* eslint-disable react/no-unknown-property */
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import {
   PiHeartStraightDuotone,
@@ -34,8 +36,9 @@ import { useSwipeable } from "react-swipeable";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
 
 const PostFullScreen = () => {
-  const { postId } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const postId = params?.postId;
+  const router = useRouter();
   const [post, setPost] = useState(null);
   const [likeCount, setLikeCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
@@ -261,7 +264,7 @@ const PostFullScreen = () => {
       setIsHidden(true);
       toast.success("Post hidden successfully");
       // Navigate back after hiding
-      setTimeout(() => navigate("/feed"), 1000);
+      setTimeout(() => router.push("/feed"), 1000);
     } catch (error) {
       console.error("Error hiding post:", error);
       toast.error("Failed to hide post");
@@ -300,7 +303,7 @@ const PostFullScreen = () => {
     setMuteModalOpen(false);
     if (wasMuted) {
       toast.success(`${post.author.name} has been muted`);
-      navigate("/feed");
+      router.push("/feed");
     }
   };
 
@@ -308,7 +311,7 @@ const PostFullScreen = () => {
     setBlockModalOpen(false);
     if (wasBlocked) {
       toast.success(`${post.author.name} has been blocked`);
-      navigate("/feed");
+      router.push("/feed");
     }
   };
 
@@ -472,7 +475,7 @@ const PostFullScreen = () => {
           </button>
           <button
             className={styles.backButton}
-            onClick={() => navigate("/feed")}
+            onClick={() => router.push("/feed")}
           >
             Back to feed
           </button>
@@ -566,7 +569,7 @@ const PostFullScreen = () => {
                   style={{ padding: "3px 10px" }}
                 >
                   <BackButton
-                    onClick={() => navigate(-1)}
+                    onClick={() => router.back()}
                     showText={true}
                     smallText={true}
                   />

@@ -16,13 +16,15 @@ const Blog = () => {
     axios
       .get("/blogs")
       .then((res) => {
-        // setBlogs([...res.data, ...res.data]); // Duplicate blogs to simulate more content
-        setBlogs(res.data);
+        // Handle both { blogs: [...] } and direct [...] response formats
+        const blogsData = Array.isArray(res.data) ? res.data : (res.data?.blogs || []);
+        setBlogs(blogsData);
         setLoading(false);
       })
       .catch(() => {
         // Handle error appropriately
         console.error("Failed to fetch blogs");
+        setBlogs([]);
         setLoading(false);
       });
   }, []);

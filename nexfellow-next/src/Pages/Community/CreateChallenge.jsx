@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import styles from "./createChallenge.module.css";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMediaQuery } from "@mui/material";
@@ -24,12 +26,13 @@ import { Button } from "../../components/ui/button";
 import { Calendar, Clock } from "lucide-react";
 
 const CreateChallenge = () => {
-  const { communityId } = useParams();
+  const params = useParams();
+  const communityId = params?.communityId;
   const [allChallenges, setAllChallenge] = useState([]);
   const [loading, setLoading] = useState(true);
   const isMobile = useMediaQuery("(max-width:768px)");
   const [showPcOnlyModal, setShowPcOnlyModal] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
     async function getall() {
@@ -171,7 +174,7 @@ const CreateChallenge = () => {
           style={{ padding: "3px 10px" }}
         >
           <BackButton
-            onClick={() => navigate(-1)}
+            onClick={() => router.back()}
             showText={true}
             smallText={true}
             style={{ marginBottom: "0px" }}

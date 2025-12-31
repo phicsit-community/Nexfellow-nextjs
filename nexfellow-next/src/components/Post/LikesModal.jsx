@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { IoSearchOutline } from "react-icons/io5";
 import axios from "axios";
 import styles from "./LikesModal.module.css";
@@ -11,7 +13,7 @@ const LikesModal = ({ profiles, onClose }) => {
   const [followStatus, setFollowStatus] = useState({});
   const [buttonLoading, setButtonLoading] = useState({});
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
+  const router = useRouter();
 
   // Fetch follow status for each profile
   useEffect(() => {
@@ -99,9 +101,9 @@ const LikesModal = ({ profiles, onClose }) => {
   // Redirect based on account type
   const handleProfileClick = (member) => {
     if (member.isCommunityAccount && member.createdCommunity) {
-      navigate(`/community/${member.username}`);
+      router.push(`/community/${member.username}`);
     } else {
-      navigate(`/user/${member.username}`);
+      router.push(`/user/${member.username}`);
     }
   };
 

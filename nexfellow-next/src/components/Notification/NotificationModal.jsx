@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { getSocket } from "../../utils/socket";
 import styles from "./NotificationModal.module.css";
@@ -19,13 +21,13 @@ import { Trash2 } from "lucide-react";
 import { PiConfetti } from "react-icons/pi";
 
 const NotificationModal = ({ closeModal }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const socket = getSocket();
   const [communityNotifications, setCommunityNotifications] = useState([]);
   const [systemNotifications, setSystemNotifications] = useState([]);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [filter, setFilter] = useState("all");
-  const storedUser = localStorage.getItem("user");
+  const storedUser = typeof window !== "undefined" ? localStorage.getItem("user") : null;
   const user = storedUser ? JSON.parse(storedUser) : null;
   const loggedInUserId = user?._id || user?.id;
   const [loading, setLoading] = useState(false);
@@ -408,17 +410,17 @@ const NotificationModal = ({ closeModal }) => {
     if (senderModel === "User") {
       // If user has a createdCommunity and isCommunityAccount is true
       if (sender.createdCommunity && sender.isCommunityAccount) {
-        if (sender.username) navigate(`/community/${sender.username}`);
+        if (sender.username) router.push(`/community/${sender.username}`);
         return;
       }
       // Otherwise, go to user profile
-      if (sender.username) navigate(`/user/${sender.username}`);
+      if (sender.username) router.push(`/user/${sender.username}`);
       return;
     }
 
     // If sender is a Community (if you ever use this model)
     if (senderModel === "Community") {
-      if (sender.username) navigate(`/community/${sender.username}`);
+      if (sender.username) router.push(`/community/${sender.username}`);
       return;
     }
   };
@@ -475,9 +477,9 @@ const NotificationModal = ({ closeModal }) => {
               <motion.div
                 key={notification._id}
                 className={`${styles.notificationItem} ${notification.recipients.find((r) => r.user === loggedInUserId)
-                    ?.read
-                    ? styles.readNotification
-                    : styles.unreadNotification
+                  ?.read
+                  ? styles.readNotification
+                  : styles.unreadNotification
                   }`}
                 onClick={() => handleNotificationClick(notification)}
                 variants={itemVariants}
@@ -850,7 +852,7 @@ const NotificationModal = ({ closeModal }) => {
                   className={styles.viewAllButton}
                   onClick={() => {
                     closeModal();
-                    navigate("/notifications");
+                    router.push("/notifications");
                   }}
                   variant="outline"
                 >

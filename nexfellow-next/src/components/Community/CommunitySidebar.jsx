@@ -1,17 +1,19 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import styles from "./Community.module.css";
 import Event from "../../components/Contest/assets/image.png";
 import SuggestionCard from "../Suggestions/SuggestionCard";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Button } from "../ui/button";
 import EmptyStateBox from "../EmptyStateBox/EmptyStateBox";
 import { BsStopwatch } from "react-icons/bs";
 import { Timer, Users2 } from "lucide-react";
 
 const UserCommunitySidebar = ({ communityId }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [isShowMore, setIsShowMore] = useState(false);
 
   // const [topMembers, setTopMembers] = useState([]);
@@ -137,7 +139,7 @@ const UserCommunitySidebar = ({ communityId }) => {
   const [buttonLoadingMap, setButtonLoadingMap] = useState({});
   const [error, setError] = useState(null);
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
 
   const [activeChallenges, setActiveChallenges] = useState([]);
 
@@ -294,8 +296,7 @@ const UserCommunitySidebar = ({ communityId }) => {
               <Link
                 key={index}
                 className={styles.event}
-                to={`/community/events/${event.slug || event.id}`}
-                style={{ cursor: "pointer" }}
+                href={`/community/events/${event.slug || event.id}`}
               >
                 <img
                   src={event.image}
@@ -326,9 +327,7 @@ const UserCommunitySidebar = ({ communityId }) => {
               <Link
                 key={index}
                 className={styles.challenge}
-                to={`/challenge/${challenge.slug || challenge._id}`}
-                state={{ communityId }}
-                style={{ cursor: "pointer" }}
+                href={`/challenge/${challenge.slug || challenge._id}`}
               >
                 <img
                   src={challenge.coverImage || challenge.image}
@@ -366,9 +365,7 @@ const UserCommunitySidebar = ({ communityId }) => {
                 <Link
                   key={index}
                   className={styles.contest}
-                  to={`/community/contests/${contest.slug || contest.id}`}
-                  state={{ communityId }}
-                  style={{ cursor: "pointer" }}
+                  href={`/community/contests/${contest.slug || contest.id}`}
                 >
                   <img
                     src={contest.image}

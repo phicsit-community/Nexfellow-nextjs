@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import AssignedMembersView from "../../components/Moderators/AssignedMembersView";
 import CommunityFollowersView from "../../components/Moderators/CommunityFollowersView";
 import styles from "./Moderators.module.css";
@@ -9,8 +11,9 @@ import { Users, UserCog, Search, ShieldCheck } from "lucide-react";
 
 const ModeratorsControl = () => {
   const [activeTab, setActiveTab] = useState("assigned");
-  const { communityId } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const communityId = params?.communityId;
+  const router = useRouter();
   const [assignedCount, setAssignedCount] = useState(0);
   const [followerCount, setFollowerCount] = useState(0);
 
@@ -41,7 +44,7 @@ const ModeratorsControl = () => {
           style={{ padding: "3px 10px" }}
         >
           <BackButton
-            onClick={() => navigate(-1)}
+            onClick={() => router.back()}
             showText={true}
             smallText={true}
           />

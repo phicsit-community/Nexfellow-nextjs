@@ -1,10 +1,13 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Footer from "../../../components/Landing/Footer/Footer";
 import ContactCTA from "../../../components/Landing/ContactCTA/ContactCTA";
 import Navbar from "../../../components/Landing/Navbar/Navbar";
 import styles from "./InternalBlogPage.module.css";
-import { Link, useParams } from "react-router-dom";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import blogImage from "./assets/image.svg";
 import authorImage from "./assets/author.svg";
 import Markdown from "react-markdown";
@@ -12,7 +15,8 @@ import { ClockIcon, CalendarIcon } from "lucide-react";
 import Hamburger from "hamburger-react";
 
 export const InternalBlogPage = () => {
-  const { id: blogId } = useParams();
+  const params = useParams();
+  const blogId = params?.id;
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -65,7 +69,7 @@ export const InternalBlogPage = () => {
       <>
         <div className={styles.blogWrapper}>
           <div className={styles.backLink}>
-            <Link to="/blogs">← Back to Blog</Link>
+            <Link href="/blogs">← Back to Blog</Link>
           </div>
 
           {loading ? (
@@ -176,18 +180,18 @@ export const InternalBlogPage = () => {
                   style={
                     isMobile
                       ? {
-                          position: "fixed",
-                          top: 0,
-                          left: sidebarOpen ? 0 : "-100vw",
-                          width: "80vw",
-                          maxWidth: "350px",
-                          height: "100vh",
-                          background: "rgba(30,41,59,0.98)",
-                          transition: "left 0.3s",
-                          zIndex: 10000,
-                          overflowY: "auto",
-                          boxShadow: sidebarOpen ? "2px 0 12px #0006" : "none",
-                        }
+                        position: "fixed",
+                        top: 0,
+                        left: sidebarOpen ? 0 : "-100vw",
+                        width: "80vw",
+                        maxWidth: "350px",
+                        height: "100vh",
+                        background: "rgba(30,41,59,0.98)",
+                        transition: "left 0.3s",
+                        zIndex: 10000,
+                        overflowY: "auto",
+                        boxShadow: sidebarOpen ? "2px 0 12px #0006" : "none",
+                      }
                       : {}
                   }
                   aria-hidden={!sidebarOpen && isMobile}

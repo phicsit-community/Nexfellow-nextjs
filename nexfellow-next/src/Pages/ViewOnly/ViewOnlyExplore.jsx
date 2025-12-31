@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import styles from "./ViewOnlyExplore.module.css";
 import { toast } from "sonner";
@@ -9,8 +11,9 @@ import verificationBadge from "./assets/badge2.svg";
 
 
 const ViewOnlyExplore = () => {
-  const { username } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const username = params?.username;
+  const router = useRouter();
   const [community, setCommunity] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -57,7 +60,7 @@ const ViewOnlyExplore = () => {
   }, [community]);
 
   const handleLogin = () => {
-    navigate("/login", { state: { returnUrl: window.location.pathname } });
+    router.push(`/login?returnUrl=${typeof window !== "undefined" ? window.location.pathname : ""}`);
   };
 
   if (loading) {

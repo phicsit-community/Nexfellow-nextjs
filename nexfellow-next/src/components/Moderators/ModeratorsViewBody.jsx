@@ -1,9 +1,11 @@
+"use client";
+
 import { useState, useEffect, useRef, useMemo } from "react";
 import axios from "axios";
 import no_posts from "./assets/no_posts.png";
 import pinIcon from "./assets/pin.svg";
 import ProfileImage from "./assets/profile_image.svg";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import {
   FaThumbtack,
   FaBellSlash,
@@ -53,7 +55,7 @@ const ModeratorsViewBody = ({ communityId }) => {
   const messageEndRef = useRef(null);
   const [followingStatus, setFollowingStatus] = useState({});
   const [loadingFollow, setLoadingFollow] = useState({});
-  const navigate = useNavigate();
+  const router = useRouter();
   const [showPinModal, setShowPinModal] = useState(false);
   const [postToPin, setPostToPin] = useState(null);
   const [pinnedPostId, setPinnedPostId] = useState(null);
@@ -72,7 +74,7 @@ const ModeratorsViewBody = ({ communityId }) => {
   const [mutedUsers, setMutedUsers] = useState([]);
   const [hiddenPosts, setHiddenPosts] = useState([]);
 
-  const currentUserId = JSON.parse(localStorage.getItem("user"))?.id;
+  const currentUserId = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user"))?.id : null;
 
   // Current user's community role
   const [myCommunityRole, setMyCommunityRole] = useState(null);
@@ -210,9 +212,9 @@ const ModeratorsViewBody = ({ communityId }) => {
 
   const handleProfileRedirect = (user) => {
     if (user.isCommunityAccount && user.createdCommunity) {
-      navigate(`/explore/${user.username}`);
+      router.push(`/explore/${user.username}`);
     } else {
-      navigate(`/user/${user.username}`);
+      router.push(`/user/${user.username}`);
     }
   };
 

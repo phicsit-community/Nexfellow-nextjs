@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useRouter, usePathname } from "next/navigation";
 import axios from "axios";
 import styles from "./NotificationReadPage.module.css";
 import BackButton from "../../components/BackButton/BackButton";
@@ -11,9 +13,10 @@ import userImg from "./assets/Frame.svg";
 import timeAgo from "./../../utils/timeAgo";
 
 const NotificationReadPage = () => {
-  const { id } = useParams();
-  const location = useLocation();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id;
+  const pathname = usePathname();
+  const router = useRouter();
   const [notification, setNotification] = useState(null);
   const [appealing, setAppealing] = useState(false);
   const [postStatus, setPostStatus] = useState(null);
@@ -22,7 +25,7 @@ const NotificationReadPage = () => {
   useEffect(() => {
     const fetchNotification = async () => {
       try {
-        const isSystem = location.pathname.includes("system");
+        const isSystem = pathname?.includes("system");
         const endpoint = isSystem
           ? `/systemNotifications/${id}`
           : `/notifications/${id}`;
@@ -33,10 +36,10 @@ const NotificationReadPage = () => {
       }
     };
     fetchNotification();
-  }, [id, location.pathname]);
+  }, [id, pathname]);
 
   const handleBack = () => {
-    navigate(-1);
+    router.back();
   };
 
   useEffect(() => {
@@ -87,14 +90,14 @@ const NotificationReadPage = () => {
     if (senderModel === "Admin") return;
     if (senderModel === "User") {
       if (sender.createdCommunity && sender.isCommunityAccount) {
-        if (sender.username) navigate(`/community/${sender.username}`);
+        if (sender.username) router.push(`/community/${sender.username}`);
         return;
       }
-      if (sender.username) navigate(`/user/${sender.username}`);
+      if (sender.username) router.push(`/user/${sender.username}`);
       return;
     }
     if (senderModel === "Community") {
-      if (sender.username) navigate(`/community/${sender.username}`);
+      if (sender.username) router.push(`/community/${sender.username}`);
       return;
     }
   };
@@ -137,7 +140,7 @@ const NotificationReadPage = () => {
             </div>
           </div>
           <div className={styles.closeModel}>
-            <button onClick={() => navigate(-1)} aria-label="Close">
+            <button onClick={() => router.back()} aria-label="Close">
               ✕
             </button>
           </div>
@@ -208,7 +211,7 @@ const NotificationReadPage = () => {
           </span>
           <button
             className={styles.closeButton}
-            onClick={() => navigate(-1)}
+            onClick={() => router.back()}
             aria-label="Mark as Read and Close"
           >
             Mark as Read & Close

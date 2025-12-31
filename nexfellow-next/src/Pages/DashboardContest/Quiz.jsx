@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useRouter, useParams, usePathname } from "next/navigation";
 import axios from "axios";
 import {
   Calendar,
@@ -239,10 +241,10 @@ const QuestionsSkeleton = () => (
 );
 
 const Quiz = () => {
-  const { id } = useParams();
-  const location = useLocation();
-  const communityId = location.state?.communityId;
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id;
+  const pathname = usePathname();
+  const router = useRouter();
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -386,9 +388,7 @@ const Quiz = () => {
   };
 
   const handleEditQuiz = () => {
-    navigate(`/contest/edit/${id}`, {
-      state: { communityId },
-    });
+    router.push(`/contest/edit/${id}`);
   };
 
   // Share quiz functionality
@@ -533,7 +533,7 @@ const Quiz = () => {
           style={{ padding: "3px 10px" }}
         >
           <BackButton
-            onClick={() => navigate(-1)}
+            onClick={() => router.back()}
             showText={true}
             smallText={true}
           />

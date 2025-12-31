@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 
 // styles
@@ -26,8 +28,9 @@ import { Settings, UserCircle2 } from "lucide-react";
 import DashboardSkeletonLoader from "./DashboardSkeletonLoader";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-  const { username } = useParams();
+  const router = useRouter();
+  const params = useParams();
+  const username = params?.username;
   const [isOpen, setIsOpen] = useState(false);
   const [isFollowersModalOpen, setIsFollowersModalOpen] = useState(false);
 
@@ -39,21 +42,21 @@ const Dashboard = () => {
   const [isDescriptionTruncated, setIsDescriptionTruncated] = useState(true);
 
   const handleBackButtonClick = () => {
-    navigate(-1);
+    router.back();
   };
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user")) || {};
+    const storedUser = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) || {} : {};
 
     if (storedUser.username && storedUser.username !== username) {
-      navigate(`/dashboard/${storedUser.username}`, { replace: true });
+      router.replace(`/dashboard/${storedUser.username}`);
       return;
     }
 
     if (username) {
       fetchData();
     }
-  }, [username, navigate]);
+  }, [username, router]);
 
   const fetchData = async () => {
     try {
@@ -65,7 +68,7 @@ const Dashboard = () => {
       );
 
       if (userResponse.data.redirect) {
-        navigate(userResponse.data.redirect, { replace: true });
+        router.replace(userResponse.data.redirect);
         return;
       }
 
@@ -116,7 +119,7 @@ const Dashboard = () => {
                 style={{ padding: "3px 10px" }}
               >
                 <BackButton
-                  onClick={() => navigate(-1)}
+                  onClick={() => router.back()}
                   showText={true}
                   smallText={true}
                 />
@@ -124,7 +127,7 @@ const Dashboard = () => {
               <button className={styles.moreButton}>
                 <Settings
                   className="text-zinc-500"
-                  onClick={() => navigate("/settings")}
+                  onClick={() => router.push("/settings")}
                 />
               </button>
             </div>
@@ -255,7 +258,7 @@ const Dashboard = () => {
                     <button
                       className={styles.editButton}
                       disabled={loading}
-                      onClick={() => navigate(`/edit-profile/${username}`)}
+                      onClick={() => router.push(`/edit-profile/${username}`)}
                     >
                       <img
                         src={EditIcon}

@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import styles from "./ViewOnlyContestDetails.module.css";
 import { Icon } from "@iconify/react";
@@ -90,8 +92,9 @@ function formatCountdown(diffMs) {
 // -------------------- COMPONENT -------------------
 
 export default function ContestPreview() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id;
+  const router = useRouter();
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState("Loading...");
@@ -137,20 +140,11 @@ export default function ContestPreview() {
   }, [quiz?.startTime]);
 
   const handleLogin = () => {
-    navigate("/login", {
-      state: {
-        returnUrl: `/contests/${id}`,
-        message: "Login to join contest",
-      },
-    });
+    router.push(`/login?returnUrl=${encodeURIComponent(`/contests/${id}`)}`);
   };
 
   const handleRegister = () => {
-    navigate("/register", {
-      state: {
-        returnUrl: `/contests/${id}`,
-      },
-    });
+    router.push(`/register?returnUrl=${encodeURIComponent(`/contests/${id}`)}`);
   };
 
   if (loading) {
@@ -169,7 +163,7 @@ export default function ContestPreview() {
       <div className={styles.bg}>
         <div className={styles.centeredCard}>
           <h3>Contest Not Found</h3>
-          <button className={styles.primaryBtn} onClick={() => navigate(-1)}>
+          <button className={styles.primaryBtn} onClick={() => router.back()}>
             Go Back
           </button>
         </div>

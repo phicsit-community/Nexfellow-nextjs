@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState, useRef, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import MetaTags from "../../components/MetaTags/MetaTags";
 
@@ -48,8 +50,9 @@ import { Share2 } from "lucide-react";
 import { UserCircle2 } from "lucide-react";
 
 const ModeratorsView = () => {
-  const { username } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const username = params?.username;
+  const router = useRouter();
   const [community, setCommunity] = useState(null);
   const [communityOwnerId, setCommunityOwnerId] = useState(null);
   const [communityId, setCommunityId] = useState(null);
@@ -63,7 +66,7 @@ const ModeratorsView = () => {
   const [isUnblocking, setIsUnblocking] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
@@ -81,6 +84,7 @@ const ModeratorsView = () => {
   };
 
   const currentUserId = useMemo(() => {
+    if (typeof window === "undefined") return null;
     const user = JSON.parse(localStorage.getItem("user"));
     return user?.id || null;
   }, []);
@@ -111,7 +115,7 @@ const ModeratorsView = () => {
     setLoading(true);
     setError(null);
     try {
-      const userData = JSON.parse(localStorage.getItem("user"));
+      const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
       const currentUserId = userData?.id;
 
       if (!currentUserId) {
@@ -285,7 +289,7 @@ const ModeratorsView = () => {
   };
 
   const handleBackButtonClick = () => {
-    navigate(-1);
+    router.back();
   };
 
   const closeModal = () => {
@@ -345,7 +349,7 @@ const ModeratorsView = () => {
                 style={{ padding: "3px 10px" }}
               >
                 <BackButton
-                  onClick={() => navigate(-1)}
+                  onClick={() => router.back()}
                   showText={true}
                   smallText={true}
                 />

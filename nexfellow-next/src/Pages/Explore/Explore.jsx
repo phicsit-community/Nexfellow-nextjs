@@ -1,13 +1,13 @@
+"use client";
+
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { debounce } from "lodash";
 import countryCodeMap from "../../components/Constants/Country";
 import { toast } from "sonner";
-
-// Styles
 import styles from "./Explore.module.css";
 
 // Assets
@@ -43,7 +43,7 @@ const Explore = () => {
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [bookmarkedCommunities, setBookmarkedCommunities] = useState([]);
 
-  const isMobile = window.innerWidth <= 768;
+  const isMobile = typeof window !== "undefined" ? window.innerWidth <= 768 : false;
   const categoryOptions = [
     "All",
     "Trending",
@@ -618,7 +618,7 @@ export const ExploreCard = ({
 
   return (
     <Link
-      to={isBlocked ? "#" : communityLink}
+      href={isBlocked ? "#" : communityLink}
       className={styles.communityCardLink}
     >
       <div

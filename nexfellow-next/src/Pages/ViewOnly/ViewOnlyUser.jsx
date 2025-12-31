@@ -1,13 +1,16 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import styles from "./ViewOnlyUser.module.css"; // Copy/adapt from ViewOnlyExplore.module.css
 import { FaUsers, FaUserPlus, FaCalendarAlt } from "react-icons/fa";
 import verificationBadge from "./assets/badge2.svg"; // Optional: if you show verified users
 
 const ViewOnlyUser = () => {
-  const { username } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const username = params?.username;
+  const router = useRouter();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,7 +32,7 @@ const ViewOnlyUser = () => {
   }, [username]);
 
   const handleLogin = () => {
-    navigate("/login", { state: { returnUrl: window.location.pathname } });
+    router.push(`/login?returnUrl=${typeof window !== "undefined" ? window.location.pathname : ""}`);
   };
 
   if (loading) {

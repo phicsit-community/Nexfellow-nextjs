@@ -18,7 +18,7 @@ const WhatDrives = () => {
       </p>
       <div className={styles.cardContainer}>
         <div className={styles.card1}>
-          <img src={card1} className={styles.icon} />
+          <img src={card1.src || card1} className={styles.icon} />
           <h3 className={styles.cardTitle}>Accelerate Dreams</h3>
           <p className={styles.cardText}>
             Every startup, every project, every wild idea deserves the right
@@ -26,7 +26,7 @@ const WhatDrives = () => {
           </p>
         </div>
         <div className={styles.card2}>
-          <img src={card2} className={styles.icon} />
+          <img src={card2.src || card2} className={styles.icon} />
           <h3 className={styles.cardTitle}>Ignite Innovation</h3>
           <p className={styles.cardText}>
             When diverse minds collide, magic happens. We create the spark that
@@ -34,7 +34,7 @@ const WhatDrives = () => {
           </p>
         </div>
         <div className={styles.card3}>
-          <img src={card3} className={styles.icon} />
+          <img src={card3.src || card3} className={styles.icon} />
           <h3 className={styles.cardTitle}>Build Community</h3>
           <p className={styles.cardText}>
             Beyond transactions, we foster genuine relationships that last,

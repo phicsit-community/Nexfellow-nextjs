@@ -1,10 +1,14 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { useSelector } from "react-redux";
 
 const ModeratorRoute = ({ children }) => {
-    const { username } = useParams();
+    const params = useParams();
+    const username = params?.username;
+    const router = useRouter();
     const [isAuthorized, setIsAuthorized] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -59,7 +63,13 @@ const ModeratorRoute = ({ children }) => {
         checkModeratorStatus();
     }, [username, currentUserId]);
 
-    if (isAuthorized === false) return <Navigate to={`/community/${username}`} replace />;
+    useEffect(() => {
+        if (isAuthorized === false && username) {
+            router.replace(`/community/${username}`);
+        }
+    }, [isAuthorized, username, router]);
+
+    if (isAuthorized === false) return null;
 
     if (isAuthorized) return <>{children}</>;
 

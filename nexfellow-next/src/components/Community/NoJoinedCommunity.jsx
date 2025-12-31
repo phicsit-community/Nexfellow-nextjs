@@ -1,10 +1,12 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import styles from "./NoJoinedCommunity.module.css";
 import illustration from "./assets/Illustration.png";
 
 const NoJoinedCommunityPage = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
@@ -13,7 +15,7 @@ const NoJoinedCommunityPage = () => {
   }, []);
 
   const handleJoinButtonClick = () => {
-    navigate("/explore");
+    router.push("/explore");
   };
 
   return (
@@ -25,7 +27,7 @@ const NoJoinedCommunityPage = () => {
           className={styles.illustration}
         />
         <h2 className={styles.title}>
-          Once you join a community, it’ll show up here
+          Once you join a community, it'll show up here
         </h2>
 
         <button className={styles.joinButton} onClick={handleJoinButtonClick}>
@@ -37,3 +39,4 @@ const NoJoinedCommunityPage = () => {
 };
 
 export default NoJoinedCommunityPage;
+

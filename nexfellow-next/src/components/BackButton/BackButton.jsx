@@ -1,4 +1,6 @@
-import { useNavigate } from "react-router-dom";
+"use client";
+
+import { useRouter } from "next/navigation";
 
 // styles
 import styles from "./BackButton.module.css";
@@ -7,10 +9,10 @@ import styles from "./BackButton.module.css";
 import backBtn from "./assets/ArrowLeft.svg";
 
 const BackButton = ({ text = "Back", showText = true, smallText = false }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleBack = () => {
-    navigate(-1);
+    router.back();
   };
 
   return (
@@ -18,7 +20,7 @@ const BackButton = ({ text = "Back", showText = true, smallText = false }) => {
       className={`${styles.backButton} ${smallText ? styles.smallText : ""}`}
       onClick={handleBack}
     >
-      <img src={backBtn} alt="Back" />
+      <img src={backBtn.src || backBtn} alt="Back" />
       {showText && <p className={styles.text}>{text}</p>}
     </button>
   );

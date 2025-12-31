@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { getSocket } from "../../utils/socket";
 import { toast } from "sonner";
@@ -25,7 +27,8 @@ const str = (v) => (v != null ? String(v) : v);
 
 const Inbox = () => {
   const socket = getSocket();
-  const navigate = useNavigate();
+  const router = useRouter();
+  const pathname = usePathname();
   const redirectToProfile = useProfileRedirect();
   const [conversations, setConversations] = useState([]);
   const [fixedConversations, setFixedConversations] = useState([]);
@@ -45,7 +48,7 @@ const Inbox = () => {
   const [typingUsers, setTypingUsers] = useState({});
   const [isSending, setIsSending] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(true);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth <= 768 : false);
   const [profileOpen, setProfileOpen] = useState(false);
 
   const messagesEndRef = useRef(null);
@@ -54,7 +57,7 @@ const Inbox = () => {
   const searchTimeoutRef = useRef(null);
 
   // Current user
-  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) || {} : {};
   const currentUserId = user.id || null;
 
   // Refs to avoid stale closures in socket handlers
@@ -64,8 +67,7 @@ const Inbox = () => {
   const messageRequestsRef = useRef(messageRequests);
   const currentUserIdRef = useRef(currentUserId);
 
-  const location = useLocation();
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const handledDeepLinkRef = useRef(false);
 
   useEffect(() => {

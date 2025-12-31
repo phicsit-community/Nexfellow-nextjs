@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import ProfileImage from "./assets/profile_image.svg";
 import noPosts from "./assets/no_posts.png";
@@ -14,7 +16,7 @@ const UserCommunityBody = ({ userId, otherUserId }) => {
     const [error, setError] = useState(null);
     const [followingStatus, setFollowingStatus] = useState({});
     const [loadingFollow, setLoadingFollow] = useState({});
-    const navigate = useNavigate();
+    const router = useRouter();
 
     useEffect(() => {
         fetchMutualConnections();
@@ -77,9 +79,9 @@ const UserCommunityBody = ({ userId, otherUserId }) => {
 
     const handleProfileClick = (connection) => {
         if (connection.isCommunityAccount && connection.createdCommunity) {
-            navigate(`/community/${connection.username}`);
+            router.push(`/community/${connection.username}`);
         } else {
-            navigate(`/user/${connection.username}`);
+            router.push(`/user/${connection.username}`);
         }
     };
 

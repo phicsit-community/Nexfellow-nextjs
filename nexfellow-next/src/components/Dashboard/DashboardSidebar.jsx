@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import Hamburger from "hamburger-react";
 
 // styles
@@ -67,10 +69,9 @@ const DashboardSidebar = ({
   const renderSidebarItem = (path, icon, title, description) => (
     <div className={styles.itemWrapper}>
       <Link
-        to={isLocked ? "#" : `${path}/${communityId}`}
-        className={`${styles.item} ${
-          isActive(`${path}/${communityId}`) ? styles.active : ""
-        }`}
+        href={isLocked ? "#" : `${path}/${communityId}`}
+        className={`${styles.item} ${isActive(`${path}/${communityId}`) ? styles.active : ""
+          }`}
         onClick={() => !isLocked && handleTabClick(`${path}/${communityId}`)}
       >
         <div className={styles.icon}>{icon}</div>
@@ -89,7 +90,7 @@ const DashboardSidebar = ({
 
   const renderMiniSidebarItem = (path, icon, title) => (
     <Link
-      to={isLocked ? "#" : `${path}/${communityId}`}
+      href={isLocked ? "#" : `${path}/${communityId}`}
       className={styles.miniMobileItem}
       onClick={() => !isLocked && handleTabClick(`${path}/${communityId}`)}
     >
@@ -150,9 +151,8 @@ const DashboardSidebar = ({
 
         {/* Floating Mini Sidebar for Mobile View */}
         <div
-          className={`${styles.mobileSidebar} ${
-            isSidebarOpen ? styles.open : styles.closed
-          }`}
+          className={`${styles.mobileSidebar} ${isSidebarOpen ? styles.open : styles.closed
+            }`}
         >
           <div className={styles.section}>
             {[...Array(6)].map((_, index) => (
@@ -164,9 +164,8 @@ const DashboardSidebar = ({
         {/* Floating Button to Open Sidebar */}
         <div className={styles.floatingButton} onClick={toggleSidebar}>
           <div
-            className={`${styles.floatingButtonIcon} ${
-              isSidebarOpen ? styles.open : styles.closed
-            }`}
+            className={`${styles.floatingButtonIcon} ${isSidebarOpen ? styles.open : styles.closed
+              }`}
           >
             {/* {isSidebarOpen ? <FaTimes /> : <FaBars />} */}
             <Hamburger onToggle={toggleSidebar} size={20} />
@@ -254,9 +253,8 @@ const DashboardSidebar = ({
 
       {/* Floating Mini Sidebar for Mobile View */}
       <div
-        className={`${styles.mobileSidebar} ${
-          isSidebarOpen ? styles.open : styles.closed
-        }`}
+        className={`${styles.mobileSidebar} ${isSidebarOpen ? styles.open : styles.closed
+          }`}
       >
         <div className={styles.mobileSection}>
           {renderMiniSidebarItem(
@@ -287,9 +285,8 @@ const DashboardSidebar = ({
       {/* Floating Button to Open Sidebar */}
       <div className={styles.floatingButton} onClick={toggleSidebar}>
         <div
-          className={`${styles.floatingButtonIcon} ${
-            isSidebarOpen ? styles.open : styles.closed
-          }`}
+          className={`${styles.floatingButtonIcon} ${isSidebarOpen ? styles.open : styles.closed
+            }`}
         >
           <Hamburger onToggle={toggleSidebar} size={20} />
         </div>

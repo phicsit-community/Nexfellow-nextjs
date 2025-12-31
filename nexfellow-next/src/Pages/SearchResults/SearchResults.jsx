@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useSearchParams } from "next/navigation";
 import Post from "../../components/Post/Post";
 import SuggestionCard from "../../components/Suggestions/SuggestionCard";
 import { ExploreCard } from "../Explore/Explore";
@@ -29,19 +31,18 @@ function SearchResults() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const location = useLocation();
+  const searchParams = useSearchParams();
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
 
   // Update filter and query when URL changes
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const typeParam = params.get("type");
-    const queryParam = params.get("q");
+    const typeParam = searchParams.get("type");
+    const queryParam = searchParams.get("q");
 
     setFilter(typeParam || "all");
     setQuery(queryParam || "");
-  }, [location.search]);
+  }, [searchParams]);
 
   // State to track "Show More" for each section
   const [showMoreStates, setShowMoreStates] = useState({
@@ -301,57 +302,50 @@ function SearchResults() {
         <p className={styles.header}>Search Results for &quot;{query}&quot;</p>
         <div className={styles.filterButtons}>
           <button
-            className={`${styles.filterButton} ${
-              filter === "all" ? styles.active : ""
-            }`}
+            className={`${styles.filterButton} ${filter === "all" ? styles.active : ""
+              }`}
             onClick={() => setFilter("all")}
           >
             All
           </button>
           <button
-            className={`${styles.filterButton} ${
-              filter === "users" ? styles.active : ""
-            }`}
+            className={`${styles.filterButton} ${filter === "users" ? styles.active : ""
+              }`}
             onClick={() => setFilter("users")}
           >
             Users
           </button>
           <button
-            className={`${styles.filterButton} ${
-              filter === "posts" ? styles.active : ""
-            }`}
+            className={`${styles.filterButton} ${filter === "posts" ? styles.active : ""
+              }`}
             onClick={() => setFilter("posts")}
           >
             Posts
           </button>
           <button
-            className={`${styles.filterButton} ${
-              filter === "communities" ? styles.active : ""
-            }`}
+            className={`${styles.filterButton} ${filter === "communities" ? styles.active : ""
+              }`}
             onClick={() => setFilter("communities")}
           >
             Communities
           </button>
           <button
-            className={`${styles.filterButton} ${
-              filter === "events" ? styles.active : ""
-            }`}
+            className={`${styles.filterButton} ${filter === "events" ? styles.active : ""
+              }`}
             onClick={() => setFilter("events")}
           >
             Events
           </button>
           <button
-            className={`${styles.filterButton} ${
-              filter === "contests" ? styles.active : ""
-            }`}
+            className={`${styles.filterButton} ${filter === "contests" ? styles.active : ""
+              }`}
             onClick={() => setFilter("contests")}
           >
             Contests
           </button>
           <button
-            className={`${styles.filterButton} ${
-              filter === "challenges" ? styles.active : ""
-            }`}
+            className={`${styles.filterButton} ${filter === "challenges" ? styles.active : ""
+              }`}
             onClick={() => setFilter("challenges")}
           >
             Challenges

@@ -1,5 +1,8 @@
+"use client";
+
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import styles from "./Leaderboard.module.css";
 import SEARCH from "./assets/search.svg";
@@ -93,7 +96,7 @@ const LeaderboardRow = ({ item, avatartemp, getShortForm, isMobile }) => {
         <span>{item.rank || "N/A"}</span>
         <div className={styles.userDetails}>
           <Link
-            to={profileLink}
+            href={profileLink}
             className={styles.username}
             style={{ textDecoration: "none", color: "inherit" }}
           >
@@ -122,7 +125,7 @@ const LeaderboardRow = ({ item, avatartemp, getShortForm, isMobile }) => {
             style={{ filter: "url(#wavy-flag)" }}
           />
         </div>
-      </div>
+      </div >
     );
   }
 
@@ -138,7 +141,7 @@ const LeaderboardRow = ({ item, avatartemp, getShortForm, isMobile }) => {
             className={styles.userAvatar}
           />
           <Link
-            to={profileLink}
+            href={profileLink}
             className={styles.username}
             style={{ textDecoration: "none", color: "inherit" }}
           >
@@ -177,7 +180,7 @@ const Leaderboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const itemsPerPage = 100;
-  const navigate = useNavigate();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const panelRef = useRef(null);
   const buttonRef = useRef(null);
@@ -453,7 +456,7 @@ const Leaderboard = () => {
                 country={topThree[1]?.owner?.country || "N/A"}
                 rating={Math.round(topThree[1]?.reputationScore)}
                 onClick={() =>
-                  navigate(`/community/${topThree[1]?.owner?.username}`)
+                  router.push(`/community/${topThree[1]?.owner?.username}`)
                 }
               />
               <TopCard1
@@ -463,7 +466,7 @@ const Leaderboard = () => {
                 country={topThree[0]?.owner?.country || "N/A"}
                 rating={Math.round(topThree[0]?.reputationScore)}
                 onClick={() =>
-                  navigate(`/community/${topThree[0]?.owner?.username}`)
+                  router.push(`/community/${topThree[0]?.owner?.username}`)
                 }
               />
               <TopCard2
@@ -473,7 +476,7 @@ const Leaderboard = () => {
                 country={topThree[2]?.owner?.country || "N/A"}
                 rating={Math.round(topThree[2]?.reputationScore)}
                 onClick={() =>
-                  navigate(`/community/${topThree[2]?.owner?.username}`)
+                  router.push(`/community/${topThree[2]?.owner?.username}`)
                 }
               />
             </>

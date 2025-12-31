@@ -1,5 +1,7 @@
+"use client";
+
 import styles from "./challengeCard.module.css";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 // images
 import trophy from "./assets/trophy.svg";
 import parti from "./assets/parti.svg";
@@ -15,7 +17,7 @@ const ChallengeCard = ({
   isUnpublished,
   progress = 0,
 }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   // status = "unpublished", "upcoming", "ongoing", "completed
 
   const getStatusColor = (status) => {
@@ -127,7 +129,7 @@ const ChallengeCard = ({
           className={styles.actionButton}
           onClick={(e) => {
             e.stopPropagation();
-            navigate(`/challenge/${id}`);
+            router.push(`/challenge/${id}`);
           }}
         >
           {status?.toLowerCase() === "completed"

@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 // styles
 import styles from "./ModeratorsSidebar.module.css";
@@ -34,7 +36,7 @@ const ModeratorsSidebar = ({
     const renderSidebarItem = (path, icon, title, description) => (
         <div className={styles.itemWrapper}>
             <Link
-                to={`${path}/${communityId}`}
+                href={`${path}/${communityId}`}
                 className={`${styles.item} ${isActive(`${path}/${communityId}`) ? styles.active : ""}`}
                 onClick={() => handleTabClick(`${path}/${communityId}`)}
             >

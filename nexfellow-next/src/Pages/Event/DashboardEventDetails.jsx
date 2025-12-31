@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { motion, AnimatePresence } from "framer-motion";
@@ -49,15 +51,16 @@ const staggerItems = {
 };
 
 const EventDetails = () => {
-  const navigate = useNavigate();
-  const { eventId } = useParams();
+  const router = useRouter();
+  const params = useParams();
+  const eventId = params?.eventId;
   const [event, setEvent] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [backButtonText, setBackButtonText] = useState("Back");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
   const [imageOverlayOpen, setImageOverlayOpen] = useState(false);
 
   useEffect(() => {
@@ -82,7 +85,7 @@ const EventDetails = () => {
     if (eventId) fetchEvent();
   }, [eventId]);
 
-  const handleBack = () => navigate(-1);
+  const handleBack = () => router.back();
 
   useEffect(() => {
     const handleResize = () => {
@@ -246,7 +249,7 @@ const EventDetails = () => {
                     style={{ padding: "3px 10px" }}
                   >
                     <BackButton
-                      onClick={() => navigate(-1)}
+                      onClick={() => router.back()}
                       showText={true}
                       smallText={true}
                     />
@@ -395,7 +398,7 @@ const EventDetails = () => {
                     </Button>
 
                     <Button
-                      onClick={() => navigate(`/community/events/${event.slug}`)}
+                      onClick={() => router.push(`/community/events/${event.slug}`)}
                       className="flex items-center gap-2 bg-card hover:bg-accent text-foreground border border-border rounded-lg transition-colors"
                       style={{ padding: '8px 16px' }}
                     >
@@ -508,7 +511,7 @@ const EventDetails = () => {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.1 * index, duration: 0.2 }}
-                          // whileHover={{ backgroundColor: "#e5f7f7" }}
+                        // whileHover={{ backgroundColor: "#e5f7f7" }}
                         >
                           <div>{attendee.name}</div>
                           <div>{attendee.email}</div>

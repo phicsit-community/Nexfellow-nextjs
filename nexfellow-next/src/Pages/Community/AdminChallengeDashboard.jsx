@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import {
   Tabs,
@@ -57,8 +59,9 @@ const { Option } = Select;
 const { TextArea } = Input;
 
 const AdminChallengeDashboard = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id;
+  const router = useRouter();
 
   // Core state
   const [activeTab, setActiveTab] = useState("overview");
@@ -250,7 +253,7 @@ const AdminChallengeDashboard = () => {
         switch (status) {
           case 401:
             message.error("You are not authenticated. Please log in again.");
-            navigate("/login");
+            router.push("/login");
             break;
           case 403:
             message.error("You don't have permission to perform this action.");
@@ -270,7 +273,7 @@ const AdminChallengeDashboard = () => {
         message.error(`An unexpected error occurred during ${context}.`);
       }
     },
-    [navigate]
+    [router]
   );
 
   // Fetch challenge details
@@ -678,7 +681,7 @@ const AdminChallengeDashboard = () => {
         content: "Challenge deleted successfully!",
         key: "delete",
       });
-      navigate(-1);
+      router.back();
     } catch (error) {
       handleApiError(error, "deleting challenge");
     } finally {

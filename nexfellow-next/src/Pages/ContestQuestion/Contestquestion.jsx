@@ -1,9 +1,11 @@
+"use client";
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import styles from "./Contestquestion.module.css";
-import { Link, useParams } from "react-router-dom";
+import Link from "next/link";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import logo from "./assets/NexFellowLogo.svg";
 import { toast, ToastContainer } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
@@ -32,16 +34,16 @@ const QuestionSkeleton = () => {
 };
 
 const ContestQuestion = () => {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params?.id;
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [questions, setQuestions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const userId = JSON.parse(localStorage.getItem("user"))?.userId || null;
+  const userId = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user"))?.userId || null : null;
   const [timer, setTimer] = useState(1);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [responses, setResponses] = useState([]);
-  const [tabSwitchCount, setTabSwitchCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
   const timerInterval = useRef(null);
   const [showModal, setShowModal] = useState(false);
   const [showClearAllModal, setShowClearAllModal] = useState(false);
@@ -57,9 +59,7 @@ const ContestQuestion = () => {
   const [perQuestionTimes, setPerQuestionTimes] = useState([]);
   const [questionStartTime, setQuestionStartTime] = useState(Date.now());
 
-  const isCommunityQuiz =
-    new URLSearchParams(window.location.search).get("isCommunityQuiz") ===
-    "true";
+  const isCommunityQuiz = searchParams?.get("isCommunityQuiz") === "true";
   useEffect(() => {
     const getQuestions = async () => {
       try {
@@ -290,7 +290,7 @@ const ContestQuestion = () => {
         });
         setTimeout(() => {
           if (document.exitFullscreen) document.exitFullscreen();
-          navigate(`/contest-completed/${id}`);
+          router.push(`/contest-completed/${id}`);
         }, 2000);
       }
     } catch (error) {
@@ -301,7 +301,7 @@ const ContestQuestion = () => {
         hideProgressBar: true,
       });
       setTimeout(() => {
-        navigate(`/contest-completed/${id}`);
+        router.push(`/contest-completed/${id}`);
       }, 2000);
     }
   }, [
@@ -452,7 +452,7 @@ const ContestQuestion = () => {
 
   useEffect(() => {
     if (formSubmitted) {
-      navigate(`/contest-completed/${id}`);
+      router.push(`/contest-completed/${id}`);
     }
   }, [formSubmitted, navigate]);
   useEffect(() => {

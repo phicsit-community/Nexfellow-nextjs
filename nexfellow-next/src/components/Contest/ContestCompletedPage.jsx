@@ -1,22 +1,23 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "next/navigation";
 import styles from "./ContestCompletedPage.module.css";
 import quizCompletedImg from "./assets/complete.png";
 import { Icon } from '@iconify/react';
 import axios from "axios";
 
 const ContestCompletedPage = () => {
-    const location = useLocation();
-    const { quizId } = useParams();
+    const params = useParams();
+    const quizId = params?.quizId;
     const [stats, setStats] = useState({ attempted: 0, notAttempted: 0, timeTaken: 0, totalPossibleTime: 0 });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (location.state && location.state.stats) {
-            setStats(location.state.stats);
-            setLoading(false);
-        } else if (quizId) {
+        // Note: location.state is not available in Next.js App Router
+        // Always fetch data from API
+        if (quizId) {
             axios.get(`/community/quizzes/${quizId}`)
                 .then(res => {
                     const quiz = res.data.quiz;
@@ -51,7 +52,7 @@ const ContestCompletedPage = () => {
         } else {
             setLoading(false);
         }
-    }, [location.state, quizId]);
+    }, [quizId]);
 
     const formatTime = (seconds) => {
         if (seconds === undefined || isNaN(seconds)) return "0:00";

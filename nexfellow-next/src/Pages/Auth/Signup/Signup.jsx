@@ -1,10 +1,8 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import {
-  Link,
-  useNavigate,
-  useSearchParams,
-  useLocation,
-} from "react-router-dom";
+import Link from "next/link";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import axios from "axios";
 import { FaGithub, FaFacebook } from "react-icons/fa";
@@ -16,9 +14,10 @@ import navbarlogo from "./assets/NexFellowLogo.svg";
 import AuthSide from "../../../components/authSide/AuthSide";
 
 const Signup = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const ref = useSearchParams()[0].get("ref");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const ref = searchParams.get("ref");
   const [returnUrl, setReturnUrl] = useState("/login");
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [showEmailForm, setShowEmailForm] = useState(false);
@@ -41,16 +40,11 @@ const Signup = () => {
   const [resendAvailable, setResendAvailable] = useState(false);
 
   useEffect(() => {
-    if (location.state?.returnUrl) {
-      setReturnUrl(location.state.returnUrl);
-    } else if (location.search) {
-      const params = new URLSearchParams(location.search);
-      const redirectParam = params.get("redirect");
-      if (redirectParam) {
-        setReturnUrl("/login?redirect=" + redirectParam);
-      }
+    const redirectParam = searchParams.get("redirect");
+    if (redirectParam) {
+      setReturnUrl("/login?redirect=" + redirectParam);
     }
-  }, [location]);
+  }, [searchParams]);
 
   useEffect(() => {
     if (showOtpField && timer > 0) {
@@ -110,7 +104,7 @@ const Signup = () => {
       });
 
       setTimeout(() => {
-        navigate(returnUrl);
+        router.push(returnUrl);
       }, 1000);
     } catch (error) {
       toast.error("Signup failed: " + (error.response?.data?.message || error.message));
@@ -132,7 +126,7 @@ const Signup = () => {
         position: "bottom-right",
         richColors: true,
       });
-      setTimeout(() => navigate("/login"), 1000);
+      setTimeout(() => router.push("/login"), 1000);
     } catch (error) {
       toast.error("OTP verification failed: " + (error.response?.data?.message || error.message));
     } finally {
@@ -161,30 +155,30 @@ const Signup = () => {
   const togglePasswordVisibility = () => setPasswordVisible((v) => !v);
 
   const googleAuth = () => {
-    const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
-      : import.meta.env.VITE_SERVER_URL;
+    const link = process.env.NODE_ENV === "development"
+      ? process.env.NEXT_PUBLIC_LOCALHOST
+      : process.env.NEXT_PUBLIC_SERVER_URL;
     window.open(`${link}/auth/google/callback`, "_self");
   };
 
   const githubAuth = () => {
-    const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
-      : import.meta.env.VITE_SERVER_URL;
+    const link = process.env.NODE_ENV === "development"
+      ? process.env.NEXT_PUBLIC_LOCALHOST
+      : process.env.NEXT_PUBLIC_SERVER_URL;
     window.open(`${link}/auth/github/callback`, "_self");
   };
 
   const facebookAuth = () => {
-    const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
-      : import.meta.env.VITE_SERVER_URL;
+    const link = process.env.NODE_ENV === "development"
+      ? process.env.NEXT_PUBLIC_LOCALHOST
+      : process.env.NEXT_PUBLIC_SERVER_URL;
     window.open(`${link}/auth/facebook/`, "_self");
   };
 
   const linkedinAuth = () => {
-    const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
-      : import.meta.env.VITE_SERVER_URL;
+    const link = process.env.NODE_ENV === "development"
+      ? process.env.NEXT_PUBLIC_LOCALHOST
+      : process.env.NEXT_PUBLIC_SERVER_URL;
     window.open(`${link}/auth/linkedin/`, "_self");
   };
 
@@ -202,8 +196,8 @@ const Signup = () => {
     <div className={styles.loginFormContainer}>
       <div className={styles.loginFrom}>
         <div className={styles.card}>
-          <div className={styles.logo} onClick={() => navigate("/")}>
-            <img src={navbarlogo} alt="NexFellow Logo" className={styles.logoImage} />
+          <div className={styles.logo} onClick={() => router.push("/")}>
+            <img src={navbarlogo.src || navbarlogo} alt="NexFellow Logo" className={styles.logoImage} />
           </div>
           <div className={styles.loginFormCard}>
             <h1 className={styles.title}>Sign Up</h1>
@@ -216,7 +210,7 @@ const Signup = () => {
                 {/* Social Login Buttons */}
                 <div className={styles.socialLogin}>
                   <button className={styles.socialBtn} onClick={googleAuth} disabled={loading}>
-                    <img alt="Google" src={google} />
+                    <img alt="Google" src={google.src || google} />
                     <p className={styles.btnText}>Sign up with Google</p>
                   </button>
                   <button className={styles.socialBtn} onClick={linkedinAuth} disabled={loading}>
@@ -350,7 +344,7 @@ const Signup = () => {
             )}
 
             <p className={styles.subtitle}>
-              Have an account? <Link to="/login">Login</Link>
+              Have an account? <Link href="/login">Login</Link>
             </p>
           </div>
         </div>

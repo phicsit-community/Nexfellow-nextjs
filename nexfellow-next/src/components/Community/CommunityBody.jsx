@@ -1,9 +1,11 @@
+"use client";
+
 import { useState, useEffect, useRef, useMemo } from "react";
 import axios from "axios";
 import no_posts from "./assets/no_posts.png";
 import pinIcon from "./assets/pin.svg";
 import ProfileImage from "./assets/profile_image.svg";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { FaThumbtack } from "react-icons/fa";
 
 // styles
@@ -37,7 +39,7 @@ const CommunityBody = ({ communityId, messageIdToScroll }) => {
   const messageEndRef = useRef(null);
   const [followingStatus, setFollowingStatus] = useState({});
   const [loadingFollow, setLoadingFollow] = useState({});
-  const navigate = useNavigate();
+  const router = useRouter();
   const [showPinModal, setShowPinModal] = useState(false);
   const [postToPin, setPostToPin] = useState(null);
   const [pinnedPostId, setPinnedPostId] = useState(null);
@@ -203,9 +205,9 @@ const CommunityBody = ({ communityId, messageIdToScroll }) => {
 
   const handleProfileRedirect = (user) => {
     if (user.isCommunityAccount && user.createdCommunity) {
-      navigate(`/explore/${user.username}`);
+      router.push(`/explore/${user.username}`);
     } else {
-      navigate(`/user/${user.username}`);
+      router.push(`/user/${user.username}`);
     }
   };
 

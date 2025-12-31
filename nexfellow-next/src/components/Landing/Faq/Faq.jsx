@@ -41,7 +41,7 @@ const FAQ = () => {
                         Frequently Asked <br />
                         <span className={styles.highlight}>Questions</span>
                     </h1>
-                    <img src={faqIllustration} alt="FAQ Illustration" className={styles.illustration} />
+                    <img src={faqIllustration.src || faqIllustration} alt="FAQ Illustration" className={styles.illustration} />
                 </div>
                 <div className={styles.faqs}>
                     {faqs.map((faq, index) => (

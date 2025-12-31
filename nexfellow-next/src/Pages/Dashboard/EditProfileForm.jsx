@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useRouter, useParams } from "next/navigation";
 
 import axios from "axios";
 import styles from "./EditProfileForm.module.css";
@@ -25,8 +27,9 @@ const EditProfileForm = () => {
   const profileInputRef = useRef(null);
   const bannerInputRef = useRef(null);
   const imgRef = useRef(null);
-  const navigate = useNavigate();
-  const { username } = useParams();
+  const router = useRouter();
+  const params = useParams();
+  const username = params?.username;
   const [id, setId] = useState(null);
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
@@ -137,7 +140,7 @@ const EditProfileForm = () => {
   };
 
   const handleBackButtonClick = () => {
-    navigate(-1);
+    router.back();
   };
 
   useEffect(() => {
@@ -357,7 +360,7 @@ const EditProfileForm = () => {
 
       toast.success("Profile updated successfully!", { duration: 3000 });
       if (sanitizedUsername) {
-        navigate(`/dashboard/${sanitizedUsername}`);
+        router.push(`/dashboard/${sanitizedUsername}`);
       }
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -500,7 +503,7 @@ const EditProfileForm = () => {
           style={{ padding: "3px 10px" }}
         >
           <BackButton
-            onClick={() => navigate(-1)}
+            onClick={() => router.back()}
             showText={true}
             smallText={true}
           />

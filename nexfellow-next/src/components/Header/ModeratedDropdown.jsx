@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { ShieldCheck, ChevronDown } from "lucide-react";
 import styles from "./ModeratedDropdown.module.css";
 
@@ -54,7 +56,7 @@ function ModeratedDropdown({ moderated, getInitials }) {
                 ) : (
                     moderated.map((community) => (
                         <Link
-                            to={`/moderators/${community?.username || community.link || community.communityId}`}
+                            href={`/moderators/${community?.username || community.link || community.communityId}`}
                             key={community.communityId}
                             className={styles.moderatedDropdownItem}
                             onClick={() => setIsOpen(false)}

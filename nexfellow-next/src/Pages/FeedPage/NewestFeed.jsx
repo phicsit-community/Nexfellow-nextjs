@@ -1,5 +1,7 @@
+"use client";
+
 import { useRef, useState, useEffect, useCallback, useLayoutEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { usePathname, useRouter } from "next/navigation";
 import axios from "axios";
 import styles from "./TrendingFeed.module.css";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
@@ -52,8 +54,8 @@ const PostSkeleton = () => (
 );
 
 const NewestFeed = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
+    const pathname = usePathname();
+    const router = useRouter();
     const [isPostsRendered, setIsPostsRendered] = useState(false);
     const [posts, setPosts] = useState([]);
     const [hasMore, setHasMore] = useState(true);
@@ -309,7 +311,7 @@ const NewestFeed = () => {
 
     const handleNavigateToPost = (postId) => {
         saveFeedCache(posts, feedContainerRef.current?.scrollTop || 0, postId);
-        navigate(`/post/${postId}`);
+        router.push(`/post/${postId}`);
     };
 
     const filteredPosts = posts.filter(isPostVisible);

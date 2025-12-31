@@ -1,6 +1,8 @@
 // Discussion.jsx
+"use client";
+
 import { useEffect, useState, useRef, forwardRef, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { getSocket } from "../../utils/socket";
 import axios from "axios";
 import styles from "./Discussion.module.css";
@@ -96,7 +98,7 @@ const MessageItem = forwardRef(
     },
     ref
   ) => {
-    const navigate = useNavigate();
+    const router = useRouter();
 
     const userInfo = message.author || {};
     const userPicture =
@@ -105,9 +107,9 @@ const MessageItem = forwardRef(
     const handleMentionClick = (mention) => {
       if (!mention || !mention.username) return;
       if (mention.isCommunityAccount || mention.isCommunity) {
-        navigate(`/community/${mention.username}`);
+        router.push(`/community/${mention.username}`);
       } else {
-        navigate(`/user/${mention.username}`);
+        router.push(`/user/${mention.username}`);
       }
     };
 

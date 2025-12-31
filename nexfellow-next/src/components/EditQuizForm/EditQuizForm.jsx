@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import styles from "./EditQuizForm.module.css";
 import BackButton from "../../components/BackButton/BackButton";
@@ -70,10 +72,11 @@ const FormSkeleton = () => (
 );
 
 const EditQuizForm = () => {
-  const { id } = useParams();
-  const location = useLocation();
-  const communityId = location.state?.communityId;
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id;
+  const searchParams = useSearchParams();
+  const communityId = searchParams.get('communityId');
+  const router = useRouter();
   const quizId = id;
   const [newField, setNewField] = useState("");
   const [quizData, setQuizData] = useState({
@@ -289,7 +292,7 @@ const EditQuizForm = () => {
       });
 
       toast.success("Contest updated successfully!");
-      navigate(`/contest/${quizId}`);
+      router.push(`/contest/${quizId}`);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to update contest");
     } finally {
@@ -306,7 +309,7 @@ const EditQuizForm = () => {
           style={{ padding: "3px 10px" }}
         >
           <BackButton
-            onClick={() => navigate(-1)}
+            onClick={() => router.back()}
             showText={true}
             smallText={true}
           />
@@ -327,7 +330,7 @@ const EditQuizForm = () => {
         style={{ padding: "3px 10px" }}
       >
         <BackButton
-          onClick={() => navigate(-1)}
+          onClick={() => router.back()}
           showText={true}
           smallText={true}
         />
@@ -579,7 +582,7 @@ const EditQuizForm = () => {
           <div className={styles.formActions}>
             <button
               type="button"
-              onClick={() => navigate(-1)}
+              onClick={() => router.back()}
               className={styles.cancelButton}
             >
               Cancel

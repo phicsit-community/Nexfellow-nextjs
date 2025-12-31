@@ -9,7 +9,7 @@ import CALENDAR from "./assets/CALENDAR.svg";
 import MARKS from "./assets/MARKS.svg";
 import DURATION from "./assets/DURATION.svg";
 import QUESTIONS from "./assets/QUESTIONS.svg";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import Modal from "react-modal";
 import axios from "axios";
 import { toast } from "sonner";
@@ -97,7 +97,7 @@ const StopWatchIcon = () => (
 const Commoncd = ({ data, isRegistered, given, isCommunityQuiz }) => {
   const [timeRemaining, setTimeRemaining] = useState("");
   const [isStartModalOpen, setIsStartModalOpen] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
   const [registerLoading, setRegisterLoading] = useState(false);
   const [userRegistered, setUserRegistered] = useState(isRegistered || false);
   const [hasAttempted, setHasAttempted] = useState(false);
@@ -107,7 +107,7 @@ const Commoncd = ({ data, isRegistered, given, isCommunityQuiz }) => {
   const shareRef = useRef();
   console.log("User Registered:", isRegistered);
 
-  const navigate = useNavigate();
+  const router = useRouter();
 
   // Determine the correct endpoints based on whether it's a community quiz
 
@@ -347,7 +347,7 @@ const Commoncd = ({ data, isRegistered, given, isCommunityQuiz }) => {
 
   const handleStartQuiz = () => {
     closeStartModal();
-    navigate(
+    router.push(
       `/contest-question/${data._id}?isCommunityQuiz=${isCommunityQuiz}`
     );
   };
@@ -592,7 +592,7 @@ const Commoncd = ({ data, isRegistered, given, isCommunityQuiz }) => {
             // During contest, registered, not attempted
             <button
               className={styles["start-now-btn"]}
-              onClick={() => navigate(`/start-contest/${data._id}`)}
+              onClick={() => router.push(`/start-contest/${data._id}`)}
             >
               Start Now
             </button>

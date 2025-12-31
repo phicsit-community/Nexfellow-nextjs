@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import styles from "./JoinedCommunity.module.css";
 import Post from "../Post/Post";
 import CommunityCardSkeleton from "./CommunityCardSkeleton";
@@ -30,7 +32,7 @@ const JoinedCommunityPage = ({ communityData }) => {
   const [error, setError] = useState(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [muteModalOpen, setMuteModalOpen] = useState(false);
   const [blockModalOpen, setBlockModalOpen] = useState(false);
@@ -39,19 +41,19 @@ const JoinedCommunityPage = ({ communityData }) => {
   const [mutedUsers, setMutedUsers] = useState([]);
   const [blockedUsers, setBlockedUsers] = useState([]);
 
-  const navigate = useNavigate();
+  const router = useRouter();
   const scrollContainerRef = useRef(null);
 
   const handleBackButtonClick = () => {
-    navigate(-1);
+    router.back();
   };
 
   const handleViewAllClick = () => {
-    navigate("/community/all-communities", { state: { communityData } });
+    router.push("/community/all-communities");
   };
 
   const handleCardClick = (community) => {
-    navigate(`/community/${community.owner?.username}`);
+    router.push(`/community/${community.owner?.username}`);
   };
 
   const scrollLeft = () => {
@@ -208,7 +210,7 @@ const JoinedCommunityPage = ({ communityData }) => {
                 style={{ padding: "3px 10px" }}
               >
                 <BackButton
-                  onClick={() => navigate(-1)}
+                  onClick={() => router.back()}
                   showText={true}
                   smallText={true}
                 />

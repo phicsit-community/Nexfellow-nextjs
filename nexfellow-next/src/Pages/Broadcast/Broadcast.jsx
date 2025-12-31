@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useRouter, useParams } from "next/navigation";
 import {
   MdEdit,
   MdSend,
@@ -55,8 +57,9 @@ function stripHtml(html) {
 }
 
 const Broadcast = () => {
-  const navigate = useNavigate();
-  const { communityId } = useParams();
+  const router = useRouter();
+  const params = useParams();
+  const communityId = params?.communityId;
   const [selectedRecipients, setSelectedRecipients] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [subject, setSubject] = useState("");
@@ -387,7 +390,7 @@ const Broadcast = () => {
         <div>
           <div className={styles.backButtonWrapper}>
             <BackButton
-              onClick={() => navigate(-1)}
+              onClick={() => router.back()}
               showText={true}
               smallText={true}
             />

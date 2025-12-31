@@ -1,5 +1,8 @@
-import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 
 // assets
 import navbarlogo from "./assets/NexFellowLogo.svg";
@@ -8,23 +11,29 @@ import navbarlogo from "./assets/NexFellowLogo.svg";
 import styles from "./ViewOnlyHeader.module.css";
 
 const ViewOnlyHeader = () => {
-    const isLoginPage = useLocation();
+    const pathname = usePathname();
     const [menuActive, setMenuActive] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [username, setUsername] = useState(null);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const isLoggedin = localStorage.getItem("isLoggedIn");
+            setIsLoggedIn(isLoggedin === "true");
+            const userData = JSON.parse(localStorage.getItem("user"));
+            setUsername(userData?.username);
+        }
+    }, []);
 
     const toggleMenu = () => {
         setMenuActive((prev) => !prev);
     };
 
-    // Check if user is logged in
-    const isLoggedin = localStorage.getItem("isLoggedIn");
-    const isLoggedIn = isLoggedin === "true" ? true : false;
-    const userData = JSON.parse(localStorage.getItem("user"));
-    const username = userData?.username;
     return (
         <div className={`${styles.navbar} ${menuActive ? styles.menuActive : ""}`}>
             <div className={styles.navbarContent}>
                 <div className={styles.navbarLogo}>
-                    <Link to="/">
+                    <Link href="/">
                         <img src={navbarlogo} alt="NexFellow Logo" />
                     </Link>
 
@@ -55,15 +64,15 @@ const ViewOnlyHeader = () => {
                     </div>
 
                     {isLoggedIn ? (
-                        <Link to={`/dashboard/${username}`} className={styles.navbarButton}>
+                        <Link href={`/dashboard/${username}`} className={styles.navbarButton}>
                             Go to Dashboard
                         </Link>
                     ) : (
                         <>
-                            <Link to="/signup" className={styles.navbarActionLink}>
+                            <Link href="/signup" className={styles.navbarActionLink}>
                                 Register
                             </Link>
-                            <Link to="/login" className={styles.navbarButton}>
+                            <Link href="/login" className={styles.navbarButton}>
                                 Login
                             </Link>
                         </>

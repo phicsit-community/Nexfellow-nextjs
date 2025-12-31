@@ -9,7 +9,7 @@ const GetMoreWithGCCommunity = ({
 }) => {
   // Extract unique categories from blogs
   const categories = useMemo(() => {
-    if (!blogs || blogs.length === 0) return [];
+    if (!blogs || !Array.isArray(blogs) || blogs.length === 0) return [];
     const cats = blogs.map((b) => b.category).filter(Boolean);
     return Array.from(new Set(cats));
   }, [blogs]);
@@ -24,32 +24,30 @@ const GetMoreWithGCCommunity = ({
       </p>
       <div className={styles.buttons}>
         <button
-          className={`${styles.button} ${
-            activeCategory === "All" ? styles.active : ""
-          }`}
+          className={`${styles.button} ${activeCategory === "All" ? styles.active : ""
+            }`}
           onClick={() => setActiveCategory("All")}
         >
           All
         </button>
         {loading
           ? Array(3)
-              .fill(0)
-              .map((_, idx) => (
-                <button key={idx} className={styles.button} disabled>
-                  Loading...
-                </button>
-              ))
-          : categories.map((cat) => (
-              <button
-                key={cat}
-                className={`${styles.button} ${
-                  activeCategory === cat ? styles.active : ""
-                }`}
-                onClick={() => setActiveCategory(cat)}
-              >
-                {cat}
+            .fill(0)
+            .map((_, idx) => (
+              <button key={idx} className={styles.button} disabled>
+                Loading...
               </button>
-            ))}
+            ))
+          : categories.map((cat) => (
+            <button
+              key={cat}
+              className={`${styles.button} ${activeCategory === cat ? styles.active : ""
+                }`}
+              onClick={() => setActiveCategory(cat)}
+            >
+              {cat}
+            </button>
+          ))}
       </div>
     </section>
   );

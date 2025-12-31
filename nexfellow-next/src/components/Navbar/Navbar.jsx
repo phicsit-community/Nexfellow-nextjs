@@ -1,4 +1,7 @@
-import { Link, useLocation } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 // assets
@@ -8,7 +11,7 @@ import navbarlogo from "./assets/NexFellowLogo.svg";
 import styles from "./Navbar.module.css";
 
 const Navbar = () => {
-  const isLoginPage = useLocation();
+  const pathname = usePathname();
   const [menuActive, setMenuActive] = useState(false);
 
   const toggleMenu = () => {
@@ -19,8 +22,8 @@ const Navbar = () => {
     <div className={`${styles.navbar} ${menuActive ? styles.menuActive : ""}`}>
       <div className={styles.navbarContent}>
         <div className={styles.navbarLogo}>
-          <Link to="/">
-            <img src={navbarlogo} alt="NexFellow Logo" />
+          <Link href="/">
+            <img src={navbarlogo.src || navbarlogo} alt="NexFellow Logo" />
           </Link>
 
           <button
@@ -35,23 +38,23 @@ const Navbar = () => {
 
         <div className={styles.navbarActions}>
           <div className={styles.navbarLinks}>
-            <Link to="/" className={styles.navbarLink}>
+            <Link href="/" className={styles.navbarLink}>
               Overview
             </Link>
-            <Link to="/" className={styles.navbarLink}>
+            <Link href="/" className={styles.navbarLink}>
               Analytics
             </Link>
-            <Link to="/mission" className={styles.navbarLink}>
+            <Link href="/mission" className={styles.navbarLink}>
               Mission
             </Link>
-            <Link to="/blogs" className={styles.navbarLink}>
+            <Link href="/blogs" className={styles.navbarLink}>
               Blogs
             </Link>
           </div>
-          <Link to="/login" className={styles.navbarActionLink}>
+          <Link href="/login" className={styles.navbarActionLink}>
             Log In
           </Link>
-          <Link to="/signup" className={styles.navbarButton}>
+          <Link href="/signup" className={styles.navbarButton}>
             Get Started
           </Link>
         </div>

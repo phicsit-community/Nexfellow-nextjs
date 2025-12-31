@@ -1,8 +1,10 @@
+"use client";
+
 import React from "react";
 import { useEffect, useState, useRef } from "react";
 import { IoArrowBack } from "react-icons/io5";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useRouter, usePathname } from "next/navigation";
 import CommunitySidebar from "../../components/Community/CommunitySidebar";
 import styles from "./AllCommunities.module.css";
 import CommunityBanner from "./assets/community_image.svg";
@@ -12,22 +14,24 @@ import { Button } from "../../components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
 const AllCommunitiesPage = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const router = useRouter();
+  const pathname = usePathname();
+  const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
 
-  const communityData = location.state?.communityData || [];
+  // Note: In Next.js App Router, state cannot be passed via router.push
+  // This component will need to receive data differently (e.g., via context or API call)
+  const [communityData, setCommunityData] = useState([]);
 
   const truncateText = (text, length) => {
     return text.length > length ? text.substring(0, length) + "..." : text;
   };
 
   const handleBackClick = () => {
-    navigate(-1);
+    router.back();
   };
 
   const handleCardClick = (community) => {
-    navigate(`/community/${community.owner?.username}`);
+    router.push(`/community/${community.owner?.username}`);
   };
 
   useEffect(() => {
@@ -47,7 +51,7 @@ const AllCommunitiesPage = () => {
                 style={{ display: "flex", gap: "4%", padding: "3px 10px" }}
               >
                 <BackButton
-                  onClick={() => navigate(-1)}
+                  onClick={() => router.back()}
                   showText={false}
                   smallText={false}
                 />

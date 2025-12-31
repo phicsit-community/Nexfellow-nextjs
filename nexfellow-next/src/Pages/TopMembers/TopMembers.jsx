@@ -1,6 +1,8 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import VERIFY from "./assets/badge2.svg";
 import COMMUNITY_BADGE from "./assets/badge3.svg";
 import styles from "./TopMembers.module.css";
@@ -33,8 +35,9 @@ const SkeletonRow = () => (
 );
 
 const TopMembers = () => {
-  const { communityId } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const communityId = params?.communityId;
+  const router = useRouter();
   const [community, setCommunity] = useState(null);
   const [followers, setFollowers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -88,7 +91,7 @@ const TopMembers = () => {
         setCommunity(comm);
         setFollowers(followersList);
 
-        const loggedInUser = JSON.parse(localStorage.getItem("user"));
+        const loggedInUser = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
         const isOwnerOfCommunity = comm.owner?._id === loggedInUser?.id;
         setIsOwner(isOwnerOfCommunity);
 
@@ -253,7 +256,7 @@ const TopMembers = () => {
           style={{ padding: "3px 10px" }}
         >
           <BackButton
-            onClick={() => navigate(-1)}
+            onClick={() => router.back()}
             showText={true}
             smallText={true}
           />

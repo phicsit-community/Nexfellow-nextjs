@@ -1,5 +1,7 @@
+"use client";
+
 import React from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 //assets
 import LOGO from "../../assets/navbarlogo2.svg";
@@ -16,8 +18,8 @@ const Footer = () => {
       <div className={style.footercontent}>
         <div className={style.content1}>
           <div className={style.content1logo}>
-            <Link to="/">
-              <img src={LOGO} alt="NexFellow Logo" />
+            <Link href="/">
+              <img src={LOGO.src || LOGO} alt="NexFellow Logo" />
             </Link>
           </div>
           <div className={style.content1content}>
@@ -29,16 +31,16 @@ const Footer = () => {
           </div>
           <div className={style.contnet1links}>
             <a href="https://x.com/phicsit">
-              <img src={TWITTER} alt="Twitter" />
+              <img src={TWITTER.src || TWITTER} alt="Twitter" />
             </a>
             <a href="https://www.linkedin.com/company/phicsit">
-              <img src={LINKEDIN} alt="LinkedIn" />
+              <img src={LINKEDIN.src || LINKEDIN} alt="LinkedIn" />
             </a>
             <a href="https://www.instagram.com/phicsit.in">
-              <img src={INSTAGRAM} alt="Instagram" />
+              <img src={INSTAGRAM.src || INSTAGRAM} alt="Instagram" />
             </a>
             <a href="https://www.facebook.com/PHICSIT">
-              <img src={FACEBOOK} alt="Facebook" />
+              <img src={FACEBOOK.src || FACEBOOK} alt="Facebook" />
             </a>
           </div>
         </div>
@@ -50,7 +52,7 @@ const Footer = () => {
             <div className={style.content2points}>
               <a href="/contests">Contests</a>
               <a href="/leaderboard">Leaderboard</a>
-              <Link to="/comingsoon">Blogs</Link>
+              <Link href="/comingsoon">Blogs</Link>
               <a href="#">Advertise With Us</a>
               <a href="/signup">Sign Up</a>
             </div>

@@ -1,11 +1,13 @@
+"use client";
+
 import React from "react";
 import styles from "./HiddenPostItem.module.css";
 import { formatDistanceToNow } from "date-fns";
 import { FaEyeSlash, FaEye } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 
 const HiddenPostItem = ({ post, onUnhide }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const formatDateToAbbreviation = (date) => {
     try {
@@ -56,7 +58,7 @@ const HiddenPostItem = ({ post, onUnhide }) => {
   };
 
   const handlePostClick = () => {
-    navigate(`/post/${post._id}`);
+    router.push(`/post/${post._id}`);
   };
 
   const handleUnhideClick = (e) => {

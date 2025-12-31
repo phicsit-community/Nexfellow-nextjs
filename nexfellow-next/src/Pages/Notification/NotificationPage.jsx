@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import styles from "./NotificationPage.module.css";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
@@ -12,11 +14,11 @@ import { ThreeDots } from "react-loader-spinner";
 import { Bell, Trash2 } from "lucide-react";
 
 const NotificationPage = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [notifications, setNotifications] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
   const socket = getSocket();
-  const storedUser = localStorage.getItem("user");
+  const storedUser = typeof window !== "undefined" ? localStorage.getItem("user") : null;
   const user = storedUser ? JSON.parse(storedUser) : null;
   const loggedInUserId = user?._id || user?.id;
   const [page, setPage] = useState(1);
@@ -189,7 +191,7 @@ const NotificationPage = () => {
   // Notification click
   const handleClick = async (notif) => {
     if (!isNotificationRead(notif)) await markAsRead(notif._id, notif.type);
-    navigate(`/notifications/${notif._id}`);
+    router.push(`/notifications/${notif._id}`);
   };
 
   // Profile click
@@ -200,14 +202,14 @@ const NotificationPage = () => {
     if (senderModel === "Admin") return;
     if (senderModel === "User") {
       if (sender.createdCommunity && sender.isCommunityAccount) {
-        if (sender.username) navigate(`/community/${sender.username}`);
+        if (sender.username) router.push(`/community/${sender.username}`);
         return;
       }
-      if (sender.username) navigate(`/user/${sender.username}`);
+      if (sender.username) router.push(`/user/${sender.username}`);
       return;
     }
     if (senderModel === "Community") {
-      if (sender.username) navigate(`/community/${sender.username}`);
+      if (sender.username) router.push(`/community/${sender.username}`);
       return;
     }
   };
@@ -300,7 +302,7 @@ const NotificationPage = () => {
               style={{ padding: "3px 10px" }}
             >
               <BackButton
-                onClick={() => navigate(-1)}
+                onClick={() => router.back()}
                 showText={true}
                 smallText={true}
               />

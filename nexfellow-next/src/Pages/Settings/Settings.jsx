@@ -1,7 +1,9 @@
+"use client";
+
 import React, { useState } from "react";
 import styles from "./Settings.module.css";
 import { IoArrowBack } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import MutedUsers from "../../components/MutedUsers/MutedUsers";
 import BlockedUsers from "../../components/BlockedUsers/BlockedUsers";
 import HiddenPosts from "../../components/HiddenPosts/HiddenPosts";
@@ -34,11 +36,11 @@ const TAB_ICONS = {
 };
 
 const Settings = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState(TABS.PRIVACY);
 
   const handleBackClick = () => {
-    navigate(-1);
+    router.back();
   };
 
   const renderTabContent = () => {
@@ -85,9 +87,8 @@ const Settings = () => {
             {Object.values(TABS).map((tab) => (
               <li
                 key={tab}
-                className={`${styles.tabItem} ${
-                  activeTab === tab ? styles.active : ""
-                }`}
+                className={`${styles.tabItem} ${activeTab === tab ? styles.active : ""
+                  }`}
                 onClick={() => setActiveTab(tab)}
               >
                 <span className={styles.tabIcon}>{TAB_ICONS[tab]}</span>

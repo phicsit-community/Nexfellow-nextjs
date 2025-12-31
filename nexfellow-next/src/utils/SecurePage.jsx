@@ -1,10 +1,13 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 
 const SecurePage = () => {
-  const { token } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const token = params?.token;
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -21,13 +24,13 @@ const SecurePage = () => {
             // Use window.location for absolute URLs
             window.location.href = redirectUrl;
           } else {
-            // Use navigate for relative URLs within React Router
-            navigate(redirectUrl);
+            // Use router.push for relative URLs within Next.js
+            router.push(redirectUrl);
           }
         }
       } catch (error) {
         if (error.response && error.response.status === 401) {
-          navigate("/login"); // Redirect to login if unauthorized
+          router.push("/login"); // Redirect to login if unauthorized
         } else {
           console.error("Error fetching secure link:", error);
         }
@@ -37,7 +40,7 @@ const SecurePage = () => {
     };
 
     fetchSecureLink();
-  }, [token, navigate]);
+  }, [token, router]);
 
   const skeletonStyle = {
     container: {

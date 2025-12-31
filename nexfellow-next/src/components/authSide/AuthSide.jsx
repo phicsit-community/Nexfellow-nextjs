@@ -1,3 +1,5 @@
+"use client";
+
 import styles from "./authSide.module.css";
 
 //icons
@@ -13,26 +15,26 @@ const AuthSide = () => {
         {/* bookbox */}
         <div className={`${styles.item} ${styles.item1}`}>
           <div className={styles.icon}>
-            <img src={BOOK} alt="book" />
+            <img src={BOOK.src || BOOK} alt="book" />
           </div>
         </div>
 
         {/* community */}
         <div className={`${styles.item} ${styles.item2}`}>
           <div className={styles.icon}>
-            <img src={TROPHY} alt="trophy" />
+            <img src={TROPHY.src || TROPHY} alt="trophy" />
           </div>
         </div>
 
         <div className={`${styles.item} ${styles.item3}`}>
           <div className={styles.icon}>
-            <img src={COMMUNITY} alt="community" />
+            <img src={COMMUNITY.src || COMMUNITY} alt="community" />
           </div>
         </div>
 
         <div className={`${styles.item} ${styles.item4}`}>
           <div className={styles.icon}>
-            <img src={MEDAL} alt="medal" />
+            <img src={MEDAL.src || MEDAL} alt="medal" />
           </div>
         </div>
       </div>

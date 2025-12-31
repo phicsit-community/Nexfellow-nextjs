@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState, useEffect, forwardRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import styles from "./CardContainer.module.css";
 import ContestData from "../contestdata/ContestData";
 import { FaChevronRight } from "react-icons/fa";
@@ -12,7 +14,7 @@ const CardContainer = forwardRef(function CardContainer(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
     try {
@@ -35,7 +37,7 @@ const CardContainer = forwardRef(function CardContainer(
   }, [quizzes, type]);
 
   const handleClick = () => {
-    navigate(`/contests/${type.toLowerCase()}`);
+    router.push(`/contests/${type.toLowerCase()}`);
   };
 
   // Skeleton loader component for cards

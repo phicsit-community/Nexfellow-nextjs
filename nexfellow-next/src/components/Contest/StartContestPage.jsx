@@ -1,13 +1,16 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import styles from "./StartContestPage.module.css";
 import startImg from "./assets/start.png";
 import { Icon } from "@iconify/react";
 
 const StartContestPage = () => {
-    const { quizId } = useParams();
-    const navigate = useNavigate();
+    const params = useParams();
+    const quizId = params?.quizId;
+    const router = useRouter();
     const [quiz, setQuiz] = useState(null);
     const [loading, setLoading] = useState(true);
     const isCommunityQuiz = true;
@@ -22,7 +25,7 @@ const StartContestPage = () => {
     }, [quizId]);
 
     const handleStart = () => {
-        navigate(
+        router.push(
             `/contest-question/${quizId}?isCommunityQuiz=${isCommunityQuiz}`
         );
     };

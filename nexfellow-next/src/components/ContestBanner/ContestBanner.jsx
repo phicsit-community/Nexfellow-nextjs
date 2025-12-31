@@ -1,6 +1,8 @@
+"use client";
+
 import React from "react";
 import styles from "./ContestBanner.module.css";
-import { NavLink } from "react-router-dom";
+import Link from "next/link";
 import Loader from "../Loader/Loader";
 
 //assets
@@ -81,10 +83,10 @@ const ContestBanner = ({ quizzes, onBannerClick }) => {
           <div className={styles.challengesLeft}>
             <div className={styles.text}>
               <h1 className={styles.challengesHeading}>
-              Challenge Your Limits   
+                Challenge Your Limits
               </h1>
               <p className={styles.challengesText}>
-              Challenge yourself with our expertly crafted contests and compete against others to win.
+                Challenge yourself with our expertly crafted contests and compete against others to win.
               </p>
             </div>
             <div className={styles.roadmapbtn} onClick={onBannerClick}>Get Started &gt;</div>
@@ -104,22 +106,22 @@ const ContestBanner = ({ quizzes, onBannerClick }) => {
               Upcoming Contest
             </div>
             {latestQuiz ? (
-            <div className={styles.participates}>
-              <div className={styles.dateTime}>
-                <span className={styles.date}>{upcomingContestDate}</span>
-                <span className={styles.timing}>
-                  {upcomingContestTimeRange}
-                </span>
+              <div className={styles.participates}>
+                <div className={styles.dateTime}>
+                  <span className={styles.date}>{upcomingContestDate}</span>
+                  <span className={styles.timing}>
+                    {upcomingContestTimeRange}
+                  </span>
+                </div>
+                <div className={styles.joined}>
+                  <img src={tr} />
+                  <span>
+                    {latestQuiz.totalRegistered > 0
+                      ? `+${latestQuiz.totalRegistered} Joined`
+                      : `${latestQuiz.totalRegistered} Joined`}
+                  </span>
+                </div>
               </div>
-              <div className={styles.joined}>
-                <img src={tr} />
-                <span>
-                  {latestQuiz.totalRegistered > 0
-                    ? `+${latestQuiz.totalRegistered} Joined`
-                    : `${latestQuiz.totalRegistered} Joined`}
-                </span>
-              </div>
-            </div>
             ) : (
               <h1 className={styles.noContestTest}>No Upcoming Contest</h1>
             )}
@@ -134,9 +136,9 @@ const ContestBanner = ({ quizzes, onBannerClick }) => {
               <p>Mastering UI/UX in 30 Days</p>
 
               <div className={styles.blogbtn}>
-                <NavLink className={styles.navlink} to="/comingsoon">
+                <Link className={styles.navlink} href="/comingsoon">
                   Read More &gt;
-                </NavLink>
+                </Link>
               </div>
             </div>
 

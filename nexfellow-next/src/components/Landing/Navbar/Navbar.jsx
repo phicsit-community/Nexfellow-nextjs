@@ -34,7 +34,7 @@ const Navbar = () => {
       <div className={styles.navbarContent}>
         <div className={styles.navbarLogo}>
           <Link href="/">
-            <img src={navbarlogo.src || navbarlogo} alt="NexFellow Logo" />
+            <img src={typeof navbarlogo === 'string' ? navbarlogo : navbarlogo.src} alt="NexFellow Logo" />
           </Link>
 
           <button

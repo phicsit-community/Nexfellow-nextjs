@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useRouter, useParams } from "next/navigation";
 import { toast } from "sonner";
 import {
   Plus,
@@ -16,8 +18,9 @@ import BackButton from "../../components/BackButton/BackButton";
 import { DatePicker } from "antd";
 
 const QuizForm = () => {
-  const navigate = useNavigate();
-  const { communityId } = useParams();
+  const router = useRouter();
+  const params = useParams();
+  const communityId = params?.communityId;
   const [quizData, setQuizData] = useState({
     title: "",
     category: "",
@@ -185,7 +188,7 @@ const QuizForm = () => {
       );
 
       if (response.status === 201) {
-        navigate(`/create/contests/${communityId}`);
+        router.push(`/create/contests/${communityId}`);
       } else {
         console.error("Error:", response.data.message);
       }
@@ -204,7 +207,7 @@ const QuizForm = () => {
           style={{ padding: "3px 10px" }}
         >
           <BackButton
-            onClick={() => navigate(-1)}
+            onClick={() => router.back()}
             showText={true}
             smallText={true}
           />
@@ -448,7 +451,7 @@ const QuizForm = () => {
           <div className={styles.formActions}>
             <button
               type="button"
-              onClick={() => navigate(-1)}
+              onClick={() => router.back()}
               className={styles.cancelButton}
             >
               Cancel

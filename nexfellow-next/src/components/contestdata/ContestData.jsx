@@ -1,16 +1,18 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import htmr from "htmr";
 import axios from "axios";
 import { FaBookmark, FaRegBookmark } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import defaultImage from "../../Pages/AllContest/Contestimages/Online_Contest_svg_banner_dark.png";
 import styles from "./ContestData.module.css";
 
 const ContestData = ({ contest, bookmarkedQuizzes }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [loading, setLoading] = useState(false);
-  const isLoggedin = localStorage.getItem("isLoggedIn");
-  const navigate = useNavigate();
+  const isLoggedin = typeof window !== "undefined" ? localStorage.getItem("isLoggedIn") : null;
+  const router = useRouter();
 
   // Check if this contest is bookmarked (from parent prop)
   useEffect(() => {
@@ -55,7 +57,7 @@ const ContestData = ({ contest, bookmarkedQuizzes }) => {
   }, [contest._id, isLoggedin]);
 
   const handleButtonClick = () => {
-    navigate(`/community/contests/${contest._id}`);
+    router.push(`/community/contests/${contest._id}`);
   };
 
   const formatDate = (dateString) => {
@@ -68,7 +70,7 @@ const ContestData = ({ contest, bookmarkedQuizzes }) => {
   const handleBookmark = async (e) => {
     e.stopPropagation();
     if (!isLoggedin) {
-      navigate("/login");
+      router.push("/login");
       return;
     }
     setLoading(true);
@@ -84,7 +86,7 @@ const ContestData = ({ contest, bookmarkedQuizzes }) => {
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        navigate("/login");
+        router.push("/login");
       }
     } finally {
       setLoading(false);

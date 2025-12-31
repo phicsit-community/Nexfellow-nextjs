@@ -1,15 +1,17 @@
+"use client";
+
 import React from "react";
 import styles from "./BlogSection.module.css";
 import icon from "./assets/Icon.svg";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const BlogSection = ({ blogs = [], loading }) => {
   // Featured blog: first published blog
   const featured = blogs && blogs.length > 0 ? blogs[0] : null;
   // Grid blogs: rest
   const gridBlogs = blogs && blogs.length > 1 ? blogs.slice(1) : [];
-  const navigate = useNavigate();
+  const router = useRouter();
 
   return (
     <div className={styles.blogSection}>
@@ -34,7 +36,7 @@ const BlogSection = ({ blogs = [], loading }) => {
               }}
               className={styles.postContent}
               onClick={() =>
-                navigate(`/blogs/${featured.slug || featured._id}`)
+                router.push(`/blogs/${featured.slug || featured._id}`)
               }
             >
               <span className={styles.label}>
@@ -91,7 +93,7 @@ const BlogSection = ({ blogs = [], loading }) => {
             ))
         ) : gridBlogs.length > 0 ? (
           gridBlogs.map((blog) => (
-            <Link to={`/blogs/${blog.slug || blog._id}`} key={blog._id}>
+            <Link href={`/blogs/${blog.slug || blog._id}`} key={blog._id}>
               <div className={styles.blogCard}>
                 <img src={blog.coverUrl || icon} alt={blog.title} />
                 <div>

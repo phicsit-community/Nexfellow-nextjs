@@ -1,10 +1,12 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import styles from "./Comment.module.css";
 import { FaHeart, FaSpinner } from "react-icons/fa";
 import Modal from "../ShareModal/MoreModal";
 import { formatDistanceToNow } from "date-fns";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { BsThreeDots } from "react-icons/bs";
 
 const Comment = ({
@@ -21,8 +23,8 @@ const Comment = ({
   myCommunityRole,
   isModeratorView = false,
 }) => {
-  const navigate = useNavigate();
-  const currentUser = JSON.parse(localStorage.getItem("user")) || {};
+  const router = useRouter();
+  const currentUser = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) || {} : {};
   const [isReplyOpen, setIsReplyOpen] = useState(false);
   const [isViewReplies, setIsViewReplies] = useState(false);
   const [replyComment, setReplyComment] = useState("");
@@ -272,9 +274,9 @@ const Comment = ({
 
   const handleProfileClick = () => {
     if (comment.isCommunityAccount && comment.createdCommunity) {
-      navigate(`/community/${comment.user}`);
+      router.push(`/community/${comment.user}`);
     } else {
-      navigate(`/user/${comment.user}`);
+      router.push(`/user/${comment.user}`);
     }
   };
 
@@ -375,9 +377,9 @@ const Comment = ({
     // Helper function to navigate based on mention type
     const handleMentionClick = (mention) => {
       if (mention.isCommunityAccount && mention.createdCommunity) {
-        navigate(`/community/${mention.username}`);
+        router.push(`/community/${mention.username}`);
       } else {
-        navigate(`/user/${mention.username}`);
+        router.push(`/user/${mention.username}`);
       }
     };
 
@@ -578,7 +580,7 @@ const Comment = ({
                   </span>
                   <span
                     className={styles.mentionHighlight}
-                    onClick={() => navigate(`/user/${prefixPart}`)}
+                    onClick={() => router.push(`/user/${prefixPart}`)}
                     style={{ cursor: "pointer" }}
                     title={`Go to ${prefixPart}'s profile`}
                     tabIndex={0}
@@ -586,7 +588,7 @@ const Comment = ({
                     aria-label={`Go to ${prefixPart}'s profile`}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
-                        navigate(`/user/${prefixPart}`);
+                        router.push(`/user/${prefixPart}`);
                       }
                     }}
                   >
@@ -716,7 +718,7 @@ const CommentSection = ({ postId, author, className, isModeratorView = false }) 
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [myCommunityRole, setMyCommunityRole] = useState(null);
-  const navigate = useNavigate();
+  const router = useRouter();
   const [isFocused, setIsFocused] = useState(false);
 
   // Mention states for new comment input
@@ -724,7 +726,7 @@ const CommentSection = ({ postId, author, className, isModeratorView = false }) 
   const [mentionSuggestions, setMentionSuggestions] = useState([]);
   const [mentions, setMentions] = useState([]);
 
-  const currentUser = JSON.parse(localStorage.getItem("user")) || {};
+  const currentUser = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) || {} : {};
   const currentUserId = currentUser.id || currentUser._id || null;
 
   // Fetch user role for mod permissions

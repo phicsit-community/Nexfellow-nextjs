@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+"use client";
+
 import * as React from "react";
 import {
   CommandDialog,
@@ -20,7 +22,7 @@ import {
   Calendar,
   X,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 
 import { BsArrowReturnLeft } from "react-icons/bs";
@@ -31,7 +33,7 @@ export default function SearchCommand() {
   const [loading, setLoading] = React.useState(false);
   const [user, setUser] = React.useState(null);
   const [error, setError] = React.useState(null);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   React.useEffect(() => {
     const down = (e) => {
@@ -52,7 +54,7 @@ export default function SearchCommand() {
       ? `/search?q=${encodeURIComponent(query)}&type=${type}`
       : `/search?q=${encodeURIComponent(query)}`;
 
-    navigate(searchUrl);
+    router.push(searchUrl);
     setOpen(false);
   };
   React.useEffect(() => {
@@ -61,23 +63,23 @@ export default function SearchCommand() {
         if (e.ctrlKey || e.metaKey) {
           if (e.key === "p") {
             e.preventDefault();
-            navigate(`/dashboard/${user?.username}`);
+            router.push(`/dashboard/${user?.username}`);
             setOpen(false);
           } else if (e.key === "e") {
             e.preventDefault();
-            navigate("/explore");
+            router.push("/explore");
             setOpen(false);
           } else if (e.key === "l") {
             e.preventDefault();
-            navigate("/leaderboard");
+            router.push("/leaderboard");
             setOpen(false);
           } else if (e.key === "c") {
             e.preventDefault();
-            navigate("/communities");
+            router.push("/communities");
             setOpen(false);
           } else if (e.key === "i") {
             e.preventDefault();
-            navigate("/inbox");
+            router.push("/inbox");
             setOpen(false);
           }
         }
@@ -85,14 +87,14 @@ export default function SearchCommand() {
       document.addEventListener("keydown", down);
       return () => document.removeEventListener("keydown", down);
     }
-  }, [open, navigate, user?.username]);
+  }, [open, router, user?.username]);
 
   React.useEffect(() => {
     const fetchUserData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const userData = JSON.parse(localStorage.getItem("user"));
+        const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
         const userId = userData?.id;
 
         if (!userId) {
@@ -163,7 +165,7 @@ export default function SearchCommand() {
               <CommandGroup heading="Navigation">
                 <CommandItem
                   onSelect={() => {
-                    navigate(`/dashboard/${user?.username}`);
+                    router.push(`/dashboard/${user?.username}`);
                     setOpen(false);
                   }}
                   className="cursor-pointer flex items-center gap-2 justify-between"
@@ -183,7 +185,7 @@ export default function SearchCommand() {
                 </CommandItem>
                 <CommandItem
                   onSelect={() => {
-                    navigate("/explore");
+                    router.push("/explore");
                     setOpen(false);
                   }}
                   className="cursor-pointer flex items-center gap-2 justify-between"
@@ -203,7 +205,7 @@ export default function SearchCommand() {
                 </CommandItem>
                 <CommandItem
                   onSelect={() => {
-                    navigate("/leaderboard");
+                    router.push("/leaderboard");
                     setOpen(false);
                   }}
                   className="cursor-pointer flex items-center gap-2 justify-between"
@@ -223,7 +225,7 @@ export default function SearchCommand() {
                 </CommandItem>
                 <CommandItem
                   onSelect={() => {
-                    navigate("/communities");
+                    router.push("/communities");
                     setOpen(false);
                   }}
                   className="cursor-pointer flex items-center gap-2 justify-between"
@@ -243,7 +245,7 @@ export default function SearchCommand() {
                 </CommandItem>
                 <CommandItem
                   onSelect={() => {
-                    navigate("/inbox");
+                    router.push("/inbox");
                     setOpen(false);
                   }}
                   className="cursor-pointer flex items-center gap-2 justify-between"
@@ -394,7 +396,7 @@ export function SearchCommandMobile() {
   const [loading, setLoading] = React.useState(false);
   const [user, setUser] = React.useState(null);
   const [error, setError] = React.useState(null);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   React.useEffect(() => {
     const down = (e) => {
@@ -415,7 +417,7 @@ export function SearchCommandMobile() {
       ? `/search?q=${encodeURIComponent(query)}&type=${type}`
       : `/search?q=${encodeURIComponent(query)}`;
 
-    navigate(searchUrl);
+    router.push(searchUrl);
     setOpen(false);
   };
   React.useEffect(() => {
@@ -424,23 +426,23 @@ export function SearchCommandMobile() {
         if (e.ctrlKey || e.metaKey) {
           if (e.key === "p") {
             e.preventDefault();
-            navigate(`/dashboard/${user?.username}`);
+            router.push(`/dashboard/${user?.username}`);
             setOpen(false);
           } else if (e.key === "e") {
             e.preventDefault();
-            navigate("/explore");
+            router.push("/explore");
             setOpen(false);
           } else if (e.key === "l") {
             e.preventDefault();
-            navigate("/leaderboard");
+            router.push("/leaderboard");
             setOpen(false);
           } else if (e.key === "c") {
             e.preventDefault();
-            navigate("/communities");
+            router.push("/communities");
             setOpen(false);
           } else if (e.key === "i") {
             e.preventDefault();
-            navigate("/inbox");
+            router.push("/inbox");
             setOpen(false);
           }
         }
@@ -448,14 +450,14 @@ export function SearchCommandMobile() {
       document.addEventListener("keydown", down);
       return () => document.removeEventListener("keydown", down);
     }
-  }, [open, navigate, user?.username]);
+  }, [open, router, user?.username]);
 
   React.useEffect(() => {
     const fetchUserData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const userData = JSON.parse(localStorage.getItem("user"));
+        const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
         const userId = userData?.id;
 
         if (!userId) {
@@ -512,7 +514,7 @@ export function SearchCommandMobile() {
               <CommandGroup heading="Navigation">
                 <CommandItem
                   onSelect={() => {
-                    navigate(`/dashboard/${user?.username}`);
+                    router.push(`/dashboard/${user?.username}`);
                     setOpen(false);
                   }}
                   className="cursor-pointer flex items-center gap-2 justify-between"
@@ -532,7 +534,7 @@ export function SearchCommandMobile() {
                 </CommandItem>
                 <CommandItem
                   onSelect={() => {
-                    navigate("/explore");
+                    router.push("/explore");
                     setOpen(false);
                   }}
                   className="cursor-pointer flex items-center gap-2 justify-between"
@@ -552,7 +554,7 @@ export function SearchCommandMobile() {
                 </CommandItem>
                 <CommandItem
                   onSelect={() => {
-                    navigate("/leaderboard");
+                    router.push("/leaderboard");
                     setOpen(false);
                   }}
                   className="cursor-pointer flex items-center gap-2 justify-between"
@@ -572,7 +574,7 @@ export function SearchCommandMobile() {
                 </CommandItem>
                 <CommandItem
                   onSelect={() => {
-                    navigate("/communities");
+                    router.push("/communities");
                     setOpen(false);
                   }}
                   className="cursor-pointer flex items-center gap-2 justify-between"
@@ -592,7 +594,7 @@ export function SearchCommandMobile() {
                 </CommandItem>
                 <CommandItem
                   onSelect={() => {
-                    navigate("/inbox");
+                    router.push("/inbox");
                     setOpen(false);
                   }}
                   className="cursor-pointer flex items-center gap-2 justify-between"

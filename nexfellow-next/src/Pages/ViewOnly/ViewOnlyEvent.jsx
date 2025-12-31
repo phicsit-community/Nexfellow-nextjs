@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 import styles from "./ViewOnlyEvent.module.css";
 import BackButton from "../../components/BackButton/BackButton";
@@ -14,8 +16,9 @@ import caretRight from "../Event/assets/CaretRight.svg";
 import { Calendar, Users, ChevronRight, CalendarClock } from "lucide-react";
 
 const ViewOnlyEvent = () => {
-  const navigate = useNavigate();
-  const { eventId } = useParams();
+  const router = useRouter();
+  const params = useParams();
+  const eventId = params?.eventId;
 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -28,7 +31,7 @@ const ViewOnlyEvent = () => {
   });
 
   const handleBack = () => {
-    navigate(-1);
+    router.back();
   };
 
   const handleShare = () => {
@@ -38,12 +41,7 @@ const ViewOnlyEvent = () => {
   };
 
   const handleLoginPrompt = () => {
-    navigate("/login", {
-      state: {
-        returnUrl: `/community/events/${eventId}`,
-        message: "Login to register for this event",
-      },
-    });
+    router.push(`/login?returnUrl=${encodeURIComponent(`/community/events/${eventId}`)}`);
   };
 
   useEffect(() => {
@@ -78,24 +76,24 @@ const ViewOnlyEvent = () => {
 
     const formattedStartTime = startTime
       ? new Date(`${startDate.split("T")[0]}T${startTime}`).toLocaleTimeString(
-          "en-US",
-          {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-          }
-        )
+        "en-US",
+        {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }
+      )
       : "TBA";
 
     const formattedEndTime = endTime
       ? new Date(`${startDate.split("T")[0]}T${endTime}`).toLocaleTimeString(
-          "en-US",
-          {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-          }
-        )
+        "en-US",
+        {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }
+      )
       : "TBA";
 
     return `${day} ${formattedStartTime} - ${formattedEndTime}`;
@@ -329,17 +327,11 @@ const ViewOnlyEvent = () => {
                     <h3>Want to attend this event?</h3>
                     <div className={styles.authButtons}>
                       <button
-                        onClick={() =>
-                          navigate("/login", {
-                            state: {
-                              returnUrl: `/community/events/${eventId}`,
-                            },
-                          })
-                        }
+                        onClick={() => router.push(`/login?returnUrl=${encodeURIComponent(`/community/events/${eventId}`)}`)}
                       >
                         Login
                       </button>
-                      <button onClick={() => navigate("/signup")}>
+                      <button onClick={() => router.push("/signup")}>
                         Sign Up
                       </button>
                     </div>
