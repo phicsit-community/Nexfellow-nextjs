@@ -515,7 +515,7 @@ const NotificationPage = () => {
                 />
                 <p>You don&apos;t have any notifications yet</p>
               </div>
-            )}}
+            )}
           </div>
         </div>
       </div>

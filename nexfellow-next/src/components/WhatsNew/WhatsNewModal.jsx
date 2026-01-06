@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoClose, IoArrowBack } from "react-icons/io5";
 import { Sparkles, Trophy, Users, Zap, Gift, Calendar } from "lucide-react";
@@ -7,6 +8,11 @@ import whatsNewLogo from "./assets/Overlay.png";
 
 const WhatsNewModal = ({ closeModal }) => {
   const [selectedItem, setSelectedItem] = useState(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Hardcoded What's New data
   const whatsNewData = [
@@ -315,7 +321,10 @@ const WhatsNewModal = ({ closeModal }) => {
     </motion.div>
   );
 
-  return (
+  // Don't render on server side
+  if (!mounted) return null;
+
+  return createPortal(
     <div className={styles.modalOverlay} onClick={closeModal}>
       <motion.div
         className={styles.modal}
@@ -351,7 +360,8 @@ const WhatsNewModal = ({ closeModal }) => {
           </AnimatePresence>
         </div>
       </motion.div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

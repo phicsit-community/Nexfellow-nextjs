@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import api from "../../lib/axios";
 import { getSocket } from "../../utils/socket";
@@ -23,6 +24,7 @@ import { PiConfetti } from "react-icons/pi";
 const NotificationModal = ({ closeModal }) => {
   const router = useRouter();
   const socket = getSocket();
+  const [mounted, setMounted] = useState(false);
   const [communityNotifications, setCommunityNotifications] = useState([]);
   const [systemNotifications, setSystemNotifications] = useState([]);
   const [selectedNotification, setSelectedNotification] = useState(null);
@@ -147,6 +149,10 @@ const NotificationModal = ({ closeModal }) => {
       console.error("Error fetching system notifications:", error);
     }
   };
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -557,7 +563,10 @@ const NotificationModal = ({ closeModal }) => {
   const hasNoNotifications =
     !hasSystemNotifications && !hasCommunityNotifications;
 
-  return (
+  // Don't render on server side
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       <motion.div
         className={styles.notificationModalOverlay}
@@ -863,7 +872,8 @@ const NotificationModal = ({ closeModal }) => {
           )}
         </motion.div>
       </motion.div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };
 
