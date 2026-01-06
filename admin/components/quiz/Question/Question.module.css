@@ -1,0 +1,89 @@
+.questionContainer {
+  margin: 20px 0;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.question {
+  font-size: 1.15rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.question pre {
+  white-space: pre-wrap;
+}
+
+.optionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.option input[type="radio"],
+.option input[type="checkbox"] {
+  accent-color: #007bff;
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+}
+
+.option label {
+  font-size: 1rem;
+  cursor: pointer;
+  vertical-align: middle;
+  margin: 0 !important;
+}
+
+.textInput {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.textInput:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+}
+
+.buttonContainer {
+  display: flex;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.delete {
+  background-color: red;
+  color: white;
+}
+
+.button:hover {
+  background-color: #0056b3;
+  color: lightgray;
+}
+
+.delete:hover {
+  background-color: darkred;
+}
