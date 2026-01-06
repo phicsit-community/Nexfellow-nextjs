@@ -1,10 +1,9 @@
-import { Outlet } from "react-router-dom";
 import Layout from "./components/Layout";
 
-export default function DocsLayout() {
+export default function DocsLayout({ children }) {
   return (
-    <Layout isPrivate={false}>
-      <Outlet />
+    <Layout>
+      {children}
     </Layout>
   );
 }

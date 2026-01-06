@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useSelector } from "react-redux";
+import api from "../../lib/axios";
 import styles from "./Suggestions.module.css";
 import Footerlink from "../FooterLink/Footerlink";
 
@@ -26,6 +27,7 @@ const SkeletonCard = () => (
 );
 
 const Suggestions = () => {
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const [expanded, setExpanded] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,8 +45,8 @@ const Suggestions = () => {
         console.log("Fetching advertisements...");
 
         const [topRes, bottomRes] = await Promise.all([
-          axios.get("/advertisements/?position=top"),
-          axios.get("/advertisements/?position=bottom"),
+          api.get("/advertisements/?position=top"),
+          api.get("/advertisements/?position=bottom"),
         ]);
 
         console.log("Top Ads Response:", topRes);
@@ -81,6 +83,11 @@ const Suggestions = () => {
 
   // Fetch suggestions
   useEffect(() => {
+    if (!isLoggedIn) {
+      setLoading(false);
+      return;
+    }
+
     const fetchSuggestions = async () => {
       try {
         const userData = JSON.parse(localStorage.getItem("user"));
@@ -92,7 +99,7 @@ const Suggestions = () => {
           return;
         }
 
-        const response = await axios.get(`/suggestions/?userId=${userId}`);
+        const response = await api.get(`/suggestions/?userId=${userId}`);
         setSuggestions(response.data);
         setLoading(false);
       } catch (error) {
@@ -102,7 +109,7 @@ const Suggestions = () => {
     };
 
     fetchSuggestions();
-  }, []);
+  }, [isLoggedIn]);
 
   const toggleShowMore = () => setExpanded(!expanded);
 
@@ -115,7 +122,7 @@ const Suggestions = () => {
           src={
             topAds.length > 0
               ? topAds[topIndex]?.imageUrl
-              : fallbackTop
+              : (fallbackTop.src || fallbackTop)
           }
           alt="Top Advertisement"
         />
@@ -125,7 +132,7 @@ const Suggestions = () => {
           src={
             bottomAds.length > 0
               ? bottomAds[bottomIndex]?.imageUrl
-              : fallbackBottom
+              : (fallbackBottom.src || fallbackBottom)
           }
           alt="Bottom Advertisement"
         />

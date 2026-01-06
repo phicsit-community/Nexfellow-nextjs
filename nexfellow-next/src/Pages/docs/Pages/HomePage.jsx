@@ -6,7 +6,7 @@ import { IoIosTrophy } from "react-icons/io";
 import { LuMousePointerClick } from "react-icons/lu";
 import { RiUserCommunityFill } from "react-icons/ri";
 import Navbar from "../components/Navbar";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 
 // Debounce hook (local, lightweight)
 function useDebouncedValue(value, delay = 400) {
@@ -83,14 +83,14 @@ const FeatureCard = ({ Icon, title, children, onClick }) => (
 );
 
 export default function HomePage() {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   // Search state with debounce
   const [query, setQuery] = React.useState("");
   const debounced = useDebouncedValue(query, 400); // use debounced value for suggestions or analytics [web:199]
   const onSearchSubmit = () => {
     const q = query.trim();
-    if (q.length > 0) navigate(`/search?q=${encodeURIComponent(q)}`); // programmatic route [web:90]
+    if (q.length > 0) router.push(`/search?q=${encodeURIComponent(q)}`); // programmatic route [web:90]
   };
 
   return (
@@ -112,7 +112,7 @@ export default function HomePage() {
                 Your go-to guide for mastering every feature and getting the most out of NexFellow
               </p>
               <button
-                onClick={() => navigate("/overview")}
+                onClick={() => router.push("/overview")}
                 className="mx-auto inline-flex items-center justify-center gap-2 bg-[#0c4b47] hover:bg-teal-400 text-white px-5 py-2.5 rounded-lg font-semibold border border-white/70 shadow-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c4b47]"
                 aria-label="Explore"
               >
@@ -152,7 +152,7 @@ export default function HomePage() {
             <FeatureCard
               Icon={FaEdit}
               title="Inline admin editing"
-              onClick={() => navigate("/editor")}
+              onClick={() => router.push("/editor")}
             >
               Since admins can edit directly, users always get the latest and frequently updated content without delays.
             </FeatureCard>
@@ -160,7 +160,7 @@ export default function HomePage() {
             <FeatureCard
               Icon={BiNavigation}
               title="Structured navigation"
-              onClick={() => navigate("/overview")}
+              onClick={() => router.push("/overview")}
             >
               Documentation stays well-structured so even someone new or from a non-technical background can understand.
             </FeatureCard>
@@ -168,7 +168,7 @@ export default function HomePage() {
             <FeatureCard
               Icon={MdSystemSecurityUpdateGood}
               title="Responsive by default"
-              onClick={() => navigate("/guides/responsive")}
+              onClick={() => router.push("/guides/responsive")}
             >
               Users can comfortably view the docs on any smart device — mobile, tablet, or desktop.
             </FeatureCard>
@@ -222,7 +222,7 @@ export default function HomePage() {
             ].map((row) => (
               <button
                 key={row.title}
-                onClick={() => navigate(row.to)}
+                onClick={() => router.push(row.to)}
                 className="w-full flex items-start gap-4 text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-lg p-1"
               >
                 <div className="bg-teal-600 rounded-full p-3 text-white transition-transform duration-200 group-hover:scale-105">

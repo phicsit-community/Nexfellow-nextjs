@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import { ClipLoader } from "react-spinners";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./DashboardEventDetails.module.css";
@@ -67,7 +67,7 @@ const EventDetails = () => {
     const fetchEvent = async () => {
       setIsLoading(true);
       try {
-        const res = await axios.get(`/event/details/slug/${eventId}`);
+        const res = await api.get(`/event/details/slug/${eventId}`);
         setEvent(res.data.event);
       } catch (error) {
         console.error("Error fetching event details:", error);

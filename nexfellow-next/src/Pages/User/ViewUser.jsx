@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 
 // styles
 import styles from "./ViewUser.module.css";
@@ -50,12 +50,12 @@ const User = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`/user/publicprofile/username/${username}`);
+      const response = await api.get(`/user/publicprofile/username/${username}`);
       setUserDetails(response.data);
       console.log("User Details:", response);
 
       if (response.data.userId) {
-        const followResponse = await axios.get(
+        const followResponse = await api.get(
           `/user/followStatus/${response.data.userId}`
         );
         setFollowStatus(followResponse.data.isFollowing);
@@ -87,7 +87,7 @@ const User = () => {
 
     try {
       const action = followStatus ? "unfollow" : "follow";
-      const response = await axios.post(
+      const response = await api.post(
         `/user/toggleFollow/${userDetails.userId}`,
         { action }
       );
@@ -154,7 +154,7 @@ const User = () => {
             <div className={styles.bannerSection}>
               <div className={styles.bannerImgContainer}>
                 <img
-                  src={userDetails?.banner || BannerImage}
+                  src={userDetails?.banner || (BannerImage?.src || BannerImage)}
                   alt="User Banner"
                   className={styles.bannerImage}
                 />
@@ -162,7 +162,7 @@ const User = () => {
               <div className={styles.communityDetails}>
                 <div className={styles.profileImageContainer}>
                   <ProfileImagePreview
-                    src={userDetails?.picture || ProfileImage}
+                    src={userDetails?.picture || (ProfileImage?.src || ProfileImage)}
                     alt="Profile"
                     className={styles.profileImage}
                   />
@@ -176,13 +176,13 @@ const User = () => {
                       userDetails?.createdCommunity ? (
                       userDetails?.accountType === "Organization" ? (
                         <img
-                          src={communityBadge}
+                          src={communityBadge?.src || communityBadge}
                           alt="Community Badge"
                           className={styles.badge}
                         />
                       ) : (
                         <img
-                          src={verificationBadge}
+                          src={verificationBadge?.src || verificationBadge}
                           alt="Verification Badge"
                           className={styles.badge}
                         />
@@ -190,7 +190,7 @@ const User = () => {
                     ) : (
                       userDetails?.verificationBadge && (
                         <img
-                          src={verificationBadge}
+                          src={verificationBadge?.src || verificationBadge}
                           alt="Verification Badge"
                           className={styles.badge}
                         />
@@ -222,7 +222,7 @@ const User = () => {
                             style={{ zIndex: 3 - index }}
                           >
                             <img
-                              src={profile?.picture || ProfileImage}
+                              src={profile?.picture || (ProfileImage?.src || ProfileImage)}
                               alt={profile?.name || "Follower"}
                               className={styles.memberImage}
                             />
@@ -256,14 +256,14 @@ const User = () => {
                       }}
                     >
                       <img
-                        src={Webicon}
+                        src={Webicon?.src || Webicon}
                         alt="Website"
                         className={styles.svgIcon}
                       />
                     </button>
                     <button className={styles.iconButton}>
                       <img
-                        src={Shareicon}
+                        src={Shareicon?.src || Shareicon}
                         alt="Share"
                         className={styles.svgIcon}
                       />

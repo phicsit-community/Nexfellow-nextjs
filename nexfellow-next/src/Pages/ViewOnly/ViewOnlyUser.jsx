@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./ViewOnlyUser.module.css"; // Copy/adapt from ViewOnlyExplore.module.css
 import { FaUsers, FaUserPlus, FaCalendarAlt } from "react-icons/fa";
 import verificationBadge from "./assets/badge2.svg"; // Optional: if you show verified users
@@ -19,7 +19,7 @@ const ViewOnlyUser = () => {
     const fetchUserData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`/user/publicprofile/username/${username}`);
+        const response = await api.get(`/user/publicprofile/username/${username}`);
         setUser(response.data);
         console.log("User data:", response.data);
       } catch (err) {
@@ -103,7 +103,7 @@ const ViewOnlyUser = () => {
                 <span className={styles.verifiedBadge}>
                   Verified
                   <img
-                    src={verificationBadge}
+                    src={verificationBadge?.src || verificationBadge}
                     alt="Verification Badge"
                     className={styles.badge}
                   />

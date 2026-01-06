@@ -94,7 +94,7 @@ const ContestBanner = ({ quizzes, onBannerClick }) => {
 
           <div className={styles.star}>
             <div className={styles.imgcontainer}>
-              <img src={Group} />
+              <img src={Group?.src || Group} />
             </div>
           </div>
         </div>
@@ -114,7 +114,7 @@ const ContestBanner = ({ quizzes, onBannerClick }) => {
                   </span>
                 </div>
                 <div className={styles.joined}>
-                  <img src={tr} />
+                  <img src={tr?.src || tr} />
                   <span>
                     {latestQuiz.totalRegistered > 0
                       ? `+${latestQuiz.totalRegistered} Joined`
@@ -143,7 +143,7 @@ const ContestBanner = ({ quizzes, onBannerClick }) => {
             </div>
 
             <div className={styles.imageLaptop}>
-              <img src={typing} className={styles.typingLaptop}></img>
+              <img src={typing?.src || typing} className={styles.typingLaptop}></img>
             </div>
           </div>
         </div>

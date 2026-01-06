@@ -11,7 +11,7 @@ import {
 } from "react-icons/md";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./Broadcast.module.css";
 import BackButton from "../../components/BackButton/BackButton";
 import DOMPurify from "dompurify";
@@ -91,9 +91,9 @@ const Broadcast = () => {
       setIsContentLoading(true);
       try {
         if (recipientSource === "members") {
-          const res = await axios.get(`/community/id/${communityId}`);
+          const res = await api.get(`/community/id/${communityId}`);
           setCommunity(res.data);
-          const user = await axios.get(`/user/profile`);
+          const user = await api.get(`/user/profile`);
           setUserData(user.data);
           if (res.data.community.owner.followers) {
             setRecipients(res.data.community.owner.followers);
@@ -102,7 +102,7 @@ const Broadcast = () => {
           }
           setEventRegistrantGroups([]);
         } else if (recipientSource === "eventRegistrants") {
-          const res = await axios.get(
+          const res = await api.get(
             `/event/community/${communityId}/registrants`
           );
           setEventRegistrantGroups(res.data.events || []);
@@ -123,7 +123,7 @@ const Broadcast = () => {
     const fetchNotifications = async () => {
       try {
         setIsContentLoading(true);
-        const res = await axios.get(
+        const res = await api.get(
           `/notifications/community/${communityId}/notifications`
         );
         setRecentNotifications(res.data.notifications);
@@ -139,7 +139,7 @@ const Broadcast = () => {
   useEffect(() => {
     const fetchUnreadCount = async () => {
       try {
-        const res = await axios.get(`/notifications/unread`);
+        const res = await api.get(`/notifications/unread`);
         setUnreadCount(res.data.count);
       } catch (err) {
         console.error("Error fetching unread count:", err);
@@ -152,7 +152,7 @@ const Broadcast = () => {
     const fetchStats = async () => {
       setIsStatsLoading(true);
       try {
-        const res = await axios.get(
+        const res = await api.get(
           `/notifications/community/${communityId}/broadcast/activity`
         );
         setActivityStats(res.data);
@@ -175,7 +175,7 @@ const Broadcast = () => {
     const cleanContent = DOMPurify.sanitize(emailContent);
 
     try {
-      const res = await axios.post(
+      const res = await api.post(
         `/notifications/community/${communityId}/send`,
         {
           title: subject,

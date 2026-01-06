@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import api from '../../lib/axios';
 import ProfileImage from "./assets/profile_image.svg";
 import noPosts from "./assets/no_posts.png";
 
@@ -17,6 +18,7 @@ const UserCommunityBody = ({ userId, otherUserId }) => {
     const [followingStatus, setFollowingStatus] = useState({});
     const [loadingFollow, setLoadingFollow] = useState({});
     const router = useRouter();
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
     useEffect(() => {
         fetchMutualConnections();
@@ -28,14 +30,16 @@ const UserCommunityBody = ({ userId, otherUserId }) => {
         setError(null);
 
         try {
-            const response = await axios.get(`/user/mutual-connections/${userId}/${otherUserId}`);
+            if (!isLoggedIn) { setMutualConnections([]); return; }
+            const response = await api.get(`/user/mutual-connections/${userId}/${otherUserId}`);
             const connections = response.data.mutualConnections || [];
             setMutualConnections(connections);
 
             // Fetch follow status for each connection
             const followStatuses = await Promise.all(
                 connections.map(async (connection) => {
-                    const res = await axios.get(`/user/followStatus/${connection._id}`);
+                    if (!isLoggedIn) return { id: connection._id, isFollowing: false };
+                    const res = await api.get(`/user/followStatus/${connection._id}`);
                     return { id: connection._id, isFollowing: res.data.isFollowing };
                 })
             );
@@ -62,7 +66,8 @@ const UserCommunityBody = ({ userId, otherUserId }) => {
         setLoadingFollow(prev => ({ ...prev, [targetUserId]: true }));
 
         try {
-            await axios.post(`/user/toggleFollow/${targetUserId}`, { action });
+            if (!isLoggedIn) return;
+            await api.post(`/user/toggleFollow/${targetUserId}`, { action });
 
             setFollowingStatus(prev => ({ ...prev, [targetUserId]: !prev[targetUserId] }));
         } catch (err) {
@@ -115,7 +120,7 @@ const UserCommunityBody = ({ userId, otherUserId }) => {
                 {/* Posts Tab - Coming Soon */}
                 {activeTab === 'Posts' && !loading && !error && (
                     <div className={styles.noPostsContainer}>
-                        <img className={styles.noPostsImage} src={noPosts} alt="No Posts" />
+                        <img className={styles.noPostsImage} src={noPosts?.src || noPosts} alt="No Posts" />
                         <p className={styles.noPostsHead}>Oops! Nothing To See Here Yet!</p>
                         <p className={styles.noPostsMessage}>There are no posts to show at the moment.</p>
                         <p className={styles.noPostsMessage}>Check back later to see updates!</p>
@@ -174,7 +179,7 @@ const UserCommunityBody = ({ userId, otherUserId }) => {
                 {/* Achievements Tab - Coming Soon */}
                 {activeTab === 'Achievements' && !loading && !error && (
                     <div className={styles.noPostsContainer}>
-                        <img className={styles.noPostsImage} src={noPosts} alt="No Achievements" />
+                        <img className={styles.noPostsImage} src={noPosts?.src || noPosts} alt="No Achievements" />
                         <p className={styles.noPostsHead}>Achievements Coming Soon!</p>
                         <p className={styles.noPostsMessage}>This section is under development.</p>
                         <p className={styles.noPostsMessage}>Stay tuned for updates!</p>

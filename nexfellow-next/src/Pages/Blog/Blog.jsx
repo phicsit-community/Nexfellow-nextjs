@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import GetMoreWithGCCommunity from "../../components/Blog/GetMoreWithGCCommunity/GetMoreWithGCCommunity";
 import style from "./Blog.module.css";
 import Footer from "../../components/Landing/Footer/Footer";

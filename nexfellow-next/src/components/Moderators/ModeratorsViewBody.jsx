@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import no_posts from "./assets/no_posts.png";
 import pinIcon from "./assets/pin.svg";
 import ProfileImage from "./assets/profile_image.svg";
@@ -100,8 +100,8 @@ const ModeratorsViewBody = ({ communityId }) => {
 
       try {
         const [postsResponse, communityResponse] = await Promise.all([
-          axios.get(`/post/community/${communityId}`),
-          axios.get(`/community/id/${communityId}`),
+          api.get(`/post/community/${communityId}`),
+          api.get(`/community/id/${communityId}`),
         ]);
 
         const followers =
@@ -112,7 +112,7 @@ const ModeratorsViewBody = ({ communityId }) => {
           const followStatuses = await Promise.all(
             followers.map(async (follower) => {
               try {
-                const res = await axios.get(
+                const res = await api.get(
                   `/user/followStatus/${follower._id}`
                 );
                 return { id: follower._id, isFollowing: res.data.isFollowing };
@@ -161,7 +161,7 @@ const ModeratorsViewBody = ({ communityId }) => {
   // Pin/unpin functions
   const pinPost = async (postId) => {
     try {
-      await axios.post(`/community/${communityId}/pin-post/${postId}`);
+      await api.post(`/community/${communityId}/pin-post/${postId}`);
       setPinnedPostId(postId);
       toast.success("Post pinned to community successfully!");
       setShowPinModal(false);
@@ -173,7 +173,7 @@ const ModeratorsViewBody = ({ communityId }) => {
   };
   const unpinPost = async () => {
     try {
-      await axios.delete(`/community/${communityId}/pin-post`);
+      await api.delete(`/community/${communityId}/pin-post`);
       setPinnedPostId(null);
       toast.success("Post unpinned successfully!");
       setShowPinModal(false);
@@ -197,7 +197,7 @@ const ModeratorsViewBody = ({ communityId }) => {
     setLoadingFollow((prev) => ({ ...prev, [targetUserId]: true }));
 
     try {
-      await axios.post(`/user/toggleFollow/${targetUserId}`, { action });
+      await api.post(`/user/toggleFollow/${targetUserId}`, { action });
 
       setFollowingStatus((prev) => ({
         ...prev,
@@ -247,7 +247,7 @@ const ModeratorsViewBody = ({ communityId }) => {
       let response;
       if (editingPost) {
         // Editing existing post
-        response = await axios.put(
+        response = await api.put(
           `/post/update/${editingPost._id}`,
           formData,
           {
@@ -258,7 +258,7 @@ const ModeratorsViewBody = ({ communityId }) => {
         );
       } else {
         // Creating new post
-        response = await axios.post("/post", formData, {
+        response = await api.post("/post", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -275,7 +275,7 @@ const ModeratorsViewBody = ({ communityId }) => {
       }
 
       // Refresh posts list after create/edit
-      const postsResponse = await axios.get(`/post/community/${communityId}`);
+      const postsResponse = await api.get(`/post/community/${communityId}`);
       setPosts(postsResponse.data.posts);
 
       setEditingPost(null);
@@ -302,7 +302,7 @@ const ModeratorsViewBody = ({ communityId }) => {
   const handleHidePost = async () => {
     if (!selectedPost) return;
     try {
-      await axios.post(`/user/hide-post/${selectedPost._id}`);
+      await api.post(`/user/hide-post/${selectedPost._id}`);
       setHiddenPosts([...hiddenPosts, selectedPost]);
       setPosts(posts.filter((p) => p._id !== selectedPost._id));
       toast.success("Post hidden successfully");
@@ -375,10 +375,10 @@ const ModeratorsViewBody = ({ communityId }) => {
         icon: <FaTrash />,
         action: async (post) => {
           try {
-            await axios.delete(`/post/${post._id}`);
+            await api.delete(`/post/${post._id}`);
             toast.success("Post deleted successfully!");
             // Refresh posts after deletion
-            const postsResponse = await axios.get(
+            const postsResponse = await api.get(
               `/post/community/${communityId}`
             );
             setPosts(postsResponse.data.posts);

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, usePathname } from "next/navigation";
 import Link from "next/link";
-import axios from "axios";
+import api from "../../lib/axios";
 import { format } from "date-fns";
 import {
   FaExternalLinkAlt,
@@ -101,7 +101,7 @@ const LinkStats = () => {
             }
 
             // Send the click data to backend and get redirect info
-            const redirectResponse = await axios.post(
+            const redirectResponse = await api.post(
               `/link/${shortCode}/track`,
               clickData
             );
@@ -119,7 +119,7 @@ const LinkStats = () => {
 
             // Fallback to regular redirect if tracking fails
             try {
-              const fallbackResponse = await axios.get(
+              const fallbackResponse = await api.get(
                 `/link/${shortCode}/redirect-info`
               );
               if (fallbackResponse.data && fallbackResponse.data.originalUrl) {
@@ -138,7 +138,7 @@ const LinkStats = () => {
           }
         } else {
           // If we're not redirecting, load the stats data
-          const response = await axios.get(`/stats/${shortCode}`);
+          const response = await api.get(`/stats/${shortCode}`);
           setLinkData(response.data);
           setError(null);
           setLoading(false);

@@ -5,9 +5,9 @@ import styles from './ContestCard.module.css';
 const ContestCard = () => {
   return (
     <div className={styles.contestCard}>
-                <div className={styles.freeTag}>Free</div>
-                <img src={trophy} alt="Trophy" className={styles.trophyImage} />
-              </div>
+      <div className={styles.freeTag}>Free</div>
+      <img src={trophy?.src || trophy} alt="Trophy" className={styles.trophyImage} />
+    </div>
   );
 };
 

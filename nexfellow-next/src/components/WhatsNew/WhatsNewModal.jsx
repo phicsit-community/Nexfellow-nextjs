@@ -158,7 +158,7 @@ const WhatsNewModal = ({ closeModal }) => {
       ) : (
         <div className={styles.listHeader}>
           <div className={styles.headerLeft}>
-            <img src={whatsNewLogo} alt="Logo" className={styles.logo} />
+            <img src={whatsNewLogo?.src || whatsNewLogo} alt="Logo" className={styles.logo} />
             <div className="flex flex-col">
               <p>What&apos;s New</p>
               <p style={{ fontSize: "12px", color: "#64748B" }}>
@@ -330,7 +330,7 @@ const WhatsNewModal = ({ closeModal }) => {
           whatsNewData.filter((item) => item.isNew).length > 0 && (
             <div
               className={
-                "text-[#19AE9F] text-[13px] bg-[#19AE9F]/10 rounded-md border-[#19AE9F]/20 flex items-center border-[1px] mb-2"
+                "text-[#19AE9F] text-[13px] bg-[#19AE9F]/10 rounded-md border-[#19AE9F]/20 flex items-center border mb-2"
               }
               style={{
                 padding: "10px 20px",

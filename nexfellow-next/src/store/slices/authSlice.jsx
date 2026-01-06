@@ -21,6 +21,21 @@ const removeLocalStorage = (key) => {
   }
 };
 
+// Helper to set cookies (for middleware auth checks)
+const setCookie = (name, value, days = 7) => {
+  if (typeof window !== "undefined") {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+  }
+};
+
+const removeCookie = (name) => {
+  if (typeof window !== "undefined") {
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+  }
+};
+
 // Helper to check token expiry
 const isTokenValid = () => {
   const expiresInStr = getLocalStorage("expiresIn");
@@ -56,6 +71,7 @@ const authSlice = createSlice({
       state.themePreference = action.payload?.user?.themePreference || "light";
 
       setLocalStorage("isLoggedIn", "true");
+      setCookie("isLoggedIn", "true", 7); // Set cookie for middleware auth
       if (action.payload?.expiresIn) {
         setLocalStorage("expiresIn", action.payload.expiresIn);
       }
@@ -72,6 +88,7 @@ const authSlice = createSlice({
       state.isLoggedIn = false;
       state.user = null;
       setLocalStorage("isLoggedIn", "false");
+      removeCookie("isLoggedIn"); // Remove cookie for middleware auth
       removeLocalStorage("user");
       removeLocalStorage("expiresIn");
 

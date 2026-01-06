@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./ViewOnlyEvent.module.css";
 import BackButton from "../../components/BackButton/BackButton";
 import { LuShare2 } from "react-icons/lu";
@@ -48,7 +48,7 @@ const ViewOnlyEvent = () => {
     const fetchEvent = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`/event/details/${eventId}`);
+        const res = await api.get(`/event/details/${eventId}`);
         setEvent(res.data.event);
         console.log(res.data.event);
       } catch (error) {

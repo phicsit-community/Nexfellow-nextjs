@@ -13,7 +13,8 @@ const responseTimeLogger = require("./utils/responseTimeLogger");
 attachLogger();
 const app = express();
 
-require("dotenv").config();
+const fs = require("fs");
+require("dotenv").config({ path: fs.existsSync(".env.local") ? ".env.local" : ".env" });
 const cors = require("cors");
 const path = require("path");
 const ExpressError = require("./utils/ExpressError");
@@ -105,6 +106,7 @@ app.use(
 app.use(
   cors({
     origin: [
+      "http://localhost:3000",
       "http://localhost:5173",
       "http://localhost:5174",
       "http://localhost:5175",

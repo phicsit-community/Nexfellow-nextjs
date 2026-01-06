@@ -11,7 +11,7 @@ import DURATION from "./assets/DURATION.svg";
 import QUESTIONS from "./assets/QUESTIONS.svg";
 import { useRouter } from "next/navigation";
 import Modal from "react-modal";
-import axios from "axios";
+import api from "../../lib/axios";
 import { toast } from "sonner";
 Modal.setAppElement("#root");
 import contestBanner from "./assets/image.png";
@@ -129,7 +129,7 @@ const Commoncd = ({ data, isRegistered, given, isCommunityQuiz }) => {
           ? `/community/quizzes/${quizId}/isRegistered`
           : `/quiz/isRegistered/${quizId}`;
 
-        const response = await axios.post(
+        const response = await api.post(
           isRegisteredEndpoint,
           {},
           {
@@ -170,7 +170,7 @@ const Commoncd = ({ data, isRegistered, given, isCommunityQuiz }) => {
         ? `/community/quizzes/${quizId}/register`
         : `/quiz/registerQuiz/${quizId}`;
 
-      const response = await axios.post(registerEndpoint);
+      const response = await api.post(registerEndpoint);
 
       if (response.status === 200) {
         if (user && user.registeredQuizzes) {
@@ -210,7 +210,7 @@ const Commoncd = ({ data, isRegistered, given, isCommunityQuiz }) => {
         const quizId = isCommunityQuiz ? data._id : data.id;
         console.log("Quiz ID to check:", quizId);
 
-        const response = await axios.get(
+        const response = await api.get(
           `/community/quizzes/${quizId}/attempted`,
           { headers: { Authorization: `Bearer ${user.token}` } }
         );
@@ -262,7 +262,7 @@ const Commoncd = ({ data, isRegistered, given, isCommunityQuiz }) => {
         const itemType = isCommunityQuiz
           ? "CommunityContest"
           : "GeneralContest";
-        const res = await axios.get(`/bookmarks/user?itemType=${itemType}`);
+        const res = await api.get(`/bookmarks/user?itemType=${itemType}`);
         // res.data.bookmarks is an array of bookmark objects
         const found = Array.isArray(res.data.bookmarks)
           ? res.data.bookmarks.some(
@@ -286,11 +286,11 @@ const Commoncd = ({ data, isRegistered, given, isCommunityQuiz }) => {
     const itemType = isCommunityQuiz ? "CommunityContest" : "GeneralContest";
     try {
       if (!bookmarked) {
-        await axios.post(`/bookmarks/${itemType}/${data._id}`);
+        await api.post(`/bookmarks/${itemType}/${data._id}`);
         setBookmarked(true);
         toast.success("Contest bookmarked!");
       } else {
-        await axios.delete(`/bookmarks/${itemType}/${data._id}`);
+        await api.delete(`/bookmarks/${itemType}/${data._id}`);
         setBookmarked(false);
         toast.success("Bookmark removed!");
       }
@@ -456,7 +456,7 @@ const Commoncd = ({ data, isRegistered, given, isCommunityQuiz }) => {
               fontWeight: "semibold",
             }}
           >
-            <img src={CALENDAR} alt="" />
+            <img src={CALENDAR?.src || CALENDAR} alt="" />
             {new Date(data.startTime).toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",
@@ -465,17 +465,17 @@ const Commoncd = ({ data, isRegistered, given, isCommunityQuiz }) => {
             | {eventTime}
           </span>
           <span style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-            <img src={QUESTIONS} alt="" />
+            <img src={QUESTIONS?.src || QUESTIONS} alt="" />
             No of Questions:{" "}
             <span>{data.questions ? data.questions.length : "N/A"}</span>
           </span>
           <span style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-            <img src={MARKS} alt="" />
+            <img src={MARKS?.src || MARKS} alt="" />
             Total Marks:
             <span>{parseInt(data.questions.length) * 10 || "N/A"}</span>
           </span>
           <span style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-            <img src={DURATION} alt="" />
+            <img src={DURATION?.src || DURATION} alt="" />
             Duration:{" "}
             <span>
               {(() => {
@@ -608,7 +608,7 @@ const Commoncd = ({ data, isRegistered, given, isCommunityQuiz }) => {
           {data.image ? (
             <img src={data.image} alt="" />
           ) : (
-            <img src={contestBanner} alt="" />
+            <img src={contestBanner?.src || contestBanner} alt="" />
           )}
         </div>
       </div>{" "}

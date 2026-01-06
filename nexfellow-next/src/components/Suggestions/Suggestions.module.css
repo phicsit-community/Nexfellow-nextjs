@@ -1,5 +1,6 @@
 .suggestions {
-  width: 84%;
+  width: 100%;
+  max-width: 350px;
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
@@ -10,6 +11,7 @@
   gap: 1rem;
   z-index: 0;
   margin-bottom: 1.5rem;
+  padding: 0 0.5rem;
 
   /* margin-left: 50px;  */
   height: 100%;

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./ViewOnlyExplore.module.css";
 import { toast } from "sonner";
 import MetaTags from "../../components/MetaTags/MetaTags";
@@ -24,7 +24,7 @@ const ViewOnlyExplore = () => {
     const fetchCommunity = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`/community/username/${username}`);
+        const response = await api.get(`/community/username/${username}`);
         setCommunity(response.data);
         console.log("Fetched community data:", response.data);
       } catch (err) {
@@ -48,7 +48,7 @@ const ViewOnlyExplore = () => {
   useEffect(() => {
     if (!community || !community._id) return;
     setLoadingReputation(true);
-    axios.get(`/analytics/${community._id}/reputation`)
+    api.get(`/analytics/${community._id}/reputation`)
       .then(res => {
         setReputationScore(res.data.reputationScore || 0);
       })
@@ -169,7 +169,7 @@ const ViewOnlyExplore = () => {
                 <span className={styles.verifiedBadge}>
                   Verified
                   <img
-                    src={verificationBadge}
+                    src={verificationBadge?.src || verificationBadge}
                     alt="Verification Badge"
                     className={styles.badge}
                   />

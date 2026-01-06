@@ -19,10 +19,14 @@ const Navbar = () => {
 
   useEffect(() => {
     // Check if user is logged in (client-side only)
-    const isLoggedin = localStorage.getItem("isLoggedIn");
-    setIsLoggedIn(isLoggedin === "true");
-    const userData = JSON.parse(localStorage.getItem("user") || "{}");
-    setUsername(userData?.username || "");
+    if (typeof window !== 'undefined') {
+      const isLoggedin = localStorage.getItem("isLoggedIn");
+      const userData = JSON.parse(localStorage.getItem("user") || "{}");
+      // Only consider logged in if both flag is true AND user data exists
+      const loggedIn = isLoggedin === "true" && userData && userData.username;
+      setIsLoggedIn(loggedIn);
+      setUsername(userData?.username || "");
+    }
   }, []);
 
   const toggleMenu = () => {
@@ -63,7 +67,7 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {isLoggedIn ? (
+          {isLoggedIn && username ? (
             <Link href={`/dashboard/${username}`} className={styles.navbarButton}>
               Go to Dashboard
             </Link>

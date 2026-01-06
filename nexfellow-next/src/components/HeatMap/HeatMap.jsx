@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./HeatMap.module.css";
-import axios from "axios";
+import api from "../../lib/axios";
 import { ActivityGraph } from "./ActivityCalendar";
 import { useMediaQuery } from "react-responsive";
 
@@ -41,7 +41,7 @@ const HeatMapComponent = ({ year, className, style, communityId }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`/discussions/heatmap/${communityId}`);
+        const response = await api.get(`/discussions/heatmap/${communityId}`);
         if (response.status != 200) {
           throw new Error("Failed to fetch heatmap data");
         }

@@ -7,7 +7,7 @@ import {
   IoMdCheckmark,
   IoMdAlert,
 } from "react-icons/io";
-import axios from "axios";
+import api from "../../lib/axios";
 
 const EditQuestion = ({
   setEditQuestion,
@@ -233,7 +233,7 @@ const EditQuestion = ({
             : questionData.correctOption,
       };
 
-      await axios.put(
+      await api.put(
         `/community/questions/${initialData._id}`,
         formattedQuestionData,
         { withCredentials: true }

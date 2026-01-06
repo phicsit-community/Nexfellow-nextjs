@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import {
   Tabs,
   Table,
@@ -282,7 +282,7 @@ const AdminChallengeDashboard = () => {
       setLoading(true);
       setError(null);
 
-      const response = await axios.get(`/challenge/${id}/admin`, {
+      const response = await api.get(`/challenge/${id}/admin`, {
         withCredentials: true,
       });
 
@@ -304,7 +304,7 @@ const AdminChallengeDashboard = () => {
     try {
       setParticipantsLoading(true);
 
-      const response = await axios.get(`/challenge/${id}/participants`, {
+      const response = await api.get(`/challenge/${id}/participants`, {
         withCredentials: true,
       });
 
@@ -339,7 +339,7 @@ const AdminChallengeDashboard = () => {
     try {
       setSubmissionsLoading(true);
 
-      const response = await axios.get(`/challenge/${id}/submissions`, {
+      const response = await api.get(`/challenge/${id}/submissions`, {
         withCredentials: true,
       });
 
@@ -371,7 +371,7 @@ const AdminChallengeDashboard = () => {
     try {
       setAnalyticsLoading(true);
 
-      const response = await axios.get(`/challenge/${id}/analytics`, {
+      const response = await api.get(`/challenge/${id}/analytics`, {
         withCredentials: true,
       });
 
@@ -447,7 +447,7 @@ const AdminChallengeDashboard = () => {
     try {
       message.loading({ content: "Submitting review...", key: "review" });
 
-      await axios.put(
+      await api.put(
         `/challenge/${id}/submissions/${currentSubmission._id}/review`,
         {
           status: values.status,
@@ -510,7 +510,7 @@ const AdminChallengeDashboard = () => {
           break;
       }
 
-      await axios.post(
+      await api.post(
         `/challenge/${id}/rewards`,
         {
           rewards: [rewardData],
@@ -543,7 +543,7 @@ const AdminChallengeDashboard = () => {
     try {
       message.loading({ content: "Approving submissions...", key: "bulk" });
 
-      await axios.post(
+      await api.post(
         `/challenge/${id}/bulk-approve`,
         {
           submissionIds: selectedSubmissions,
@@ -572,7 +572,7 @@ const AdminChallengeDashboard = () => {
     try {
       message.loading({ content: "Rejecting submissions...", key: "bulk" });
 
-      await axios.post(
+      await api.post(
         `/challenge/${id}/bulk-reject`,
         {
           submissionIds: selectedSubmissions,
@@ -602,7 +602,7 @@ const AdminChallengeDashboard = () => {
     try {
       message.loading({ content: "Updating status...", key: "status" });
 
-      await axios.put(
+      await api.put(
         `/challenge/${id}/status`,
         {
           status: values.status,
@@ -650,7 +650,7 @@ const AdminChallengeDashboard = () => {
         },
       };
 
-      await axios.put(`/challenge/${id}`, updateData, {
+      await api.put(`/challenge/${id}`, updateData, {
         withCredentials: true,
       });
 
@@ -673,7 +673,7 @@ const AdminChallengeDashboard = () => {
     try {
       message.loading({ content: "Deleting challenge...", key: "delete" });
 
-      await axios.delete(`/challenge/${id}`, {
+      await api.delete(`/challenge/${id}`, {
         withCredentials: true,
       });
 
@@ -996,7 +996,7 @@ const AdminChallengeDashboard = () => {
             <Button type="primary" onClick={fetchChallenge}>
               Retry
             </Button>
-            <Button onClick={() => navigate(-1)}>Go Back</Button>
+            <Button onClick={() => router.back()}>Go Back</Button>
           </Space>
         </div>
       </div>
@@ -1011,7 +1011,7 @@ const AdminChallengeDashboard = () => {
           style={{ padding: "3px 10px" }}
         >
           <BackButton
-            onClick={() => navigate(-1)}
+            onClick={() => router.back()}
             showText={true}
             smallText={true}
             style={{ marginBottom: "0px" }}

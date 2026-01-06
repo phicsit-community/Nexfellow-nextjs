@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback, useLayoutEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./TrendingFeed.module.css";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { ThreeDots } from "react-loader-spinner";
@@ -110,11 +110,11 @@ const NewestFeed = () => {
         const fetchData = async () => {
             setLoadingUserData(true);
             try {
-                const mutedResponse = await axios.get("/user/muted-users");
+                const mutedResponse = await api.get("/user/muted-users");
                 setMutedUsers(mutedResponse.data.mutedUsers || []);
-                const blockedResponse = await axios.get("/user/blocked-users");
+                const blockedResponse = await api.get("/user/blocked-users");
                 setBlockedUsers(blockedResponse.data.blockedUsers || []);
-                const hiddenResponse = await axios.get("/user/hidden-posts");
+                const hiddenResponse = await api.get("/user/hidden-posts");
                 setHiddenPosts(hiddenResponse.data.hiddenPosts || []);
             } catch (err) {
                 setError("Error fetching user settings: " + err.message);
@@ -135,7 +135,7 @@ const NewestFeed = () => {
             if (isRefresh) setIsRefreshing(true);
 
             try {
-                const res = await axios.get("/post/dynamic/feed", {
+                const res = await api.get("/post/dynamic/feed", {
                     params: {
                         limit: PAGE_SIZE,
                         cursor: isRefresh ? null : cursor, // use cursor instead of page
@@ -298,7 +298,7 @@ const NewestFeed = () => {
     const handleHidePost = async () => {
         if (!selectedPost) return;
         try {
-            await axios.post(`/user/hide-post/${selectedPost._id}`);
+            await api.post(`/user/hide-post/${selectedPost._id}`);
             setHiddenPosts([...hiddenPosts, selectedPost]);
             setPosts((posts) => posts.filter((p) => p._id !== selectedPost._id));
             toast.success("Post hidden successfully");

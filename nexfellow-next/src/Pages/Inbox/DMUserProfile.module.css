@@ -1,8 +1,12 @@
 /* DMUserProfile.module.css */
 
-/* Motion reduction */
+/* Motion reduction - scoped to this module's root element */
 @media (prefers-reduced-motion: reduce) {
-    * {
+
+    .overlay,
+    .overlay *,
+    .panel,
+    .panel * {
         animation: none !important;
         transition: none !important;
     }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./Community.module.css"; // Import CSS module for styling
 
 // Components
@@ -16,7 +16,7 @@ const Community = () => {
       try {
         setLoading(true);
         console.log("Fetching user profile...");
-        const response = await axios.get("/user/profile");
+        const response = await api.get("/user/profile");
         console.log("User profile:", response.data);
         const followedCommunityIds = response.data.followedCommunities;
 
@@ -33,7 +33,7 @@ const Community = () => {
         console.log("Followed Community IDs:", followedCommunityIds);
 
         const communityDataPromises = followedCommunityIds.map((communityId) =>
-          axios.get(`/community/id/${communityId}`)
+          api.get(`/community/id/${communityId}`)
         );
 
         const communities = await Promise.all(

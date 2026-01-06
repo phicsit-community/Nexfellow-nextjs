@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 
 //icons
 import { FaChevronRight } from "react-icons/fa";
@@ -38,7 +38,7 @@ const Contest = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("/quiz/getAllQuizzes");
+        const response = await api.get("/quiz/getAllQuizzes");
         if (response.status === 200) {
           const data = response.data;
           const updatedQuizzes = data.map((quiz) => {

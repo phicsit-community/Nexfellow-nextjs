@@ -1,5 +1,5 @@
 import { useTheme } from "../../hooks/useTheme";
-import axios from "axios";
+import api from "../../lib/axios";
 import { Sun, Moon, Monitor } from "lucide-react";
 import styles from "./ThemeToggleButton.module.css";
 
@@ -54,7 +54,7 @@ function ThemeToggleButton() {
 
     const saveThemePreference = async (preference) => {
         try {
-            await axios.patch('user/me/theme', { theme: preference }, { withCredentials: true });
+            await api.patch('user/me/theme', { theme: preference }, { withCredentials: true });
         } catch (err) {
             console.error('Failed to save theme preference:', err);
         }

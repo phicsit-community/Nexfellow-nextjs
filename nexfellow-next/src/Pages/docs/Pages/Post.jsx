@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import { FaUsers, FaLink, FaShareAlt, FaMoon, FaSun, FaTimes, FaDownload, FaEdit } from "react-icons/fa";
 import MiniFooter from "../components/MiniFooter";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import { IoMdAddCircleOutline, IoMdInformationCircle } from "react-icons/io";
 import { MdAccountCircle, MdOutlineAddPhotoAlternate } from "react-icons/md";
 
 export default function Post() {
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const [activeStep, setActiveStep] = useState(0);
   const [zoomImage, setZoomImage] = useState(null);
   const timelineRef = useRef(null);
@@ -84,9 +84,8 @@ export default function Post() {
 
   return (
     <div
-      className={`${
-        darkMode ? "bg-black text-gray-100" : "bg-white text-gray-900"
-      } min-h-screen px-6 py-10 font-poppins transition-colors duration-500`}
+      className={`${darkMode ? "bg-black text-gray-100" : "bg-white text-gray-900"
+        } min-h-screen px-6 py-10 font-poppins transition-colors duration-500`}
     >
       <div className="max-w-5xl mx-auto text-left">
         <div className="flex justify-between items-center">
@@ -98,14 +97,13 @@ export default function Post() {
               </span>
             </p>
             <h1
-              className={`text-3xl font-semibold mt-2 ${
-                darkMode ? "text-white" : "text-[#0E7C86]"
-              }`}
+              className={`text-3xl font-semibold mt-2 ${darkMode ? "text-white" : "text-[#0E7C86]"
+                }`}
             >
               How to create a post on NexFellow?
             </h1>
             <div className="flex items-center mt-2 text-sm text-gray-500">
-             <span
+              <span
                 className={`${darkMode
                   ? "bg-[#006C6980]/20 text-white"
                   : "bg-[#1C5C5C] text-white"
@@ -130,14 +128,13 @@ export default function Post() {
         <p
           className={`mt-4 leading-relaxed ${darkMode ? "text-[#D0CACA]" : "text-black"}`}
         >
-Creating a post allows you to share your thoughts, updates, or announcements directly with your community. You can add text, links, or media to make your post engaging, and even tag relevant topics or members to spark meaningful conversations. Posts help you keep your audience informed, encourage participation, and build stronger connections within the platform.        </p>
+          Creating a post allows you to share your thoughts, updates, or announcements directly with your community. You can add text, links, or media to make your post engaging, and even tag relevant topics or members to spark meaningful conversations. Posts help you keep your audience informed, encourage participation, and build stronger connections within the platform.        </p>
 
 
         <div className="relative mt-8" ref={timelineRef}>
           <div
-            className={`absolute top-0 bottom-0 left-6 w-0.5 ${
-              darkMode ? "bg-gray-800" : "bg-[#D1EBEE]"
-            }`}
+            className={`absolute top-0 bottom-0 left-6 w-0.5 ${darkMode ? "bg-gray-800" : "bg-[#D1EBEE]"
+              }`}
           />
           <div
             className="absolute top-0 left-6 w-0.5 transition-all duration-500"
@@ -156,13 +153,12 @@ Creating a post allows you to share your thoughts, updates, or announcements dir
               >
                 <div className="w-12 flex justify-center relative">
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center border-4 text-xl font-semibold transition-colors duration-500 ${
-                      idx <= activeStep
+                    className={`w-12 h-12 rounded-full flex items-center justify-center border-4 text-xl font-semibold transition-colors duration-500 ${idx <= activeStep
                         ? "text-white"
                         : darkMode
-                        ? "bg-black text-[#0E7C86]"
-                        : "bg-white text-[#0E7C86]"
-                    }`}
+                          ? "bg-black text-[#0E7C86]"
+                          : "bg-white text-[#0E7C86]"
+                      }`}
                     style={{
                       backgroundColor:
                         idx <= activeStep ? cyan : "transparent",

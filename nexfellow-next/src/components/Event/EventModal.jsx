@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import {
   FiEdit2,
   FiTrash,
@@ -183,12 +183,12 @@ const EventModal = ({ isOpen, onClose, eventData, communityId }) => {
 
     try {
       if (eventData && eventData._id) {
-        await axios.put(`/event/update/${eventData._id}`, eventDataToSend, {
+        await api.put(`/event/update/${eventData._id}`, eventDataToSend, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         message.success("Event updated successfully!");
       } else {
-        await axios.post(`/event/create/${communityId}`, eventDataToSend, {
+        await api.post(`/event/create/${communityId}`, eventDataToSend, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         message.success("Event created successfully!");

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./Moderators.module.css";
 import ModeratorCard from "./ModeratorCard";
 import TransferModal from "./TransferModal";
@@ -15,7 +15,7 @@ const AssignedMembersView = ({ communityId }) => {
     useEffect(() => {
         const fetchModerators = async () => {
             try {
-                const res = await axios.get(`/community/id/${communityId}`);
+                const res = await api.get(`/community/id/${communityId}`);
                 const community = res.data.community;
 
                 let users = community.owner.followers || [];
@@ -25,7 +25,7 @@ const AssignedMembersView = ({ communityId }) => {
                 }
 
                 const userIds = users.map(u => u._id);
-                const { data } = await axios.post(`/community/${communityId}/get-users-roles`, {
+                const { data } = await api.post(`/community/${communityId}/get-users-roles`, {
                     communityId,
                     userIds,
                 });
@@ -57,7 +57,7 @@ const AssignedMembersView = ({ communityId }) => {
         if (!selectedUser) return;
 
         try {
-            await axios.patch(`/community/${communityId}/transfer-ownership`, {
+            await api.patch(`/community/${communityId}/transfer-ownership`, {
                 newOwnerId: selectedUser._id,
             });
 

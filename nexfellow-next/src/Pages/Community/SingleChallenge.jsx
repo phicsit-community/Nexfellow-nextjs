@@ -2,7 +2,7 @@
 // Enhanced challenge viewing functionality
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import MetaTags from "../../components/MetaTags/MetaTags";
 import {
   Tabs,
@@ -248,7 +248,7 @@ const CheckpointSubmissionForm = ({
       });
 
       // Make actual API call to new endpoint
-      await axios.post(
+      await api.post(
         `/challenge/${challengeId}/submit/${day}`,
         formData,
         {},
@@ -438,7 +438,7 @@ const Checkpoints = ({ challenge, userProgress, fetchUserProgress }) => {
 
     try {
       setLoadingSubmissions(true);
-      const response = await axios.get(
+      const response = await api.get(
         `/challenge/${challenge._id}/progress`,
         {},
         {
@@ -642,7 +642,7 @@ const Checkpoints = ({ challenge, userProgress, fetchUserProgress }) => {
         ) : (
           <div className={styles.checkpointsDivContent}>
             <div>
-              <img src={calender} alt="Calendar" />
+              <img src={calender?.src || calender} alt="Calendar" />
               <span>No daily tasks configured yet</span>
             </div>
           </div>
@@ -723,7 +723,7 @@ const Participants = ({ challenge }) => {
           : null
       );
 
-      const response = await axios.get(
+      const response = await api.get(
         `/challenge/${challenge._id}/leaderboard`
       );
       setLeaderboard(response.data.leaderboard || []);
@@ -777,7 +777,7 @@ const Participants = ({ challenge }) => {
   if (!totalParticipants && !challenge?.participants?.length) {
     return (
       <div className={styles.participantsDiv}>
-        <img src={participants} alt="Participants" />
+        <img src={participants?.src || participants} alt="Participants" />
         <div className={styles.participantsDivContent1}>
           No participants yet
         </div>
@@ -956,7 +956,9 @@ const Participants = ({ challenge }) => {
           className={styles.viewProfileLink}
           onClick={() => {
             try {
-              window.open(`/explore/${record.user?.username}`, "_blank");
+              if (record.user?.username) {
+                window.open(`/explore/${record.user.username}`, "_blank");
+              }
             } catch {
               // ignore
             }
@@ -1038,7 +1040,7 @@ const ActivityFeed = ({ challenge, isCreator, currentUserId }) => {
         endpoint = `/challenge/${challenge._id}/user/${currentUserId}/activity`;
       }
 
-      const response = await axios.get(
+      const response = await api.get(
         endpoint,
         {},
         {
@@ -1659,7 +1661,7 @@ const Summary = ({ challenge, onPublish, userProgress }) => {
       // Optimistic UI update
       message.loading({ content: "Publishing challenge...", key: "publish" });
 
-      await axios.put(`/challenge/${challenge._id}/status`, {
+      await api.put(`/challenge/${challenge._id}/status`, {
         status: "published",
       });
 
@@ -1686,7 +1688,7 @@ const Summary = ({ challenge, onPublish, userProgress }) => {
     <div className={styles.summaryDiv}>
       {challenge.status === "draft" && (
         <div className={styles.summaryDivInfo}>
-          <img src={info} alt="Info" />
+          <img src={info?.src || info} alt="Info" />
           <span>Add timeline & goals to publish this challenges...</span>
         </div>
       )}
@@ -1702,7 +1704,7 @@ const Summary = ({ challenge, onPublish, userProgress }) => {
                 height="133px"
               />
             ) : (
-              <img src={trophy} alt="Trophy" width="232px" height="133px" />
+              <img src={trophy?.src || trophy} alt="Trophy" width="232px" height="133px" />
             )}
           </div>
 
@@ -2035,19 +2037,19 @@ const Summary = ({ challenge, onPublish, userProgress }) => {
         {challenge.status === "draft" && (
           <div className={styles.summaryDivActions}>
             <div>
-              <img src={setDate} alt="Set Date" />
+              <img src={setDate?.src || setDate} alt="Set Date" />
               <span>Set date</span>
             </div>
             <div>
-              <img src={schedule} alt="Schedule" />
+              <img src={schedule?.src || schedule} alt="Schedule" />
               <span>Schedule</span>
             </div>
             <div>
-              <img src={checkpoint} alt="Checkpoint" />
+              <img src={checkpoint?.src || checkpoint} alt="Checkpoint" />
               <span>Checkpoints</span>
             </div>
             <div>
-              <img src={edit} alt="Edit" />
+              <img src={edit?.src || edit} alt="Edit" />
               <span>Edit</span>
             </div>
 
@@ -2068,7 +2070,7 @@ const Summary = ({ challenge, onPublish, userProgress }) => {
 };
 
 const SingleChallenge = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [challenge, setChallenge] = useState(null);
   const [userProgress, setUserProgress] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -2095,7 +2097,7 @@ const SingleChallenge = () => {
       const user = localStorage.getItem("user");
       if (!user) return;
 
-      const response = await axios.get(
+      const response = await api.get(
         `/challenge/${id}/progress`,
         {},
         {
@@ -2131,10 +2133,10 @@ const SingleChallenge = () => {
     try {
       setLoading(true);
       // Use the new public API endpoint to get challenge details
-      const response = await axios.get(`/challenge/public/${id}`);
+      const response = await api.get(`/challenge/public/${id}`);
       if (!response.data.challenge) {
         message.error("Challenge not found");
-        navigate("/");
+        router.push("/");
         return;
       }
 
@@ -2150,7 +2152,7 @@ const SingleChallenge = () => {
       console.error("Error fetching challenge:", error);
       if (error.response?.status === 404) {
         message.error("Challenge not found");
-        navigate("/");
+        router.push("/");
       } else {
         message.error(
           error.response?.data?.message || "Failed to load challenge details"
@@ -2181,7 +2183,7 @@ const SingleChallenge = () => {
       // Optimistic UI update
       message.loading({ content: "Joining challenge...", key: "joining" });
 
-      await axios.post(
+      await api.post(
         `/challenge/enroll/${id}`,
         {},
         {
@@ -2211,7 +2213,7 @@ const SingleChallenge = () => {
 
   const handlePublishChallenge = async () => {
     try {
-      const response = await axios.put(`/challenge/${id}/status`, {
+      const response = await api.put(`/challenge/${id}/status`, {
         status: "ongoing",
       });
 
@@ -2249,7 +2251,7 @@ const SingleChallenge = () => {
           style={{ padding: "3px 10px" }}
         >
           <BackButton
-            onClick={() => navigate(-1)}
+            onClick={() => router.back()}
             showText={true}
             smallText={true}
             style={{ marginBottom: "0px" }}
@@ -2305,7 +2307,7 @@ const SingleChallenge = () => {
               <Button
                 type="text"
                 icon={<SettingOutlined />}
-                onClick={() => navigate(`/admin/challenge/${id}`)}
+                onClick={() => router.push(`/admin/challenge/${id}`)}
                 title="Admin Dashboard"
               />
             )}

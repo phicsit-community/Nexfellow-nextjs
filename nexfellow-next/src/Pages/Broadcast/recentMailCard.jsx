@@ -51,9 +51,9 @@ const MailCard = ({
               __html: subject.length > 50 ? subject.slice(0, 50) : subject,
             }}
           ></div>
-          <img src={mailIcon} alt="Mail Icon" />
+          <img src={mailIcon?.src || mailIcon} alt="Mail Icon" />
         </div>
-        <p className={styles.mailDateTime}>
+        <p className={styles.mailDateTime}>>
           {formatDate(date)} {formatTime(date)}
         </p>
       </div>

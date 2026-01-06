@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import {
   FaTasks,
   FaTrophy,
@@ -20,7 +20,7 @@ import { MdAccountCircle, MdOutlineAddPhotoAlternate } from "react-icons/md";
 export default function ChallengesPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [zoomImage, setZoomImage] = useState(null);
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const timelineRef = useRef(null);
   const cyan = "#0E7C86";
 
@@ -49,7 +49,7 @@ export default function ChallengesPage() {
 
   const steps = [
     { id: 1, title: "Step 1", desc: "Click on profile under account management", image: null, icon: <MdAccountCircle size={24} /> },
-    { id: 2, title: "Step 2", desc: "Click on Challenges (only available once verified) and select Create Challenge", image: null, icon: <FaDownload />  },
+    { id: 2, title: "Step 2", desc: "Click on Challenges (only available once verified) and select Create Challenge", image: null, icon: <FaDownload /> },
     { id: 3, title: "Step 3", desc: "Choose a template and fill the required details", image: Step1Image, icon: <FaEdit /> },
     { id: 4, title: "Step 4", desc: "Challenge is created. Click the challenge, then click Publish to make it public", image: Step2Image, icon: <MdOutlineAddPhotoAlternate size={24} /> },
     { id: 5, title: "Step 5", desc: "Once published, click on the challenge to view activity and submissions. Use settings to edit the challenge", image: Step3Image, icon: <IoMdSettings size={24} /> },
@@ -159,8 +159,8 @@ export default function ChallengesPage() {
             <div
               key={card.id}
               className={`p-5 rounded-lg flex flex-col items-start gap-3 shadow-md transition-all ${darkMode
-                  ? "bg-[#006C69] text-gray-200 hover:scale-105"
-                  : "bg-[#006C69] text-white hover:scale-105"
+                ? "bg-[#006C69] text-gray-200 hover:scale-105"
+                : "bg-[#006C69] text-white hover:scale-105"
                 }`}
             >
               <div
@@ -198,10 +198,10 @@ export default function ChallengesPage() {
                 <div className="w-12 flex justify-center relative">
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center border-4 font-semibold transition-colors duration-500 ${idx <= activeStep
-                        ? "text-white"
-                        : darkMode
-                          ? "bg-black text-[#0E7C86]"
-                          : "bg-white text-[#0E7C86]"
+                      ? "text-white"
+                      : darkMode
+                        ? "bg-black text-[#0E7C86]"
+                        : "bg-white text-[#0E7C86]"
                       }`}
                     style={{
                       backgroundColor: idx <= activeStep ? cyan : "transparent",
@@ -219,7 +219,7 @@ export default function ChallengesPage() {
                   <p className="mt-2 leading-relaxed text-[15px]">{step.desc}</p>
                   {step.image && (
                     <img
-                      src={step.image}
+                      src={step.image.src || step.image}
                       alt={`${step.title} screenshot`}
                       className="mt-4 w-full h-auto max-w-md rounded-lg shadow-md cursor-pointer transition transform hover:scale-105"
                       onClick={() => setZoomImage(step.image)}
@@ -242,7 +242,7 @@ export default function ChallengesPage() {
             <FaTimes />
           </button>
           <img
-            src={zoomImage}
+            src={zoomImage.src || zoomImage}
             alt="Zoomed"
             className="max-w-[90vw] max-h-[80vh] rounded-lg shadow-lg transform scale-95 animate-scaleUp"
           />

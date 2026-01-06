@@ -11,11 +11,11 @@ import {
 } from "react-icons/fa";
 import { IoMdInformationCircle } from "react-icons/io";
 import MiniFooter from "../components/MiniFooter";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import { MdAccountCircle } from "react-icons/md";
 
 export default function EditAccount() {
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const [activeStep, setActiveStep] = useState(0);
   const [zoomImage, setZoomImage] = useState(null);
   const timelineRef = useRef(null);
@@ -86,9 +86,8 @@ export default function EditAccount() {
 
   return (
     <div
-      className={`${
-        darkMode ? "bg-black text-gray-100" : "bg-white text-gray-900"
-      } font-poppins min-h-screen px-6 py-10 transition-colors duration-500`}
+      className={`${darkMode ? "bg-black text-gray-100" : "bg-white text-gray-900"
+        } font-poppins min-h-screen px-6 py-10 transition-colors duration-500`}
     >
       <div className="max-w-5xl mx-auto text-left">
         {/* Header */}
@@ -102,9 +101,8 @@ export default function EditAccount() {
             </p>
 
             <h1
-              className={`text-3xl font-semibold mt-2 ${
-                darkMode ? "text-white" : "text-[#0E7C86]"
-              }`}
+              className={`text-3xl font-semibold mt-2 ${darkMode ? "text-white" : "text-[#0E7C86]"
+                }`}
             >
               How to edit user details on NexFellow?
             </h1>
@@ -137,15 +135,14 @@ export default function EditAccount() {
             }`}
         >
           The Edit User Details & Settings section allows members to
-          personalize and manage their accounts with ease. From updating 
+          personalize and manage their accounts with ease. From updating
           profile information and contact details to adjusting privacy preferences and notification controls, users have full flexibility to tailor their experience.
         </p>
 
         <div className="relative mt-8" ref={timelineRef}>
           <div
-            className={`absolute top-0 bottom-0 left-[1.5rem] w-0.5 ${
-              darkMode ? "bg-gray-800" : "bg-[#D1EBEE]"
-            }`}
+            className={`absolute top-0 bottom-0 left-[1.5rem] w-0.5 ${darkMode ? "bg-gray-800" : "bg-[#D1EBEE]"
+              }`}
           />
 
           <div
@@ -165,13 +162,12 @@ export default function EditAccount() {
               >
                 <div className="w-12 flex justify-center relative z-10">
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center border-4 text-2xl transition-colors duration-500 ${
-                      idx <= activeStep
+                    className={`w-12 h-12 rounded-full flex items-center justify-center border-4 text-2xl transition-colors duration-500 ${idx <= activeStep
                         ? "text-white"
                         : darkMode
-                        ? "bg-black text-[#0E7C86]"
-                        : "bg-white text-[#0E7C86]"
-                    }`}
+                          ? "bg-black text-[#0E7C86]"
+                          : "bg-white text-[#0E7C86]"
+                      }`}
                     style={{
                       backgroundColor:
                         idx <= activeStep ? cyan : "transparent",
@@ -187,7 +183,7 @@ export default function EditAccount() {
                     {step.title}
                   </h3>
                   <p className={`mt-2 leading-relaxed ${darkMode ? "text-[#D0CACA]" : "text-black"
-            }`}>{step.desc}</p>
+                    }`}>{step.desc}</p>
 
                   {step.image && (
                     <img

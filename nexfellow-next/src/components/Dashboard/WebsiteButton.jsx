@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./WebsiteButton.module.css";
 import Webicon from "./assets/web.svg";
 import { toast } from "sonner";
@@ -24,7 +24,7 @@ const WebsiteButton = ({
 
     try {
       setIsSubmitting(true);
-      const response = await axios.put(
+      const response = await api.put(
         `/community/${communityId}/link`,
         { link: websiteLink },
         { withCredentials: true }
@@ -54,7 +54,7 @@ const WebsiteButton = ({
         disabled={!isCommunityAccount}
         onClick={handleOpenModal}
       >
-        <img src={Webicon} alt="Website" className={styles.svgIcon} />
+        <img src={Webicon?.src || Webicon} alt="Website" className={styles.svgIcon} />
       </button>
 
       {isModalOpen && (

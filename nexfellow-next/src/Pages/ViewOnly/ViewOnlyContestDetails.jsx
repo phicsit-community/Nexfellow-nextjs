@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./ViewOnlyContestDetails.module.css";
 import { Icon } from "@iconify/react";
 
@@ -102,7 +102,7 @@ export default function ContestPreview() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`/community/public/${id}`);
+        const res = await api.get(`/community/public/${id}`);
         const data = res.data.quiz;
         console.log("Fetched quiz data:", data);
         setQuiz({
@@ -175,7 +175,7 @@ export default function ContestPreview() {
     <div className={styles.bg}>
       <div className={styles.cardOuter}>
         <div className={styles.cardInner}>
-          <img src={contestBanner} className={styles.banner} alt="Contest Banner" />
+          <img src={contestBanner?.src || contestBanner} className={styles.banner} alt="Contest Banner" />
           <div className={styles.cardContent}>
             <div className={styles.titleRow}>
               <div className={styles.rowBetween}>

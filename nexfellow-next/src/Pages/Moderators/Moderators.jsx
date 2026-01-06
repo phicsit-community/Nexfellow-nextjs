@@ -6,7 +6,7 @@ import AssignedMembersView from "../../components/Moderators/AssignedMembersView
 import CommunityFollowersView from "../../components/Moderators/CommunityFollowersView";
 import styles from "./Moderators.module.css";
 import BackButton from "../../components/BackButton/BackButton";
-import axios from "axios";
+import api from "../../lib/axios";
 import { Users, UserCog, Search, ShieldCheck } from "lucide-react";
 
 const ModeratorsControl = () => {
@@ -19,13 +19,13 @@ const ModeratorsControl = () => {
 
   const fetchCounts = async () => {
     try {
-      const communityRes = await axios.get(`/community/id/${communityId}`);
+      const communityRes = await api.get(`/community/id/${communityId}`);
       const community = communityRes.data.community;
 
       const modCount = (community.moderators || []).length;
       setAssignedCount(modCount + 1); // owner + mods
 
-      const followersRes = await axios.get(`/community/followers/${communityId}`);
+      const followersRes = await api.get(`/community/followers/${communityId}`);
       setFollowerCount(followersRes.data.followers.length || 0);
     } catch (err) {
       console.error("Error fetching counts", err);

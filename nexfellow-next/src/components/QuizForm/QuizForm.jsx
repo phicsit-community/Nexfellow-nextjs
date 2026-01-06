@@ -12,7 +12,7 @@ import {
   Badge,
   Settings,
 } from "lucide-react";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./QuizForm.module.css";
 import BackButton from "../../components/BackButton/BackButton";
 import { DatePicker } from "antd";
@@ -177,7 +177,7 @@ const QuizForm = () => {
         });
       });
 
-      const response = await axios.post(
+      const response = await api.post(
         `/community/${communityId}/quizzes`,
         formData,
         {

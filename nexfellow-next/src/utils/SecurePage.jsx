@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 
 const SecurePage = () => {
   const params = useParams();
@@ -13,7 +13,7 @@ const SecurePage = () => {
   useEffect(() => {
     const fetchSecureLink = async () => {
       try {
-        const response = await axios.get(`/secure/secure/${token}`, {
+        const response = await api.get(`/secure/secure/${token}`, {
           withCredentials: true, // Ensures cookies are sent
         });
 

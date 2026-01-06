@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 
 // styles
 import styles from "./ViewOnlyQuiz.module.css";
@@ -22,7 +22,7 @@ const ViewOnlyQuiz = () => {
     const fetchQuiz = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`/public/quiz/${id}`);
+        const response = await api.get(`/public/quiz/${id}`);
         setQuiz(response.data.quiz);
       } catch (err) {
         console.error("Failed to fetch quiz:", err);

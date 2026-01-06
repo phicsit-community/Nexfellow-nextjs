@@ -34,7 +34,7 @@ const ViewOnlyHeader = () => {
             <div className={styles.navbarContent}>
                 <div className={styles.navbarLogo}>
                     <Link href="/">
-                        <img src={navbarlogo} alt="NexFellow Logo" />
+                        <img src={navbarlogo?.src || navbarlogo} alt="NexFellow Logo" />
                     </Link>
 
                     <button
@@ -63,7 +63,7 @@ const ViewOnlyHeader = () => {
                         </Link> */}
                     </div>
 
-                    {isLoggedIn ? (
+                    {isLoggedIn && username ? (
                         <Link href={`/dashboard/${username}`} className={styles.navbarButton}>
                             Go to Dashboard
                         </Link>

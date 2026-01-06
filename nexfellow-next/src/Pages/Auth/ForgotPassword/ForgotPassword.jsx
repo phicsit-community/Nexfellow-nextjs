@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -25,7 +25,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("/user/forgotpassword", {
+      const response = await api.post("/user/forgotpassword", {
         email: email.toLowerCase(),
       });
 

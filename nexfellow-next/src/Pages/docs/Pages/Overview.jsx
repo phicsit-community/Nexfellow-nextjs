@@ -13,11 +13,11 @@ import {
   FaSun,
 } from "react-icons/fa";
 import MiniFooter from "../components/MiniFooter.jsx";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import { IoMdInformationCircle } from "react-icons/io";
 
 export default function Overview() {
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const cyan = "#0E7C86";
 
   const toggleTheme = () => setDarkMode(!darkMode);
@@ -150,30 +150,30 @@ export default function Overview() {
             <div
               key={item.id}
               className={`group flex flex-col items-start gap-3 p-6 rounded-2xl shadow-md transform transition duration-300 hover:scale-105 border ${darkMode
-                  ? "bg-[#111] border-[#0E7C86]/20 hover:bg-[#0E7C86] hover:text-white"
-                  : "bg-white border-[#D1EBEE] hover:bg-[#0E7C86] hover:text-white"
+                ? "bg-[#111] border-[#0E7C86]/20 hover:bg-[#0E7C86] hover:text-white"
+                : "bg-white border-[#D1EBEE] hover:bg-[#0E7C86] hover:text-white"
                 }`}
             >
               <div
                 className={`text-2xl transition duration-300 ${darkMode
-                    ? "text-[#0E7C86] group-hover:text-white"
-                    : "text-[#0E7C86] group-hover:text-white"
+                  ? "text-[#0E7C86] group-hover:text-white"
+                  : "text-[#0E7C86] group-hover:text-white"
                   }`}
               >
                 {item.icon}
               </div>
               <h3
                 className={`text-lg font-semibold transition duration-300 ${darkMode
-                    ? "text-white group-hover:text-white"
-                    : "text-[#0E7C86] group-hover:text-white"
+                  ? "text-white group-hover:text-white"
+                  : "text-[#0E7C86] group-hover:text-white"
                   }`}
               >
                 {item.title}
               </h3>
               <p
                 className={`text-sm leading-relaxed transition duration-300 ${darkMode
-                    ? "text-gray-300 group-hover:text-white"
-                    : "text-gray-700 group-hover:text-white"
+                  ? "text-gray-300 group-hover:text-white"
+                  : "text-gray-700 group-hover:text-white"
                   }`}
               >
                 {item.desc}

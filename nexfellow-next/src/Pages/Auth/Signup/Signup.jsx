@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { toast } from "sonner";
-import axios from "axios";
+import api from "../../lib/axios";
 import { FaGithub, FaFacebook } from "react-icons/fa";
 import { ArrowLeft } from "lucide-react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
@@ -82,7 +82,7 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("/user/register", formData);
+      const response = await api.post("/user/register", formData);
 
       if (response.data.otpRequired) {
         toast.info("OTP sent to your email", {
@@ -118,7 +118,7 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      await axios.post("/user/otp/verify-register", {
+      await api.post("/user/otp/verify-register", {
         email: formData.email,
         otp,
       });
@@ -140,7 +140,7 @@ const Signup = () => {
     setTimer(300);
 
     try {
-      await axios.post("/user/otp/resend-register", { email: formData.email });
+      await api.post("/user/otp/resend-register", { email: formData.email });
       toast.info("New OTP sent to your email", {
         position: "bottom-right",
         richColors: true,

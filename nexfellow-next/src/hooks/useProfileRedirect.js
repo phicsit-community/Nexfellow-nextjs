@@ -1,7 +1,7 @@
 // src/hooks/useProfileRedirect.js
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../lib/axios";
 
 export default function useProfileRedirect() {
     const router = useRouter();
@@ -29,7 +29,7 @@ export default function useProfileRedirect() {
 
             if (needsFetch) {
                 try {
-                    const res = await axios.get(`/user/profile/username/${userIdOrUsername}`);
+                    const res = await api.get(`/user/profile/username/${userIdOrUsername}`);
 
                     // If the server explicitly asks the client to redirect, follow it
                     if (res?.data?.redirect) {

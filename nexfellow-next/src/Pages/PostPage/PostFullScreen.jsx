@@ -12,7 +12,7 @@ import {
   PiBookmarkSimpleDuotone,
   PiBookmarkSimpleFill,
 } from "react-icons/pi";
-import axios from "axios";
+import api from "../../lib/axios";
 import Comment from "../../components/Post/Comment";
 import styles from "./PostFullScreen.module.css";
 import VERIFY from "./assets/Verify.svg";
@@ -61,7 +61,7 @@ const PostFullScreen = () => {
   useEffect(() => {
     async function fetchPost() {
       try {
-        const res = await axios.get(`/post/${postId}`);
+        const res = await api.get(`/post/${postId}`);
         const post = res.data.post;
         setPost(post);
         setLikeCount(post.likeCount);
@@ -71,7 +71,7 @@ const PostFullScreen = () => {
 
         // Check if the post author is blocked
         if (post.author && post.author._id) {
-          const blockedResponse = await axios.get("/user/blocked-users");
+          const blockedResponse = await api.get("/user/blocked-users");
           const blockedUsers = blockedResponse.data.blockedUsers || [];
           const isAuthorBlocked = blockedUsers.some(
             (user) => user._id === post.author._id
@@ -88,7 +88,7 @@ const PostFullScreen = () => {
     async function checkIfLiked(postId) {
       if (!postId) return;
       try {
-        const res = await axios.get(`/like/checkIfPostLiked/${postId}`);
+        const res = await api.get(`/like/checkIfPostLiked/${postId}`);
         setIsLiked(res.data.Switch);
       } catch (error) {
         console.error("Error checking if liked:", error);
@@ -98,7 +98,7 @@ const PostFullScreen = () => {
     async function checkIfHidden(postId) {
       if (!postId) return;
       try {
-        const res = await axios.get(`/user/is-post-hidden/${postId}`);
+        const res = await api.get(`/user/is-post-hidden/${postId}`);
         setIsHidden(res.data.isHidden);
       } catch (error) {
         console.error("Error checking if post is hidden:", error);
@@ -110,7 +110,7 @@ const PostFullScreen = () => {
 
   const handleShareIncrement = async () => {
     try {
-      const response = await axios.patch(`/post/increment-shares/${post._id}`);
+      const response = await api.patch(`/post/increment-shares/${post._id}`);
       setShareCount(response.data.count);
       console.log(response.data.message);
     } catch (error) {
@@ -173,7 +173,7 @@ const PostFullScreen = () => {
     setTimeout(() => setAnimateLike(false), 500);
 
     try {
-      await axios.post(`/like/posts/${post._id}`);
+      await api.post(`/like/posts/${post._id}`);
     } catch (error) {
       setIsLiked(false);
       setLikeCount((prev) => prev - 1);
@@ -190,7 +190,7 @@ const PostFullScreen = () => {
     setTimeout(() => setAnimateLike(false), 500);
 
     try {
-      await axios.delete(`/like/posts/${post._id}`);
+      await api.delete(`/like/posts/${post._id}`);
     } catch (error) {
       setIsLiked(true);
       setLikeCount((prev) => prev + 1);
@@ -201,7 +201,7 @@ const PostFullScreen = () => {
   useEffect(() => {
     const fetchBookmarkStatus = async () => {
       try {
-        const res = await axios.get("/bookmarks/user?itemType=Post");
+        const res = await api.get("/bookmarks/user?itemType=Post");
         const found = Array.isArray(res.data.bookmarks)
           ? res.data.bookmarks.some(
             (bm) =>
@@ -224,11 +224,11 @@ const PostFullScreen = () => {
     setBookmarkLoading(true);
     try {
       if (!bookmarked) {
-        await axios.post(`/bookmarks/Post/${post._id}`);
+        await api.post(`/bookmarks/Post/${post._id}`);
         setBookmarked(true);
         toast.success("Post bookmarked!");
       } else {
-        await axios.delete(`/bookmarks/Post/${post._id}`);
+        await api.delete(`/bookmarks/Post/${post._id}`);
         setBookmarked(false);
         toast.info("Bookmark removed!");
       }
@@ -247,7 +247,7 @@ const PostFullScreen = () => {
 
     setIsUnblocking(true);
     try {
-      await axios.post(`/user/unblock/${post.author._id}`);
+      await api.post(`/user/unblock/${post.author._id}`);
       setIsBlocked(false);
       toast.success(`${post.author.name} has been unblocked`);
     } catch (error) {
@@ -260,7 +260,7 @@ const PostFullScreen = () => {
 
   const handleHidePost = async () => {
     try {
-      await axios.post(`/user/hide-post/${post._id}`);
+      await api.post(`/user/hide-post/${post._id}`);
       setIsHidden(true);
       toast.success("Post hidden successfully");
       // Navigate back after hiding
@@ -275,7 +275,7 @@ const PostFullScreen = () => {
 
   const handleUnhidePost = async () => {
     try {
-      await axios.post(`/user/unhide-post/${post._id}`);
+      await api.post(`/user/unhide-post/${post._id}`);
       setIsHidden(false);
       toast.success("Post unhidden successfully");
     } catch (error) {
@@ -733,7 +733,7 @@ const PostFullScreen = () => {
                           <div
                             className={styles.name}
                             onClick={() =>
-                              navigate(`/explore/${post.author.username}`)
+                              router.push(`/explore/${post.author.username}`)
                             }
                           >
                             {post.author.name}
@@ -741,13 +741,13 @@ const PostFullScreen = () => {
                               post.author.createdCommunity ? (
                               post.community?.accountType === "Organization" ? (
                                 <img
-                                  src={communityBadge}
+                                  src={communityBadge?.src || communityBadge}
                                   alt="Community Badge"
                                   className={styles.badge}
                                 />
                               ) : (
                                 <img
-                                  src={VERIFY}
+                                  src={VERIFY?.src || VERIFY}
                                   alt="Verification Badge"
                                   className={styles.badge}
                                 />
@@ -755,7 +755,7 @@ const PostFullScreen = () => {
                             ) : (
                               post.author.verificationBadge && (
                                 <img
-                                  src={VERIFY}
+                                  src={VERIFY?.src || VERIFY}
                                   alt="Verification Badge"
                                   className={styles.verified}
                                 />
@@ -935,7 +935,7 @@ const PostFullScreen = () => {
                 style={{ padding: "3px 10px" }}
               >
                 <BackButton
-                  onClick={() => navigate(-1)}
+                  onClick={() => router.back()}
                   showText={true}
                   smallText={true}
                 />
@@ -957,20 +957,20 @@ const PostFullScreen = () => {
             <div className={styles.authorDetails}>
               <div
                 className={styles.name}
-                onClick={() => navigate(`/explore/${post.author.username}`)}
+                onClick={() => router.push(`/explore/${post.author.username}`)}
               >
                 {post.author.name}
                 {post.author.isCommunityAccount &&
                   post.author.createdCommunity ? (
                   post.community?.accountType === "Organization" ? (
                     <img
-                      src={communityBadge}
+                      src={communityBadge?.src || communityBadge}
                       alt="Community Badge"
                       className={styles.badge}
                     />
                   ) : (
                     <img
-                      src={VERIFY}
+                      src={VERIFY?.src || VERIFY}
                       alt="Verification Badge"
                       className={styles.badge}
                     />
@@ -978,7 +978,7 @@ const PostFullScreen = () => {
                 ) : (
                   post.author.verificationBadge && (
                     <img
-                      src={VERIFY}
+                      src={VERIFY?.src || VERIFY}
                       alt="Verification Badge"
                       className={styles.verified}
                     />

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import { toast } from "sonner";
 
 // Components
@@ -220,7 +220,7 @@ const CommunityContests = () => {
   const fetchQuizzes = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`/community/${communityId}/quizzes`);
+      const response = await api.get(`/community/${communityId}/quizzes`);
       setUserQuizzes(response.data.quizzes || []);
       setFilteredQuizzes(response.data.quizzes || []);
       setTimeout(() => setLoading(false), 800); // Simulated loading delay for skeleton effect
@@ -306,7 +306,7 @@ const CommunityContests = () => {
 
   const handleDeleteSuccess = async () => {
     try {
-      await axios.delete(`/community/quizzes/${selectedQuizId}`);
+      await api.delete(`/community/quizzes/${selectedQuizId}`);
       // Don't need to update quizzes state separately since we'll fetch fresh data
       setShowConfirmationModel(false);
       toast.success("Quiz deleted successfully!");

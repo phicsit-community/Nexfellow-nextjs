@@ -4,7 +4,7 @@
 import { useEffect, useState, useRef, forwardRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { getSocket } from "../../utils/socket";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./Discussion.module.css";
 import SendIcon from "./assets/send.svg";
 import {
@@ -345,7 +345,7 @@ const Discussion = ({ communityId, messageIdToScroll, isModeratorView }) => {
 
     const fetchCommunityInfo = async () => {
       try {
-        const { data } = await axios.get(`/community/id/${communityId}`);
+        const { data } = await api.get(`/community/id/${communityId}`);
         setCommunity(data.community);
         setIsOwner(data.community.owner._id === currentUserId);
         if (isModeratorView) {
@@ -370,7 +370,7 @@ const Discussion = ({ communityId, messageIdToScroll, isModeratorView }) => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const { data } = await axios.get(`/discussions/${communityId}`, {
+        const { data } = await api.get(`/discussions/${communityId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const messagesWithDates = data.map((msg, idx, arr) => {
@@ -554,7 +554,7 @@ const Discussion = ({ communityId, messageIdToScroll, isModeratorView }) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
     try {
-      await axios.post(
+      await api.post(
         `/discussions`,
         {
           communityId,
@@ -583,7 +583,7 @@ const Discussion = ({ communityId, messageIdToScroll, isModeratorView }) => {
 
   const handleDeleteMessage = async (messageId) => {
     try {
-      await axios.delete(`/discussions/${messageId}`, {
+      await api.delete(`/discussions/${messageId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
     } catch (err) {
@@ -593,7 +593,7 @@ const Discussion = ({ communityId, messageIdToScroll, isModeratorView }) => {
 
   const handleReact = async (messageId, emoji) => {
     try {
-      await axios.post(
+      await api.post(
         `/discussions/${messageId}/react`,
         { emoji },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -608,7 +608,7 @@ const Discussion = ({ communityId, messageIdToScroll, isModeratorView }) => {
   // Allow empty query so tapping @ shows initial suggestions
   const fetchUserSuggestions = async (query) => {
     try {
-      const { data } = await axios.get(
+      const { data } = await api.get(
         `/discussions/users/search?query=${encodeURIComponent(query || "")}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -908,7 +908,7 @@ const Discussion = ({ communityId, messageIdToScroll, isModeratorView }) => {
           </div>
 
           <button type="submit" className={styles.sendButton} title="Send" aria-label="Send message">
-            <img src={SendIcon} alt="send" height={20} />
+            <img src={SendIcon?.src || SendIcon} alt="send" height={20} />
           </button>
         </form>
       </div>

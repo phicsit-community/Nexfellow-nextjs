@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import { useRouter } from "next/navigation";
 import styles from "./Community.module.css";
 import Event from "../../components/Contest/assets/image.png";
@@ -24,7 +24,7 @@ const UserCommunitySidebar = ({ communityId }) => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get(`/event/community/${communityId}`);
+        const res = await api.get(`/event/community/${communityId}`);
         const now = new Date();
 
         const eventsData = res.data
@@ -105,7 +105,7 @@ const UserCommunitySidebar = ({ communityId }) => {
   useEffect(() => {
     const fetchContests = async () => {
       try {
-        const res = await axios.get(`/community/${communityId}/quizzes`);
+        const res = await api.get(`/community/${communityId}/quizzes`);
         console.log(res.data);
         const contestsData = res.data.quizzes.map((val) => {
           return {
@@ -146,7 +146,7 @@ const UserCommunitySidebar = ({ communityId }) => {
   useEffect(() => {
     const fetchActiveChallenges = async () => {
       try {
-        const res = await axios.get(
+        const res = await api.get(
           `/challenge/${communityId}/active-challenges`
         );
         const challenges = res.data.challenges || [];
@@ -164,7 +164,7 @@ const UserCommunitySidebar = ({ communityId }) => {
   useEffect(() => {
     const fetchTopMembers = async () => {
       try {
-        const res = await axios.get(`/community/${communityId}/top-members`);
+        const res = await api.get(`/community/${communityId}/top-members`);
         const members = res.data.topMembers || [];
         setTopMembers(members);
 
@@ -194,7 +194,7 @@ const UserCommunitySidebar = ({ communityId }) => {
       try {
         const responses = await Promise.all(
           topMembers.map((member) =>
-            axios.get(`/user/followStatus/${member._id}`)
+            api.get(`/user/followStatus/${member._id}`)
           )
         );
 
@@ -225,10 +225,10 @@ const UserCommunitySidebar = ({ communityId }) => {
   //   try {
   //     const action = followStatusMap[memberId] ? "unfollow" : "follow";
 
-  //     await axios.post(`/user/toggleFollow/${memberId}`, { action });
+  //     await api.post(`/user/toggleFollow/${memberId}`, { action });
 
   //     // Fetch updated follow status for this member
-  //     const response = await axios.get(`/user/followStatus/${memberId}`);
+  //     const response = await api.get(`/user/followStatus/${memberId}`);
   //     setFollowStatusMap((prevStatusMap) => ({
   //       ...prevStatusMap,
   //       [memberId]: response.data.isFollowing,

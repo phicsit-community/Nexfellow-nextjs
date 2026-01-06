@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 
 // styles
 import styles from "./Dashboard.module.css";
@@ -63,13 +63,17 @@ const Dashboard = () => {
       setLoading(true);
       setError(null);
 
-      const userResponse = await axios.get(
+      const userResponse = await api.get(
         `/user/profile/username/${username}`
       );
 
       if (userResponse.data.redirect) {
-        router.replace(userResponse.data.redirect);
-        return;
+        const redirect = userResponse.data.redirect;
+        // Only redirect if it's a valid string path
+        if (typeof redirect === "string" && redirect.startsWith("/")) {
+          router.replace(redirect);
+          return;
+        }
       }
 
       const user = userResponse.data;
@@ -77,7 +81,7 @@ const Dashboard = () => {
       setId(user.id);
 
       if (user.isCommunityAccount && user.createdCommunity) {
-        const communityResponse = await axios.get(
+        const communityResponse = await api.get(
           `/community/id/${user.createdCommunity._id}`
         );
         setCommunityData(communityResponse.data.community);
@@ -134,7 +138,7 @@ const Dashboard = () => {
             <div className={styles.bannerSection}>
               <div className={styles.bannerImgContainer}>
                 <img
-                  src={userData.banner || CommunityBanner}
+                  src={userData.banner || (CommunityBanner?.src || CommunityBanner)}
                   alt="Community Banner"
                   className={styles.bannerImage}
                 />
@@ -142,7 +146,7 @@ const Dashboard = () => {
               <div className={styles.communityDetails}>
                 <div className={styles.profileImageContainer}>
                   <ProfileImagePreview
-                    src={userData?.picture || ProfileImage}
+                    src={userData?.picture || (ProfileImage?.src || ProfileImage)}
                     alt="Profile"
                     className={styles.profileImage}
                   />
@@ -165,20 +169,20 @@ const Dashboard = () => {
                       userData?.createdCommunity ? (
                       userData?.communityBadge ? (
                         <img
-                          src={communityBadge}
+                          src={communityBadge?.src || communityBadge}
                           alt="Community Badge"
                           className={styles.badge}
                         />
                       ) : userData?.verificationBadge ? (
                         <img
-                          src={verificationBadge}
+                          src={verificationBadge?.src || verificationBadge}
                           alt="Verification Badge"
                           className={styles.badge}
                         />
                       ) : null
                     ) : userData?.verificationBadge ? (
                       <img
-                        src={verificationBadge}
+                        src={verificationBadge?.src || verificationBadge}
                         alt="Verification Badge"
                         className={styles.badge}
                       />
@@ -215,7 +219,7 @@ const Dashboard = () => {
                             style={{ zIndex: 3 - index }}
                           >
                             <img
-                              src={profile?.picture || ProfileImage}
+                              src={profile?.picture || (ProfileImage?.src || ProfileImage)}
                               alt={profile?.name || "Member"}
                               className={styles.memberImage}
                             />
@@ -245,7 +249,7 @@ const Dashboard = () => {
                       onClick={() => setIsOpen(true)}
                     >
                       <img
-                        src={InviteIcon}
+                        src={InviteIcon?.src || InviteIcon}
                         alt="invite"
                         className={styles.svgIcon}
                       />
@@ -261,7 +265,7 @@ const Dashboard = () => {
                       onClick={() => router.push(`/edit-profile/${username}`)}
                     >
                       <img
-                        src={EditIcon}
+                        src={EditIcon?.src || EditIcon}
                         alt="edit"
                         className={styles.svgIcon}
                       />
@@ -276,7 +280,7 @@ const Dashboard = () => {
             verificationBadge={userData?.verificationBadge}
             premiumBadge={userData?.premiumBadge}
             communityId={communityData?._id}
-            userId={userData.userId}
+            userId={userData?.id || userData?._id}
             username={username}
           />
         </div>
@@ -293,7 +297,7 @@ const Dashboard = () => {
         isOpen={isFollowersModalOpen}
         onClose={() => setIsFollowersModalOpen(false)}
         communityId={communityData?._id}
-        userId={userData.userId}
+        userId={userData?.id || userData?._id}
       />
     </div>
   );

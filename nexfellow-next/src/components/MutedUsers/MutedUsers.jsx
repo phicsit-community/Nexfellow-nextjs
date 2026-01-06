@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import { toast } from "sonner";
 import styles from "./MutedUsers.module.css";
 
@@ -15,7 +15,7 @@ const MutedUsers = () => {
   const fetchMutedUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("/user/muted-users");
+      const response = await api.get("/user/muted-users");
       setMutedUsers(response.data.mutedUsers || []);
       setError(null);
     } catch (err) {
@@ -28,7 +28,7 @@ const MutedUsers = () => {
 
   const handleUnmuteUser = async (userId, username) => {
     try {
-      const response = await axios.post(`/user/unmute/${userId}`);
+      const response = await api.post(`/user/unmute/${userId}`);
       toast.success(
         response.data.message || `Unmuted ${username} successfully`
       );

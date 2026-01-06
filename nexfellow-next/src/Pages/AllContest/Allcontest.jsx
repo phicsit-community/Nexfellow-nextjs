@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import styles from "./Allcontest.module.css";
-import axios from "axios";
+import api from "../../lib/axios";
 import ContestBanner from "../../components/ContestBanner/ContestBanner.jsx";
 import CardContainer from "../../components/CardContainer/CardContainer.jsx";
 import BannerSkeleton from "../../components/Skeleton/BannerSkeleton.jsx";
@@ -24,7 +24,7 @@ const Allcontest = () => {
   useEffect(() => {
     const fetchBookmarkedQuizzes = async () => {
       try {
-        const response = await axios.get("/bookmarks/user?itemType=GeneralContest", {
+        const response = await api.get("/bookmarks/user?itemType=GeneralContest", {
           withCredentials: true,
         });
         setBookmarkedQuizzes(response.data.bookmarks || []);
@@ -36,7 +36,7 @@ const Allcontest = () => {
 
     const getQuizzes = async () => {
       try {
-        const response = await axios.get("/quiz/getAllQuizzes");
+        const response = await api.get("/quiz/getAllQuizzes");
         if (response.status === 200) {
           const data = response.data;
           const updatedQuizzes = data.map((quiz) => {

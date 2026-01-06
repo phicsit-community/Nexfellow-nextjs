@@ -233,9 +233,9 @@ const DMUserProfile = ({
 
                                 {/* Badge precedence: community badge > verification badge */}
                                 {hasCommunityBadge ? (
-                                    <img src={communityBadge} alt="Community Badge" className={styles.badge} />
+                                    <img src={communityBadge?.src || communityBadge} alt="Community Badge" className={styles.badge} />
                                 ) : hasVerificationBadge ? (
-                                    <img src={verificationBadge} alt="Verification Badge" className={styles.badge} />
+                                    <img src={verificationBadge?.src || verificationBadge} alt="Verification Badge" className={styles.badge} />
                                 ) : null}
 
                                 {isCommunity && communityAccountType && (

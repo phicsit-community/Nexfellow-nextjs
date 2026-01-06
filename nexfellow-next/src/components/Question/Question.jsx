@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import { toast } from "sonner";
 import { Edit, Trash2 } from "lucide-react";
 
@@ -19,7 +19,7 @@ const Question = ({ question, quizId, onDeleted, fetchAllQuestions }) => {
   // Delete handler
   const handleDelete = async () => {
     try {
-      await axios.delete(`/community/questions/${question._id}`);
+      await api.delete(`/community/questions/${question._id}`);
       toast.success("Question deleted successfully.");
       if (onDeleted) onDeleted(question._id);
       if (typeof fetchAllQuestions === "function") {

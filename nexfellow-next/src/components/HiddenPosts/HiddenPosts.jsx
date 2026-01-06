@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./HiddenPosts.module.css";
-import axios from "axios";
+import api from "../../lib/axios";
 import { toast } from "sonner";
 import { FaEyeSlash } from "react-icons/fa";
 import HiddenPostItem from "./HiddenPostItem";
@@ -16,7 +16,7 @@ const HiddenPosts = () => {
   const fetchHiddenPosts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("/user/hidden-posts");
+      const response = await api.get("/user/hidden-posts");
       setHiddenPosts(response.data.hiddenPosts || []);
     } catch (error) {
       console.error("Error fetching hidden posts:", error);
@@ -28,7 +28,7 @@ const HiddenPosts = () => {
 
   const handleUnhidePost = async (postId) => {
     try {
-      await axios.post(`/user/unhide-post/${postId}`);
+      await api.post(`/user/unhide-post/${postId}`);
       toast.success("Post unhidden successfully");
       setHiddenPosts(hiddenPosts.filter((post) => post._id !== postId));
     } catch (error) {

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./Suggestions.module.css";
 import { useRouter } from "next/navigation";
 import avatar from "../../../assets/avatar.svg";
@@ -27,7 +27,7 @@ const SuggestionCard = ({ user }) => {
         }
 
         if (user._id) {
-          const response = await axios.get(`/user/followStatus/${user._id}`);
+          const response = await api.get(`/user/followStatus/${user._id}`);
           setFollowStatus(response.data.isFollowing);
         }
       } catch (err) {
@@ -45,10 +45,10 @@ const SuggestionCard = ({ user }) => {
       const action = followStatus ? "unfollow" : "follow";
 
       if (user._id) {
-        await axios.post(`/user/toggleFollow/${user._id}`, { action });
+        await api.post(`/user/toggleFollow/${user._id}`, { action });
 
         // Fetch updated follow status
-        const response = await axios.get(`/user/followStatus/${user._id}`);
+        const response = await api.get(`/user/followStatus/${user._id}`);
         setFollowStatus(response.data.isFollowing);
       }
     } catch (err) {

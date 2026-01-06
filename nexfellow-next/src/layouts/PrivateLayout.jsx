@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { initializeSocket } from "@/utils/socket";
 import Header from "@/components/Header/Header";
 import Sidebar from "@/components/Sidebar/Sidebar";
+import style from "./PrivateLayout.module.css";
 
 export default function PrivateLayout({ children }) {
     const user = useSelector((state) => state.auth.user);
@@ -18,13 +19,15 @@ export default function PrivateLayout({ children }) {
     }, [user]);
 
     return (
-        <div className="flex min-h-screen">
-            <Sidebar />
-            <div className="flex-1 flex flex-col">
-                <Header />
-                <main className="flex-1 overflow-auto">
+        <div className={style.container}>
+            <Header />
+            <div className={style.main}>
+                <div className={style.sidebar}>
+                    <Sidebar />
+                </div>
+                <div className={style.content}>
                     {children}
-                </main>
+                </div>
             </div>
         </div>
     );

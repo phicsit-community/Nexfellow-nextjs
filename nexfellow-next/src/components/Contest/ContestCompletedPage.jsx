@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import styles from "./ContestCompletedPage.module.css";
 import quizCompletedImg from "./assets/complete.png";
 import { Icon } from '@iconify/react';
-import axios from "axios";
+import api from "../../lib/axios";
 
 const ContestCompletedPage = () => {
     const params = useParams();
@@ -18,7 +18,7 @@ const ContestCompletedPage = () => {
         // Note: location.state is not available in Next.js App Router
         // Always fetch data from API
         if (quizId) {
-            axios.get(`/community/quizzes/${quizId}`)
+            api.get(`/community/quizzes/${quizId}`)
                 .then(res => {
                     const quiz = res.data.quiz;
                     const response = res.data.response;
@@ -68,7 +68,7 @@ const ContestCompletedPage = () => {
         <div className={styles.wrapper}>
             <div className={styles.card}>
                 <div className={styles.left}>
-                    <img src={quizCompletedImg} alt="Tech Quiz" className={styles.quizImage} />
+                    <img src={quizCompletedImg?.src || quizCompletedImg} alt="Tech Quiz" className={styles.quizImage} />
                 </div>
                 <div className={styles.right}>
                     <h2 className={styles.heading}>Contest Completed!</h2>

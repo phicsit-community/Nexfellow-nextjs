@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   FaChevronLeft,
   FaChevronRight,
@@ -30,7 +31,7 @@ export default function Sidebar({
   collapsed,
   setCollapsed,
 }) {
-  const location = useLocation();
+  const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" ? window.innerWidth < 768 : false
   );
@@ -111,14 +112,14 @@ export default function Sidebar({
       <ul className="space-y-1">
         {items.map((item) => (
           <li key={item.path} className="group relative">
-            <NavLink
-              to={item.path}
-              end={false}
-              className={({ isActive }) =>
+
+            <Link
+              href={`/docs${item.path === '/overview' ? '' : item.path.replace('/docs', '')}`} // Adjust path logic effectively
+              className={
                 [
                   "flex items-center gap-3 px-4 py-2.5 rounded-md transition-colors",
                   "focus:outline-none focus:ring-2 focus:ring-white/30",
-                  isActive
+                  (pathname.includes(item.path) || (item.path === '/overview' && pathname === '/docs/overview')) // Simplified active check
                     ? darkMode
                       ? "bg-white/5 text-[#1CA1A5]"
                       : "bg-[#0C6D75] text-white"
@@ -127,7 +128,6 @@ export default function Sidebar({
                       : "text-white hover:bg-[#0C6D75]",
                 ].join(" ")
               }
-              aria-current={({ isActive }) => (isActive ? "page" : undefined)}
             >
               <span
                 className={
@@ -139,7 +139,7 @@ export default function Sidebar({
               {!collapsed && (
                 <span className="truncate">{item.name}</span>
               )}
-            </NavLink>
+            </Link>
 
             {/* Tooltip when collapsed */}
             {collapsed && (
@@ -177,7 +177,7 @@ export default function Sidebar({
       <div className="flex-shrink-0 flex items-center justify-between p-4 border-b border-white/10">
         <div className="flex items-center justify-center w-full">
           <img
-            src={collapsed || isMobile ? logoIcon : logo}
+            src={(collapsed || isMobile ? logoIcon : logo).src || (collapsed || isMobile ? logoIcon : logo)}
             alt="NexFellow Logo"
             className={`transition-all duration-300 object-contain ${collapsed || isMobile ? "w-8" : "w-36"}`}
           />

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
-import axios from "axios";
+import api from "../../lib/axios";
 import {
   FaMapMarkerAlt,
   FaGlobe,
@@ -25,7 +25,7 @@ const LinkDetails = ({ link }) => {
   const fetchLinkStats = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`/stats/${link.shortCode}`);
+      const response = await api.get(`/stats/${link.shortCode}`);
       setLinkStats(response.data);
       setError(null);
     } catch (err) {

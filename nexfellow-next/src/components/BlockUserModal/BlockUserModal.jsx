@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./BlockUserModal.module.css";
 import { FaBan } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
@@ -13,7 +13,7 @@ const BlockUserModal = ({ isOpen, onClose, user }) => {
   const handleBlockUser = async () => {
     setIsSubmitting(true);
     try {
-      const response = await axios.post(`/user/block/${user._id}`);
+      const response = await api.post(`/user/block/${user._id}`);
       toast.success(response.data.message || "User blocked successfully");
       onClose(true); // Pass true to indicate successful blocking
     } catch (error) {

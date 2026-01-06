@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import { toast } from "sonner";
 import styles from "./PrivacySettings.module.css";
 import { Switch } from "../../components/ui/switch";
@@ -24,7 +24,7 @@ const PrivacySettings = () => {
   const fetchPrivacySettings = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("/user/privacy-settings");
+      const response = await api.get("/user/privacy-settings");
       if (response.data && response.data.privacySettings) {
         setSettings(response.data.privacySettings);
       }
@@ -46,7 +46,7 @@ const PrivacySettings = () => {
       setSettings((prev) => ({ ...prev, [key]: newValue }));
 
       // Send the update to the server
-      await axios.patch("/user/privacy-settings", {
+      await api.patch("/user/privacy-settings", {
         privacySettings: { [key]: newValue },
       });
 

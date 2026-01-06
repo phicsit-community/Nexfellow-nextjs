@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import {
   FaClipboardCheck,
   FaEdit,
@@ -12,13 +12,13 @@ import {
 import ContestSetupImg from "../assets/contestsetup.png";
 import ManageContestImg from "../assets/contest_setup1.png";
 import MiniFooter from "../components/MiniFooter.jsx";
-import { IoMdAddCircle, IoMdInformationCircle  } from "react-icons/io";
+import { IoMdAddCircle, IoMdInformationCircle } from "react-icons/io";
 import { MdAccountCircle, MdOutlineAddPhotoAlternate } from "react-icons/md";
 
 export default function ContestSetup() {
   const [activeStep, setActiveStep] = useState(0);
   const [zoomImage, setZoomImage] = useState(null);
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const timelineRef = useRef(null);
   const cyan = "#0E7C86";
 
@@ -51,7 +51,7 @@ export default function ContestSetup() {
       title: "Step 1",
       desc: "Click on profile under account management to access your contest creation options.",
       image: null,
-      icon: <MdAccountCircle size={24}/>
+      icon: <MdAccountCircle size={24} />
     },
     {
       id: 2,
@@ -116,24 +116,22 @@ export default function ContestSetup() {
 
   return (
     <div
-      className={`${
-        darkMode ? "bg-black text-gray-100" : "bg-white text-gray-900"
-      } min-h-screen px-6 py-10 transition-colors duration-500 font-poppins`}
+      className={`${darkMode ? "bg-black text-gray-100" : "bg-white text-gray-900"
+        } min-h-screen px-6 py-10 transition-colors duration-500 font-poppins`}
     >
       <div className="max-w-5xl mx-auto text-left">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-             <p className={`text-sm ${darkMode ? "text-white" : "text-gray-800 "}`}>
+            <p className={`text-sm ${darkMode ? "text-white" : "text-gray-800 "}`}>
               Docs &gt; Setup &gt;{" "}
               <span className="font-medium text-[#1CA1A5]">
                 Contest Setup
               </span>
             </p>
             <h1
-              className={`text-3xl font-semibold font-poppins mt-2 ${
-                darkMode ? "text-white" : "text-[#0E7C86]"
-              }`}
+              className={`text-3xl font-semibold font-poppins mt-2 ${darkMode ? "text-white" : "text-[#0E7C86]"
+                }`}
             >
               How to conduct contest on NexFellow?
             </h1>
@@ -162,21 +160,19 @@ export default function ContestSetup() {
 
         {/* Description */}
         <p
-          className={`mt-4 leading-relaxed ${
-            darkMode ? "text-[#D0CACA]" : "text-black"
-          }`}
+          className={`mt-4 leading-relaxed ${darkMode ? "text-[#D0CACA]" : "text-black"
+            }`}
         >
-          Contests are designed to bring out the competitive spirit in the community while fostering learning and 
-          collaboration. You can create and host contests across different categories, define rules, set deadlines, and 
-          reward participants based on their performance. Contests not only encourage members to showcase their skills 
+          Contests are designed to bring out the competitive spirit in the community while fostering learning and
+          collaboration. You can create and host contests across different categories, define rules, set deadlines, and
+          reward participants based on their performance. Contests not only encourage members to showcase their skills
           but also help build engagement, recognition, and healthy competition within the platform.
         </p>
 
         {/* Info Cards */}
         <h2
-          className={`text-2xl font-semibold mt-8 mb-6 ${
-            darkMode ? "text-white" : "text-[#0E7C86]"
-          }`}
+          className={`text-2xl font-semibold mt-8 mb-6 ${darkMode ? "text-white" : "text-[#0E7C86]"
+            }`}
         >
           Contest
         </h2>
@@ -185,16 +181,14 @@ export default function ContestSetup() {
           {infoCards.map((card) => (
             <div
               key={card.id}
-              className={`p-5 rounded-lg flex flex-row items-center gap-3 shadow-md transition-all ${
-                darkMode
-                  ? "bg-[#006C69] text-gray-200 hover:bg-[#006C69] hover:scale-105"
-                  : "bg-[#006C69] text-white hover:bg-[#006C69] hover:scale-105"
-              }`}
+              className={`p-5 rounded-lg flex flex-row items-center gap-3 shadow-md transition-all ${darkMode
+                ? "bg-[#006C69] text-gray-200 hover:bg-[#006C69] hover:scale-105"
+                : "bg-[#006C69] text-white hover:bg-[#006C69] hover:scale-105"
+                }`}
             >
               <div
-                className={`w-10 h-10 rounded-md flex items-center justify-center ${
-                  darkMode ? "bg-[#006C69]" : "bg-[#006C69]"
-                }`}
+                className={`w-10 h-10 rounded-md flex items-center justify-center ${darkMode ? "bg-[#006C69]" : "bg-[#006C69]"
+                  }`}
               >
                 {card.icon}
               </div>
@@ -208,9 +202,8 @@ export default function ContestSetup() {
 
         <div className="relative mt-8" ref={timelineRef}>
           <div
-            className={`absolute top-0 bottom-0 left-6 w-0.5 ${
-              darkMode ? "bg-gray-800" : "bg-[#D1EBEE]"
-            }`}
+            className={`absolute top-0 bottom-0 left-6 w-0.5 ${darkMode ? "bg-gray-800" : "bg-[#D1EBEE]"
+              }`}
           />
           <div
             className="absolute top-0 left-6 w-0.5 transition-all duration-500"
@@ -229,13 +222,12 @@ export default function ContestSetup() {
               >
                 <div className="w-12 flex justify-center relative">
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center border-4 font-semibold transition-colors duration-500 ${
-                      idx <= activeStep
-                        ? "text-white"
-                        : darkMode
+                    className={`w-12 h-12 rounded-full flex items-center justify-center border-4 font-semibold transition-colors duration-500 ${idx <= activeStep
+                      ? "text-white"
+                      : darkMode
                         ? "bg-black text-[#0E7C86]"
                         : "bg-white text-[#0E7C86]"
-                    }`}
+                      }`}
                     style={{
                       backgroundColor: idx <= activeStep ? cyan : "transparent",
                       borderColor: cyan,
@@ -252,7 +244,7 @@ export default function ContestSetup() {
                   <p className="mt-2 leading-relaxed text-[15px]">{step.desc}</p>
                   {step.image && (
                     <img
-                      src={step.image}
+                      src={step.image.src || step.image}
                       alt={`${step.title} screenshot`}
                       className="mt-4 w-full h-auto max-w-md rounded-lg shadow-md cursor-pointer transition transform hover:scale-105"
                       onClick={() => setZoomImage(step.image)}
@@ -275,7 +267,7 @@ export default function ContestSetup() {
             <FaTimes />
           </button>
           <img
-            src={zoomImage}
+            src={zoomImage.src || zoomImage}
             alt="Zoomed"
             className="max-w-[90vw] max-h-[80vh] rounded-lg shadow-lg transform scale-95 animate-scaleUp"
           />

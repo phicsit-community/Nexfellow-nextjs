@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./NotificationPage.module.css";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { getSocket } from "../../utils/socket";
@@ -31,8 +31,8 @@ const NotificationPage = () => {
     setLoading(true);
     try {
       const [systemRes, communityRes] = await Promise.all([
-        axios.get(`/systemNotifications?page=${pageNum}&limit=${LIMIT}`),
-        axios.get(`/notifications?page=${pageNum}&limit=${LIMIT}`),
+        api.get(`/systemNotifications?page=${pageNum}&limit=${LIMIT}`),
+        api.get(`/notifications?page=${pageNum}&limit=${LIMIT}`),
       ]);
 
       // add demo notification for testing
@@ -110,7 +110,7 @@ const NotificationPage = () => {
   // Mark as read (single) - always update recipients array
   const markAsRead = async (id, type) => {
     try {
-      await axios.patch(
+      await api.patch(
         `/${type === "system" ? "systemNotifications" : "notifications"
         }/${id}/read`
       );
@@ -135,7 +135,7 @@ const NotificationPage = () => {
   const markAllAsRead = async () => {
     setLoading(true);
     try {
-      await axios.post("/systemNotifications/read/all");
+      await api.post("/systemNotifications/read/all");
       setNotifications((prev) =>
         prev.map((n) => ({
           ...n,
@@ -156,7 +156,7 @@ const NotificationPage = () => {
   //     return;
   //   setLoading(true);
   //   try {
-  //     await axios.delete("/systemNotifications/delete/all");
+  //     await api.delete("/systemNotifications/delete/all");
   //     setNotifications([]);
   //   } catch (err) {
   //     console.error("Error deleting all notifications:", err);
@@ -167,7 +167,7 @@ const NotificationPage = () => {
   // Delete single notification for user
   const deleteNotification = async (notification) => {
     try {
-      await axios.delete(`/systemNotifications/${notification._id}/user`);
+      await api.delete(`/systemNotifications/${notification._id}/user`);
       setNotifications((prev) =>
         prev.filter((n) => n._id !== notification._id)
       );
@@ -510,12 +510,12 @@ const NotificationPage = () => {
               <div className={styles.noNotificationsContainer}>
                 <img
                   className={styles.noNotificationsIcon}
-                  src={NoNotification}
+                  src={NoNotification?.src || NoNotification}
                   alt="No Notifications"
                 />
                 <p>You don&apos;t have any notifications yet</p>
               </div>
-            )}
+            )}}
           </div>
         </div>
       </div>

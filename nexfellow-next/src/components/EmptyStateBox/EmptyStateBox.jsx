@@ -9,10 +9,10 @@ import contestsIcon from "./assets/contests.svg";
 import { MdOutlineAnalytics } from "react-icons/md";
 
 const icons = {
-    members: <img src={membersIcon} alt="members icon" className={styles.icon} />,
-    events: <img src={eventsIcon} alt="events icon" className={styles.icon} />,
-    challenges: <img src={challengesIcon} alt="challenges icon" className={styles.icon} />,
-    contests: <img src={contestsIcon} alt="contests icon" className={styles.icon} />,
+    members: <img src={membersIcon?.src || membersIcon} alt="members icon" className={styles.icon} />,
+    events: <img src={eventsIcon?.src || eventsIcon} alt="events icon" className={styles.icon} />,
+    challenges: <img src={challengesIcon?.src || challengesIcon} alt="challenges icon" className={styles.icon} />,
+    contests: <img src={contestsIcon?.src || contestsIcon} alt="contests icon" className={styles.icon} />,
     analytics: <MdOutlineAnalytics className={styles.icon} />, // using icon instead of svg
 };
 

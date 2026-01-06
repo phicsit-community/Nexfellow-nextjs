@@ -143,13 +143,12 @@ Leaderboard.module.css .leaderboard {
   overflow-x: auto;
 }
 
-
-table {
+.scrollableTableContainer table {
   width: 100%;
   border-collapse: collapse;
 }
 
-th {
+.scrollableTableContainer th {
   padding: 10px;
   text-align: center;
 }
@@ -159,21 +158,21 @@ th {
   text-align: left;
 }
 
-td {
+.scrollableTableContainer td {
   padding: 10px 0px 10px 0px;
   text-align: center;
   /* border:2px solid black; */
 }
 
-th {
+.scrollableTableContainer th {
   background-color: #f4f4f4;
 }
 
-table th:first-child {
+.scrollableTableContainer table th:first-child {
   border-radius: 8px 0 0 8px;
 }
 
-table th:last-child {
+.scrollableTableContainer table th:last-child {
   border-radius: 0 8px 8px 0;
 }
 
@@ -400,8 +399,8 @@ table th:last-child {
   display: none;
 }
 
-th,
-td {
+.scrollableTableContainer th,
+.scrollableTableContainer td {
   text-align: center;
   vertical-align: middle;
 }

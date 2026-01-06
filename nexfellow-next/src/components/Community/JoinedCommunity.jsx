@@ -6,7 +6,7 @@ import styles from "./JoinedCommunity.module.css";
 import Post from "../Post/Post";
 import CommunityCardSkeleton from "./CommunityCardSkeleton";
 import CommunityBanner from "./assets/community_image.svg";
-import axios from "axios";
+import api from "../../lib/axios";
 import { IoArrowBack, IoArrowForward } from "react-icons/io5";
 
 import CommunitySidebar from "./JoinedCommunitySidebar";
@@ -79,15 +79,15 @@ const JoinedCommunityPage = ({ communityData }) => {
 
       try {
         // Fetch muted users first
-        const mutedResponse = await axios.get("/user/muted-users");
+        const mutedResponse = await api.get("/user/muted-users");
         setMutedUsers(mutedResponse.data.mutedUsers || []);
 
         // Fetch blocked users
-        const blockedResponse = await axios.get("/user/blocked-users");
+        const blockedResponse = await api.get("/user/blocked-users");
         setBlockedUsers(blockedResponse.data.blockedUsers || []);
 
         // Then fetch posts
-        const response = await axios.get("/post/");
+        const response = await api.get("/post/");
         setPost(response.data.posts);
       } catch (err) {
         setError("Error fetching posts: " + err.message);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import { toast } from "sonner";
 import styles from "./BlockedUsers.module.css";
 
@@ -15,7 +15,7 @@ const BlockedUsers = () => {
   const fetchBlockedUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("/user/blocked-users");
+      const response = await api.get("/user/blocked-users");
       setBlockedUsers(response.data.blockedUsers || []);
       setError(null);
     } catch (err) {
@@ -28,7 +28,7 @@ const BlockedUsers = () => {
 
   const handleUnblockUser = async (userId, username) => {
     try {
-      const response = await axios.post(`/user/unblock/${userId}`);
+      const response = await api.post(`/user/unblock/${userId}`);
       toast.success(
         response.data.message || `Unblocked ${username} successfully`
       );

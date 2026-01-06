@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import Footer from "../../../components/Landing/Footer/Footer";
 import ContactCTA from "../../../components/Landing/ContactCTA/ContactCTA";
 import Navbar from "../../../components/Landing/Navbar/Navbar";

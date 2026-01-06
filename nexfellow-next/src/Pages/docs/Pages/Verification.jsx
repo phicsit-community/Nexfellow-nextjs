@@ -10,7 +10,7 @@ import {
   FaDownload,
   FaEdit,
 } from "react-icons/fa";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import { IoMdInformationCircle } from "react-icons/io";
 import Step1Image from "../assets/verification1.png";
 import Step2Image from "../assets/verification2.png";
@@ -20,7 +20,7 @@ import { MdAccountCircle } from 'react-icons/md';
 export default function VerificationPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [zoomImage, setZoomImage] = useState(null);
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const timelineRef = useRef(null);
 
   const toggleTheme = () => setDarkMode(!darkMode);
@@ -245,7 +245,7 @@ export default function VerificationPage() {
 
                   {step.image && (
                     <img
-                      src={step.image}
+                      src={step.image.src || step.image}
                       alt={`${step.title} screenshot`}
                       className="mt-4 w-full h-auto max-w-md rounded-lg shadow-md cursor-pointer transition transform hover:scale-105"
                       onClick={() => setZoomImage(step.image)}
@@ -268,7 +268,7 @@ export default function VerificationPage() {
             <FaTimes />
           </button>
           <img
-            src={zoomImage}
+            src={zoomImage.src || zoomImage}
             alt="Zoomed"
             className="max-w-[90vw] max-h-[80vh] rounded-lg shadow-lg transform scale-95 animate-scaleUp"
           />

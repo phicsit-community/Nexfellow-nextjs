@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./Leaderboard.module.css";
 import SEARCH from "./assets/search.svg";
 import {
@@ -195,11 +195,11 @@ const Leaderboard = () => {
   const fetchCommunities = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get("/community/");
+      const response = await api.get("/community/");
       const communityDataWithReputation = await Promise.all(
         response.data.map(async (community) => {
           try {
-            const repRes = await axios.get(
+            const repRes = await api.get(
               `/analytics/${community._id}/reputation`
             );
             return {
@@ -336,7 +336,7 @@ const Leaderboard = () => {
       <div className={styles.leaderboard}>
         <div className={styles.searchBar}>
           <div className={styles.search}>
-            <img src={SEARCH} alt="search" />
+            <img src={SEARCH?.src || SEARCH} alt="search" />
             <input
               type="text"
               placeholder="Search owner by name..."
@@ -456,7 +456,7 @@ const Leaderboard = () => {
                 country={topThree[1]?.owner?.country || "N/A"}
                 rating={Math.round(topThree[1]?.reputationScore)}
                 onClick={() =>
-                  router.push(`/community/${topThree[1]?.owner?.username}`)
+                  topThree[1]?.owner?.username && router.push(`/community/${topThree[1].owner.username}`)
                 }
               />
               <TopCard1
@@ -466,7 +466,7 @@ const Leaderboard = () => {
                 country={topThree[0]?.owner?.country || "N/A"}
                 rating={Math.round(topThree[0]?.reputationScore)}
                 onClick={() =>
-                  router.push(`/community/${topThree[0]?.owner?.username}`)
+                  topThree[0]?.owner?.username && router.push(`/community/${topThree[0].owner.username}`)
                 }
               />
               <TopCard2
@@ -476,7 +476,7 @@ const Leaderboard = () => {
                 country={topThree[2]?.owner?.country || "N/A"}
                 rating={Math.round(topThree[2]?.reputationScore)}
                 onClick={() =>
-                  router.push(`/community/${topThree[2]?.owner?.username}`)
+                  topThree[2]?.owner?.username && router.push(`/community/${topThree[2].owner.username}`)
                 }
               />
             </>

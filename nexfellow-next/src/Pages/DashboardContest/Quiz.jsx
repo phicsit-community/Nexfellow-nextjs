@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter, useParams, usePathname } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import {
   Calendar,
   Clock,
@@ -289,7 +289,7 @@ const Quiz = () => {
   const fetchQuiz = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`/community/quizzes/${id}`, {
+      const response = await api.get(`/community/quizzes/${id}`, {
         withCredentials: true,
       });
 
@@ -320,7 +320,7 @@ const Quiz = () => {
   const fetchQuestions = useCallback(async () => {
     setQuestionsLoading(true);
     try {
-      const response = await axios.get(`/community/creator/${id}/questions`, {
+      const response = await api.get(`/community/creator/${id}/questions`, {
         withCredentials: true,
       });
       setAllQuestions(response.data.questions);
@@ -336,7 +336,7 @@ const Quiz = () => {
   const fetchParticipants = useCallback(async () => {
     setParticipantsLoading(true);
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `/community/quizzes/${id}/participants`,
         {
           withCredentials: true,
@@ -360,7 +360,7 @@ const Quiz = () => {
 
     try {
       setIsCalculatingResult(true);
-      const response = await axios.post(
+      const response = await api.post(
         `/community/quizzes/${id}/leaderboard`,
         {},
         {

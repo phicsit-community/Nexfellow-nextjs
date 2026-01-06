@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaDownload, FaEdit, FaMoon, FaSun, FaTimes } from "react-icons/fa";
 import MiniFooter from "../components/MiniFooter.jsx";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import { CgProfile } from "react-icons/cg";
 import { FaCircleChevronRight } from "react-icons/fa6";
 import { IoMdInformationCircle } from "react-icons/io";
@@ -10,7 +10,7 @@ import { MdAccountCircle } from "react-icons/md";
 export default function AccountSetup() {
   const [activeStep, setActiveStep] = useState(0);
   const [zoomImage, setZoomImage] = useState(null);
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const timelineRef = useRef(null);
   const cyan = "#0E7C86";
 

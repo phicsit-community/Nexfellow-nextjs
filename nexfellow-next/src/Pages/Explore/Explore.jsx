@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -66,12 +66,12 @@ const Explore = () => {
     debounce(async () => {
       try {
         setLoading(true);
-        const response = await axios.get("/community/");
+        const response = await api.get("/community/");
 
         const communityDataWithReputation = await Promise.all(
           response.data.map(async (community) => {
             try {
-              const repRes = await axios.get(
+              const repRes = await api.get(
                 `/analytics/${community._id}/reputation`
               );
               return {
@@ -173,12 +173,12 @@ const Explore = () => {
     debounce(async () => {
       try {
         setLoading(true);
-        const response = await axios.get("/explore/all-communities");
+        const response = await api.get("/explore/all-communities");
         // Optionally fetch reputation for each community as before
         const communityDataWithReputation = await Promise.all(
           response.data.map(async (community) => {
             try {
-              const repRes = await axios.get(
+              const repRes = await api.get(
                 `/analytics/${community._id}/reputation`
               );
               return {
@@ -231,7 +231,7 @@ const Explore = () => {
   useEffect(() => {
     const fetchBookmarkedCommunities = async () => {
       try {
-        const res = await axios.get("/bookmarks/user?itemType=Community");
+        const res = await api.get("/bookmarks/user?itemType=Community");
         setBookmarkedCommunities(
           (res.data.bookmarks || []).map(
             (b) => b.bookmarkItem?._id || b.bookmarkItem
@@ -258,7 +258,7 @@ const Explore = () => {
         transition={{ duration: 0.5 }}
       >
         <img
-          src={exploreBannerDesktop}
+          src={exploreBannerDesktop?.src || exploreBannerDesktop}
           alt="Explore Banner"
           className={styles.exploreBannerImage}
         />
@@ -494,12 +494,12 @@ export const ExploreCard = ({
   const [isBlocked, setIsBlocked] = useState(false);
   const [isUnblocking, setIsUnblocking] = useState(false);
   const ownerName = community.owner?.name || "Unknown Owner";
-  const headerImage = community.owner?.banner || CardBanner;
-  const profilePic = community.owner?.picture || ProfileImage;
+  const headerImage = community.owner?.banner || (CardBanner?.src || CardBanner);
+  const profilePic = community.owner?.picture || (ProfileImage?.src || ProfileImage);
   const tag = community.category.length > 0 ? community.category[0] : "No Tag";
   const membersCount = community.owner?.followers?.length || 0;
   const communityUsername = community.owner?.username;
-  const communityLink = `/explore/${communityUsername}`;
+  const communityLink = communityUsername ? `/explore/${communityUsername}` : "#";
   const communityOwnerId = community.owner?._id;
   const [reputationScore, setReputationScore] = useState(
     propReputation !== undefined
@@ -517,7 +517,7 @@ export const ExploreCard = ({
     // Check if this community is blocked
     const checkIfBlocked = async () => {
       try {
-        const response = await axios.get("/user/blocked-users");
+        const response = await api.get("/user/blocked-users");
         const blockedUsers = response.data.blockedUsers || [];
         setIsBlocked(
           blockedUsers.some((user) => user._id === communityOwnerId)
@@ -576,7 +576,7 @@ export const ExploreCard = ({
 
     setIsUnblocking(true);
     try {
-      await axios.post(`/user/unblock/${communityOwnerId}`);
+      await api.post(`/user/unblock/${communityOwnerId}`);
       setIsBlocked(false);
       toast.success(`${ownerName} has been unblocked`);
     } catch (error) {
@@ -598,11 +598,11 @@ export const ExploreCard = ({
     setBookmarkLoading(true);
     try {
       if (!isBookmarked) {
-        await axios.post(`/bookmarks/Community/${community._id}`);
+        await api.post(`/bookmarks/Community/${community._id}`);
         setIsBookmarked(true);
         toast.success("Community bookmarked!");
       } else {
-        await axios.delete(`/bookmarks/Community/${community._id}`);
+        await api.delete(`/bookmarks/Community/${community._id}`);
         setIsBookmarked(false);
         toast.info("Bookmark removed!");
       }
@@ -691,7 +691,7 @@ export const ExploreCard = ({
           <span className={styles.communityFollowers}>
             <img
               className={styles.followersIcon}
-              src={tr}
+              src={tr?.src || tr}
               alt="Followers Icon"
               style={{ marginRight: "5px" }}
             />

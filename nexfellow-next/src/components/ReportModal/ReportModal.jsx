@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./ReportModal.module.css";
 import { IoClose } from "react-icons/io5";
 import { MdReport, MdUploadFile } from "react-icons/md";
@@ -74,7 +74,7 @@ const ReportModal = ({ isOpen, onClose, postId, authorId }) => {
         formData.append("images", image);
       });
 
-      const response = await axios.post("/report/create", formData, {
+      const response = await api.post("/report/create", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

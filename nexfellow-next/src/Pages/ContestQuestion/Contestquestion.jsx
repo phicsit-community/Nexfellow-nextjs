@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import logo from "./assets/NexFellowLogo.svg";
 import { toast, ToastContainer } from "react-toastify";
-import axios from "axios";
+import api from "../../lib/axios";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { MdGridView } from "react-icons/md";
@@ -68,7 +68,7 @@ const ContestQuestion = () => {
           ? `/community/user/${id}/questions`
           : `/quiz/getQuestions/${id}`;
 
-        const response = await axios.get(endpoint);
+        const response = await api.get(endpoint);
         console.log(response);
         const { questions, duration } = response.data; // Determine timer mode
         const hasQuestionTimeLimits = questions.some((q) => q.timeLimit);
@@ -277,7 +277,7 @@ const ContestQuestion = () => {
         ? `/community/quizzes/${id}/submit`
         : `/quiz/submitQuiz/${id}`;
 
-      const response = await axios.post(endpoint, {
+      const response = await api.post(endpoint, {
         answers: formattedResponses,
         timeTaken,
       });
@@ -628,7 +628,7 @@ const ContestQuestion = () => {
       <nav className={styles.navbar}>
         <div className={styles.logoContainer}>
           <Link to="/">
-            <img src={logo} alt="Logo" className={styles.logo} />
+            <img src={logo?.src || logo} alt="Logo" className={styles.logo} />
           </Link>
         </div>
         <div className={styles.timerSection}>

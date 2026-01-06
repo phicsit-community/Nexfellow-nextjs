@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 import Link from "next/link";
-import axios from "axios";
+import api from "../../lib/axios";
 import { useMediaQuery } from "react-responsive";
 
 // styles
@@ -22,6 +23,7 @@ import AnimatedSettings from "./animated/settings.json";
 function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const [activeTab, setActiveTab] = useState(pathname);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
@@ -34,6 +36,8 @@ function Sidebar() {
   }, [pathname]);
 
   useEffect(() => {
+    if (!isLoggedIn) return;
+
     const fetchUserData = async () => {
       setLoading(true);
       setError(null);
@@ -41,7 +45,7 @@ function Sidebar() {
         const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
         const userId = userData?.id;
         if (!userId) throw new Error("User ID is missing");
-        const response = await axios.get(`/user/profile`);
+        const response = await api.get(`/user/profile`);
         setUser(response.data);
       } catch (err) {
         setError("Failed to load user data: " + err.message);
@@ -50,7 +54,7 @@ function Sidebar() {
       }
     };
     fetchUserData();
-  }, []);
+  }, [isLoggedIn]);
 
   const menuItems = [
     { path: "/feed", icon: AnimatedHome, label: "Home" },
@@ -58,9 +62,9 @@ function Sidebar() {
     { path: "/leaderboard", icon: AnimatedLeaderboard, label: "Leaderboard" },
     {
       path: "/communities",
-      icon: AnimatedCommunity,
+      icon: AnimatedCommunity?.src || AnimatedCommunity,
       label: "Communities",
-      staticIcon: staticCommuntiy.src || staticCommuntiy,
+      staticIcon: staticCommuntiy?.src || staticCommuntiy,
     },
     { path: "/inbox", icon: AnimatedMessenger, label: "Inbox" },
   ];
@@ -73,7 +77,7 @@ function Sidebar() {
     if (loading) return;
     setLoading(true);
     try {
-      const response = await axios.get("/user/logout", { withCredentials: true });
+      const response = await api.get("/user/logout", { withCredentials: true });
       if (response.status === 200) {
         localStorage.clear();
         router.push("/login");
@@ -128,10 +132,10 @@ function Sidebar() {
 
           <Link
             className={style.amLink}
-            href={`/dashboard/${user?.username}`}
+            href={user?.username ? `/dashboard/${user.username}` : "#"}
             onClick={() => setActiveTab("/profile")}
           >
-            <p
+            <div
               className={style.amItems}
               onMouseEnter={() => setHoveredIndex(5)}
               onMouseLeave={() => setHoveredIndex(null)}
@@ -144,7 +148,7 @@ function Sidebar() {
                 />
               </div>
               <span>Profile</span>
-            </p>
+            </div>
           </Link>
 
           <Link
@@ -152,7 +156,7 @@ function Sidebar() {
             href={`/settings`}
             onClick={() => setActiveTab("/settings")}
           >
-            <p
+            <div
               className={style.amItems}
               onMouseEnter={() => setHoveredIndex(6)}
               onMouseLeave={() => setHoveredIndex(null)}
@@ -165,7 +169,7 @@ function Sidebar() {
                 />
               </div>
               <span>Settings</span>
-            </p>
+            </div>
           </Link>
 
           {/* Optional logout block remains commented as in original */}

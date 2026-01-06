@@ -7,7 +7,7 @@ import styles from "./CreateChallengeOverlay.module.css";
 
 // components
 import Switch from "@mui/material/Switch";
-import axios from "axios";
+import api from "../../lib/axios";
 import moment from "moment";
 import {
   DatePicker,
@@ -499,7 +499,7 @@ const CreateChallengeOverlay = ({
         checkpointRewardsCount: checkpointRewards.length,
       });
 
-      const response = await axios.post(
+      const response = await api.post(
         "/challenge/create",
         formData,
         {},
@@ -578,12 +578,12 @@ const CreateChallengeOverlay = ({
                     className={styles.challengeImage}
                   />
                   <button className={styles.editIcon}>
-                    <img src={edit} alt="Edit" />
+                    <img src={edit?.src || edit} alt="Edit" />
                   </button>
                 </>
               ) : (
                 <div className={styles.challengeImage}>
-                  <img src={trophy} alt="Default Trophy" />
+                  <img src={trophy?.src || trophy} alt="Default Trophy" />
                 </div>
               )}
             </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import MetaTags from "../../components/MetaTags/MetaTags";
 
 // styles
@@ -103,20 +103,20 @@ const Community = () => {
       const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
       const currentUserId = userData?.id;
       if (!currentUserId) throw new Error("User ID is missing");
-      const response = await axios.get(`/community/username/${username}`);
+      const response = await api.get(`/community/username/${username}`);
       const fetchedCommunity = response.data;
       setCommunity(fetchedCommunity);
       setCommunityOwnerId(fetchedCommunity.owner?._id);
       setCommunityId(fetchedCommunity._id);
 
-      const blockedResponse = await axios.get("/user/blocked-users", getAuthHeaders());
+      const blockedResponse = await api.get("/user/blocked-users", getAuthHeaders());
       const blockedUsers = blockedResponse.data.blockedUsers || [];
       const isOwnerBlocked = blockedUsers.some(
         (user) => user._id === fetchedCommunity.owner?._id
       );
       setIsBlocked(isOwnerBlocked);
 
-      const mutedResponse = await axios.get("/user/muted-users", getAuthHeaders());
+      const mutedResponse = await api.get("/user/muted-users", getAuthHeaders());
       const mutedUsers = mutedResponse.data.mutedUsers || [];
       const isOwnerMuted = mutedUsers.some(
         (user) => user._id === fetchedCommunity.owner?._id
@@ -125,7 +125,7 @@ const Community = () => {
 
       if (fetchedCommunity._id) {
         try {
-          const res = await axios.get(
+          const res = await api.get(
             `/bookmarks/check/Community/${fetchedCommunity._id}`,
             getAuthHeaders()
           );
@@ -136,7 +136,7 @@ const Community = () => {
       }
 
       if (fetchedCommunity.owner?._id && currentUserId) {
-        const followResponse = await axios.get(
+        const followResponse = await api.get(
           `/user/followStatus/${fetchedCommunity.owner._id}`,
           getAuthHeaders()
         );
@@ -190,7 +190,7 @@ const Community = () => {
     setError(null);
     try {
       const action = followStatus ? "unfollow" : "follow";
-      const response = await axios.post(
+      const response = await api.post(
         `/user/toggleFollow/${communityOwnerId}`,
         { action },
         getAuthHeaders()
@@ -211,7 +211,7 @@ const Community = () => {
     if (!communityOwnerId) return;
     setIsUnblocking(true);
     try {
-      await axios.post(`/user/unblock/${communityOwnerId}`, {}, getAuthHeaders());
+      await api.post(`/user/unblock/${communityOwnerId}`, {}, getAuthHeaders());
       setIsBlocked(false);
       toast.success(`${community.owner?.name} has been unblocked`);
     } catch {
@@ -226,11 +226,11 @@ const Community = () => {
     setBookmarkLoading(true);
     try {
       if (!isBookmarked) {
-        await axios.post(`/bookmarks/Community/${communityId}`, {}, getAuthHeaders());
+        await api.post(`/bookmarks/Community/${communityId}`, {}, getAuthHeaders());
         setIsBookmarked(true);
         toast.success("Community bookmarked!");
       } else {
-        await axios.delete(`/bookmarks/Community/${communityId}`, getAuthHeaders());
+        await api.delete(`/bookmarks/Community/${communityId}`, getAuthHeaders());
         setIsBookmarked(false);
         toast.info("Bookmark removed!");
       }
@@ -451,7 +451,7 @@ const Community = () => {
                       }}
                       aria-label="Message owner"
                     >
-                      <img src={Msgicon} alt="Message" className={styles.svgIcon} />
+                      <img src={Msgicon?.src || Msgicon} alt="Message" className={styles.svgIcon} />
                     </button>
 
                     <button
@@ -467,7 +467,7 @@ const Community = () => {
                         }
                       }}
                     >
-                      <img src={Webicon} alt="Website" className={styles.svgIcon} />
+                      <img src={Webicon?.src || Webicon} alt="Website" className={styles.svgIcon} />
                     </button>
 
                     {/* Share icon removed from here; Share is now in 3-dots menu */}

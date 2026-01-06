@@ -31,7 +31,9 @@ const AllCommunitiesPage = () => {
   };
 
   const handleCardClick = (community) => {
-    router.push(`/community/${community.owner?.username}`);
+    if (community.owner?.username) {
+      router.push(`/community/${community.owner.username}`);
+    }
   };
 
   useEffect(() => {

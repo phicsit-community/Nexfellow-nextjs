@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { useRouter } from "next/navigation";
 import { IoSearchOutline } from "react-icons/io5";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./LikesModal.module.css";
 
 const LikesModal = ({ profiles, onClose }) => {
@@ -25,7 +25,7 @@ const LikesModal = ({ profiles, onClose }) => {
         await Promise.all(
           profiles.map(async (profile) => {
             try {
-              const response = await axios.get(
+              const response = await api.get(
                 `/user/followStatus/${profile._id}`
               );
               statusData[profile._id] = response.data.isFollowing;
@@ -77,7 +77,7 @@ const LikesModal = ({ profiles, onClose }) => {
     const action = followStatus[profileId] ? "unfollow" : "follow";
 
     try {
-      const response = await axios.post(`/user/toggleFollow/${profileId}`, {
+      const response = await api.post(`/user/toggleFollow/${profileId}`, {
         action,
       });
 

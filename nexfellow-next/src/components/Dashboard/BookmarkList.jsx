@@ -6,7 +6,7 @@ import { MdOutlineArticle } from "react-icons/md";
 import { FiSearch, FiChevronDown } from "react-icons/fi";
 import { LuArrowDownUp } from "react-icons/lu";
 import { ThreeDots } from "react-loader-spinner";
-import axios from "axios";
+import api from "../../lib/axios";
 import BookmarkPostCard from "./BookmarkPostCard";
 import BookmarkContestCard from "./BookmarkContestCard";
 import BookmarkCommunityCard from "./BookmarkCommunityCard";
@@ -66,9 +66,9 @@ const BookmarkList = () => {
         const fetchCounts = async () => {
             try {
                 const [postsRes, contestsRes, communitiesRes] = await Promise.all([
-                    axios.get(CATEGORY_MAP.posts.endpoint, { withCredentials: true }),
-                    axios.get(CATEGORY_MAP.contests.endpoint, { withCredentials: true }),
-                    axios.get(CATEGORY_MAP.communities.endpoint, { withCredentials: true }),
+                    api.get(CATEGORY_MAP.posts.endpoint, { withCredentials: true }),
+                    api.get(CATEGORY_MAP.contests.endpoint, { withCredentials: true }),
+                    api.get(CATEGORY_MAP.communities.endpoint, { withCredentials: true }),
                 ]);
                 setCounts({
                     posts: postsRes.data.bookmarks?.length || 0,
@@ -89,7 +89,7 @@ const BookmarkList = () => {
             setError(null);
             setItems([]);
             try {
-                const res = await axios.get(CATEGORY_MAP[category].endpoint, {
+                const res = await api.get(CATEGORY_MAP[category].endpoint, {
                     withCredentials: true,
                 });
                 setItems(res.data.bookmarks || []);

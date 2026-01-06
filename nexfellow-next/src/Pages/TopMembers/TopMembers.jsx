@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import { useParams, useRouter } from "next/navigation";
 import VERIFY from "./assets/badge2.svg";
 import COMMUNITY_BADGE from "./assets/badge3.svg";
@@ -85,7 +85,7 @@ const TopMembers = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get(`/community/id/${communityId}`);
+        const { data } = await api.get(`/community/id/${communityId}`);
         const comm = data.community;
         const followersList = comm.owner.followers || [];
         setCommunity(comm);
@@ -95,7 +95,7 @@ const TopMembers = () => {
         const isOwnerOfCommunity = comm.owner?._id === loggedInUser?.id;
         setIsOwner(isOwnerOfCommunity);
 
-        const topRes = await axios.get(`/community/${communityId}/top-members`);
+        const topRes = await api.get(`/community/${communityId}/top-members`);
         const topIds = topRes.data.topMembers.map((m) => m._id || m);
         const fullTopMembers = followersList.filter((f) =>
           topIds.includes(f._id)
@@ -147,7 +147,7 @@ const TopMembers = () => {
       }
 
       const topMemberIds = updatedTopMembers.map((m) => m._id);
-      const { data } = await axios.patch(
+      const { data } = await api.patch(
         `/community/${communityId}/top-members`,
         {
           topMembers: topMemberIds,
@@ -179,7 +179,7 @@ const TopMembers = () => {
       }
 
       const topMemberIds = newTopMembers.map((m) => m._id);
-      const { data } = await axios.patch(
+      const { data } = await api.patch(
         `/community/${communityId}/top-members`,
         {
           topMembers: topMemberIds,
@@ -349,7 +349,7 @@ const TopMembers = () => {
                           "Organization" ? (
                           <span className={styles.badgePill}>
                             <img
-                              src={COMMUNITY_BADGE}
+                              src={COMMUNITY_BADGE?.src || COMMUNITY_BADGE}
                               className={styles.badge}
                               alt="Community Badge"
                             />
@@ -358,7 +358,7 @@ const TopMembers = () => {
                         ) : (
                           <span className={styles.badgePill}>
                             <img
-                              src={VERIFY}
+                              src={VERIFY?.src || VERIFY}
                               className={styles.badge}
                               alt="Verified Badge"
                             />
@@ -368,7 +368,7 @@ const TopMembers = () => {
                       ) : user.verificationBadge ? (
                         <span className={styles.badgePill}>
                           <img
-                            src={VERIFY}
+                            src={VERIFY?.src || VERIFY}
                             className={styles.badge}
                             alt="Verified Badge"
                           />
@@ -449,7 +449,7 @@ const TopMembers = () => {
                       user.createdCommunity?.accountType === "Organization" ? (
                         <span className={styles.badgePill}>
                           <img
-                            src={COMMUNITY_BADGE}
+                            src={COMMUNITY_BADGE?.src || COMMUNITY_BADGE}
                             className={styles.badge}
                             alt="Community Badge"
                           />
@@ -458,7 +458,7 @@ const TopMembers = () => {
                       ) : (
                         <span className={styles.badgePill}>
                           <img
-                            src={VERIFY}
+                            src={VERIFY?.src || VERIFY}
                             className={styles.badge}
                             alt="Verified Badge"
                           />
@@ -468,7 +468,7 @@ const TopMembers = () => {
                     ) : user.verificationBadge ? (
                       <span className={styles.badgePill}>
                         <img
-                          src={VERIFY}
+                          src={VERIFY?.src || VERIFY}
                           className={styles.badge}
                           alt="Verified Badge"
                         />

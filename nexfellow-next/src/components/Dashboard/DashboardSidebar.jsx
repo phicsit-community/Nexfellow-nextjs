@@ -66,42 +66,48 @@ const DashboardSidebar = ({
     </div>
   );
 
-  const renderSidebarItem = (path, icon, title, description) => (
-    <div className={styles.itemWrapper}>
+  const renderSidebarItem = (path, icon, title, description) => {
+    const href = isLocked || !communityId ? "#" : `${path}/${communityId}`;
+    return (
+      <div className={styles.itemWrapper}>
+        <Link
+          href={href}
+          className={`${styles.item} ${isActive(`${path}/${communityId}`) ? styles.active : ""
+            }`}
+          onClick={() => !isLocked && communityId && handleTabClick(`${path}/${communityId}`)}
+        >
+          <div className={styles.icon}>{icon}</div>
+          <div>
+            <h4 className={styles.title}>{title}</h4>
+            <p className={styles.description}>{description}</p>
+          </div>
+          {isLocked && (
+            <div className={styles.lockOverlay}>
+              <img src={lockIcon?.src || lockIcon} alt="" className={styles.lockIcon} />
+            </div>
+          )}
+        </Link>
+      </div>
+    );
+  };
+
+  const renderMiniSidebarItem = (path, icon, title) => {
+    const href = isLocked || !communityId ? "#" : `${path}/${communityId}`;
+    return (
       <Link
-        href={isLocked ? "#" : `${path}/${communityId}`}
-        className={`${styles.item} ${isActive(`${path}/${communityId}`) ? styles.active : ""
-          }`}
-        onClick={() => !isLocked && handleTabClick(`${path}/${communityId}`)}
+        href={href}
+        className={styles.miniMobileItem}
+        onClick={() => !isLocked && communityId && handleTabClick(`${path}/${communityId}`)}
       >
-        <div className={styles.icon}>{icon}</div>
-        <div>
-          <h4 className={styles.title}>{title}</h4>
-          <p className={styles.description}>{description}</p>
-        </div>
+        {icon} {title}
         {isLocked && (
           <div className={styles.lockOverlay}>
-            <img src={lockIcon} alt="" className={styles.lockIcon} />
+            <img src={lockIcon?.src || lockIcon} alt="" className={styles.lockIcon} />
           </div>
         )}
       </Link>
-    </div>
-  );
-
-  const renderMiniSidebarItem = (path, icon, title) => (
-    <Link
-      href={isLocked ? "#" : `${path}/${communityId}`}
-      className={styles.miniMobileItem}
-      onClick={() => !isLocked && handleTabClick(`${path}/${communityId}`)}
-    >
-      {icon} {title}
-      {isLocked && (
-        <div className={styles.lockOverlay}>
-          <img src={lockIcon} alt="" className={styles.lockIcon} />
-        </div>
-      )}
-    </Link>
-  );
+    );
+  };
 
   if (loading) {
     return (

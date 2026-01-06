@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import { getSocket } from "../../utils/socket";
 import { toast } from "sonner";
 import {
@@ -159,7 +159,7 @@ const Inbox = () => {
 
         // Mark messages as read on the server if received from other user
         if (msgSenderId !== me) {
-          axios.patch(`/api/your-endpoint/messages/${convId}/read`).catch(() => { });
+          api.patch(`/api/your-endpoint/messages/${convId}/read`).catch(() => { });
         }
       }
 
@@ -395,7 +395,7 @@ const Inbox = () => {
   const fetchConversations = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("/direct-messages/conversations");
+      const response = await api.get("/direct-messages/conversations");
       const sorted = (response.data.conversations || []).sort(
         (a, b) =>
           new Date(b.lastUpdatedAt || b.createdAt) -
@@ -413,7 +413,7 @@ const Inbox = () => {
 
   const fetchMessageRequests = async () => {
     try {
-      const response = await axios.get("/direct-messages/requests");
+      const response = await api.get("/direct-messages/requests");
       setMessageRequests(response.data.requests || []);
     } catch (error) {
       console.error("Error fetching message requests:", error);
@@ -487,13 +487,13 @@ const Inbox = () => {
   const fetchMessages = async (conversationId) => {
     if (!conversationId) return;
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `/direct-messages/conversations/${conversationId}`
       );
       setMessages(response.data.messages || []);
 
       // Mark as read server-side
-      await axios.patch(`/direct-messages/conversations/${conversationId}/read`);
+      await api.patch(`/direct-messages/conversations/${conversationId}/read`);
 
       // Locally mark conversation as read
       setConversations((prev) =>
@@ -549,7 +549,7 @@ const Inbox = () => {
     handleTyping(false);
 
     try {
-      const response = await axios.post("/direct-messages/send", {
+      const response = await api.post("/direct-messages/send", {
         recipientId: sel.otherUser._id,
         content: contentToSend,
       });
@@ -647,7 +647,7 @@ const Inbox = () => {
 
   const handleAcceptRequest = async (requestId) => {
     try {
-      await axios.post("/direct-messages/requests/handle", {
+      await api.post("/direct-messages/requests/handle", {
         conversationId: requestId,
         action: "accept",
       });
@@ -662,7 +662,7 @@ const Inbox = () => {
 
   const handleRejectRequest = async (requestId) => {
     try {
-      await axios.post("/direct-messages/requests/handle", {
+      await api.post("/direct-messages/requests/handle", {
         conversationId: requestId,
         action: "reject",
       });
@@ -676,7 +676,7 @@ const Inbox = () => {
 
   const handleBlockRequest = async (requestId) => {
     try {
-      await axios.post("/direct-messages/requests/handle", {
+      await api.post("/direct-messages/requests/handle", {
         conversationId: requestId,
         action: "block",
       });
@@ -696,7 +696,7 @@ const Inbox = () => {
 
     setIsSearching(true);
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `/direct-messages/search-users?query=${encodeURIComponent(searchQuery)}`
       );
       setSearchResults(response.data.users || []);
@@ -769,7 +769,7 @@ const Inbox = () => {
   const confirmDeleteConversation = async () => {
     if (!deleteConversationId) return;
     try {
-      await axios.delete(`/direct-messages/conversations/${deleteConversationId}`);
+      await api.delete(`/direct-messages/conversations/${deleteConversationId}`);
       // Remove locally
       setConversations((prev) =>
         prev.filter((c) => str(c._id) !== str(deleteConversationId))
@@ -795,7 +795,7 @@ const Inbox = () => {
       return;
     }
     try {
-      await axios.post("/direct-messages/block", { targetId: targetUserId });
+      await api.post("/direct-messages/block", { targetId: targetUserId });
       toast.success("User blocked");
       // optionally refresh conversations
       fetchConversations();
@@ -811,7 +811,7 @@ const Inbox = () => {
       return;
     }
     try {
-      await axios.post("/direct-messages/unblock", { targetId: targetUserId });
+      await api.post("/direct-messages/unblock", { targetId: targetUserId });
       toast.success("User unblocked");
       fetchConversations();
     } catch (e) {
@@ -911,7 +911,7 @@ const Inbox = () => {
       console.error("Profile redirect failed:", err);
 
       const idOrName = userToView.username || userToView._id;
-      if (idOrName) navigate(`/user/${encodeURIComponent(String(idOrName))}`);
+      if (idOrName) router.push(`/user/${encodeURIComponent(String(idOrName))}`);
     }
   };
 
@@ -937,7 +937,7 @@ const Inbox = () => {
       >
         <div className={styles.sidebarHeader}>
           <div>
-            <img src={messageIcon} />
+            <img src={messageIcon?.src || messageIcon} />
             <h2>Messages</h2>
           </div>
           <button
@@ -950,7 +950,7 @@ const Inbox = () => {
         </div>
 
         <div className={styles.searchUsers}>
-          <img src={searchIcon} />
+          <img src={searchIcon?.src || searchIcon} />
           <input
             type="text"
             value={searchQueryforChat}
@@ -1371,7 +1371,7 @@ const Inbox = () => {
           </>
         ) : (
           <div className={styles.noConversationSelected}>
-            <img src={newConvImg} />
+            <img src={newConvImg?.src || newConvImg} />
             <h3>Select a conversation or start a new one</h3>
             <h4>
               Choose from your existing conversations or start a new chat with

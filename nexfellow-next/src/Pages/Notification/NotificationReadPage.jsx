@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter, usePathname } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./NotificationReadPage.module.css";
 import BackButton from "../../components/BackButton/BackButton";
 import ReactQuill from "react-quill";
@@ -29,7 +29,7 @@ const NotificationReadPage = () => {
         const endpoint = isSystem
           ? `/systemNotifications/${id}`
           : `/notifications/${id}`;
-        const res = await axios.get(endpoint);
+        const res = await api.get(endpoint);
         setNotification(res.data.notification);
       } catch (error) {
         console.error("Error fetching notification:", error);
@@ -53,7 +53,7 @@ const NotificationReadPage = () => {
       ) {
         setCheckingReview(true);
         try {
-          const res = await axios.get(`/post/${notification.meta.postId}`);
+          const res = await api.get(`/post/${notification.meta.postId}`);
           setPostStatus(res.data.post);
         } catch (e) {
           setPostStatus(null);
@@ -71,7 +71,7 @@ const NotificationReadPage = () => {
     }
     setAppealing(true);
     try {
-      await axios.post(
+      await api.post(
         `/admin/posts/${notification.meta.postId}/request-review`,
         {},
         { withCredentials: true }

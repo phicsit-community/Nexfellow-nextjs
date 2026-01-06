@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import { FaMoon, FaSun, FaSearch, FaBookmark, FaFilter, FaDownload, FaEdit } from "react-icons/fa";
 import { motion, useScroll, useSpring } from "framer-motion";
 import MiniFooter from "../components/MiniFooter.jsx";
@@ -11,7 +11,7 @@ import { MdAccountCircle } from "react-icons/md";
 const ACCENT = "#0E7C86";
 
 export default function BookMark() {
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const toggleTheme = () => setDarkMode((v) => !v);
 
   const timelineRef = useRef(null);
@@ -66,9 +66,8 @@ export default function BookMark() {
               </span>
             </p>
             <h1
-              className={`text-3xl font-semibold mt-2 ${
-                darkMode ? "text-white" : "text-[#0E7C86]"
-              }`}
+              className={`text-3xl font-semibold mt-2 ${darkMode ? "text-white" : "text-[#0E7C86]"
+                }`}
             >
               How to bookmark a Post on NexFellow?
             </h1>
@@ -99,9 +98,9 @@ export default function BookMark() {
         <p
           className={`mt-6 leading-relaxed ${darkMode ? "text-[#D0CACA]" : "text-black"}`}
         >
-          Bookmarks make it easy to save important posts, discussions, or announcements so you can revisit 
-          them anytime. Instead of losing track in the feed, you can organize and access bookmarked content 
-          in one place, helping you stay updated, review useful insights, or catch up on information at your 
+          Bookmarks make it easy to save important posts, discussions, or announcements so you can revisit
+          them anytime. Instead of losing track in the feed, you can organize and access bookmarked content
+          in one place, helping you stay updated, review useful insights, or catch up on information at your
           convenience.
         </p>
 
@@ -109,11 +108,10 @@ export default function BookMark() {
           {highlights.map((item) => (
             <div
               key={item.id}
-              className={`flex flex-col items-start gap-3 p-6 rounded-2xl shadow-md transform transition hover:scale-105 ${
-                darkMode
-                  ? "bg-[#006C69] text-white hover:bg-[#0E7C86]"
-                  : "bg-[#006C69] text-white hover:bg-[#0C6D75]"
-              }`}
+              className={`flex flex-col items-start gap-3 p-6 rounded-2xl shadow-md transform transition hover:scale-105 ${darkMode
+                ? "bg-[#006C69] text-white hover:bg-[#0E7C86]"
+                : "bg-[#006C69] text-white hover:bg-[#0C6D75]"
+                }`}
             >
               {/* <div className="text-2xl">{item.icon}</div> */}
               <h3 className="text-lg text-center w-full font-semibold">{item.title}</h3>
@@ -170,7 +168,7 @@ export default function BookMark() {
                 className={`mt-4 rounded-2xl border ${panelBorder} ${panelBg} overflow-hidden`}
               >
                 <img
-                  src={step2Shot}
+                  src={step2Shot.src || step2Shot}
                   alt="Step 2 — Profile > Bookmarks"
                   loading="lazy"
                   className="w-full h-auto block"
@@ -197,7 +195,7 @@ export default function BookMark() {
                 className={`mt-4 rounded-2xl border ${panelBorder} ${panelBg} overflow-hidden`}
               >
                 <img
-                  src={step3Shot}
+                  src={step3Shot.src || step3Shot}
                   alt="Step 3 — Saved items view"
                   loading="lazy"
                   className="w-full h-auto block"

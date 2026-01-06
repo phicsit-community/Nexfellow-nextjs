@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import {
   FaCalendarAlt,
   FaUsers,
@@ -21,7 +21,7 @@ import { IoStar } from 'react-icons/io5';
 export default function EventsPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [zoomImage, setZoomImage] = useState(null);
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const timelineRef = useRef(null);
   const cyan = "#0E7C86";
 
@@ -189,7 +189,7 @@ export default function EventsPage() {
               key={item.id}
               className={`flex items-center gap-3 p-5 rounded-2xl shadow-md transition transform hover:scale-105 ${darkMode
                 ? "bg-[#006C69] text-white hover:bg-[#006C69]"
-                  : "bg-[#006C69] text-white hover:bg-[#006C69]"
+                : "bg-[#006C69] text-white hover:bg-[#006C69]"
                 }`}
             >
               <div
@@ -257,7 +257,7 @@ export default function EventsPage() {
 
                   {step.image && (
                     <img
-                      src={step.image}
+                      src={step.image.src || step.image}
                       alt={`${step.title} screenshot`}
                       className="mt-4 w-full h-auto max-w-md rounded-lg shadow-md cursor-pointer transition transform hover:scale-105"
                       onClick={() => setZoomImage(step.image)}
@@ -280,7 +280,7 @@ export default function EventsPage() {
             <FaTimes />
           </button>
           <img
-            src={zoomImage}
+            src={zoomImage.src || zoomImage}
             alt="Zoomed"
             className="max-w-[90vw] max-h-[80vh] rounded-lg shadow-lg transform scale-95 animate-scaleUp"
           />

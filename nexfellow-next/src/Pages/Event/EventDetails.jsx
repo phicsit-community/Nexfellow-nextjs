@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./EventDetails.module.css";
 import BackButton from "../../components/BackButton/BackButton";
 import { LuShare2 } from "react-icons/lu";
@@ -44,14 +44,14 @@ const EventDetails = () => {
     try {
       setLoadingRegister(true);
       if (isRegistered) {
-        await axios.post(
+        await api.post(
           `/event/unregister/${eventId}`,
           {},
           { withCredentials: true }
         );
         toast.success("You have unregistered from the event!");
       } else {
-        await axios.post(
+        await api.post(
           `/event/register/${eventId}`,
           {},
           { withCredentials: true }
@@ -71,7 +71,7 @@ const EventDetails = () => {
     if (!eventId || !isRegistered) return;
 
     try {
-      await axios.post(
+      await api.post(
         `/event/unregister/${eventId}`,
         {},
         { withCredentials: true }
@@ -110,7 +110,7 @@ const EventDetails = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await axios.get(`/event/details/${eventId}`, {
+        const res = await api.get(`/event/details/${eventId}`, {
           withCredentials: true,
         });
         setEvent(res.data.event);
@@ -331,11 +331,11 @@ const EventDetails = () => {
                     onClick={handleAddToCalendar}
                   >
                     <div className={styles.calendarButtonContainer}>
-                      <img src={calendar} alt="calendar" />
+                      <img src={calendar?.src || calendar} alt="calendar" />
                       <span>Add to calendar</span>
                     </div>
                     <img
-                      src={caretRight}
+                      src={caretRight?.src || caretRight}
                       className={styles.arrow}
                       alt="caretRight"
                     />
@@ -346,11 +346,11 @@ const EventDetails = () => {
                       onClick={handleCancelAttendance}
                     >
                       <div className={styles.calendarButtonContainer}>
-                        <img src={userCircleDashed} alt="userCircleDashed" />
+                        <img src={userCircleDashed?.src || userCircleDashed} alt="userCircleDashed" />
                         <span>Cancel attendance</span>
                       </div>
                       <img
-                        src={caretRight}
+                        src={caretRight?.src || caretRight}
                         className={styles.arrow}
                         alt="caretRight"
                       />

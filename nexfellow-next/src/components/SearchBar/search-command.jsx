@@ -23,7 +23,7 @@ import {
   X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 
 import { BsArrowReturnLeft } from "react-icons/bs";
 
@@ -63,7 +63,7 @@ export default function SearchCommand() {
         if (e.ctrlKey || e.metaKey) {
           if (e.key === "p") {
             e.preventDefault();
-            router.push(`/dashboard/${user?.username}`);
+            if (user?.username) router.push(`/dashboard/${user.username}`);
             setOpen(false);
           } else if (e.key === "e") {
             e.preventDefault();
@@ -102,7 +102,7 @@ export default function SearchCommand() {
         }
 
         // Fetch user profile
-        const response = await axios.get(`/user/profile`);
+        const response = await api.get(`/user/profile`);
         setUser(response.data);
       } catch (err) {
         setError("Failed to load user data: " + err.message);
@@ -141,7 +141,7 @@ export default function SearchCommand() {
       <CommandDialog
         open={open}
         onOpenChange={setOpen}
-        className="w-full max-w-2xl z-[9999] "
+        className="w-full max-w-2xl z-9999"
         style={{
           padding: "2rem",
         }}
@@ -165,7 +165,7 @@ export default function SearchCommand() {
               <CommandGroup heading="Navigation">
                 <CommandItem
                   onSelect={() => {
-                    router.push(`/dashboard/${user?.username}`);
+                    if (user?.username) router.push(`/dashboard/${user.username}`);
                     setOpen(false);
                   }}
                   className="cursor-pointer flex items-center gap-2 justify-between"
@@ -426,7 +426,7 @@ export function SearchCommandMobile() {
         if (e.ctrlKey || e.metaKey) {
           if (e.key === "p") {
             e.preventDefault();
-            router.push(`/dashboard/${user?.username}`);
+            if (user?.username) router.push(`/dashboard/${user.username}`);
             setOpen(false);
           } else if (e.key === "e") {
             e.preventDefault();
@@ -465,7 +465,7 @@ export function SearchCommandMobile() {
         }
 
         // Fetch user profile
-        const response = await axios.get(`/user/profile`);
+        const response = await api.get(`/user/profile`);
         setUser(response.data);
       } catch (err) {
         setError("Failed to load user data: " + err.message);
@@ -490,7 +490,7 @@ export function SearchCommandMobile() {
       <CommandDialog
         open={open}
         onOpenChange={setOpen}
-        className="w-full max-w-2xl z-[9999] "
+        className="w-full max-w-2xl z-9999"
         style={{
           padding: "2rem",
         }}
@@ -514,7 +514,7 @@ export function SearchCommandMobile() {
               <CommandGroup heading="Navigation">
                 <CommandItem
                   onSelect={() => {
-                    router.push(`/dashboard/${user?.username}`);
+                    if (user?.username) router.push(`/dashboard/${user.username}`);
                     setOpen(false);
                   }}
                   className="cursor-pointer flex items-center gap-2 justify-between"

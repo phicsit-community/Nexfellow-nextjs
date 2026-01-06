@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import { useParams, useRouter } from "next/navigation";
 import styles from "./StartContestPage.module.css";
 import startImg from "./assets/start.png";
@@ -16,7 +16,7 @@ const StartContestPage = () => {
     const isCommunityQuiz = true;
 
     useEffect(() => {
-        axios.get(`community/quizzes/${quizId}`)
+        api.get(`community/quizzes/${quizId}`)
             .then(res => {
                 setQuiz(res.data.quiz);
                 setLoading(false);
@@ -76,7 +76,7 @@ const StartContestPage = () => {
     return (
         <div className={styles.container}>
             <div className={styles.leftPanel}>
-                <img src={startImg} alt="Start Contest" className={styles.illustration} />
+                <img src={startImg?.src || startImg} alt="Start Contest" className={styles.illustration} />
             </div>
 
             <div className={styles.rightPanel}>

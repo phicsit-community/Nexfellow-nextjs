@@ -31,7 +31,7 @@ const GetMoreWithCommunity = () => {
                 <h2 className={styles.title}>{section.title}</h2>
                 <div className={styles.imageWrapper}>
                   <img
-                    src={target}
+                    src={target?.src || target}
                     alt={`${section.title} icon`}
                     className={styles.featureImage}
                   />
@@ -50,7 +50,7 @@ const GetMoreWithCommunity = () => {
                 <h2 className={styles.titleReverse}>{section.title}</h2>
                 <div className={styles.imageWrapper}>
                   <img
-                    src={light}
+                    src={light?.src || light}
                     alt={`${section.title} icon`}
                     className={styles.featureImage}
                   />

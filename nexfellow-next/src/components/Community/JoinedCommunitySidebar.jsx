@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./Community.module.css";
 import Event from "../../Pages/Community/assets/event_image.png";
 import SuggestionCard from "../Suggestions/SuggestionCard";
@@ -30,7 +30,7 @@ const JoinedCommunitySidebar = () => {
           return;
         }
 
-        const response = await axios.get(`/suggestions/?userId=${userId}`);
+        const response = await api.get(`/suggestions/?userId=${userId}`);
         setSuggestions(response.data);
         setLoading(false);
       } catch (error) {

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import { useSelector } from "react-redux";
 
 const ModeratorRoute = ({ children }) => {
@@ -25,7 +25,7 @@ const ModeratorRoute = ({ children }) => {
 
             try {
                 setLoading(true);
-                const res = await axios.get(`/community/username/${username}`, {
+                const res = await api.get(`/community/username/${username}`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("authToken")}`,
                     },

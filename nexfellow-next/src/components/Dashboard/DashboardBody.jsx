@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import { toast } from "sonner";
 
 // styles
@@ -67,13 +67,18 @@ const DashboardBody = ({
 
   useEffect(() => {
     const fetchVerificationStatus = async () => {
+      if (!userId) return; // Extra safeguard
+
       try {
         setVerificationLoading(true);
-        const response = await axios.get(`/requests/status/${userId}`);
+        const response = await api.get(`/requests/status/${userId}`);
         setVerificationStatus(response.data.status);
       } catch (err) {
-        console.error("Failed to fetch verification status", err);
-        setError("Failed to load data");
+        // Only log error if it's not a 404 (user may not have any verification request)
+        if (err.response?.status !== 404) {
+          console.error("Failed to fetch verification status", err);
+        }
+        // Don't set error state for verification status failures
       } finally {
         setVerificationLoading(false);
       }
@@ -117,7 +122,7 @@ const DashboardBody = ({
       let response;
       if (editingPost) {
         // If editing, send PUT request
-        response = await axios.put(
+        response = await api.put(
           `/post/update/${editingPost._id}`,
           formData,
           {
@@ -128,7 +133,7 @@ const DashboardBody = ({
         );
       } else {
         // Otherwise, create a new post
-        response = await axios.post("/post", formData, {
+        response = await api.post("/post", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -146,7 +151,7 @@ const DashboardBody = ({
       }
 
       // Fetch updated posts
-      const postsResponse = await axios.get(`/post/community/${communityId}`);
+      const postsResponse = await api.get(`/post/community/${communityId}`);
       setPosts(postsResponse.data.posts);
 
       // Reset editing state
@@ -159,7 +164,7 @@ const DashboardBody = ({
 
   const pinPost = async (postId) => {
     try {
-      await axios.post(`/community/${communityId}/pin-post/${postId}`);
+      await api.post(`/community/${communityId}/pin-post/${postId}`);
       setPinnedPostId(postId);
       toast.success("Post pinned to community successfully!");
       setShowPinModal(false);
@@ -173,7 +178,7 @@ const DashboardBody = ({
 
   const unpinPost = async () => {
     try {
-      await axios.delete(`/community/${communityId}/pin-post`);
+      await api.delete(`/community/${communityId}/pin-post`);
       setPinnedPostId(null);
       toast.success("Post unpinned successfully!");
       setShowPinModal(false);
@@ -199,7 +204,7 @@ const DashboardBody = ({
       try {
         // Show loading state while fetching new analytics data
         setAnalyticsLoading(true);
-        const analyticsResponse = await axios.get(
+        const analyticsResponse = await api.get(
           `/analytics/${communityId}?filter=${newFilter}`
         );
         setAnalytics(analyticsResponse.data);
@@ -225,9 +230,9 @@ const DashboardBody = ({
       try {
         const [postsResponse, communityResponse, analyticsResponse] =
           await Promise.all([
-            axios.get(`/post/community/${communityId}`),
-            axios.get(`/community/id/${communityId}`),
-            axios.get(`/analytics/${communityId}?filter=${analyticsFilter}`), // Use current filter
+            api.get(`/post/community/${communityId}`),
+            api.get(`/community/id/${communityId}`),
+            api.get(`/analytics/${communityId}?filter=${analyticsFilter}`), // Use current filter
           ]);
 
         const fetchedPosts = postsResponse.data.posts || [];
@@ -269,7 +274,7 @@ const DashboardBody = ({
       icon: <FaTrash />,
       action: async (post) => {
         try {
-          await axios.delete(`/post/${post._id}`);
+          await api.delete(`/post/${post._id}`);
           toast.success("Post deleted successfully!");
           window.location.reload();
         } catch (error) {
@@ -495,7 +500,7 @@ const DashboardBody = ({
                   </div>
                 ) : (
                   <div className={styles.noPostsContainer}>
-                    <img className={styles.noPostsImage} src={no_posts} />
+                    <img className={styles.noPostsImage} src={no_posts?.src || no_posts} />
                     <p className={styles.noPostsHead}>
                       Oops! Nothing To See Here Yet!
                     </p>
@@ -539,7 +544,7 @@ const DashboardBody = ({
                       {/* Followers */}
                       <div className={styles.analytic}>
                         <img
-                          src={Followers}
+                          src={Followers?.src || Followers}
                           className={styles.analyticMainImg}
                         />
                         <div className={styles.analyticContentHeading}>
@@ -553,7 +558,7 @@ const DashboardBody = ({
                           </div>
                           <div className={styles.analyticContentRight}>
                             <img
-                              src={rise}
+                              src={rise?.src || rise}
                               className={styles.analyticRiseImg}
                               style={{
                                 transform:
@@ -581,7 +586,7 @@ const DashboardBody = ({
 
                       {/* Participants */}
                       <div className={styles.analytic}>
-                        <img src={partcip} className={styles.analyticMainImg} />
+                        <img src={partcip?.src || partcip} className={styles.analyticMainImg} />
                         <div className={styles.analyticContentHeading}>
                           Participants
                         </div>
@@ -593,7 +598,7 @@ const DashboardBody = ({
                           </div>
                           <div className={styles.analyticContentRight}>
                             <img
-                              src={rise}
+                              src={rise?.src || rise}
                               className={styles.analyticRiseImg}
                               style={{
                                 transform:
@@ -625,7 +630,7 @@ const DashboardBody = ({
 
                       {/* Likes */}
                       <div className={styles.analytic}>
-                        <img src={likes} className={styles.analyticMainImg} />
+                        <img src={likes?.src || likes} className={styles.analyticMainImg} />
                         <div className={styles.analyticContentHeading}>
                           Likes
                         </div>
@@ -637,7 +642,7 @@ const DashboardBody = ({
                           </div>
                           <div className={styles.analyticContentRight}>
                             <img
-                              src={rise}
+                              src={rise?.src || rise}
                               className={styles.analyticRiseImg}
                               style={{
                                 transform:
@@ -666,7 +671,7 @@ const DashboardBody = ({
                       {/* Comments */}
                       <div className={styles.analytic}>
                         <img
-                          src={comments}
+                          src={comments?.src || comments}
                           className={styles.analyticMainImg}
                         />
                         <div className={styles.analyticContentHeading}>
@@ -680,7 +685,7 @@ const DashboardBody = ({
                           </div>
                           <div className={styles.analyticContentRight}>
                             <img
-                              src={rise}
+                              src={rise?.src || rise}
                               className={styles.analyticRiseImg}
                               style={{
                                 transform:
@@ -709,7 +714,7 @@ const DashboardBody = ({
                       {/* Page Views */}
                       <div className={styles.analytic}>
                         <img
-                          src={pageViewsIcon}
+                          src={pageViewsIcon?.src || pageViewsIcon}
                           className={styles.analyticMainImg}
                         />
                         <div className={styles.analyticContentHeading}>
@@ -723,7 +728,7 @@ const DashboardBody = ({
                           </div>
                           <div className={styles.analyticContentRight}>
                             <img
-                              src={rise}
+                              src={rise?.src || rise}
                               className={styles.analyticRiseImg}
                               style={{
                                 transform:
@@ -755,7 +760,7 @@ const DashboardBody = ({
                         onClick={() => setShowLinkAnalyticsModal(true)}
                       >
                         <img
-                          src={linkClicksIcon}
+                          src={linkClicksIcon?.src || linkClicksIcon}
                           className={styles.analyticMainImg}
                         />
                         <div className={styles.analyticContentHeading}>
@@ -769,7 +774,7 @@ const DashboardBody = ({
                           </div>
                           <div className={styles.analyticContentRight}>
                             <img
-                              src={rise}
+                              src={rise?.src || rise}
                               className={styles.analyticRiseImg}
                               style={{
                                 transform:
@@ -836,10 +841,10 @@ const DashboardBody = ({
               <img
                 src={
                   verificationStatus === "Pending"
-                    ? pendingVector
+                    ? (pendingVector?.src || pendingVector)
                     : verificationStatus === "Rejected"
-                      ? pendingVector
-                      : verifyVector
+                      ? (pendingVector?.src || pendingVector)
+                      : (verifyVector?.src || verifyVector)
                 }
                 alt={
                   verificationStatus === "Pending"

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import MetaTags from "../../components/MetaTags/MetaTags";
 
 // styles
@@ -28,7 +28,7 @@ const ViewOnlyChallenge = () => {
     const fetchChallenge = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`/challenge/getChallenge/${id}`);
+        const response = await api.get(`/challenge/getChallenge/${id}`);
         setChallenge(response.data);
       } catch (error) {
         console.error("Error fetching challenge:", error);
@@ -87,7 +87,7 @@ const ViewOnlyChallenge = () => {
       )}
       <div className={styles.backButton}>
         <button onClick={handleBack}>
-          <img src={Back} alt="Back" />
+          <img src={Back?.src || Back} alt="Back" />
           <span>Back</span>
         </button>
       </div>
@@ -136,11 +136,11 @@ const PublicCheckpoints = () => {
       </div>
       <div className={styles.checkpointsDivContent}>
         <div>
-          <img src={calender} alt="Calendar" />
+          <img src={calender?.src || calender} alt="Calendar" />
           <span>Schedule</span>
         </div>
         <div>
-          <img src={leaderboard} alt="Leaderboard" />
+          <img src={leaderboard?.src || leaderboard} alt="Leaderboard" />
           <div>Leaderboard</div>
         </div>
       </div>
@@ -157,7 +157,7 @@ const PublicParticipants = () => {
 
   return (
     <div className={styles.participantsDiv}>
-      <img src={participants} alt="Participants" />
+      <img src={participants?.src || participants} alt="Participants" />
       <div className={styles.participantsDivContent1}>Participants Preview</div>
       <div className={styles.participantsDivContent2}>
         Login to see who&apos;s participating in this challenge
@@ -178,12 +178,12 @@ const PublicSummary = ({ onLogin, challenge }) => {
   return (
     <div className={styles.summaryDiv}>
       <div className={styles.summaryDivInfo}>
-        <img src={info} alt="Info" />
+        <img src={info?.src || info} alt="Info" />
         <span>Login to participate in this challenge</span>
       </div>
       <div className={styles.summaryDivMain}>
         <div className={styles.trophyImg}>
-          <img src={trophy} width="232px" height="133px" alt="Trophy" />
+          <img src={trophy?.src || trophy} width="232px" height="133px" alt="Trophy" />
         </div>
         <div className={styles.challengeInfoPreview}>
           <h3>{challenge?.name || "Challenge Preview"}</h3>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { useSelector } from "react-redux";
 import { marked } from "marked";
 import { formatDistanceToNow } from "date-fns";
 import { debounce } from "lodash";
@@ -27,7 +28,7 @@ import { PiBookmarkSimpleDuotone, PiBookmarkSimpleFill } from "react-icons/pi";
 import { FaThumbtack } from "react-icons/fa";
 import VERIFY from "./assets/Verify.svg";
 import communityBadge from "./assets/badge3.svg";
-import axios from "axios";
+import api from "../../lib/axios";
 import ShareIcon from "../ShareIcon/ShareIcon";
 import { Bookmark, BookMarked, Heart, MessageCircle } from "lucide-react";
 
@@ -56,11 +57,13 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
   const [loaded, setLoaded] = useState(false);
   const PLACEHOLDER_IMG =
     "https://placehold.co/800x400?text=Image+Not+Available";
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   useEffect(() => {
     async function checkIfLiked() {
+      if (!isLoggedIn) return;
       try {
-        const res = await axios.get(`/like/checkIfPostLiked/${post._id}`);
+        const res = await api.get(`/like/checkIfPostLiked/${post._id}`);
         setIsLiked(res.data.Switch);
       } catch (error) {
         console.error("Error checking if post is liked:", error);
@@ -70,11 +73,12 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
 
     // Check if the user is following this community/author
     async function checkIfFollowing() {
+      if (!isLoggedIn) return;
       try {
         if (post?.author?._id) {
           // Use the author's ID or community ID if available
           const communityId = post.author.createdCommunity || post.author._id;
-          const res = await axios.get(`/user/checkFollowing/${communityId}`);
+          const res = await api.get(`/user/checkFollowing/${communityId}`);
           setIsFollowing(res.data.isFollowing);
         }
       } catch (error) {
@@ -84,12 +88,12 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
       }
     }
     checkIfFollowing();
-  }, []);
+  }, [isLoggedIn]);
 
   useEffect(() => {
     async function fetchFollowers() {
       try {
-        const res = await axios.get(`/user/publicprofile/${post.author._id}`);
+        const res = await api.get(`/user/publicprofile/${post.author._id}`);
         setFollowers(res.data.followers);
         setFollowerCount(res.data.followers.length);
       } catch (error) {
@@ -99,7 +103,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
 
     async function fetchFollowings() {
       try {
-        const res = await axios.get(`/user/publicprofile/${post.author._id}`);
+        const res = await api.get(`/user/publicprofile/${post.author._id}`);
         setFollowings(res.data.following);
         setFollowingCount(res.data.following.length);
       } catch (error) {
@@ -167,7 +171,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
 
   const handleShareIncrement = async () => {
     try {
-      const response = await axios.patch(`/post/increment-shares/${post._id}`);
+      const response = await api.patch(`/post/increment-shares/${post._id}`);
       setShareCount(response.data.count);
     } catch (error) {
       console.error("Share failed", error);
@@ -183,7 +187,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
     setTimeout(() => setAnimateLike(false), 500);
 
     try {
-      await axios.post(`/like/posts/${post._id}`);
+      await api.post(`/like/posts/${post._id}`);
     } catch (error) {
       setIsLiked(false);
       setLikeCount((prev) => prev - 1);
@@ -200,7 +204,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
     setTimeout(() => setAnimateLike(false), 500);
 
     try {
-      await axios.delete(`/like/posts/${post._id}`);
+      await api.delete(`/like/posts/${post._id}`);
     } catch (error) {
       setIsLiked(true);
       setLikeCount((prev) => prev + 1);
@@ -211,7 +215,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
   useEffect(() => {
     const fetchBookmarkStatus = async () => {
       try {
-        const res = await axios.get("/bookmarks/user?itemType=Post");
+        const res = await api.get("/bookmarks/user?itemType=Post");
         const found = Array.isArray(res.data.bookmarks)
           ? res.data.bookmarks.some(
             (bm) =>
@@ -234,11 +238,11 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
     setBookmarkLoading(true);
     try {
       if (!bookmarked) {
-        await axios.post(`/bookmarks/Post/${post._id}`);
+        await api.post(`/bookmarks/Post/${post._id}`);
         setBookmarked(true);
         toast.success("Post bookmarked!");
       } else {
-        await axios.delete(`/bookmarks/Post/${post._id}`);
+        await api.delete(`/bookmarks/Post/${post._id}`);
         setBookmarked(false);
         toast.info("Bookmark removed!");
       }
@@ -329,7 +333,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
   // Track link clicks for analytics
   const trackLinkClick = async (url) => {
     try {
-      await axios.post(
+      await api.post(
         `http://localhost:4000/analytics/67922fda70d29d966dbfa9cf/link-analytics`,
         {
           url,
@@ -409,20 +413,20 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
                       post.author.createdCommunity ? (
                       post.author.communityBadge ? (
                         <img
-                          src={communityBadge}
+                          src={communityBadge?.src || communityBadge}
                           alt="Community Badge"
                           className={styles.badge}
                         />
                       ) : post.author.verificationBadge ? (
                         <img
-                          src={VERIFY}
+                          src={VERIFY?.src || VERIFY}
                           alt="Verification Badge"
                           className={styles.badge}
                         />
                       ) : null
                     ) : post.author.verificationBadge ? (
                       <img
-                        src={VERIFY}
+                        src={VERIFY?.src || VERIFY}
                         alt="Verification Badge"
                         className={styles.verified}
                       />

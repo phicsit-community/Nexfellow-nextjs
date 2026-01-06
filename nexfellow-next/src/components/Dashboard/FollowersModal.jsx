@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./FollowersModal.module.css";
 import ProfileImage from "./assets/profile_image.svg";
 import { useRouter } from "next/navigation";
@@ -33,7 +33,7 @@ const FollowersModal = ({ isOpen, onClose, communityId, userId }) => {
     setError(null);
 
     try {
-      const response = await axios.get(`/user/profile/${userId}`);
+      const response = await api.get(`/user/profile/${userId}`);
       const followersList = response.data.followers || []; // Ensure followers exist
       setFollowers(followersList);
       fetchFollowStatus(followersList);
@@ -53,7 +53,7 @@ const FollowersModal = ({ isOpen, onClose, communityId, userId }) => {
       await Promise.all(
         members.map(async (member) => {
           try {
-            const res = await axios.get(`/user/followStatus/${member._id}`);
+            const res = await api.get(`/user/followStatus/${member._id}`);
             statusData[member._id] = res.data.isFollowing;
           } catch (err) {
             console.error(
@@ -79,7 +79,7 @@ const FollowersModal = ({ isOpen, onClose, communityId, userId }) => {
     const action = followStatus[followerId] ? "unfollow" : "follow";
 
     try {
-      const res = await axios.post(`/user/toggleFollow/${followerId}`, {
+      const res = await api.post(`/user/toggleFollow/${followerId}`, {
         action,
       });
 

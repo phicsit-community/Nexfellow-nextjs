@@ -1,12 +1,12 @@
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import styles from './Comingsoon.module.css';
 
 const Comingsoon = () => {
-    const navigate = useNavigate();
+    const router = useRouter();
 
     const handleClick = () => {
-        navigate('/feed');
+        router.push('/feed');
     };
 
     return (

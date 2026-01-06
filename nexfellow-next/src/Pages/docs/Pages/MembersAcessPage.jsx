@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { FaMoon, FaSun, FaTimes, FaChevronDown, FaChevronRight, FaDownload, FaEdit } from "react-icons/fa";
 import MiniFooter from "../components/MiniFooter.jsx";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import { IoMdInformationCircle } from "react-icons/io";
 
 // Import images
@@ -12,7 +12,7 @@ import { MdAccountCircle } from "react-icons/md";
 export default function MembersAccessPage() {
   const [activeStep, setActiveStep] = useState({});
   const [zoomImage, setZoomImage] = useState(null);
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const [openSection, setOpenSection] = useState({ top: true, mgmt: true });
 
   const timelineRefs = {
@@ -25,13 +25,13 @@ export default function MembersAccessPage() {
   const toggleTheme = () => setDarkMode(!darkMode);
 
   const steps = [
-     { id: 1, title: "Step 1", desc: "Click on Profile under Account Management.", image: null, icon: <MdAccountCircle size={24} /> },
+    { id: 1, title: "Step 1", desc: "Click on Profile under Account Management.", image: null, icon: <MdAccountCircle size={24} /> },
     { id: 2, title: "Step 2", desc: "Click on Top Members (available once you’re verified).", image: TopMembersImg, icon: <FaDownload /> },
     { id: 3, title: "Step 3", desc: "Select top members to showcase on your page.", image: null, icon: <FaEdit /> },
   ];
 
   const managementSteps = [
-     { id: 1, title: "Step 1", desc: "Click on Profile under Account Management.", image: null, icon: <MdAccountCircle size={24} /> },
+    { id: 1, title: "Step 1", desc: "Click on Profile under Account Management.", image: null, icon: <MdAccountCircle size={24} /> },
     { id: 2, title: "Step 2", desc: "Click on Moderators.", image: null, icon: <FaDownload /> },
     { id: 3, title: "Step 3", desc: "Select role from your followers list and assign them roles.", image: ManagementPanelImg, icon: <FaEdit /> },
   ];
@@ -91,13 +91,12 @@ export default function MembersAccessPage() {
             {/* Step Circle */}
             <div className="w-12 flex justify-center relative">
               <div
-                className={`w-12 h-12 rounded-full flex items-center justify-center shadow border-4 font-semibold transition-colors duration-500 ${
-                  idx <= (activeStep[prefix] ?? 0)
-                    ? `bg-[${cyan}] border-[${cyan}] text-white`
-                    : darkMode
+                className={`w-12 h-12 rounded-full flex items-center justify-center shadow border-4 font-semibold transition-colors duration-500 ${idx <= (activeStep[prefix] ?? 0)
+                  ? `bg-[${cyan}] border-[${cyan}] text-white`
+                  : darkMode
                     ? `bg-black border-[${cyan}] text-[${cyan}]`
                     : `bg-white border-[${cyan}] text-[${cyan}]`
-                }`}
+                  }`}
                 style={{
                   backgroundColor:
                     idx <= (activeStep[prefix] ?? 0) ? cyan : darkMode ? "black" : "white",
@@ -123,7 +122,7 @@ export default function MembersAccessPage() {
 
               {step.image && (
                 <img
-                  src={step.image}
+                  src={step.image.src || step.image}
                   alt={`${step.title} example`}
                   className="mt-4 w-full max-w-md rounded-lg shadow cursor-pointer hover:scale-[1.03] transition-transform"
                   onClick={() => setZoomImage(step.image)}
@@ -138,9 +137,8 @@ export default function MembersAccessPage() {
 
   return (
     <div
-      className={`${
-        darkMode ? "bg-black text-gray-100" : "bg-white text-gray-900"
-      } min-h-screen font-poppins px-8 py-10 transition-colors duration-500`}
+      className={`${darkMode ? "bg-black text-gray-100" : "bg-white text-gray-900"
+        } min-h-screen font-poppins px-8 py-10 transition-colors duration-500`}
     >
       <div className="max-w-5xl mx-auto text-left">
         {/* Header */}
@@ -152,10 +150,9 @@ export default function MembersAccessPage() {
                 Members and Access
               </span>
             </p>
-             <h1
-              className={`text-3xl font-semibold mt-2 ${
-                darkMode ? "text-white" : "text-[#0E7C86]"
-              }`}
+            <h1
+              className={`text-3xl font-semibold mt-2 ${darkMode ? "text-white" : "text-[#0E7C86]"
+                }`}
             >
               Featuring Top Members & Managing Roles
             </h1>
@@ -193,7 +190,7 @@ export default function MembersAccessPage() {
           <button
             onClick={() => setOpenSection((prev) => ({ ...prev, top: !prev.top }))}
             className={`flex items-center gap-2 mb-1 text-2xl font-semibold ${darkMode ? "text-white" : "text-black"}`}
-            // style={{ color: cyan }}
+          // style={{ color: cyan }}
           >
             {openSection.top ? <FaChevronDown /> : <FaChevronRight />}
             Top Members
@@ -209,7 +206,7 @@ export default function MembersAccessPage() {
           <button
             onClick={() => setOpenSection((prev) => ({ ...prev, mgmt: !prev.mgmt }))}
             className={`flex items-center gap-2 mb-1 text-2xl font-semibold ${darkMode ? "text-white" : "text-black"}`}
-            // style={{ color: "white" }}
+          // style={{ color: "white" }}
           >
             {openSection.mgmt ? <FaChevronDown /> : <FaChevronRight />}
             Management
@@ -246,7 +243,7 @@ export default function MembersAccessPage() {
             <FaTimes />
           </button>
           <img
-            src={zoomImage}
+            src={zoomImage.src || zoomImage}
             alt="Zoomed"
             className="max-w-[90vw] max-h-[80vh] rounded-lg shadow-lg transform scale-95 animate-scaleUp"
           />

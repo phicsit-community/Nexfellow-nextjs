@@ -12,7 +12,8 @@
   z-index: 20;
   background-color: white;
   border-bottom: 1px solid #eeeff1;
-
+  left: 50%;
+  transform: translateX(-50%);
   /* max-width: 1470px; */
   margin: 0px auto;
 }

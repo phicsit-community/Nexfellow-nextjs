@@ -11,13 +11,13 @@ import {
   FaEllipsisH,
   FaDownload,
 } from "react-icons/fa";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import MiniFooter from "../components/MiniFooter.jsx";
 import { IoMdInformationCircle } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
 export default function MembersFeedPage() {
   const [activeStep, setActiveStep] = useState(0);
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const timelineRef = useRef(null);
   const cyan = "#0E7C86";
 
@@ -170,10 +170,10 @@ export default function MembersFeedPage() {
                 <div className="w-12 flex justify-center relative">
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center border-4 font-semibold transition-colors duration-500 text-xl ${idx <= activeStep
-                        ? "text-white"
-                        : darkMode
-                          ? "bg-black text-[#0E7C86]"
-                          : "bg-white text-[#0E7C86]"
+                      ? "text-white"
+                      : darkMode
+                        ? "bg-black text-[#0E7C86]"
+                        : "bg-white text-[#0E7C86]"
                       }`}
                     style={{
                       backgroundColor:
@@ -211,8 +211,8 @@ export default function MembersFeedPage() {
             <div
               key={act.id}
               className={`flex flex-col items-center justify-center gap-2 py-6 rounded-2xl shadow-md transition transform hover:scale-105 ${darkMode
-                  ? "bg-[#006C69] text-white hover:bg-[#0E7C86]/30"
-                  : "bg-[#006C69] text-white hover:bg-[#0E7C86]"
+                ? "bg-[#006C69] text-white hover:bg-[#0E7C86]/30"
+                : "bg-[#006C69] text-white hover:bg-[#0E7C86]"
                 }`}
             >
               <div className="text-4xl">{act.icon}</div>
@@ -226,8 +226,8 @@ export default function MembersFeedPage() {
             <div
               key={act.id}
               className={`flex flex-col items-center justify-center gap-2 py-6 rounded-2xl shadow-md transition transform hover:scale-105 ${darkMode
-                  ? "bg-[#006C69] text-white hover:bg-[#0E7C86]/30"
-                  : "bg-[#006C69] text-white hover:bg-[#0E7C86]"
+                ? "bg-[#006C69] text-white hover:bg-[#0E7C86]/30"
+                : "bg-[#006C69] text-white hover:bg-[#0E7C86]"
                 }`}
             >
               <div className="text-4xl">{act.icon}</div>

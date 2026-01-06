@@ -40,7 +40,7 @@ export const TopCard2Skeleton = () => {
 export const TopCard1 = ({ name, rating, picture, rank, onClick }) => {
   return (
     <div className={styles.firstPosition} onClick={onClick} style={{ cursor: onClick ? "pointer" : "default" }}>
-      <img src={rank1} alt="Rank Icon" className={styles.rankCard} />
+      <img src={rank1?.src || rank1} alt="Rank Icon" className={styles.rankCard} />
       <img
         src={picture || "https://via.placeholder.com/75"}
         className={styles.firstPosImg}
@@ -66,7 +66,7 @@ export const TopCard2 = ({ name, rating, picture, rank, onClick }) => {
         className={styles.STposImg}
         alt={name}
       />
-      <img src={rank2} alt="Rank Icon" className={styles.rankCard} />
+      <img src={rank2?.src || rank2} alt="Rank Icon" className={styles.rankCard} />
       <p className={styles.rankst}>{rank}</p>
       <div className={styles.dataST}>
         <div className={styles.rankCard2}>

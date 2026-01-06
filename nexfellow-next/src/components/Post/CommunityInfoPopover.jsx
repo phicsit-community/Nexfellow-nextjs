@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./CommunityInfoPopover.module.css";
 import profile from "../../assets/profile.jpg";
-import axios from "axios";
+import api from "../../lib/axios";
 
 const Spinner = ({ variant }) => (
   <div className={`${styles.spinner} ${styles[variant]}`} />
@@ -105,7 +105,7 @@ const CommunityInfoPopover = ({
         }
 
         if (community.communityOwnerId) {
-          const response = await axios.get(
+          const response = await api.get(
             `/user/followStatus/${community.communityOwnerId}`
           );
           setFollowStatus(response.data.isFollowing);
@@ -125,12 +125,12 @@ const CommunityInfoPopover = ({
       const action = followStatus ? "unfollow" : "follow";
 
       if (community.communityOwnerId) {
-        await axios.post(`/user/toggleFollow/${community.communityOwnerId}`, {
+        await api.post(`/user/toggleFollow/${community.communityOwnerId}`, {
           action,
         });
 
         // Fetch updated follow status
-        const response = await axios.get(
+        const response = await api.get(
           `/user/followStatus/${community.communityOwnerId}`
         );
         setFollowStatus(response.data.isFollowing);

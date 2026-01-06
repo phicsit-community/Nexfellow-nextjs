@@ -22,9 +22,8 @@ const MetaTags = ({
   // Generate OG image URL based on content type
   const getOgImageUrl = () => {
     if (contentId && contentType) {
-      return `${
-        import.meta.env.VITE_SERVER_URL || "https://api.nexfellow.com"
-      }/preview/og/${contentType}/${contentId}`;
+      return `${process.env.NEXT_PUBLIC_SERVER_URL || "https://api.nexfellow.com"
+        }/preview/og/${contentType}/${contentId}`;
     }
 
     // If image is provided, use it

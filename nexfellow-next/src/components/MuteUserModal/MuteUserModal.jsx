@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import { IoClose } from "react-icons/io5";
 import { FaVolumeMute } from "react-icons/fa";
 import { toast } from "sonner";
@@ -13,7 +13,7 @@ const MuteUserModal = ({ isOpen, onClose, user }) => {
   const handleMuteUser = async () => {
     setIsSubmitting(true);
     try {
-      const response = await axios.post(`/user/mute/${user._id}`);
+      const response = await api.post(`/user/mute/${user._id}`);
       toast.success(response.data.message || "User muted successfully");
       onClose(true); // Pass true to indicate successful muting
     } catch (error) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./Comment.module.css";
 import { FaHeart, FaSpinner } from "react-icons/fa";
 import Modal from "../ShareModal/MoreModal";
@@ -87,7 +87,7 @@ const Comment = ({
       return;
     setLoadingDelete(true);
     try {
-      await axios.delete(`/comment/comments/${comment.id}`, {
+      await api.delete(`/comment/comments/${comment.id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
@@ -124,7 +124,7 @@ const Comment = ({
     }
     setLoadingEdit(true);
     try {
-      await axios.put(
+      await api.put(
         `/comment/comments/${comment.id}`,
         { content: editedComment },
         {
@@ -157,7 +157,7 @@ const Comment = ({
   const handleReportComment = async () => {
     setLoadingDelete(true);
     try {
-      await axios.put(
+      await api.put(
         `/comment/comments/${comment.id}/report`,
         {},
         {
@@ -254,7 +254,7 @@ const Comment = ({
     if (loadingLike) return;
     setLoadingLike(true);
     try {
-      const response = await axios.put(
+      const response = await api.put(
         `/comment/comments/${comment.id}/like`,
         {},
         {
@@ -291,7 +291,7 @@ const Comment = ({
       return;
     }
     try {
-      const res = await axios.get(`/comment/comments/users/search?query=${encodeURIComponent(query)}`, {
+      const res = await api.get(`/comment/comments/users/search?query=${encodeURIComponent(query)}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
       });
       setMentionSuggestions(res.data || []);
@@ -336,7 +336,7 @@ const Comment = ({
     if (!replyComment.trim() || loadingReply) return;
     setLoadingReply(true);
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `/comment/posts/${postId}/comments`,
         {
           content: replyComment,
@@ -734,7 +734,7 @@ const CommentSection = ({ postId, author, className, isModeratorView = false }) 
     if (!currentUserId) return;
     async function fetchUserRole() {
       try {
-        const res = await axios.get(`/comment/${postId}/myRole`, {
+        const res = await api.get(`/comment/${postId}/myRole`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
@@ -783,7 +783,7 @@ const CommentSection = ({ postId, author, className, isModeratorView = false }) 
       return;
     }
     try {
-      const res = await axios.get(`/comment/comments/users/search?query=${encodeURIComponent(query)}`, {
+      const res = await api.get(`/comment/comments/users/search?query=${encodeURIComponent(query)}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
       });
       setMentionSuggestions(res.data || []);

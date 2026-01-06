@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../../lib/axios";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
@@ -41,63 +41,67 @@ const Login = () => {
   const [timer, setTimer] = useState(300); // 5 minutes in seconds
   const [resendAvailable, setResendAvailable] = useState(false);
 
-  const authCheckCompleted = useRef(false);
+  // Use module-level flag to prevent duplicate auth checks across remounts
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
+    // Use sessionStorage to prevent auth check on hot reloads
+    const authChecked = sessionStorage.getItem("loginAuthChecked");
+    if (authChecked === "true" || isRedirecting) return;
+    sessionStorage.setItem("loginAuthChecked", "true");
+
+    // Clear the flag after 5 seconds to allow re-check if user stays on page
+    const clearTimer = setTimeout(() => {
+      sessionStorage.removeItem("loginAuthChecked");
+    }, 5000);
+
     // Check for stale token data on mount
     if (typeof window !== "undefined" && localStorage.getItem("isLoggedIn") === "true") {
       const expiresIn = localStorage.getItem("expiresIn");
       if (expiresIn) {
         const expiresAt = new Date(expiresIn);
         if (isNaN(expiresAt) || expiresAt <= new Date()) {
-          // If token is expired, don't immediately log out
-          // Instead, let the token service try to refresh first
           console.log("Login: Found expired token, will attempt refresh");
         }
       }
     }
 
-    // Auto-check if user is already logged in
-    if (authCheckCompleted.current) return;
-
     const checkAuth = async () => {
       try {
-        authCheckCompleted.current = true;
-        const response = await axios.get("/auth/getDetails", {
+        const response = await api.get("/auth/getDetails", {
           withCredentials: true,
         });
 
         if (response.status === 200) {
           const { payload, expiresIn, redirect } = response.data;
 
-          localStorage.setItem("user", JSON.stringify(payload));
-          localStorage.setItem("expiresIn", expiresIn);
-          localStorage.setItem("isLoggedIn", "true");
-
           dispatch(login({ user: payload, expiresIn }));
+          setIsRedirecting(true);
+
+          // Ensure redirect is a valid string
+          const redirectPath = typeof redirect === "string" ? redirect : "/feed";
 
           setTimeout(() => {
-            if (redirect?.startsWith("http")) {
-              window.location.href = redirect;
+            if (redirectPath.startsWith("http")) {
+              window.location.href = redirectPath;
             } else {
-              router.push(redirect || "/feed");
+              router.push(redirectPath);
             }
           }, 300);
         }
       } catch (error) {
-        console.error("Error checking authentication:", error);
-        // Don't clear auth state on network errors
-        if (
-          error.response &&
-          (error.response.status === 401 || error.response.status === 403)
-        ) {
-          localStorage.setItem("isLoggedIn", "false");
-        }
+        // Silent fail - user is not logged in, stay on login page
+        console.log("Not authenticated, staying on login page");
       }
     };
 
     checkAuth();
-  }, [dispatch, router]);
+
+    return () => {
+      clearTimeout(clearTimer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (showOtpField && timer > 0) {
@@ -120,7 +124,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("/user/login", { email, password });
+      const response = await api.post("/user/login", { email, password });
 
       if (response.data.otpRequired) {
         toast.info("OTP sent to your email", {
@@ -137,23 +141,23 @@ const Login = () => {
 
       const { payload, expiresIn, redirect } = response.data;
 
-      localStorage.setItem("user", JSON.stringify(payload));
-      localStorage.setItem("expiresIn", expiresIn);
-      localStorage.setItem("isLoggedIn", "true");
-
       dispatch(login({ user: payload, expiresIn }));
       if (payload.themePreference) {
         setTheme(payload.themePreference);
-      } toast.success("Login successful", {
+      }
+      toast.success("Login successful", {
         position: "bottom-right",
         richColors: true,
       });
 
+      // Ensure redirect is a valid string
+      const redirectPath = typeof redirect === "string" ? redirect : "/feed";
+
       setTimeout(() => {
-        if (redirect?.startsWith("http")) {
-          window.location.href = redirect;
+        if (redirectPath.startsWith("http")) {
+          window.location.href = redirectPath;
         } else {
-          router.push(redirect || "/feed");
+          router.push(redirectPath);
         }
       }, 300);
     } catch (error) {
@@ -171,13 +175,9 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("/user/otp/verify", { email, otp });
+      const response = await api.post("/user/otp/verify", { email, otp });
 
       const { payload, expiresIn, redirect, expiresAt } = response.data;
-
-      localStorage.setItem("user", JSON.stringify(payload));
-      localStorage.setItem("expiresIn", expiresIn);
-      localStorage.setItem("isLoggedIn", "true");
 
       dispatch(login({ user: payload, expiresIn }));
 
@@ -186,11 +186,14 @@ const Login = () => {
         richColors: true,
       });
 
+      // Ensure redirect is a valid string
+      const redirectPath = typeof redirect === "string" ? redirect : "/feed";
+
       setTimeout(() => {
-        if (redirect?.startsWith("http")) {
-          window.location.href = redirect;
+        if (redirectPath.startsWith("http")) {
+          window.location.href = redirectPath;
         } else {
-          router.push(redirect || "/feed");
+          router.push(redirectPath);
         }
       }, 300);
     } catch (error) {
@@ -212,7 +215,7 @@ const Login = () => {
     setTimer(300); // Reset timer to 5 minutes
 
     try {
-      await axios.post("/user/otp/resend", { email });
+      await api.post("/user/otp/resend", { email });
       toast.info("New OTP sent to your email", {
         position: "bottom-right",
         richColors: true,

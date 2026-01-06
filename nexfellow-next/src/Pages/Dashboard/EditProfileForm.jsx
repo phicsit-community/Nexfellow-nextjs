@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./EditProfileForm.module.css";
 
 import countryCodeMap from "../../components/Constants/Country";
@@ -146,7 +146,7 @@ const EditProfileForm = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`/user/profile/username/${username}`);
+        const response = await api.get(`/user/profile/username/${username}`);
         const userData = response.data;
         setUser(userData);
         setId(userData._id);
@@ -196,7 +196,7 @@ const EditProfileForm = () => {
     try {
       setUsernameStatus((prev) => ({ ...prev, checking: true, message: "" }));
 
-      const response = await axios.get(`/user/check-username/${username}`, {
+      const response = await api.get(`/user/check-username/${username}`, {
         withCredentials: true,
       });
 
@@ -305,7 +305,7 @@ const EditProfileForm = () => {
 
         if (!formattedWebsiteLink) {
           // Send empty string to remove link
-          await axios.put(
+          await api.put(
             `/community/${id}/link`,
             { link: "" },
             { withCredentials: true }
@@ -322,7 +322,7 @@ const EditProfileForm = () => {
             return;
           }
 
-          await axios.put(
+          await api.put(
             `/community/${id}/link`,
             { link: formattedWebsiteLink },
             { withCredentials: true }
@@ -339,7 +339,7 @@ const EditProfileForm = () => {
         }
       });
 
-      const response = await axios.post("/user/updateprofile", data, {
+      const response = await api.post("/user/updateprofile", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -348,7 +348,7 @@ const EditProfileForm = () => {
         const updatedUser = { ...currentUser, ...response.data.user };
         localStorage.setItem("user", JSON.stringify(updatedUser));
       } else {
-        const userResponse = await axios.get(
+        const userResponse = await api.get(
           `/user/profile/username/${sanitizedUsername}`
         );
         if (userResponse.data) {
@@ -559,7 +559,7 @@ const EditProfileForm = () => {
                       }}
                     >
                       <img
-                        src={CameraIcon}
+                        src={CameraIcon?.src || CameraIcon}
                         alt="Camera"
                         className={styles.customCameraIcon}
                       />
@@ -626,7 +626,7 @@ const EditProfileForm = () => {
                     }}
                   >
                     <img
-                      src={CameraIcon}
+                      src={CameraIcon?.src || CameraIcon}
                       alt="Camera"
                       className={styles.customCameraIcon}
                     />

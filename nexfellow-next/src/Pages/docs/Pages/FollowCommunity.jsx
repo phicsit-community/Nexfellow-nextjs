@@ -1,11 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
 import { FaTimes, FaMoon, FaSun, FaDownload, FaEdit } from "react-icons/fa";
 import MiniFooter from "../components/MiniFooter";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import { IoMdInformationCircle } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
 export default function FollowCommunity() {
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const [activeStep, setActiveStep] = useState(0);
   const [zoomImage, setZoomImage] = useState(null);
   const timelineRef = useRef(null);
@@ -119,7 +119,7 @@ export default function FollowCommunity() {
         <p
           className={`mt-4 leading-relaxed ${darkMode ? "text-[#D0CACA]" : "text-black"}`}
         >
-Exploring communities on NexFellow allows you to discover groups that match your interests, passions, and goals. You can follow communities to stay updated, engage in discussions with like-minded people, and access posts or resources tailored to your field.         </p>
+          Exploring communities on NexFellow allows you to discover groups that match your interests, passions, and goals. You can follow communities to stay updated, engage in discussions with like-minded people, and access posts or resources tailored to your field.         </p>
 
         <div className="relative mt-8" ref={timelineRef}>
           <div
@@ -144,10 +144,10 @@ Exploring communities on NexFellow allows you to discover groups that match your
                 <div className="w-12 flex justify-center relative">
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center border-4 font-semibold transition-colors duration-500 ${idx <= activeStep
-                        ? "text-white"
-                        : darkMode
-                          ? "bg-black text-[#0E7C86]"
-                          : "bg-white text-[#0E7C86]"
+                      ? "text-white"
+                      : darkMode
+                        ? "bg-black text-[#0E7C86]"
+                        : "bg-white text-[#0E7C86]"
                       }`}
                     style={{
                       backgroundColor:

@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./ConfirmationModal.module.css";
 import { toast } from "sonner";
 

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import htmr from "htmr";
-import axios from "axios";
+import api from "../../lib/axios";
 import { FaBookmark, FaRegBookmark } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 import defaultImage from "../../Pages/AllContest/Contestimages/Online_Contest_svg_banner_dark.png";
@@ -36,7 +36,7 @@ const ContestData = ({ contest, bookmarkedQuizzes }) => {
       if (!isLoggedin) return;
       try {
         // This assumes you have a route that checks if a contest is bookmarked
-        const res = await axios.get(`/bookmarks/user?itemType=GeneralContest`);
+        const res = await api.get(`/bookmarks/user?itemType=GeneralContest`);
         // res.data.bookmarks is an array of bookmark objects
         const found = Array.isArray(res.data.bookmarks)
           ? res.data.bookmarks.some(
@@ -77,11 +77,11 @@ const ContestData = ({ contest, bookmarkedQuizzes }) => {
     try {
       if (!isBookmarked) {
         // Add bookmark
-        await axios.post(`/bookmarks/GeneralContest/${contest._id}`);
+        await api.post(`/bookmarks/GeneralContest/${contest._id}`);
         setIsBookmarked(true);
       } else {
         // Remove bookmark
-        await axios.delete(`/bookmarks/GeneralContest/${contest._id}`);
+        await api.delete(`/bookmarks/GeneralContest/${contest._id}`);
         setIsBookmarked(false);
       }
     } catch (error) {

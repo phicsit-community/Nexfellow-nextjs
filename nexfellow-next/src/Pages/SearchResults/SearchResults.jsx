@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Post from "../../components/Post/Post";
 import SuggestionCard from "../../components/Suggestions/SuggestionCard";
 import { ExploreCard } from "../Explore/Explore";
-import axios from "axios";
+import api from "../../lib/axios";
 import {
   FaLink,
   FaBellSlash,
@@ -59,7 +59,7 @@ function SearchResults() {
       setLoading(true);
       setError(null);
       try {
-        const response = await axios.get(
+        const response = await api.get(
           `/search?q=${encodeURIComponent(query)}`
         );
         setResults(response.data);

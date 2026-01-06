@@ -10,7 +10,7 @@ import { useMediaQuery } from "@mui/material";
 import CreateOverlay from "./CreateChallengeOverlay";
 import ChallengeCard from "../../components/Community/ChallengeCard";
 import ChallengeCardSkeleton from "../../components/Community/ChallengeCardSkeleton";
-import axios from "axios";
+import api from "../../lib/axios";
 import BackButton from "../../components/BackButton/BackButton";
 
 
@@ -39,7 +39,7 @@ const CreateChallenge = () => {
       try {
         setLoading(true);
         // Use the new API endpoint for getting created challenges
-        const response = await axios.get(
+        const response = await api.get(
           `/challenge/community/${communityId}/created`
         );
         console.log("API Response:", response.data);
@@ -209,7 +209,7 @@ const CreateChallenge = () => {
             }}
           >
             <div
-              className={`bg-[#FFE4E6] rounded-full flex items-center justify-center aspect-square w-[50px] h-[50px] `}
+              className={`bg-[#FFE4E6] rounded-full flex items-center justify-center aspect-square w-12.5 h-12.5 `}
             >
               <Clock size={"24px"} color="#E11D48" />
             </div>
@@ -231,7 +231,7 @@ const CreateChallenge = () => {
             }}
           >
             <div
-              className={`bg-[#F3E8FF] rounded-full flex items-center justify-center aspect-square w-[50px] h-[50px] `}
+              className={`bg-[#F3E8FF] rounded-full flex items-center justify-center aspect-square w-12.5 h-12.5 `}
             >
               <Calendar size={"24px"} color="#9333EA" />
             </div>
@@ -253,7 +253,7 @@ const CreateChallenge = () => {
             }}
           >
             <div
-              className={`bg-[#FEF3C7] rounded-full flex items-center justify-center aspect-square w-[50px] h-[50px] `}
+              className={`bg-[#FEF3C7] rounded-full flex items-center justify-center aspect-square w-12.5 h-12.5 `}
             >
               <Calendar size={"24px"} color="#D97706" />
             </div>
@@ -304,7 +304,7 @@ const CreateChallenge = () => {
           <div className={styles.noChallenges}>
             <div className={styles.boostEngagement}>
               <div className={styles.trophyIcon}>
-                <img src={trophy} alt="Trophy Icon" />
+                <img src={trophy?.src || trophy} alt="Trophy Icon" />
               </div>
               <h2>Boost Community Engagement with Milestones</h2>
               <p>

@@ -36,7 +36,7 @@ const Privacy = () => {
         <div className={styles.headerContainer}>
           <div className={styles.headerContent}>
             <div className={styles.headerIcon}>
-              <img src={shield} alt="privacy shield" />
+              <img src={shield?.src || shield} alt="privacy shield" />
             </div>
             <h1 className={styles.headerTitle}>
               <span className={styles.highlight}>Privacy</span> Policy
@@ -73,7 +73,7 @@ const Privacy = () => {
             {/* Quick Actions */}
             <div className={styles.quickActions}>
               <div className={styles.actionCard}>
-                <img src={lock} alt="security" />
+                <img src={lock?.src || lock} alt="security" />
                 <div className={styles.actionInfo}>
                   <p className={styles.actionText}>Your data is secure</p>
                   <p className={styles.actionSubtext}>End-to-end encryption</p>
@@ -132,7 +132,7 @@ const Privacy = () => {
                 </h3>
                 <div className={styles.listContainer}>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Registration Information:</strong> When you create
                       an account, we collect your name, email address, and
@@ -140,7 +140,7 @@ const Privacy = () => {
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Profile Information:</strong> You may choose to
                       provide additional information to enhance your profile,
@@ -149,7 +149,7 @@ const Privacy = () => {
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Content:</strong> We collect information you post,
                       share, or upload on the platform, including text, images,
@@ -157,7 +157,7 @@ const Privacy = () => {
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Community and Project Information:</strong> We
                       collect information about the communities you join and
@@ -172,7 +172,7 @@ const Privacy = () => {
                 </h3>
                 <div className={styles.listContainer}>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Usage Data:</strong> We collect information about
                       how you interact with the platform, such as pages visited,
@@ -180,7 +180,7 @@ const Privacy = () => {
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Device Information:</strong> We collect data about
                       the device you use to access NexFellow, including device
@@ -189,7 +189,7 @@ const Privacy = () => {
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Cookies and Tracking:</strong> We use cookies and
                       similar technologies to track your activity on the
@@ -234,7 +234,7 @@ const Privacy = () => {
                 </h3>
                 <div className={styles.listContainer}>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Account Management:</strong> We use your
                       registration information to create and manage your
@@ -242,7 +242,7 @@ const Privacy = () => {
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Community Management:</strong> We use your
                       information to facilitate community management, including
@@ -250,7 +250,7 @@ const Privacy = () => {
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Content Sharing:</strong> We use your content to
                       enable sharing and collaboration within communities and
@@ -264,7 +264,7 @@ const Privacy = () => {
                 </h3>
                 <div className={styles.listContainer}>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Analytics and Insights:</strong> We use usage data
                       and analytics to understand how users interact with the
@@ -272,7 +272,7 @@ const Privacy = () => {
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Feature Development:</strong> We use user feedback
                       and behavior to inform feature development and prioritize
@@ -280,7 +280,7 @@ const Privacy = () => {
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Platform Optimization:</strong> We use device
                       information and usage data to optimize platform
@@ -340,7 +340,7 @@ const Privacy = () => {
                 </p>
                 <div className={styles.listContainer}>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Access and Update:</strong> You can access and
                       update your personal profile information directly through
@@ -348,7 +348,7 @@ const Privacy = () => {
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Delete Your Data:</strong> You may request the
                       deletion of your account and associated personal
@@ -356,7 +356,7 @@ const Privacy = () => {
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Withdraw Consent:</strong> Where processing is
                       based on consent, you may withdraw your consent at any
@@ -365,7 +365,7 @@ const Privacy = () => {
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Opt-Out of Communications:</strong> You can opt
                       out of marketing and promotional emails by using the
@@ -489,18 +489,18 @@ const Privacy = () => {
                 </p>
                 <div className={styles.listContainer}>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>Posting the updated policy on our website</div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       Sending a notification via email or platform notice (if
                       appropriate)
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       The updated policy will take effect on the date indicated
                       at the top of the policy.
@@ -606,9 +606,8 @@ const Privacy = () => {
 
         {/* Floating TOC Modal */}
         <div
-          className={`${styles.floatingTocModal} ${
-            showFloatingToc ? styles.active : ""
-          }`}
+          className={`${styles.floatingTocModal} ${showFloatingToc ? styles.active : ""
+            }`}
         >
           <div className={styles.floatingTocContent}>
             <div className={styles.floatingTocHeader}>

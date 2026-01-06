@@ -36,7 +36,7 @@ const Terms = () => {
         <div className={styles.headerContainer}>
           <div className={styles.headerContent}>
             <div className={styles.headerIcon}>
-              <img src={document} alt="terms document" />
+              <img src={document?.src || document} alt="terms document" />
             </div>
             <h1 className={styles.headerTitle}>
               <span className={styles.highlight}>Terms</span> of Service
@@ -77,7 +77,7 @@ const Terms = () => {
             {/* Quick Actions */}
             <div className={styles.quickActions}>
               <div className={styles.actionCard}>
-                <img src={lock} alt="security" />
+                <img src={lock?.src || lock} alt="security" />
                 <div className={styles.actionInfo}>
                   <p className={styles.actionText}>Your agreement is secure</p>
                   <p className={styles.actionSubtext}>Legally binding terms</p>
@@ -135,28 +135,28 @@ const Terms = () => {
                 </p>
                 <div className={styles.listContainer}>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Post or share content</strong> that is abusive,
                       discriminatory, obscene, illegal, or harmful.
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Impersonate others</strong> or provide false
                       information.
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Attempt to interfere</strong> with the security or
                       integrity of the Platform.
                     </div>
                   </div>
                   <div className={styles.listItem}>
-                    <img src={tick} alt="tick" />
+                    <img src={tick?.src || tick} alt="tick" />
                     <div>
                       <strong>Use the platform</strong> for unauthorized
                       commercial purposes or unsolicited marketing.
@@ -427,9 +427,8 @@ const Terms = () => {
 
         {/* Floating TOC Modal */}
         <div
-          className={`${styles.floatingTocModal} ${
-            showFloatingToc ? styles.active : ""
-          }`}
+          className={`${styles.floatingTocModal} ${showFloatingToc ? styles.active : ""
+            }`}
         >
           <div className={styles.floatingTocContent}>
             <div className={styles.floatingTocHeader}>

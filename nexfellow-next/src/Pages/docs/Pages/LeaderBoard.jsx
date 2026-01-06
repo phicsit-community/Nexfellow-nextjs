@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { MdLeaderboard } from "react-icons/md";
 import { FaExclamationCircle, FaFire, FaMoon, FaSun } from "react-icons/fa";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import MiniFooter from "../components/MiniFooter.jsx";
 import { IoMdInformationCircle } from "react-icons/io";
 
 const LeaderBoard = () => {
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const [isDark, setIsDark] = useState(darkMode);
   const cyan = "#0E7C86";
 
@@ -63,9 +63,8 @@ const LeaderBoard = () => {
 
   return (
     <div
-      className={`min-h-screen px-6 py-10 font-poppins transition-colors duration-500 ${
-        isDark ? "bg-black text-gray-100" : "bg-white text-gray-900"
-      }`}
+      className={`min-h-screen px-6 py-10 font-poppins transition-colors duration-500 ${isDark ? "bg-black text-gray-100" : "bg-white text-gray-900"
+        }`}
     >
       <div className="max-w-5xl mx-auto text-left">
         {/* Breadcrumb & Header */}
@@ -74,13 +73,12 @@ const LeaderBoard = () => {
             <p className={`text-sm ${darkMode ? "text-white" : "text-gray-800 "}`}>
               Docs &gt; Activity and Interaction &gt;{" "}
               <span className="font-medium text-[#1CA1A5]">
-                 Leaderboards
+                Leaderboards
               </span>
             </p>
             <h1
-              className={`text-3xl font-semibold mt-2 ${
-                isDark ? "text-white" : "text-[#0E7C86]"
-              } flex items-center gap-2`}
+              className={`text-3xl font-semibold mt-2 ${isDark ? "text-white" : "text-[#0E7C86]"
+                } flex items-center gap-2`}
             >
               Leaderboard and reputations on NexFellow
             </h1>
@@ -120,15 +118,14 @@ const LeaderBoard = () => {
           weekly to ensure fairness and balance across all contributors.
         </p>
 
-       <h2
-  className={`flex items-center justify-center gap-3 text-2xl font-semibold mt-10 mb-6 text-center ${
-    isDark ? "text-[#1CA1A5]" : "text-[#000000]"
-  }`}
->
-  <span className="flex-1 max-w-[140px] border-t border-gray-400"></span>
-  How to top the Leaderboard
-  <span className="flex-1 max-w-[140px] border-t border-gray-400"></span>
-</h2>
+        <h2
+          className={`flex items-center justify-center gap-3 text-2xl font-semibold mt-10 mb-6 text-center ${isDark ? "text-[#1CA1A5]" : "text-[#000000]"
+            }`}
+        >
+          <span className="flex-1 max-w-[140px] border-t border-gray-400"></span>
+          How to top the Leaderboard
+          <span className="flex-1 max-w-[140px] border-t border-gray-400"></span>
+        </h2>
 
 
 
@@ -137,17 +134,15 @@ const LeaderBoard = () => {
           {leaderboardCriteria.map((item, index) => (
             <div
               key={index}
-              className={`flex items-center rounded-lg overflow-hidden transition-transform hover:scale-[1.02] ${
-                isDark
+              className={`flex items-center rounded-lg overflow-hidden transition-transform hover:scale-[1.02] ${isDark
                   ? "bg-[#006C69] hover:bg-[#0E7C86]/40"
                   : "bg-[#006C69] hover:bg-[#0E7C86]"
-              }`}
+                }`}
             >
               {/* Percentage Box */}
               <div
-                className={`px-5 py-4 m-2 rounded-xl font-semibold text-center border ${
-                  isDark ? "text-[#006C69] bg-white" : "text-[#006C69] bg-white"
-                }`}
+                className={`px-5 py-4 m-2 rounded-xl font-semibold text-center border ${isDark ? "text-[#006C69] bg-white" : "text-[#006C69] bg-white"
+                  }`}
               >
                 <span className="text-2xl font-bold">{item.percentage}</span>
               </div>
@@ -156,9 +151,8 @@ const LeaderBoard = () => {
               <div className="flex-1 p-4 flex justify-between items-start">
                 <div>
                   <h3
-                    className={`font-semibold text-lg mb-1 ${
-                      isDark ? "text-white" : "text-white"
-                    }`}
+                    className={`font-semibold text-lg mb-1 ${isDark ? "text-white" : "text-white"
+                      }`}
                   >
                     {item.title}
                   </h3>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./EditQuizForm.module.css";
 import BackButton from "../../components/BackButton/BackButton";
 import {
@@ -99,7 +99,7 @@ const EditQuizForm = () => {
     const fetchQuizData = async () => {
       setLoading(true); // Show skeleton loading UI
       try {
-        const response = await axios.get(`/community/quizzes/${quizId}`);
+        const response = await api.get(`/community/quizzes/${quizId}`);
         const data = response.data.quiz;
         setQuizData({
           title: data.title || "",
@@ -285,7 +285,7 @@ const EditQuizForm = () => {
         }
       });
 
-      await axios.put(`/community/quizzes/${quizId}`, formData, {
+      await api.put(`/community/quizzes/${quizId}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

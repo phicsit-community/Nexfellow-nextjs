@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../lib/axios";
 
 /**
  * Token refresh utility
@@ -53,12 +53,11 @@ class TokenRefreshService {
       const attemptRefresh = async () => {
         try {
           console.log(
-            `Attempting token refresh${
-              retryAttempt > 0 ? ` (retry ${retryAttempt})` : ""
+            `Attempting token refresh${retryAttempt > 0 ? ` (retry ${retryAttempt})` : ""
             }`
           );
 
-          const response = await axios.post(
+          const response = await api.post(
             "/auth/refresh-token",
             {},
             {
@@ -179,44 +178,13 @@ class TokenRefreshService {
 
   /**
    * Set up axios interceptors to handle token refreshing
+   * NOTE: In Next.js, interceptors are handled in lib/axios.js
+   * This method is kept for compatibility but does minimal setup
    */
   setupInterceptors() {
-    // Response interceptor to handle token refresh
-    axios.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        // Return error if not 401 or no config
-        if (!error.response || error.response.status !== 401 || !error.config) {
-          return Promise.reject(error);
-        }
-
-        // Prevent infinite loop - don't retry refresh-token endpoint
-        if (error.config.url.includes("/auth/refresh-token")) {
-          return Promise.reject(error);
-        }
-
-        // Don't redirect to login if we're already on the login page
-        if (window.location.pathname === "/login") {
-          return Promise.reject(error);
-        }
-
-        try {
-          console.log("401 detected, attempting to refresh token");
-          // Try to refresh token
-          await this.refreshToken();
-          console.log("Token refreshed, retrying original request");
-
-          // Retry the original request
-          return axios(error.config);
-        } catch (refreshError) {
-          console.error(
-            "Failed to refresh token for 401 error:",
-            refreshError.message
-          );
-          return Promise.reject(refreshError);
-        }
-      }
-    );
+    // Interceptors are now handled in lib/axios.js to avoid duplication
+    // This method is kept for backward compatibility
+    console.log("Token service interceptors are handled in lib/axios.js");
   }
 
   /**

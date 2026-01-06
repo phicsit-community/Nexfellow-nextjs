@@ -9,7 +9,7 @@ import {
   FaDownload,
 } from "react-icons/fa";
 import MiniFooter from "../components/MiniFooter.jsx";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { IoMdInformationCircle } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
@@ -43,7 +43,7 @@ const steps = [
 export default function EditAccount() {
   const [activeStep, setActiveStep] = useState(0);
   const [zoomImage, setZoomImage] = useState(null);
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const timelineRef = useRef(null);
   const [hasProgress, setHasProgress] = useState(false);
 
@@ -123,7 +123,7 @@ export default function EditAccount() {
               </span>
             </div>
             <p className={`mt-6 leading-relaxed ${darkMode ? "text-[#D0CACA]" : "text-black"
-            }`}>
+              }`}>
               Account settings in NexFellow allow you to personalize and manage your experience on the platform. From updating login credentials and notification preferences to controlling privacy options and linked accounts, the settings give you full flexibility to keep your profile secure and tailored to your needs.             </p>
           </div>
 
@@ -162,10 +162,10 @@ export default function EditAccount() {
                 <div className="w-12 flex justify-center relative">
                   <div
                     className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center border-4 font-semibold transition-colors duration-500 ${idx <= activeStep
-                        ? "bg-[#0E7C86] border-[#0E7C86] text-white"
-                        : darkMode
-                          ? "bg-black border-[#0E7C86] text-[#0E7C86]"
-                          : "bg-white border-[#0E7C86] text-[#0E7C86]"
+                      ? "bg-[#0E7C86] border-[#0E7C86] text-white"
+                      : darkMode
+                        ? "bg-black border-[#0E7C86] text-[#0E7C86]"
+                        : "bg-white border-[#0E7C86] text-[#0E7C86]"
                       }`}
                   >
                     {step.icon}
@@ -175,9 +175,9 @@ export default function EditAccount() {
                 {/* Step Content */}
                 <div className="flex-1">
                   <h3 className={`text-xl font-semibold text-[#1CA1A5] ${darkMode ? "text-[#1CA1A5]" : "text-[#1CA1A5]"
-            }`}>{step.title}</h3>
+                    }`}>{step.title}</h3>
                   <p className={`mt-2 text-[15px] ${darkMode ? "text-[#D0CACA]" : "text-black"
-            }`}>{step.desc}</p>
+                    }`}>{step.desc}</p>
                   {step.image && (
                     <img
                       src={step.image}

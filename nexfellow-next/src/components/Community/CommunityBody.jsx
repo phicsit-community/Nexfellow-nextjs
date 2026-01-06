@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import no_posts from "./assets/no_posts.png";
 import pinIcon from "./assets/pin.svg";
 import ProfileImage from "./assets/profile_image.svg";
@@ -79,8 +79,8 @@ const CommunityBody = ({ communityId, messageIdToScroll }) => {
 
       try {
         const [postsResponse, communityResponse] = await Promise.all([
-          axios.get(`/post/community/${communityId}`),
-          axios.get(`/community/id/${communityId}`),
+          api.get(`/post/community/${communityId}`),
+          api.get(`/community/id/${communityId}`),
         ]);
 
         const followers =
@@ -91,7 +91,7 @@ const CommunityBody = ({ communityId, messageIdToScroll }) => {
           const followStatuses = await Promise.all(
             followers.map(async (follower) => {
               try {
-                const res = await axios.get(
+                const res = await api.get(
                   `/user/followStatus/${follower._id}`
                 );
                 return { id: follower._id, isFollowing: res.data.isFollowing };
@@ -151,7 +151,7 @@ const CommunityBody = ({ communityId, messageIdToScroll }) => {
 
   const pinPost = async (postId) => {
     try {
-      await axios.post(`/community/${communityId}/pin-post/${postId}`);
+      await api.post(`/community/${communityId}/pin-post/${postId}`);
       setPinnedPostId(postId);
       toast.success("Post pinned to community successfully!");
       setShowPinModal(false);
@@ -165,7 +165,7 @@ const CommunityBody = ({ communityId, messageIdToScroll }) => {
 
   const unpinPost = async () => {
     try {
-      await axios.delete(`/community/${communityId}/pin-post`);
+      await api.delete(`/community/${communityId}/pin-post`);
       setPinnedPostId(null);
       toast.success("Post unpinned successfully!");
       setShowPinModal(false);
@@ -190,7 +190,7 @@ const CommunityBody = ({ communityId, messageIdToScroll }) => {
     setLoadingFollow((prev) => ({ ...prev, [targetUserId]: true }));
 
     try {
-      await axios.post(`/user/toggleFollow/${targetUserId}`, { action });
+      await api.post(`/user/toggleFollow/${targetUserId}`, { action });
 
       setFollowingStatus((prev) => ({
         ...prev,
@@ -234,7 +234,7 @@ const CommunityBody = ({ communityId, messageIdToScroll }) => {
     if (!selectedPost) return;
 
     try {
-      await axios.post(`/user/hide-post/${selectedPost._id}`);
+      await api.post(`/user/hide-post/${selectedPost._id}`);
       // Update local state to hide the post immediately
       setHiddenPosts([...hiddenPosts, selectedPost]);
       setPosts(posts.filter((p) => p._id !== selectedPost._id));

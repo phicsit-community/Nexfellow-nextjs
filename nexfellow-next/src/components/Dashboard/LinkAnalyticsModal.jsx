@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
-import axios from "axios";
+import api from "../../lib/axios";
 import { FaLink, FaChartBar, FaTimes, FaCopy } from "react-icons/fa";
 import LinkDetails from "./LinkDetails";
 import styles from "./LinkAnalyticsModal.module.css";
@@ -22,7 +22,7 @@ const LinkAnalyticsModal = ({ isOpen, onClose, communityId }) => {
   const fetchLinks = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`/link/community/${communityId}/links`);
+      const response = await api.get(`/link/community/${communityId}/links`);
       setLinks(response.data || []);
       setError(null);
     } catch (err) {

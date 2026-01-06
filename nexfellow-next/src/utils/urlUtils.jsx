@@ -41,7 +41,7 @@ export const parseContent = (content) => {
 
               // Redirect to the API endpoint which will handle the redirect and tracking
               window.open(
-                `${import.meta.env.REACT_APP_API_URL || ""}/link/${shortCode}`,
+                `${process.env.NEXT_PUBLIC_SERVER_URL || ""}/link/${shortCode}`,
                 "_blank"
               );
             }}

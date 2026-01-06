@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./Event.module.css";
 import EventModal from "../../components/Event/EventModal";
 import BackButton from "../../components/BackButton/BackButton";
@@ -34,7 +34,7 @@ const EventsPage = () => {
   useEffect(() => {
     const fetchCommunity = async () => {
       try {
-        const response = await axios.get(`/community/id/${communityId}`);
+        const response = await api.get(`/community/id/${communityId}`);
         setUserId(response.data.community.owner?.createdCommunity);
       } catch (error) {
         console.error("Error fetching community data:", error);
@@ -48,7 +48,7 @@ const EventsPage = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get(`/event/community/${communityId}`);
+      const response = await api.get(`/event/community/${communityId}`);
       const upcoming = response.data.filter(
         (event) => new Date(event.startDate) >= new Date()
       );
@@ -83,7 +83,7 @@ const EventsPage = () => {
 
   const confirmDeleteEvent = async () => {
     try {
-      await axios.delete(`/event/delete/${eventToDelete}`);
+      await api.delete(`/event/delete/${eventToDelete}`);
       fetchEvents(); // Refresh events after deletion
     } catch (error) {
       console.error("Error deleting event:", error);

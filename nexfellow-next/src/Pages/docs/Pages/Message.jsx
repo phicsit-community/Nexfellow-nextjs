@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import { IoMdInformationCircle } from "react-icons/io";
 import {
   FaMoon,
@@ -22,7 +22,7 @@ import { MdAccountCircle } from "react-icons/md";
 const ACCENT = "#0E7C86";
 
 export default function MessageGuide() {
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const toggleTheme = () => setDarkMode((v) => !v);
 
   const timelineRef = useRef(null);
@@ -90,9 +90,8 @@ export default function MessageGuide() {
               </span>
             </p>
             <h1
-              className={`text-3xl font-semibold mt-2 ${
-                darkMode ? "text-white" : "text-[#0E7C86]"
-              }`}
+              className={`text-3xl font-semibold mt-2 ${darkMode ? "text-white" : "text-[#0E7C86]"
+                }`}
             >
               How to network on NexFellow?
             </h1>
@@ -132,11 +131,10 @@ export default function MessageGuide() {
           {features.map((item) => (
             <div
               key={item.id}
-              className={`group flex flex-col items-start gap-3 p-6 rounded-2xl shadow-md transform transition hover:scale-105 border ${
-                darkMode
-                  ? "bg-[#006C69] border-gray-700 hover:bg-[#0E7C86] hover:text-white"
-                  : "bg-[#006C69] border-gray-200 text-white hover:bg-[#0C6D75]"
-              }`}
+              className={`group flex flex-col items-start gap-3 p-6 rounded-2xl shadow-md transform transition hover:scale-105 border ${darkMode
+                ? "bg-[#006C69] border-gray-700 hover:bg-[#0E7C86] hover:text-white"
+                : "bg-[#006C69] border-gray-200 text-white hover:bg-[#0C6D75]"
+                }`}
             >
               {/* <div
                 className={`text-2xl transition-colors ${
@@ -188,7 +186,7 @@ export default function MessageGuide() {
                 <p className={`mt-1 ${darkMode ? "text-[#D0CACA]" : "text-black"}`}>{step.title}</p>
                 {step.img && (
                   <img
-                    src={step.img}
+                    src={step.img.src || step.img}
                     alt={`Step ${step.id}`}
                     className="mt-4 rounded-lg border shadow-md max-w-lg"
                   />

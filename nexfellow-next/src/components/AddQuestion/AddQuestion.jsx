@@ -7,7 +7,7 @@ import {
   IoMdCheckmark,
   IoMdAlert,
 } from "react-icons/io";
-import axios from "axios";
+import api from "../../lib/axios";
 
 const AddQuestion = ({ setAddQuestion, quizId, quizData, fetchAllQuestions }) => {
   const [questionData, setQuestionData] = useState({
@@ -162,7 +162,7 @@ const AddQuestion = ({ setAddQuestion, quizId, quizData, fetchAllQuestions }) =>
 
       console.log("formattedQuestionData:", formattedQuestionData);
 
-      const response = await axios.post(
+      const response = await api.post(
         `/community/quizzes/${quizId}/questions`,
         formattedQuestionData,
         { withCredentials: true }

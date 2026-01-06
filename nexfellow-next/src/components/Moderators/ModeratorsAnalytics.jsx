@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import {
     LineChart,
     Line,
@@ -140,7 +140,7 @@ export default function ModeratorsAnalytics({
 
     useEffect(() => {
         setLoading(true);
-        axios.get(`/analytics/${communityId}?filter=${analyticsFilter}`)
+        api.get(`/analytics/${communityId}?filter=${analyticsFilter}`)
             .then(res => setData(res.data))
             .catch(() => setData(null))
             .finally(() => setLoading(false));

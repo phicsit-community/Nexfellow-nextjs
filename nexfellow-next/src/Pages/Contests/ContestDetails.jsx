@@ -5,7 +5,7 @@ import htmr from "htmr";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import Commoncd from "../../components/Contest/Commoncd";
 import { toast } from "sonner";
-import axios from "axios";
+import api from "../../lib/axios";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import PaginationItem from "@mui/material/PaginationItem";
@@ -241,7 +241,7 @@ const ContestDetails = () => {
           ? `/community/quizzes/${id}`
           : `/quiz/getQuiz/${id}`;
         console.log("Fetching from endpoint:", endpoint);
-        const response = await axios.get(endpoint);
+        const response = await api.get(endpoint);
         console.log("Quiz response:", response);
 
         if (response.status === 200 && response.data.quiz) {
@@ -276,7 +276,7 @@ const ContestDetails = () => {
           ? `/community/quizzes/${id}/rewards`
           : `reward/get-reward-details`;
 
-        const response = await axios.get(endpoint);
+        const response = await api.get(endpoint);
 
         if (response.status === 200) {
           const rewards = response.data.rewards; // Updated response structure
@@ -300,7 +300,7 @@ const ContestDetails = () => {
         ? `/community/quizzes/${id}/leaderboard`
         : `/quiz/getLeaderboard/${id}`;
 
-      const response = await axios.get(endpoint);
+      const response = await api.get(endpoint);
       console.log("Leaderboard response:", response);
 
       if (response.status === 200) {
@@ -491,7 +491,7 @@ const ContestDetails = () => {
                 <section id="leaderboard">
                   <nav className={styles["ladder-nav"]}>
                     <div className={styles["contest-filters"]}>
-                      <img src={search} alt="Search" />
+                      <img src={search?.src || search} alt="Search" />
                       <input
                         type="text"
                         id="search-name"

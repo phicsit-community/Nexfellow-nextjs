@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { FaDownload, FaMoon, FaSun, FaTimes } from "react-icons/fa";
-import { useOutletContext } from "react-router-dom";
+import { useDocsTheme } from "../context/DocsContext";
 import MiniFooter from "../components/MiniFooter.jsx";
 import { IoMdInformationCircle } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
 export default function FeedPage() {
-  const { darkMode, setDarkMode } = useOutletContext();
+  const { darkMode, setDarkMode } = useDocsTheme();
   const [activeStep, setActiveStep] = useState(0);
   const [zoomedImage, setZoomedImage] = useState(null);
   const timelineRef = useRef(null);
@@ -24,7 +24,7 @@ export default function FeedPage() {
       id: 2,
       title:
         "Navigate across various activities like Feed, People, and Discussions to explore and participate.",
-      icon: <FaDownload size={24} />  
+      icon: <FaDownload size={24} />
     },
   ];
 
@@ -86,9 +86,8 @@ export default function FeedPage() {
 
   return (
     <div
-      className={`${
-        darkMode ? "bg-black text-gray-100" : "bg-white text-gray-900"
-      } font-poppins min-h-screen px-6 py-10 transition-colors duration-500`}
+      className={`${darkMode ? "bg-black text-gray-100" : "bg-white text-gray-900"
+        } font-poppins min-h-screen px-6 py-10 transition-colors duration-500`}
     >
       <div className="max-w-5xl mx-auto text-left">
         {/* Header Section */}
@@ -101,9 +100,8 @@ export default function FeedPage() {
               </span>
             </p>
             <h1
-              className={`text-3xl font-semibold mt-2 ${
-                darkMode ? "text-white" : "text-[#0E7C86]"
-              }`}
+              className={`text-3xl font-semibold mt-2 ${darkMode ? "text-white" : "text-[#0E7C86]"
+                }`}
             >
               Feed,Discussions and Members on NexFellow?
             </h1>
@@ -189,10 +187,10 @@ export default function FeedPage() {
                 <div className="w-16 flex justify-center relative">
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center border-4 font-semibold transition-colors duration-500 ${idx <= activeStep
-                        ? "text-white"
-                        : darkMode
-                          ? "bg-black text-[#0E7C86]"
-                          : "bg-white text-[#0E7C86]"
+                      ? "text-white"
+                      : darkMode
+                        ? "bg-black text-[#0E7C86]"
+                        : "bg-white text-[#0E7C86]"
                       }`}
                     style={{
                       backgroundColor:

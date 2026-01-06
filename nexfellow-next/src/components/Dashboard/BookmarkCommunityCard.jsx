@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./BookmarkCommunity.module.css";
 import { Icon } from "@iconify/react";
 import { FaFire } from "react-icons/fa";
-import axios from "axios";
+import api from "../../lib/axios";
 
 const BookmarkCommunityCard = ({ data, path = "community" }) => {
     const owner = data.owner || {};

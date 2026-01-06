@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../lib/axios";
 import { logout } from "../../store/slices/authSlice";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
@@ -14,7 +14,7 @@ const useLogout = () => {
   const handleLogout = async () => {
     try {
       // Call server to invalidate refresh token and clear cookies
-      await axios.get("/auth/logout", { withCredentials: true });
+      await api.get("/auth/logout", { withCredentials: true });
 
       // Clear local storage
       localStorage.removeItem("user");

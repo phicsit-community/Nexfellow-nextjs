@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import { getSocket } from "../../utils/socket";
 import styles from "./NotificationModal.module.css";
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -103,7 +103,7 @@ const NotificationModal = ({ closeModal }) => {
 
   const fetchCommunityNotifications = async (pageNum = 1) => {
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `/notifications?page=${pageNum}&limit=${LIMIT}`
       );
       const newNotifs = response.data.notifications || [];
@@ -134,7 +134,7 @@ const NotificationModal = ({ closeModal }) => {
 
   const fetchSystemNotifications = async (pageNum = 1) => {
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `/systemNotifications?page=${pageNum}&limit=${LIMIT}`
       );
       const newNotifs = response.data.notifications || [];
@@ -199,7 +199,7 @@ const NotificationModal = ({ closeModal }) => {
       ) {
         setCheckingReview(true);
         try {
-          const res = await axios.get(
+          const res = await api.get(
             `/post/${selectedNotification.meta.postId}`
           );
           setPostStatus(res.data.post);
@@ -219,7 +219,7 @@ const NotificationModal = ({ closeModal }) => {
     }
     setAppealing(true);
     try {
-      await axios.post(
+      await api.post(
         `/admin/posts/${notification.meta.postId}/request-review`,
         {},
         { withCredentials: true }
@@ -297,7 +297,7 @@ const NotificationModal = ({ closeModal }) => {
           ? `/systemNotifications/${notification._id}/read`
           : `/notifications/${notification._id}/read`;
 
-      await axios.patch(endpoint);
+      await api.patch(endpoint);
 
       if (notification.type === "system") {
         setSystemNotifications((prev) =>
@@ -334,7 +334,7 @@ const NotificationModal = ({ closeModal }) => {
   const markAllAsRead = async () => {
     setLoading(true);
     try {
-      await axios.post("/systemNotifications/read/all");
+      await api.post("/systemNotifications/read/all");
       // Update UI state: mark all as read for logged-in user
       setSystemNotifications((prev) =>
         prev.map((n) => ({
@@ -366,7 +366,7 @@ const NotificationModal = ({ closeModal }) => {
       return;
     setLoading(true);
     try {
-      await axios.delete("/systemNotifications/delete/all");
+      await api.delete("/systemNotifications/delete/all");
       setSystemNotifications([]);
       setCommunityNotifications([]);
       toast.success("All notifications deleted!");
@@ -380,7 +380,7 @@ const NotificationModal = ({ closeModal }) => {
 
   const deleteNotification = async (notification) => {
     try {
-      await axios.delete(`/systemNotifications/${notification._id}/user`);
+      await api.delete(`/systemNotifications/${notification._id}/user`);
       if (notification.type === "system") {
         setSystemNotifications((prev) =>
           prev.filter((n) => n._id !== notification._id)
@@ -810,7 +810,7 @@ const NotificationModal = ({ closeModal }) => {
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.2, duration: 0.4 }}
                         className={styles.noNotificationsIcon}
-                        src={NoNotifcation}
+                        src={NoNotifcation?.src || NoNotifcation}
                         alt="No Notifications"
                       />
                       <motion.p

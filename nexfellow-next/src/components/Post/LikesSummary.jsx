@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./LikesSummary.module.css";
-import axios from "axios";
+import api from "../../lib/axios";
 import LikesModal from "./LikesModal";
 
 const SummaryContent = ({ likeCount, profiles, onClick }) => {
@@ -47,7 +47,7 @@ const LikesSummary = ({ postId, isLiked }) => {
   React.useEffect(() => {
     const fetchLikes = async () => {
       try {
-        const res = await axios.get(`/like/posts/${postId}`);
+        const res = await api.get(`/like/posts/${postId}`);
         const resData = res.data.likes;
         const profiles = resData
           .map((like) => like.user)

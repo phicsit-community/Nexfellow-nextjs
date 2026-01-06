@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./Moderators.module.css";
 import { toast } from "sonner";
 import { ROLE_OPTIONS, ROLE_PRIVILEGES } from "../Constants/roles";
@@ -12,7 +12,7 @@ const ModeratorCard = ({ user, communityId }) => {
     const handleSave = async () => {
         setLoading(true);
         try {
-            await axios.patch(`/community/${communityId}/role`, {
+            await api.patch(`/community/${communityId}/role`, {
                 userId: user._id,
                 role: selectedRole,
                 communityId: communityId,

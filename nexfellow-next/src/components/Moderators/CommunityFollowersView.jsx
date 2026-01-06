@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import styles from "./Moderators.module.css";
 import TransferModal from "./TransferModal";
 import { toast } from "sonner";
@@ -33,15 +33,15 @@ const CommunityFollowersView = ({ communityId }) => {
 
     const fetchData = async () => {
         try {
-            const communityRes = await axios.get(`/community/id/${communityId}`);
+            const communityRes = await api.get(`/community/id/${communityId}`);
             const community = communityRes.data.community;
             const ownerId = community.owner._id;
 
-            const followersRes = await axios.get(`/community/followers/${communityId}`);
+            const followersRes = await api.get(`/community/followers/${communityId}`);
             const rawFollowers = followersRes.data.followers;
 
             const userIds = rawFollowers.map((u) => u._id);
-            const rolesRes = await axios.post(`/community/${communityId}/get-users-roles`, {
+            const rolesRes = await api.post(`/community/${communityId}/get-users-roles`, {
                 communityId,
                 userIds,
             });
@@ -71,7 +71,7 @@ const CommunityFollowersView = ({ communityId }) => {
     const handleRoleChange = async (userId, newRole) => {
         setRoleLoadingMap((prev) => ({ ...prev, [userId]: true }));
         try {
-            await axios.patch(`/community/${communityId}/role`, {
+            await api.patch(`/community/${communityId}/role`, {
                 userId,
                 role: newRole,
                 communityId,
@@ -89,7 +89,7 @@ const CommunityFollowersView = ({ communityId }) => {
     const handleOwnershipTransfer = async () => {
         setTransferLoading(true);
         try {
-            await axios.patch(`/api/community/${communityId}/moderators`, {
+            await api.patch(`/api/community/${communityId}/moderators`, {
                 userId: selectedUser._id,
                 action: "transferOwnership",
             });

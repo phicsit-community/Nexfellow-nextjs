@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import { toast } from "sonner";
 
 import Navbar from "../../components/Navbar/Navbar";
@@ -34,7 +34,7 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/user/contact", formdata);
+      const response = await api.post("/user/contact", formdata);
 
       if (response.status === 200) {
         toast.success("Thank you for contacting us");
@@ -78,17 +78,17 @@ const Contact = () => {
 
               <div className={styles.commitments}>
                 <div className={styles.commitmentText}>
-                  <img src={tick} alt="tick" />
+                  <img src={tick?.src || tick} alt="tick" />
                   <p>Swift responses, dedicated support</p>
                 </div>
 
                 <div className={styles.commitmentText}>
-                  <img src={tick} alt="tick" />
+                  <img src={tick?.src || tick} alt="tick" />
                   <p>Efficient and always here for you</p>
                 </div>
 
                 <div className={styles.commitmentText}>
-                  <img src={tick} alt="tick" />
+                  <img src={tick?.src || tick} alt="tick" />
                   <p>We listen, understand, and act promptly</p>
                 </div>
               </div>
@@ -195,7 +195,7 @@ const Contact = () => {
 
                 <div className={styles.buttonContainer}>
                   <button type="submit" className={styles.button}>
-                    <img src={send} alt="send" />
+                    <img src={send?.src || send} alt="send" />
                     Send Your Message
                   </button>
                 </div>
@@ -213,7 +213,7 @@ const Contact = () => {
               </div>
 
               <div className={styles.rightIcon}>
-                <img src={rightside} alt="rightside" />
+                <img src={rightside?.src || rightside} alt="rightside" />
               </div>
             </div>
           </div>
@@ -226,7 +226,7 @@ const Contact = () => {
               </div>
 
               <div className={styles.rightIcon}>
-                <img src={rightside} alt="rightside" />
+                <img src={rightside?.src || rightside} alt="rightside" />
               </div>
             </div>
           </div>

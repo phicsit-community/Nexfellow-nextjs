@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './CommunitySummary.module.css';
-import axios from "axios";
+import api from "../../lib/axios";
 
 const SummaryContent = ({ profiles, onClick }) => {
   // Display up to 3 profile images

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import { useMediaQuery } from "react-responsive";
 import ThemeToggleButton from "../ThemeToggle/ThemeToggleButton";
 import ModeratedDropdown from "./ModeratedDropdown";
@@ -55,9 +56,11 @@ function Header() {
   const { effectiveTheme } = useTheme();
   const toggleModal = () => setIsModalOpen((prev) => !prev);
   const toggleWhatsNew = () => setIsWhatsNewOpen((prev) => !prev);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   useEffect(() => {
     const fetchUserData = async () => {
+      if (!isLoggedIn) return;
       setLoading(true);
       setError(null);
       try {
@@ -67,7 +70,7 @@ function Header() {
 
         if (!userId || !username) throw new Error("Invalid user data");
 
-        const response = await axios.get(`/user/profile`);
+        const response = await api.get(`/user/profile`);
         setUser(response.data);
       } catch (err) {
         setError("Failed to load user data: " + err.message);
@@ -77,8 +80,9 @@ function Header() {
     };
 
     const fetchUnreadNotifications = async () => {
+      if (!isLoggedIn) return;
       try {
-        const res = await axios.get(`/notifications/unread`);
+        const res = await api.get(`/notifications/unread`);
         setUnreadCount(res.data.count || 0);
       } catch (error) {
         console.error("Error fetching unread notifications:", error);
@@ -86,8 +90,9 @@ function Header() {
     };
 
     const fetchModerated = async () => {
+      if (!isLoggedIn) return;
       try {
-        const res = await axios.get("community/moderator/communities");
+        const res = await api.get("/community/moderator/communities");
         setModerated(res.data.communities || []);
         console.log("Moderated communities fetched:", res.data.communities);
       } catch (e) {
@@ -95,20 +100,24 @@ function Header() {
       }
     };
 
-    fetchUserData();
-    fetchUnreadNotifications();
-    fetchModerated();
+    if (isLoggedIn) {
+      fetchUserData();
+      fetchUnreadNotifications();
+      fetchModerated();
+    }
 
-    const interval = setInterval(fetchUnreadNotifications, 5000);
-    return () => clearInterval(interval);
-  }, []);
+    const interval = isLoggedIn ? setInterval(fetchUnreadNotifications, 5000) : null;
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isLoggedIn]);
 
   const handleLogout = async () => {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
 
     try {
-      const response = await axios.get("/user/logout", {
+      const response = await api.get("/user/logout", {
         withCredentials: true,
       });
 
@@ -234,7 +243,7 @@ function Header() {
                 className={`${styles.menuContent} w-72 p-0 mt-3`}
               >
                 <Link
-                  href={`/dashboard/${user?.username}`}
+                  href={user?.username ? `/dashboard/${user.username}` : "#"}
                   className={styles.profileHeader}
                 >
                   <div className={styles.avatar}>
@@ -270,7 +279,7 @@ function Header() {
                 <div className={styles.section}>
                   <div className={styles.sectionLabel}>Navigation</div>
                   <DropdownMenuItem asChild className={styles.menuItem}>
-                    <Link href={`/dashboard/${user?.username}`}>
+                    <Link href={user?.username ? `/dashboard/${user.username}` : "#"}>
                       <LayoutDashboard
                         className={`dark:text-white ${styles.icon}`}
                       />

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import MetaTags from "../../components/MetaTags/MetaTags";
 
 // styles
@@ -122,14 +122,14 @@ const ModeratorsView = () => {
         throw new Error("User ID is missing");
       }
 
-      const response = await axios.get(`/community/username/${username}`);
+      const response = await api.get(`/community/username/${username}`);
       const fetchedCommunity = response.data;
       setCommunity(fetchedCommunity);
       setCommunityOwnerId(fetchedCommunity.owner?._id);
       setCommunityId(fetchedCommunity._id);
 
       // Check if this community is blocked
-      const blockedResponse = await axios.get("/user/blocked-users");
+      const blockedResponse = await api.get("/user/blocked-users");
       const blockedUsers = blockedResponse.data.blockedUsers || [];
       const isOwnerBlocked = blockedUsers.some(
         (user) => user._id === fetchedCommunity.owner?._id
@@ -137,7 +137,7 @@ const ModeratorsView = () => {
       setIsBlocked(isOwnerBlocked);
 
       // Check if this community is muted
-      const mutedResponse = await axios.get("/user/muted-users");
+      const mutedResponse = await api.get("/user/muted-users");
       const mutedUsers = mutedResponse.data.mutedUsers || [];
       const isOwnerMuted = mutedUsers.some(
         (user) => user._id === fetchedCommunity.owner?._id
@@ -146,7 +146,7 @@ const ModeratorsView = () => {
 
       // Check follow status
       if (fetchedCommunity.owner?._id && currentUserId) {
-        const followResponse = await axios.get(
+        const followResponse = await api.get(
           `/user/followStatus/${fetchedCommunity.owner._id}`
         );
         setFollowStatus(followResponse.data.isFollowing);
@@ -213,7 +213,7 @@ const ModeratorsView = () => {
 
     try {
       const action = followStatus ? "unfollow" : "follow";
-      const response = await axios.post(
+      const response = await api.post(
         `/user/toggleFollow/${communityOwnerId}`,
         { action }
       );
@@ -237,7 +237,7 @@ const ModeratorsView = () => {
 
     setIsUnblocking(true);
     try {
-      await axios.post(`/user/unblock/${communityOwnerId}`);
+      await api.post(`/user/unblock/${communityOwnerId}`);
       setIsBlocked(false);
       toast.success(`${community.owner?.name} has been unblocked`);
     } catch (error) {
@@ -253,7 +253,7 @@ const ModeratorsView = () => {
     if (!communityId) return;
     const fetchBookmark = async () => {
       try {
-        const res = await axios.get(`/bookmarks/check/Community/${communityId}`);
+        const res = await api.get(`/bookmarks/check/Community/${communityId}`);
         setIsBookmarked(res.data.isBookmarked || false);
       } catch (err) {
         setIsBookmarked(false);
@@ -267,11 +267,11 @@ const ModeratorsView = () => {
     setBookmarkLoading(true);
     try {
       if (!isBookmarked) {
-        await axios.post(`/bookmarks/Community/${communityId}`);
+        await api.post(`/bookmarks/Community/${communityId}`);
         setIsBookmarked(true);
         toast.success("Community bookmarked!");
       } else {
-        await axios.delete(`/bookmarks/Community/${communityId}`);
+        await api.delete(`/bookmarks/Community/${communityId}`);
         setIsBookmarked(false);
         toast.info("Bookmark removed!");
       }
@@ -442,20 +442,20 @@ const ModeratorsView = () => {
                       community.owner?.createdCommunity ? (
                       community.owner?.communityBadge ? (
                         <img
-                          src={communityBadge}
+                          src={communityBadge?.src || communityBadge}
                           alt="Community Badge"
                           className={styles.badge}
                         />
                       ) : community.owner?.verificationBadge ? (
                         <img
-                          src={verificationBadge}
+                          src={verificationBadge?.src || verificationBadge}
                           alt="Verification Badge"
                           className={styles.badge}
                         />
                       ) : null
                     ) : community.owner?.verificationBadge ? (
                       <img
-                        src={verificationBadge}
+                        src={verificationBadge?.src || verificationBadge}
                         alt="Verification Badge"
                         className={styles.badge}
                       />
@@ -515,7 +515,7 @@ const ModeratorsView = () => {
                       }}
                     >
                       <img
-                        src={Webicon}
+                        src={Webicon?.src || Webicon}
                         alt="Website"
                         className={styles.svgIcon}
                       />
@@ -526,7 +526,7 @@ const ModeratorsView = () => {
                     >
                       <DialogTrigger className={styles.iconButton}>
                         <img
-                          src={Shareicon}
+                          src={Shareicon?.src || Shareicon}
                           alt="invite"
                           className={styles.svgIcon}
                         />

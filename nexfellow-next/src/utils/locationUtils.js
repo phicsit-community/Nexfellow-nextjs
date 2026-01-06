@@ -1,5 +1,5 @@
 // IP and location detection utility functions
-import axios from "axios";
+import api from "../../lib/axios";
 
 export async function getIpAddress() {
   try {
@@ -31,7 +31,7 @@ export async function getLocationByIp(ip) {
     if (!targetIp) return null;
 
     // Using our backend as a proxy to avoid CORS issues
-    const response = await axios.get(`/api/get-location?ip=${targetIp}`);
+    const response = await api.get(`/api/get-location?ip=${targetIp}`);
     const data = await response.json();
     return data;
   } catch (error) {

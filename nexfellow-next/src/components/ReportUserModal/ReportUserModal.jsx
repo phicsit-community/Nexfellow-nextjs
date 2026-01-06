@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../lib/axios";
 import { IoClose } from "react-icons/io5";
 import { MdReport } from "react-icons/md";
 import { toast } from "sonner";
@@ -155,7 +155,7 @@ const ReportUserModal = ({ isOpen, onClose, user }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post(`/report/user/${user._id}`, {
+      const response = await api.post(`/report/user/${user._id}`, {
         category,
         description,
       });

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import axios from "axios";
+import api from "../../lib/axios";
 import { toast } from "react-toastify";
 import styles from "./CommunityForm.module.css";
 import BackButton from "../../components/BackButton/BackButton";
@@ -53,19 +53,31 @@ export default function GetVerified() {
 
   const router = useRouter();
   const pathname = usePathname();
-  // Note: In Next.js App Router, location.state is not available
-  // The userId should be passed via URL params or context instead
+  // Get userId from localStorage
   const [userId, setUserId] = useState(null);
   const toastId = React.useRef();
 
+  // Get userId from localStorage on mount
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      if (user?.id || user?._id) {
+        setUserId(user.id || user._id);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    // Only show toast after initial load and when userId state has been checked
+    if (userId === null) return; // Still loading
+
     if (userId) {
       if (!toast.isActive(toastId.current)) {
         toastId.current = toast.success("User ID retrieved successfully.");
       }
     } else {
       if (!toast.isActive(toastId.current)) {
-        toastId.current = toast.error("User ID not found.");
+        toastId.current = toast.error("User ID not found. Please log in again.");
       }
     }
   }, [userId]);
@@ -154,7 +166,7 @@ export default function GetVerified() {
       fd.append("userId", userId);
       fd.append("action", "create");
 
-      await axios.post("/requests/", fd);
+      await api.post("/requests/", fd);
       toast.success("Request submitted for verification!");
       router.back();
     } catch (error) {
