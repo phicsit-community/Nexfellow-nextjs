@@ -57,7 +57,12 @@ const EventsPage = () => {
       );
       setEvents({ upcoming, past });
     } catch (error) {
-      console.error("Error fetching events:", error);
+      // 404 means no events found for this community - that's okay
+      if (error.response?.status === 404) {
+        setEvents({ upcoming: [], past: [] });
+      } else {
+        console.error("Error fetching events:", error);
+      }
     }
   };
 

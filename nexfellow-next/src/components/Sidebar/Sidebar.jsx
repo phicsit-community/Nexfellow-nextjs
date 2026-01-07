@@ -42,9 +42,13 @@ function Sidebar() {
       setLoading(true);
       setError(null);
       try {
-        const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
-        const userId = userData?.id;
-        if (!userId) throw new Error("User ID is missing");
+        const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") || "null") : null;
+        const userId = userData?.id || userData?._id;
+        if (!userId) {
+          // User data not available yet, will retry when Redux state updates
+          setLoading(false);
+          return;
+        }
         const response = await api.get(`/user/profile`);
         setUser(response.data);
       } catch (err) {

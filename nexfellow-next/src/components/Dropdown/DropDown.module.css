@@ -68,7 +68,7 @@
   transition: background-color 0.15s ease;
 }
 
-input[type="checkbox"] {
+.dropdownItem input[type="checkbox"] {
   margin-right: 8px;
   flex: 0 0 auto;
 }

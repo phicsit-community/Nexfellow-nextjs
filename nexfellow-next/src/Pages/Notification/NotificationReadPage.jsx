@@ -5,9 +5,12 @@ import { useParams, useRouter, usePathname } from "next/navigation";
 import api from "../../lib/axios";
 import styles from "./NotificationReadPage.module.css";
 import BackButton from "../../components/BackButton/BackButton";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.bubble.css";
+import dynamic from "next/dynamic";
+import "react-quill-new/dist/quill.bubble.css";
 import { toast } from "sonner";
+
+// Dynamically import ReactQuill to avoid SSR issues
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 import { Button } from "../../components/ui/button";
 import userImg from "./assets/Frame.svg";
 import timeAgo from "./../../utils/timeAgo";

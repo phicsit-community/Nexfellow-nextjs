@@ -16,16 +16,21 @@ const JoinedCommunitySidebar = () => {
   const [error, setError] = useState(null);
 
   const communityId = useSelector((state) => state.auth?.user?.owner);
+  const reduxUser = useSelector((state) => state.auth?.user);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
       try {
-        const userData = JSON.parse(localStorage.getItem("user"));
-        const userId = userData?.id || userData?._id;
+        // Try Redux state first, then localStorage
+        let userId = reduxUser?.id || reduxUser?._id;
 
         if (!userId) {
-          console.error("User ID is missing from local storage.");
-          setError("User ID is required.");
+          const userData = JSON.parse(localStorage.getItem("user") || "null");
+          userId = userData?.id || userData?._id;
+        }
+
+        if (!userId) {
+          // User not logged in yet, don't show error, just wait
           setLoading(false);
           return;
         }
@@ -41,7 +46,7 @@ const JoinedCommunitySidebar = () => {
     };
 
     fetchSuggestions();
-  }, []);
+  }, [reduxUser]);
 
   const events = [
     // {

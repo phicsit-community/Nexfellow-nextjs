@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import {
   MdEdit,
   MdSend,
@@ -9,8 +10,7 @@ import {
   MdArrowDropDown,
   MdOutlineMessage,
 } from "react-icons/md";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import "react-quill-new/dist/quill.snow.css";
 import api from "../../lib/axios";
 import styles from "./Broadcast.module.css";
 import BackButton from "../../components/BackButton/BackButton";
@@ -34,6 +34,12 @@ import { SaveOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Button as ShadCnButton } from "@/components/ui/button";
+
+// Dynamically import ReactQuill with SSR disabled to avoid findDOMNode issues
+const ReactQuill = dynamic(() => import("react-quill-new"), {
+  ssr: false,
+  loading: () => <div style={{ height: "250px", border: "2px solid var(--color-border)", borderRadius: "4px" }} />
+});
 
 dayjs.extend(relativeTime);
 

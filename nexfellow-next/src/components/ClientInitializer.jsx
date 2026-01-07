@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import api from "@/lib/axios";
 import tokenService from "@/utils/auth/tokenService";
 import { initializeSocket } from "@/utils/socket";
+import { login, setAuthLoading } from "@/store/slices/authSlice";
 
 /**
  * Client-side initialization component for Next.js
@@ -12,23 +13,49 @@ import { initializeSocket } from "@/utils/socket";
  */
 export default function ClientInitializer() {
     const user = useSelector((state) => state.auth.user);
+    const dispatch = useDispatch();
 
-    // Initialize token refresh service when the app mounts
+    // Initialize token refresh service and check auth on mount
     useEffect(() => {
-        console.log("ClientInitializer: Initializing token service");
+        console.log("ClientInitializer: Initializing...");
 
-        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-        const expiresIn = localStorage.getItem("expiresIn");
-        let isValid = false;
+        const initializeAuth = async () => {
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            const userStr = localStorage.getItem("user");
+            const hasUser = userStr && userStr !== "null" && userStr !== "undefined";
 
-        if (isLoggedIn && expiresIn) {
-            const expiresAt = new Date(expiresIn);
-            if (!isNaN(expiresAt)) {
-                isValid = expiresAt > new Date();
-                console.log(`ClientInitializer: User login state: ${isValid ? "valid" : "expired"}`);
+            // Case 1: User data exists in localStorage - we're good
+            if (isLoggedIn && hasUser) {
+                console.log("ClientInitializer: User data found in localStorage");
+                dispatch(setAuthLoading(false));
+                return;
             }
-        }
 
+            // Case 2: No localStorage data - try to fetch from server (handles OAuth redirect)
+            // This is crucial for OAuth flows where cookies are set but localStorage is empty
+            console.log("ClientInitializer: No user data in localStorage, checking server...");
+
+            try {
+                const response = await api.get("/auth/getDetails", {
+                    withCredentials: true,
+                });
+
+                if (response.status === 200 && response.data.payload) {
+                    const { payload, expiresIn } = response.data;
+                    console.log("ClientInitializer: User authenticated via cookies, updating state");
+
+                    // Update Redux and localStorage
+                    dispatch(login({ user: payload, expiresIn }));
+                }
+            } catch (error) {
+                // Not authenticated - that's fine, user needs to login
+                console.log("ClientInitializer: Not authenticated");
+            } finally {
+                dispatch(setAuthLoading(false));
+            }
+        };
+
+        initializeAuth();
         tokenService.initialize();
 
         // Auth heartbeat check every 15 minutes
@@ -47,7 +74,7 @@ export default function ClientInitializer() {
         return () => {
             clearInterval(authCheckInterval);
         };
-    }, []);
+    }, [dispatch]);
 
     // Initialize socket connection on user presence or change
     useEffect(() => {

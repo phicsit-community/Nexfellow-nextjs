@@ -27,7 +27,6 @@ import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { toast } from "sonner";
 
 const { TextArea } = Input;
-const { TabPane } = Tabs;
 const { Option } = Select;
 
 const CreateChallengeOverlay = ({
@@ -567,154 +566,158 @@ const CreateChallengeOverlay = ({
           activeKey={activeTab}
           onChange={handleTabChange}
           className={styles.challengeTabs}
-        >
-          <TabPane tab="Basics" key="1">
-            <div className={styles.imageContainer}>
-              {coverImage ? (
+          items={[
+            {
+              key: "1",
+              label: "Basics",
+              children: (
                 <>
-                  <img
-                    src={coverImage}
-                    alt="Challenge Cover"
-                    className={styles.challengeImage}
-                  />
-                  <button className={styles.editIcon}>
-                    <img src={edit?.src || edit} alt="Edit" />
-                  </button>
-                </>
-              ) : (
-                <div className={styles.challengeImage}>
-                  <img src={trophy?.src || trophy} alt="Default Trophy" />
-                </div>
-              )}
-            </div>
-
-            {/* Challenge Form */}
-            <form className={styles.challengeForm}>
-              {/* Challenge Title */}
-              <div className={styles.formGroup}>
-                <label>
-                  Challenge Title <span className={styles.required}>*</span>
-                </label>
-                <Input
-                  placeholder="Enter challenge title"
-                  value={challengeTitle}
-                  onChange={(e) => setChallengeTitle(e.target.value)}
-                />
-                {errors.title && (
-                  <div className={styles.errorText}>{errors.title}</div>
-                )}
-              </div>
-
-              {/* Challenge Description */}
-              <div className={styles.formGroup}>
-                <label>
-                  Challenge Description{" "}
-                  <span className={styles.required}>*</span>
-                </label>
-                <TextArea
-                  placeholder="Describe your challenge"
-                  value={challengeDescription}
-                  onChange={(e) => setChallengeDescription(e.target.value)}
-                  rows={4}
-                />
-                {errors.description && (
-                  <div className={styles.errorText}>{errors.description}</div>
-                )}
-              </div>
-
-              {/* Duration Selection */}
-              <div className={styles.formGroup}>
-                <label>
-                  Challenge Duration <span className={styles.required}>*</span>
-                </label>
-                <Select
-                  value={duration}
-                  onChange={handleDurationChange}
-                  style={{ width: "100%" }}
-                >
-                  <Option value={7}>7 Days (Weekly Challenge)</Option>
-                  <Option value={30}>30 Days (Monthly Challenge)</Option>
-                  <Option value={100}>100 Days (Century Challenge)</Option>
-                  <Option value="custom">Custom Duration</Option>
-                </Select>
-                {errors.duration && (
-                  <div className={styles.errorText}>{errors.duration}</div>
-                )}
-
-                {duration === "custom" && (
-                  <div style={{ marginTop: "10px" }}>
-                    <Input
-                      type="number"
-                      placeholder="Enter custom duration (days)"
-                      value={customDuration}
-                      onChange={(e) =>
-                        handleCustomDurationChange(
-                          parseInt(e.target.value) || null
-                        )
-                      }
-                      min={1}
-                      max={365}
-                    />
-                    {errors.customDuration && (
-                      <div className={styles.errorText}>
-                        {errors.customDuration}
+                  <div className={styles.imageContainer}>
+                    {coverImage ? (
+                      <>
+                        <img
+                          src={coverImage}
+                          alt="Challenge Cover"
+                          className={styles.challengeImage}
+                        />
+                        <button className={styles.editIcon}>
+                          <img src={edit?.src || edit} alt="Edit" />
+                        </button>
+                      </>
+                    ) : (
+                      <div className={styles.challengeImage}>
+                        <img src={trophy?.src || trophy} alt="Default Trophy" />
                       </div>
                     )}
                   </div>
-                )}
 
-                <div
-                  style={{ marginTop: "8px", fontSize: "12px", color: "#666" }}
-                >
-                  Selected duration: {customDuration || duration} days
-                  {dailyTasks.length > 0 && (
-                    <span> | Current tasks: {dailyTasks.length}</span>
-                  )}
-                </div>
-              </div>
+                  {/* Challenge Form */}
+                  <form className={styles.challengeForm}>
+                    {/* Challenge Title */}
+                    <div className={styles.formGroup}>
+                      <label>
+                        Challenge Title <span className={styles.required}>*</span>
+                      </label>
+                      <Input
+                        placeholder="Enter challenge title"
+                        value={challengeTitle}
+                        onChange={(e) => setChallengeTitle(e.target.value)}
+                      />
+                      {errors.title && (
+                        <div className={styles.errorText}>{errors.title}</div>
+                      )}
+                    </div>
 
-              {/* Start Date */}
-              <div className={styles.formGroup}>
-                <label>
-                  Start Date <span className={styles.required}>*</span>
-                </label>
-                <input
-                  type="datetime-local"
-                  value={startDateTime ? startDateTime.format('YYYY-MM-DDTHH:mm') : ''}
-                  onChange={(e) => {
-                    const newDate = e.target.value ? moment(e.target.value) : null;
-                    handleStartDateChange(newDate);
-                  }}
-                  style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #d9d9d9" }}
-                  className={styles.nativeDateInput}
-                />
-                {errors.startDate && (
-                  <div className={styles.errorText}>{errors.startDate}</div>
-                )}
-              </div>
+                    {/* Challenge Description */}
+                    <div className={styles.formGroup}>
+                      <label>
+                        Challenge Description{" "}
+                        <span className={styles.required}>*</span>
+                      </label>
+                      <TextArea
+                        placeholder="Describe your challenge"
+                        value={challengeDescription}
+                        onChange={(e) => setChallengeDescription(e.target.value)}
+                        rows={4}
+                      />
+                      {errors.description && (
+                        <div className={styles.errorText}>{errors.description}</div>
+                      )}
+                    </div>
 
-              {/* End Date */}
-              <div className={styles.formGroup}>
-                <label>
-                  End Date <span className={styles.required}>*</span>
-                </label>
-                <input
-                  type="datetime-local"
-                  value={endDateTime ? endDateTime.format('YYYY-MM-DDTHH:mm') : ''}
-                  onChange={(e) => {
-                    const newDate = e.target.value ? moment(e.target.value) : null;
-                    setEndDateTime(newDate);
-                  }}
-                  style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #d9d9d9" }}
-                  className={styles.nativeDateInput}
-                />
-                {errors.endDate && (
-                  <div className={styles.errorText}>{errors.endDate}</div>
-                )}
-              </div>
+                    {/* Duration Selection */}
+                    <div className={styles.formGroup}>
+                      <label>
+                        Challenge Duration <span className={styles.required}>*</span>
+                      </label>
+                      <Select
+                        value={duration}
+                        onChange={handleDurationChange}
+                        style={{ width: "100%" }}
+                      >
+                        <Option value={7}>7 Days (Weekly Challenge)</Option>
+                        <Option value={30}>30 Days (Monthly Challenge)</Option>
+                        <Option value={100}>100 Days (Century Challenge)</Option>
+                        <Option value="custom">Custom Duration</Option>
+                      </Select>
+                      {errors.duration && (
+                        <div className={styles.errorText}>{errors.duration}</div>
+                      )}
 
-              {/* Challenge Settings */}
-              {/* <div className={styles.formGroup}>
+                      {duration === "custom" && (
+                        <div style={{ marginTop: "10px" }}>
+                          <Input
+                            type="number"
+                            placeholder="Enter custom duration (days)"
+                            value={customDuration}
+                            onChange={(e) =>
+                              handleCustomDurationChange(
+                                parseInt(e.target.value) || null
+                              )
+                            }
+                            min={1}
+                            max={365}
+                          />
+                          {errors.customDuration && (
+                            <div className={styles.errorText}>
+                              {errors.customDuration}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      <div
+                        style={{ marginTop: "8px", fontSize: "12px", color: "#666" }}
+                      >
+                        Selected duration: {customDuration || duration} days
+                        {dailyTasks.length > 0 && (
+                          <span> | Current tasks: {dailyTasks.length}</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Start Date */}
+                    <div className={styles.formGroup}>
+                      <label>
+                        Start Date <span className={styles.required}>*</span>
+                      </label>
+                      <input
+                        type="datetime-local"
+                        value={startDateTime ? startDateTime.format('YYYY-MM-DDTHH:mm') : ''}
+                        onChange={(e) => {
+                          const newDate = e.target.value ? moment(e.target.value) : null;
+                          handleStartDateChange(newDate);
+                        }}
+                        style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #d9d9d9" }}
+                        className={styles.nativeDateInput}
+                      />
+                      {errors.startDate && (
+                        <div className={styles.errorText}>{errors.startDate}</div>
+                      )}
+                    </div>
+
+                    {/* End Date */}
+                    <div className={styles.formGroup}>
+                      <label>
+                        End Date <span className={styles.required}>*</span>
+                      </label>
+                      <input
+                        type="datetime-local"
+                        value={endDateTime ? endDateTime.format('YYYY-MM-DDTHH:mm') : ''}
+                        onChange={(e) => {
+                          const newDate = e.target.value ? moment(e.target.value) : null;
+                          setEndDateTime(newDate);
+                        }}
+                        style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #d9d9d9" }}
+                        className={styles.nativeDateInput}
+                      />
+                      {errors.endDate && (
+                        <div className={styles.errorText}>{errors.endDate}</div>
+                      )}
+                    </div>
+
+                    {/* Challenge Settings */}
+                    {/* <div className={styles.formGroup}>
                 <label>Settings</label>
                 <Space direction="vertical" style={{ width: "100%" }}>
                   <div className={styles.switchContainer}>
@@ -755,329 +758,338 @@ const CreateChallengeOverlay = ({
                   </div>
                 </Space>
               </div> */}
-            </form>
-          </TabPane>
+                  </form>
+                </>
+              ),
+            },
+            {
+              key: "2",
+              label: "Daily Tasks",
+              children: (
+                <div className={styles.checkpointsContainer}>
+                  <div className={styles.sectionHeader}>
+                    <div className={styles.checkPointHead}>Daily Tasks</div>
+                    <div className={styles.checkPointContent}>
+                      Configure daily tasks for participants. Each day should have a
+                      clear task and submission requirement.
+                    </div>
+                  </div>
 
-          <TabPane tab="Daily Tasks" key="2">
-            <div className={styles.checkpointsContainer}>
-              <div className={styles.sectionHeader}>
-                <div className={styles.checkPointHead}>Daily Tasks</div>
-                <div className={styles.checkPointContent}>
-                  Configure daily tasks for participants. Each day should have a
-                  clear task and submission requirement.
-                </div>
-              </div>
+                  {/* Duration and task count validation alerts */}
+                  {errors.dailyTasksCount && (
+                    <Alert
+                      message="Task Count Mismatch"
+                      description={errors.dailyTasksCount}
+                      type="warning"
+                      showIcon
+                      style={{ marginBottom: "15px" }}
+                    />
+                  )}
 
-              {/* Duration and task count validation alerts */}
-              {errors.dailyTasksCount && (
-                <Alert
-                  message="Task Count Mismatch"
-                  description={errors.dailyTasksCount}
-                  type="warning"
-                  showIcon
-                  style={{ marginBottom: "15px" }}
-                />
-              )}
+                  {errors.dateRange && (
+                    <Alert
+                      message="Date Range Issue"
+                      description={errors.dateRange}
+                      type="error"
+                      showIcon
+                      style={{ marginBottom: "15px" }}
+                    />
+                  )}
 
-              {errors.dateRange && (
-                <Alert
-                  message="Date Range Issue"
-                  description={errors.dateRange}
-                  type="error"
-                  showIcon
-                  style={{ marginBottom: "15px" }}
-                />
-              )}
+                  {/* Quick actions for tasks */}
+                  <div className={styles.quickActionsContainer}>
+                    <Button
+                      type="default"
+                      onClick={resetDailyTasksForDuration}
+                      size="small"
+                      className={styles.actionButton}
+                    >
+                      Reset to Default Tasks
+                    </Button>
 
-              {/* Quick actions for tasks */}
-              <div className={styles.quickActionsContainer}>
-                <Button
-                  type="default"
-                  onClick={resetDailyTasksForDuration}
-                  size="small"
-                  className={styles.actionButton}
-                >
-                  Reset to Default Tasks
-                </Button>
-
-                {dailyTasks.length > 0 && (
-                  <Button
-                    type="default"
-                    onClick={() => applySameTaskToAllDays(0)}
-                    size="small"
-                    className={styles.actionButton}
-                  >
-                    Apply Day 1 Task to All Days
-                  </Button>
-                )}
-              </div>
-
-              <div className={styles.checkpointsList}>
-                {dailyTasks.map((task, index) => (
-                  <Card
-                    key={index}
-                    title={`Day ${task.day}`}
-                    size="small"
-                    extra={
-                      <div className={styles.taskCardActions}>
-                        <Button
-                          type="text"
-                          size="small"
-                          onClick={() => duplicateTask(index)}
-                          title="Duplicate this task"
-                          className={styles.taskActionButton}
-                        >
-                          Duplicate
-                        </Button>
-                        <Button
-                          type="text"
-                          size="small"
-                          onClick={() => applySameTaskToAllDays(index)}
-                          title="Apply this task to all days"
-                          className={styles.taskActionButton}
-                        >
-                          Apply to All
-                        </Button>
-                        <Button
-                          type="text"
-                          danger
-                          icon={<DeleteOutlined />}
-                          onClick={() => removeDailyTask(index)}
-                          className={styles.taskDeleteButton}
-                        />
-                      </div>
-                    }
-                  >
-                    <Space direction="vertical" style={{ width: "100%" }}>
-                      <div className={styles.taskFormGroup}>
-                        <label className={styles.taskLabel}>Task Title</label>
-                        <Input
-                          placeholder="Enter task title"
-                          value={task.title}
-                          onChange={(e) =>
-                            updateDailyTask(index, "title", e.target.value)
-                          }
-                          className={styles.taskInput}
-                        />
-                        {errors.dailyTasks?.[index]?.title && (
-                          <div className={styles.errorText}>
-                            {errors.dailyTasks[index].title}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className={styles.taskFormGroup}>
-                        <label className={styles.taskLabel}>
-                          Task Description
-                        </label>
-                        <TextArea
-                          placeholder="Describe what participants need to do"
-                          value={task.description}
-                          onChange={(e) =>
-                            updateDailyTask(
-                              index,
-                              "description",
-                              e.target.value
-                            )
-                          }
-                          rows={2}
-                          className={styles.taskTextarea}
-                        />
-                        {errors.dailyTasks?.[index]?.description && (
-                          <div className={styles.errorText}>
-                            {errors.dailyTasks[index].description}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className={styles.taskFormGroup}>
-                        <label className={styles.taskLabel}>
-                          Submission Type
-                        </label>
-                        <Select
-                          value={task.submissionType}
-                          onChange={(value) =>
-                            updateDailyTask(index, "submissionType", value)
-                          }
-                          style={{ width: "100%" }}
-                          className={styles.taskSelect}
-                        >
-                          <Option value="text">Text Submission</Option>
-                          <Option value="image">Image Submission</Option>
-                        </Select>
-                      </div>
-
-                      <div className={styles.taskFormGroup}>
-                        <label className={styles.taskLabel}>
-                          Submission Prompt
-                        </label>
-                        <Input
-                          placeholder="What should participants share?"
-                          value={task.submissionPrompt}
-                          onChange={(e) =>
-                            updateDailyTask(
-                              index,
-                              "submissionPrompt",
-                              e.target.value
-                            )
-                          }
-                          className={styles.taskInput}
-                        />
-                        {errors.dailyTasks?.[index]?.submissionPrompt && (
-                          <div className={styles.errorText}>
-                            {errors.dailyTasks[index].submissionPrompt}
-                          </div>
-                        )}
-                      </div>
-                    </Space>
-                  </Card>
-                ))}
-              </div>
-
-              <Button
-                type="dashed"
-                onClick={addDailyTask}
-                icon={<PlusOutlined />}
-                className={styles.addButton}
-              >
-                Add Daily Task
-              </Button>
-            </div>
-          </TabPane>
-
-          <TabPane tab="Rewards" key="3">
-            <div className={styles.rewardsContainer}>
-              <div className={styles.sectionHeader}>
-                <h3 className={styles.sectionTitle}>Checkpoint Rewards</h3>
-                <p className={styles.sectionDescription}>
-                  Set up rewards for specific milestones in your challenge
-                </p>
-              </div>
-
-              <div className={styles.rewardsList}>
-                {checkpointRewards.map((reward, index) => (
-                  <Card
-                    key={index}
-                    title={`Checkpoint Day ${reward.checkpointDay}`}
-                    size="small"
-                    extra={
+                    {dailyTasks.length > 0 && (
                       <Button
-                        type="text"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => removeCheckpointReward(index)}
-                        className={styles.rewardDeleteButton}
-                      />
-                    }
+                        type="default"
+                        onClick={() => applySameTaskToAllDays(0)}
+                        size="small"
+                        className={styles.actionButton}
+                      >
+                        Apply Day 1 Task to All Days
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className={styles.checkpointsList}>
+                    {dailyTasks.map((task, index) => (
+                      <Card
+                        key={index}
+                        title={`Day ${task.day}`}
+                        size="small"
+                        extra={
+                          <div className={styles.taskCardActions}>
+                            <Button
+                              type="text"
+                              size="small"
+                              onClick={() => duplicateTask(index)}
+                              title="Duplicate this task"
+                              className={styles.taskActionButton}
+                            >
+                              Duplicate
+                            </Button>
+                            <Button
+                              type="text"
+                              size="small"
+                              onClick={() => applySameTaskToAllDays(index)}
+                              title="Apply this task to all days"
+                              className={styles.taskActionButton}
+                            >
+                              Apply to All
+                            </Button>
+                            <Button
+                              type="text"
+                              danger
+                              icon={<DeleteOutlined />}
+                              onClick={() => removeDailyTask(index)}
+                              className={styles.taskDeleteButton}
+                            />
+                          </div>
+                        }
+                      >
+                        <Space direction="vertical" style={{ width: "100%" }}>
+                          <div className={styles.taskFormGroup}>
+                            <label className={styles.taskLabel}>Task Title</label>
+                            <Input
+                              placeholder="Enter task title"
+                              value={task.title}
+                              onChange={(e) =>
+                                updateDailyTask(index, "title", e.target.value)
+                              }
+                              className={styles.taskInput}
+                            />
+                            {errors.dailyTasks?.[index]?.title && (
+                              <div className={styles.errorText}>
+                                {errors.dailyTasks[index].title}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className={styles.taskFormGroup}>
+                            <label className={styles.taskLabel}>
+                              Task Description
+                            </label>
+                            <TextArea
+                              placeholder="Describe what participants need to do"
+                              value={task.description}
+                              onChange={(e) =>
+                                updateDailyTask(
+                                  index,
+                                  "description",
+                                  e.target.value
+                                )
+                              }
+                              rows={2}
+                              className={styles.taskTextarea}
+                            />
+                            {errors.dailyTasks?.[index]?.description && (
+                              <div className={styles.errorText}>
+                                {errors.dailyTasks[index].description}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className={styles.taskFormGroup}>
+                            <label className={styles.taskLabel}>
+                              Submission Type
+                            </label>
+                            <Select
+                              value={task.submissionType}
+                              onChange={(value) =>
+                                updateDailyTask(index, "submissionType", value)
+                              }
+                              style={{ width: "100%" }}
+                              className={styles.taskSelect}
+                            >
+                              <Option value="text">Text Submission</Option>
+                              <Option value="image">Image Submission</Option>
+                            </Select>
+                          </div>
+
+                          <div className={styles.taskFormGroup}>
+                            <label className={styles.taskLabel}>
+                              Submission Prompt
+                            </label>
+                            <Input
+                              placeholder="What should participants share?"
+                              value={task.submissionPrompt}
+                              onChange={(e) =>
+                                updateDailyTask(
+                                  index,
+                                  "submissionPrompt",
+                                  e.target.value
+                                )
+                              }
+                              className={styles.taskInput}
+                            />
+                            {errors.dailyTasks?.[index]?.submissionPrompt && (
+                              <div className={styles.errorText}>
+                                {errors.dailyTasks[index].submissionPrompt}
+                              </div>
+                            )}
+                          </div>
+                        </Space>
+                      </Card>
+                    ))}
+                  </div>
+
+                  <Button
+                    type="dashed"
+                    onClick={addDailyTask}
+                    icon={<PlusOutlined />}
+                    className={styles.addButton}
                   >
-                    <Space direction="vertical" style={{ width: "100%" }}>
-                      <div className={styles.rewardFormGroup}>
-                        <label className={styles.rewardLabel}>
-                          Checkpoint Day
-                        </label>
-                        <Input
-                          type="number"
-                          placeholder="Day number"
-                          value={reward.checkpointDay}
-                          onChange={(e) =>
-                            updateCheckpointReward(
-                              index,
-                              "checkpointDay",
-                              parseInt(e.target.value)
-                            )
-                          }
-                          min={1}
-                          className={styles.rewardInput}
-                        />
-                        {errors.checkpointRewards?.[index]?.checkpointDay && (
-                          <div className={styles.errorText}>
-                            {errors.checkpointRewards[index].checkpointDay}
+                    Add Daily Task
+                  </Button>
+                </div>
+              ),
+            },
+            {
+              key: "3",
+              label: "Rewards",
+              children: (
+                <div className={styles.rewardsContainer}>
+                  <div className={styles.sectionHeader}>
+                    <h3 className={styles.sectionTitle}>Checkpoint Rewards</h3>
+                    <p className={styles.sectionDescription}>
+                      Set up rewards for specific milestones in your challenge
+                    </p>
+                  </div>
+
+                  <div className={styles.rewardsList}>
+                    {checkpointRewards.map((reward, index) => (
+                      <Card
+                        key={index}
+                        title={`Checkpoint Day ${reward.checkpointDay}`}
+                        size="small"
+                        extra={
+                          <Button
+                            type="text"
+                            danger
+                            icon={<DeleteOutlined />}
+                            onClick={() => removeCheckpointReward(index)}
+                            className={styles.rewardDeleteButton}
+                          />
+                        }
+                      >
+                        <Space direction="vertical" style={{ width: "100%" }}>
+                          <div className={styles.rewardFormGroup}>
+                            <label className={styles.rewardLabel}>
+                              Checkpoint Day
+                            </label>
+                            <Input
+                              type="number"
+                              placeholder="Day number"
+                              value={reward.checkpointDay}
+                              onChange={(e) =>
+                                updateCheckpointReward(
+                                  index,
+                                  "checkpointDay",
+                                  parseInt(e.target.value)
+                                )
+                              }
+                              min={1}
+                              className={styles.rewardInput}
+                            />
+                            {errors.checkpointRewards?.[index]?.checkpointDay && (
+                              <div className={styles.errorText}>
+                                {errors.checkpointRewards[index].checkpointDay}
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
 
-                      <div className={styles.rewardFormGroup}>
-                        <label className={styles.rewardLabel}>
-                          Reward Type
-                        </label>
-                        <Select
-                          value={reward.rewardType}
-                          onChange={(value) =>
-                            updateCheckpointReward(index, "rewardType", value)
-                          }
-                          style={{ width: "100%" }}
-                          className={styles.rewardSelect}
-                        >
-                          <Option value="badge">Badge</Option>
-                          <Option value="points">Points</Option>
-                          <Option value="certificate">Certificate</Option>
-                          <Option value="custom">Custom</Option>
-                        </Select>
-                      </div>
-
-                      <div className={styles.rewardFormGroup}>
-                        <label className={styles.rewardLabel}>
-                          Reward Value
-                        </label>
-                        <Input
-                          placeholder="e.g., 'Week 1 Champion', '100 points'"
-                          value={reward.rewardValue}
-                          onChange={(e) =>
-                            updateCheckpointReward(
-                              index,
-                              "rewardValue",
-                              e.target.value
-                            )
-                          }
-                          className={styles.rewardInput}
-                        />
-                        {errors.checkpointRewards?.[index]?.rewardValue && (
-                          <div className={styles.errorText}>
-                            {errors.checkpointRewards[index].rewardValue}
+                          <div className={styles.rewardFormGroup}>
+                            <label className={styles.rewardLabel}>
+                              Reward Type
+                            </label>
+                            <Select
+                              value={reward.rewardType}
+                              onChange={(value) =>
+                                updateCheckpointReward(index, "rewardType", value)
+                              }
+                              style={{ width: "100%" }}
+                              className={styles.rewardSelect}
+                            >
+                              <Option value="badge">Badge</Option>
+                              <Option value="points">Points</Option>
+                              <Option value="certificate">Certificate</Option>
+                              <Option value="custom">Custom</Option>
+                            </Select>
                           </div>
-                        )}
-                      </div>
 
-                      <div className={styles.rewardFormGroup}>
-                        <label className={styles.rewardLabel}>
-                          Reward Description
-                        </label>
-                        <TextArea
-                          placeholder="Describe this reward"
-                          value={reward.rewardDescription}
-                          onChange={(e) =>
-                            updateCheckpointReward(
-                              index,
-                              "rewardDescription",
-                              e.target.value
-                            )
-                          }
-                          rows={2}
-                          className={styles.rewardTextarea}
-                        />
-                        {errors.checkpointRewards?.[index]
-                          ?.rewardDescription && (
-                            <div className={styles.errorText}>
-                              {errors.checkpointRewards[index].rewardDescription}
-                            </div>
-                          )}
-                      </div>
-                    </Space>
-                  </Card>
-                ))}
-              </div>
+                          <div className={styles.rewardFormGroup}>
+                            <label className={styles.rewardLabel}>
+                              Reward Value
+                            </label>
+                            <Input
+                              placeholder="e.g., 'Week 1 Champion', '100 points'"
+                              value={reward.rewardValue}
+                              onChange={(e) =>
+                                updateCheckpointReward(
+                                  index,
+                                  "rewardValue",
+                                  e.target.value
+                                )
+                              }
+                              className={styles.rewardInput}
+                            />
+                            {errors.checkpointRewards?.[index]?.rewardValue && (
+                              <div className={styles.errorText}>
+                                {errors.checkpointRewards[index].rewardValue}
+                              </div>
+                            )}
+                          </div>
 
-              <Button
-                type="dashed"
-                onClick={addCheckpointReward}
-                icon={<PlusOutlined />}
-                className={styles.addButton}
-              >
-                Add Checkpoint Reward
-              </Button>
-            </div>
-          </TabPane>
-        </Tabs>
+                          <div className={styles.rewardFormGroup}>
+                            <label className={styles.rewardLabel}>
+                              Reward Description
+                            </label>
+                            <TextArea
+                              placeholder="Describe this reward"
+                              value={reward.rewardDescription}
+                              onChange={(e) =>
+                                updateCheckpointReward(
+                                  index,
+                                  "rewardDescription",
+                                  e.target.value
+                                )
+                              }
+                              rows={2}
+                              className={styles.rewardTextarea}
+                            />
+                            {errors.checkpointRewards?.[index]
+                              ?.rewardDescription && (
+                                <div className={styles.errorText}>
+                                  {errors.checkpointRewards[index].rewardDescription}
+                                </div>
+                              )}
+                          </div>
+                        </Space>
+                      </Card>
+                    ))}
+                  </div>
+
+                  <Button
+                    type="dashed"
+                    onClick={addCheckpointReward}
+                    icon={<PlusOutlined />}
+                    className={styles.addButton}
+                  >
+                    Add Checkpoint Reward
+                  </Button>
+                </div>
+              ),
+            },
+          ]}
+        />
 
         {/* Error Summary */}
         {formSubmitted && Object.keys(errors).length > 0 && (

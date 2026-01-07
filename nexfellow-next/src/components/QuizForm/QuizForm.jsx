@@ -28,7 +28,7 @@ const QuizForm = () => {
     startTime: null, // dayjs object
     endTime: null, // dayjs object
     timerMode: "full", // default timer mode
-    duration: null,
+    duration: "",
     rules: [],
     misc: [],
   });

@@ -68,15 +68,14 @@ export default function GetVerified() {
   }, []);
 
   useEffect(() => {
-    // Only show toast after initial load and when userId state has been checked
+    // Only process after initial load and when userId state has been checked
     if (userId === null) return; // Still loading
 
-    if (userId) {
-      if (!toast.isActive(toastId.current)) {
-        toastId.current = toast.success("User ID retrieved successfully.");
-      }
-    } else {
-      if (!toast.isActive(toastId.current)) {
+    // Don't show success toast, it's unnecessary
+    if (!userId) {
+      // Only show error if user is supposed to be logged in
+      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+      if (isLoggedIn && !toast.isActive(toastId.current)) {
         toastId.current = toast.error("User ID not found. Please log in again.");
       }
     }

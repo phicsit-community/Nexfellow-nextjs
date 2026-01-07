@@ -94,11 +94,13 @@ export default function SearchCommand() {
       setLoading(true);
       setError(null);
       try {
-        const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
-        const userId = userData?.id;
+        const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") || "null") : null;
+        const userId = userData?.id || userData?._id;
 
         if (!userId) {
-          throw new Error("User ID is missing");
+          // User not logged in yet, skip fetching
+          setLoading(false);
+          return;
         }
 
         // Fetch user profile
@@ -457,11 +459,13 @@ export function SearchCommandMobile() {
       setLoading(true);
       setError(null);
       try {
-        const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
-        const userId = userData?.id;
+        const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") || "null") : null;
+        const userId = userData?.id || userData?._id;
 
         if (!userId) {
-          throw new Error("User ID is missing");
+          // User not logged in yet, skip fetching
+          setLoading(false);
+          return;
         }
 
         // Fetch user profile

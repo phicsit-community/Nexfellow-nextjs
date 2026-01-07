@@ -146,7 +146,7 @@
   border-color: var(--color-border);
 }
 
-input:focus {
+.mainContainer input:focus {
   outline: none;
   border-color: var(--color-primary);
 }
@@ -995,8 +995,8 @@ input:focus {
     accent-color: var(--color-primary) !important;
   }
 
-  input[type="checkbox"],
-  input[type="radio"] {
+  :global(input[type="checkbox"]),
+  :global(input[type="radio"]) {
     accent-color: var(--color-primary);
   }
 
@@ -1169,7 +1169,7 @@ input:focus {
   }
 
   .dropdownButton,
-  input,
+  .mainContainer input,
   .inputBox {
     padding: 0.75rem;
     font-size: 0.95rem;
@@ -1266,7 +1266,7 @@ input:focus {
 @media (max-width: 640px) {
 
   .dropdownButton,
-  input,
+  .mainContainer input,
   .inputBox {
     font-size: 0.875rem;
     padding: 0.625rem;

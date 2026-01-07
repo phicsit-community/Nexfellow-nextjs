@@ -100,9 +100,13 @@ const Community = () => {
     setLoading(true);
     setError(null);
     try {
-      const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
-      const currentUserId = userData?.id;
-      if (!currentUserId) throw new Error("User ID is missing");
+      const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") || "null") : null;
+      const currentUserId = userData?.id || userData?._id;
+      if (!currentUserId) {
+        // User not logged in, skip auth-dependent features
+        setLoading(false);
+        return;
+      }
       const response = await api.get(`/community/username/${username}`);
       const fetchedCommunity = response.data;
       setCommunity(fetchedCommunity);

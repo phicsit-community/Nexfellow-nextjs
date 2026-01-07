@@ -68,15 +68,15 @@ const User = () => {
   };
 
   useEffect(() => {
-    const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
-    setCurrentUserId(userData?.id || null);
+    const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") || "null") : null;
+    setCurrentUserId(userData?.id || userData?._id || null);
 
     fetchUserDetails();
   }, [username]);
 
   const toggleFollow = async () => {
     if (!userDetails?._id) {
-      setError("User ID is missing.");
+      setError("Unable to follow user.");
       return;
     }
 
