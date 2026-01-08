@@ -32,6 +32,7 @@ const Login = () => {
   const [otpRequired, setOtpRequired] = useState(false);
   const [showOtpField, setShowOtpField] = useState(false);
   const [resending, setResending] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const { setTheme } = useTheme();
 
   // Timer states
@@ -73,23 +74,22 @@ const Login = () => {
 
           dispatch(login({ user: payload, expiresIn }));
 
-          setTimeout(() => {
-            if (redirect?.startsWith("http")) {
-              window.location.href = redirect;
-            } else {
-              navigate(redirect || "/feed");
-            }
-          }, 300);
+          if (redirect?.startsWith("http")) {
+            window.location.href = redirect;
+          } else {
+            navigate(redirect || "/feed");
+          }
         }
       } catch (error) {
         console.error("Error checking authentication:", error);
-        // Don't clear auth state on network errors
         if (
           error.response &&
           (error.response.status === 401 || error.response.status === 403)
         ) {
           localStorage.setItem("isLoggedIn", "false");
         }
+      } finally {
+        setIsCheckingAuth(false);
       }
     };
 
@@ -146,13 +146,11 @@ const Login = () => {
         richColors: true,
       });
 
-      setTimeout(() => {
-        if (redirect?.startsWith("http")) {
-          window.location.href = redirect;
-        } else {
-          navigate(redirect || "/feed");
-        }
-      }, 300);
+      if (redirect?.startsWith("http")) {
+        window.location.href = redirect;
+      } else {
+        navigate(redirect || "/feed");
+      }
     } catch (error) {
       console.error("Login error:", error);
       toast.error(
@@ -232,27 +230,27 @@ const Login = () => {
 
   const googleAuth = () => {
     const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
+      ? (import.meta.env.VITE_LOCALHOST || "http://localhost:4000")
       : import.meta.env.VITE_SERVER_URL;
-    window.open(`${link}/auth/google/callback`, "_self");
+    window.open(`${link}/auth/google`, "_self");
   };
 
   const githubAuth = () => {
     const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
+      ? (import.meta.env.VITE_LOCALHOST || "http://localhost:4000")
       : import.meta.env.VITE_SERVER_URL;
-    window.open(`${link}/auth/github/callback`, "_self");
+    window.open(`${link}/auth/github`, "_self");
   };
   const facebookAuth = () => {
     const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
+      ? (import.meta.env.VITE_LOCALHOST || "http://localhost:4000")
       : import.meta.env.VITE_SERVER_URL;
-    window.open(`${link}/auth/facebook/callback`, "_self");
+    window.open(`${link}/auth/facebook`, "_self");
   };
 
   const linkedinAuth = () => {
     const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
+      ? (import.meta.env.VITE_LOCALHOST || "http://localhost:4000")
       : import.meta.env.VITE_SERVER_URL;
     window.open(`${link}/auth/linkedin/`, "_self");
   };
@@ -262,6 +260,14 @@ const Login = () => {
     const s = seconds % 60;
     return `${m}:${s < 10 ? "0" + s : s}`;
   };
+
+  if (isCheckingAuth) {
+    return (
+      <div className={styles.loginFormContainer} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div className={styles.spinner} style={{ width: '40px', height: '40px', borderWidth: '4px' }}></div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.loginFormContainer}>

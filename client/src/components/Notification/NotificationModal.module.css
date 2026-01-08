@@ -124,13 +124,13 @@
 }
 
 .unreadNotification {
-  background-color: rgba(36, 178, 180, 0.08);
+  background-color: #f0f9ff;
   position: relative;
+  border-left: 3px solid #bae6fd;
 }
 
 .readNotification {
-  background-color: #f8fafd;
-  opacity: 0.7;
+  background-color: #ffffff;
 }
 
 .notificationItem {
@@ -643,12 +643,12 @@
   }
 
   .unreadNotification {
-    background-color: rgba(36, 178, 180, 0.15);
+    background-color: #1a2632;
+    border-left: 3px solid #4e8cff;
   }
 
   .readNotification {
     background-color: var(--color-card);
-    opacity: 0.7;
   }
 
   .notificationItem {

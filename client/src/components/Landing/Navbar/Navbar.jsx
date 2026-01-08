@@ -19,7 +19,15 @@ const Navbar = () => {
   // Check if user is logged in
   const isLoggedin = localStorage.getItem("isLoggedIn");
   const isLoggedIn = isLoggedin === "true" ? true : false;
-  const userData = JSON.parse(localStorage.getItem("user"));
+  let userData = null;
+  try {
+    const userStr = localStorage.getItem("user");
+    if (userStr && userStr !== "undefined") {
+      userData = JSON.parse(userStr);
+    }
+  } catch (error) {
+    console.error("Error parsing user data:", error);
+  }
   const username = userData?.username;
   return (
     <div className={`${styles.navbar} ${menuActive ? styles.menuActive : ""}`}>

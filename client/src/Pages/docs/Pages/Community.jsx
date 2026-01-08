@@ -14,8 +14,8 @@ import {
 } from "react-icons/fa";
 import MiniFooter from "../components/MiniFooter.jsx";
 import { IoMdInformationCircle } from "react-icons/io";
-import Step1Image from "../../../../public/images/community1.png";
-import Step2Image from "../../../../public/images/community2.png";
+const Step1Image = "/images/community1.png";
+const Step2Image = "/images/community2.png";
 import { MdAccountCircle } from "react-icons/md";
 
 export default function Community() {

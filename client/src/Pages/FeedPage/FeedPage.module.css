@@ -2,154 +2,126 @@
   display: grid;
   grid-template-columns: 2fr 1fr;
   align-items: start;
-  justify-content: space-between;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background-color: var(--color-background, #fff);
   overflow: hidden;
 }
 
-/* Feed side container holding tabs + feed */
-.feedSide {
+/* Feed Column Wrapper */
+.feedColumn {
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: auto;
+  border-right: 1px solid var(--color-border, #eee);
+  overflow: hidden;
+  /* Contains scroll */
 }
 
-/* Tabs container */
-.tabs {
+/* Tabs Header */
+.tabsHeader {
   display: flex;
-  gap: 0;
-  /* reset gap for clean border lines */
-  padding: 0.5rem;
-  border-bottom: 1px solid var(--color-border, #ddd);
-  border-right: 1px solid var(--color-border, #ddd);
-  /* border separating tabs from feed */
+  justify-content: space-around;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border, #eee);
   background-color: var(--color-card, #fff);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  min-height: 50px;
 }
 
-/* Each tab gets equal width, text centered */
-.tabs button {
+.tabButton {
   flex: 1;
-  /* equal width */
   background: none;
   border: none;
-  padding: 0.5rem 0;
-  /* vertical padding only */
-  font-weight: 600;
+  padding: 1rem 0;
   font-size: 1rem;
+  font-weight: 500;
+  color: #6b7280;
+  /* Gray-500 */
   cursor: pointer;
-  color: var(--color-text, #555);
-  border-bottom: 2px solid transparent;
-  text-align: center;
-  display: inline-flex;
-  /* shrink to text */
-  justify-content: center;
   position: relative;
-}
-
-/* Add a vertical border-right to all tabs except the last */
-.tabs button:not(:last-child) {
-  border-right: 1px solid var(--color-border, #ddd);
-}
-
-/* The span wraps text and handles underline */
-.tabs button>span {
-  display: inline-block;
-  padding: 4px 12px;
-  /* added horizontal padding for pill shape */
-  border-bottom: 2px solid transparent;
-  width: auto;
-  border-radius: 9999px;
-  /* pill shape */
-  transition: background-color 0.3s ease, color 0.3s ease, border-bottom-color 0.3s ease;
-}
-
-/* Hover effect: text color and underline */
-.tabs button:hover>span {
-  color: var(--color-primary, #4e8cff);
-  border-bottom-color: var(--color-primary, #4e8cff);
-}
-
-/* Active tab: highlight text and underline just under text with pill background */
-.tabs button.activeTab>span {
-  color: var(--color-primary, #fff);
-  background-color: var(--color-primary, #4e8cff);
-  border-bottom-color: transparent;
-}
-
-/* Feed container fills rest of vertical space */
-.feedContainer {
-  flex-grow: 1;
-  overflow-y: auto;
-}
-
-/* Suggestions container styling */
-.suggestionsContainer {
+  transition: all 0.2s ease;
   display: flex;
-  align-items: center;
   justify-content: center;
-  box-sizing: border-box;
+}
+
+.tabButton:hover {
+  background-color: #f9fafb;
+}
+
+/* Active State */
+.activeTab {
+  color: #14b8a6;
+  /* Teal-500 */
+  font-weight: 600;
+}
+
+/* Underline indicator */
+.activeTab::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #14b8a6;
+  /* Teal-500 */
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+/* Suggestions Container */
+.suggestionsContainer {
+  display: block;
   height: 100%;
   overflow-y: auto;
-  scrollbar-width: none;
-  background-color: var(--color-card, #fff);
-  color: var(--color-card-foreground, #141414);
+  border-left: 1px solid var(--color-border, transparent);
+  padding: 1rem;
 }
 
-.suggestionsContainer::-webkit-scrollbar {
-  display: none;
+/* Dark Mode */
+:global(.dark) .homepage {
+  background-color: #000;
 }
 
-/* Responsive adjustments */
+:global(.dark) .feedColumn {
+  border-right-color: #333;
+}
+
+:global(.dark) .tabsHeader {
+  background-color: #000;
+  border-bottom-color: #333;
+}
+
+:global(.dark) .tabButton {
+  color: #9ca3af;
+  /* Gray-400 */
+}
+
+:global(.dark) .tabButton:hover {
+  background-color: #111;
+}
+
+:global(.dark) .activeTab {
+  color: #14b8a6;
+}
+
+:global(.dark) .suggestionsContainer {
+  border-left-color: #333;
+}
+
 @media (max-width: 1024px) {
   .homepage {
-    display: flex;
-    justify-content: center;
-    background-color: var(--color-background, #fff);
+    grid-template-columns: 1fr;
   }
 
   .suggestionsContainer {
     display: none;
   }
-}
 
-@media (max-width: 768px) {
-  .suggestionsContainer {
-    display: none;
-  }
-}
-
-/* Dark mode overrides */
-:global(.dark) {
-  .homepage {
-    background-color: var(--color-background, #1a1a1a);
-  }
-
-  .suggestionsContainer {
-    background-color: var(--color-card, #181818);
-    color: var(--color-card-foreground, #eee);
-  }
-
-  .tabs {
-    border-bottom-color: #333;
-    border-right-color: #333;
-    background-color: var(--color-card, #181818);
-  }
-
-  .tabs button {
-    color: var(--color-text, #bbb);
-    border-right-color: #333;
-  }
-
-  .tabs button:hover>span {
-    color: var(--color-primary, #4e8cff);
-  }
-
-  .tabs button.activeTab>span {
-    color: #fff;
-    background-color: var(--color-primary, #4e8cff);
-    border-bottom-color: transparent;
+  .feedColumn {
+    border-right: none;
   }
 }

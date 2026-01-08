@@ -1,0 +1,378 @@
+.main{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  background: #f5f5f5;
+  flex: 1;
+}
+
+.container {
+  position: relative;
+  width: 100%; 
+  height: 100%;
+  margin: auto;
+  margin-bottom: -80px;
+}
+
+.text {
+  position: relative;
+  font-size: 14px;
+  color: #333;
+  max-width: 80%; 
+  margin-bottom: 60px;
+}
+
+/* Common styles for items */
+.item {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+/* Icon container centering */
+.icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.icon img {
+  max-width: 50%;
+  max-height: 50%;
+  object-fit: contain;
+}
+
+/* Individual item styles */
+.item1 {
+  top: 30%;
+  left: 28%;
+  width: 20%;
+  height: 15%;
+  background: linear-gradient(to bottom, #A7D7D5, #56AFB2);
+  animation: item1Animation 6s infinite ease;
+}
+
+@keyframes item1Animation{
+  0%{
+    top: 30%;
+    left: 28%;
+    width: 20%;
+    height: 15%;
+  }
+
+  10%{
+    top: 30%;
+    left: 28%;
+    width: 20%;
+    height: 10%;
+  }
+
+  20%{
+    top: 30%;
+    left: 28%;
+    width: 20%;
+    height: 10%;
+  }
+
+  30%{
+    top: 30%;
+    left: 28%;
+    width: 20%;
+    height: 10%;
+  }
+
+  40%{
+    top: 30%;
+    left: 28%;
+    width: 44%;
+    height: 10%;
+  }
+
+  50%{
+    top: 30%;
+    left: 28%;
+    width: 44%;
+    height: 15%;
+  }
+
+  60%{
+    top: 30%;
+    left: 28%;
+    width: 20%;
+    height: 15%;
+  }
+
+  70%{
+    top: 30%;
+    left: 28%;
+    width: 20%;
+    height: 15%;
+  }
+
+  80%{
+    top: 30%;
+    left: 28%;
+    width: 20%;
+    height: 15%;
+  }
+
+  90%{
+    top: 30%;
+    left: 28%;
+    width: 20%;
+    height: 15%;
+  }
+}
+
+.item2 {
+  top: 46%;
+  left: 28%;
+  width: 20%;
+  height: 25%;
+  background: linear-gradient(45deg, #C372D9, #9060DA);
+  animation: item2Animation 6s infinite ease;
+}
+
+@keyframes item2Animation{
+  0%{
+    top: 46%;
+    left: 28%;
+    width: 20%;
+    height: 25%;
+  }
+
+  10%{
+    top: 41%;
+    left: 28%;
+    width: 20%;
+    height: 30%;
+  }
+
+  20%{
+    top: 41%;
+    left: 28%;
+    width: 20%;
+    height: 14%;
+  }
+
+  30%{
+    top: 41%;
+    left: 28%;
+    width: 20%;
+    height: 14%;
+  }
+
+  40%{
+    top: 41%;
+    left: 28%;
+    width: 20%;
+    height: 14%;
+  }
+
+  50%{
+    top: 46%;
+    left: 28%;
+    width: 20%;
+    height: 12%;
+  }
+
+  60%{
+    top: 46%;
+    left: 28%;
+    width: 20%;
+    height: 12%;
+  }
+
+  70%{
+    top: 46%;
+    left: 28%;
+    width: 20%;
+    height: 9%;
+  }
+
+  80%{
+    top: 46%;
+    left: 28%;
+    width: 20%;
+    height: 9%;
+  }
+
+  90%{
+    top: 46%;
+    left: 28%;
+    width: 20%;
+    height: 9%;
+  }
+}
+
+
+.item3 {
+  top: 30%;
+  left: 49%;
+  width: 23%;
+  height: 25%;
+  background: linear-gradient(45deg, #D264A5, #F9706A);
+  animation: item3Animation 6s infinite ease;
+}
+
+@keyframes item3Animation{
+  0%{
+    top: 30%;
+    left: 49%;
+    width: 23%;
+    height: 25%;
+  }
+
+  10%{
+    top: 30%;
+    left: 49%;
+    width: 23%;
+    height: 25%;
+  }
+
+  20%{
+    top: 30%;
+    left: 49%;
+    width: 23%;
+    height: 25%;
+  }
+
+  30%{
+    top: 30%;
+    left: 49%;
+    width: 23%;
+    height: 41%;
+  }
+
+  40%{
+    top: 41%;
+    left: 49%;
+    width: 23%;
+    height: 30%;
+  }
+
+  50%{
+    top: 46%;
+    left: 49%;
+    width: 23%;
+    height: 25%;
+  }
+
+  60%{
+    top: 30%;
+    left: 49%;
+    width: 23%;
+    height: 41%;
+  }
+
+  70%{
+    top: 30%;
+    left: 49%;
+    width: 23%;
+    height: 25%;
+  }
+
+  80%{
+    top: 30%;
+    left: 49%;
+    width: 23%;
+    height: 25%;
+  }
+
+  90%{
+    top: 30%;
+    left: 49%;
+    width: 23%;
+    height: 25%;
+  }
+}
+
+
+.item4 {
+  top: 56%;
+  left: 49%;
+  width: 23%;
+  height: 15%;
+  background: linear-gradient(135deg, #8AA5F7, #6D80EB);
+  animation: item4Animation 6s infinite ease;
+}
+
+@keyframes item4Animation{
+  0%{
+    top: 56%;
+    left: 49%;
+    width: 23%;
+    height: 15%;
+  }
+
+  10%{
+    top: 56%;
+    left: 49%;
+    width: 23%;
+    height: 15%;
+  }
+
+  20%{
+    top: 56%;
+    left: 28%;
+    width: 43%;
+    height: 15%;
+  }
+
+  30%{
+    top: 56%;
+    left: 28%;
+    width: 20%;
+    height: 15%;
+  }
+
+  40%{
+    top: 56%;
+    left: 28%;
+    width: 20%;
+    height: 15%;
+  }
+
+  50%{
+    top: 59%;
+    left: 28%;
+    width: 20%;
+    height: 12%;
+  }
+
+  60%{
+    top: 59%;
+    left: 28%;
+    width: 20%;
+    height: 12%;
+  }
+
+  70%{
+    top: 56%;
+    left: 28%;
+    width: 20%;
+    height: 15%;
+  }
+
+  80%{
+    top: 56%;
+    left: 28%;
+    width: 43%;
+    height: 15%;
+  }
+
+  90%{
+    top: 56%;
+    left: 49%;
+    width: 23%;
+    height: 15%;
+  }
+}

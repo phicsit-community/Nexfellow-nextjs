@@ -1,0 +1,131 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 20px;
+  height: 80px;
+  width: 100vw;
+  box-sizing: border-box;
+  position: fixed;
+  z-index: 1;
+  background-color: white;
+  border-bottom: 1px solid #eeeff1;
+
+  max-width: 1470px;
+  margin: 0px auto;
+}
+
+.navbarLogo {
+  margin-left: 30.2px;
+  /* border on right side of logo to align with sidebar */
+  height: 100%;
+  padding-right: 59px;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+}
+
+.navbarlogo {
+  display: block;
+  width: 190px;
+  height: auto;
+}
+
+.navlogo2 {
+  display: none;
+}
+
+.headRight {
+  width: 80%;
+  display: flex;
+  box-sizing: border-box;
+  padding: 0px 30px;
+  justify-content: flex-end;
+  align-items: center;
+  /* border: 2px solid black; */
+}
+
+/* Search container to wrap input and icon */
+.searchContainer {
+  width: 60%;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 8px 20px;
+  gap: 10px;
+  position: relative;
+  left:-300px
+}
+
+.searchIcon {
+  color: #b0b0b0;
+  font-size: 18px;
+}
+
+.searchBar {
+  width: 100%;
+  border-radius: 10px;
+  outline: none;
+  font-size: 16px;
+  border: none;
+}
+.searchBar::placeholder {
+  padding-left: 30px;
+}
+/* Profile picture and notification section */
+.headRightRight {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.dp {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  /* object-fit: cover; */
+}
+
+@media only screen and (min-width: 1471px) {
+  .navbarLogo {
+    margin-left: 30.4px;
+  }
+}
+
+@media (max-width: 576px) {
+  .header {
+    padding: 10px;
+  }
+
+  .headRight {
+    width: 100%;
+    gap: 20px;
+  }
+
+  .navbarLogo {
+    display: none;
+  }
+
+  .searchContainer {
+    width: 80%; /* Increased width on smaller screens */
+  }
+}
+
+@media (max-width: 1024px) {
+  .navbarlogo {
+    display: none;
+  }
+
+  .navlogo2 {
+    display: block;
+  }
+
+  /* hide right side of border */
+  .navbarLogo {
+    padding-right: 0px;
+    border: none;
+  }
+}

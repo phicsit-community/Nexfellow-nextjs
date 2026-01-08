@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Button } from "../../components/ui/button";
 import userImg from "./assets/Frame.svg";
 import timeAgo from "./../../utils/timeAgo";
+import { X } from "lucide-react";
 
 const NotificationReadPage = () => {
   const { id } = useParams();
@@ -34,10 +35,6 @@ const NotificationReadPage = () => {
     };
     fetchNotification();
   }, [id, location.pathname]);
-
-  const handleBack = () => {
-    navigate(-1);
-  };
 
   useEffect(() => {
     const fetchPostStatus = async () => {
@@ -102,114 +99,98 @@ const NotificationReadPage = () => {
   if (!notification) return <div className={styles.loading}>Loading...</div>;
 
   const senderName = notification?.sender?.name || "System";
-  const senderPic = notification?.sender?.picture || userImg;
+  const senderPic = notification?.sender?.picture || notification?.sender?.avatar || userImg;
 
   return (
-    <div className={styles.mainContainer}>
-      <div className={styles.container}>
+    <div className={styles.overlay}>
+      <div className={styles.modal}>
         <div className={styles.header}>
-          <div className={styles.headerBottom}>
-            <span className={styles.badge}>
-              <img src={userImg} alt="Notification type icon" />
+          <div className={styles.headerContent}>
+            <div className={styles.badge}>
               {notification.type === "broadcast"
                 ? "Broadcast message"
                 : notification.type === "system"
                   ? "System Notification"
-                  : notification.type === "user"
-                    ? "User Notification"
-                    : "Notification"}
-            </span>
+                  : "Notification"}
+            </div>
             <h2 className={styles.title}>{notification.title}</h2>
             <div className={styles.meta}>
-              <span className={styles.user}>
+              <div className={styles.senderInfo} onClick={handleProfileClick}>
                 <img
                   src={senderPic}
-                  className={styles.userImg}
-                  onClick={() => handleProfileClick()}
+                  className={styles.avatar}
                   alt="Sender"
-                />{" "}
-                {senderName}
-              </span>
+                  onError={(e) => { e.target.src = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + notification._id; }}
+                />
+                <span className={styles.senderName}>{senderName}</span>
+              </div>
               <span className={styles.dot}>•</span>
-              <span className={styles.time}>
-                {timeAgo(notification.createdAt)}
-              </span>
+              <span className={styles.time}>{timeAgo(notification.createdAt)}</span>
             </div>
           </div>
-          <div className={styles.closeModel}>
-            <button onClick={() => navigate(-1)} aria-label="Close">
-              ✕
-            </button>
+          <button className={styles.closeBtn} onClick={() => navigate(-1)}>
+            <X size={24} />
+          </button>
+        </div>
+
+        <div className={styles.body}>
+          <ReactQuill
+            value={notification.message}
+            readOnly={true}
+            theme="bubble"
+            modules={{ toolbar: false }}
+            className={styles.quillContent}
+          />
+
+          <div className={styles.actionsArea}>
+            {notification &&
+              notification.type === "system" &&
+              notification.title &&
+              notification.title.toLowerCase().includes("taken down") &&
+              notification.meta?.postId &&
+              (checkingReview ? (
+                <div className={styles.statusMsg}>Checking post status...</div>
+              ) : !postStatus ? null : !postStatus.isDeleted ? (
+                <div className={`${styles.statusMsg} ${styles.success}`}>
+                  This post has been restored and is now visible to users.
+                </div>
+              ) : postStatus.underReview === "pending" ? (
+                <div className={`${styles.statusMsg} ${styles.warning}`}>
+                  Review already requested. Awaiting admin action.
+                </div>
+              ) : postStatus.underReview === "rejected" ? (
+                <div className={`${styles.statusMsg} ${styles.error}`}>
+                  Your appeal was rejected by the admin.
+                  {postStatus.rejectionReason && (
+                    <div className={styles.reason}>
+                      Reason: {postStatus.rejectionReason}
+                    </div>
+                  )}
+                </div>
+              ) : postStatus.underReview === "approved" ? (
+                <div className={`${styles.statusMsg} ${styles.success}`}>
+                  Your post appeal was approved and the post is restored.
+                </div>
+              ) : (
+                <Button
+                  className={styles.appealButton}
+                  onClick={handleAppeal}
+                  disabled={appealing}
+                >
+                  {appealing ? "Submitting..." : "Request Review"}
+                </Button>
+              ))}
           </div>
         </div>
-        <ReactQuill
-          value={notification.message}
-          readOnly={true}
-          theme="bubble"
-          modules={{ toolbar: false }}
-          className={styles.body}
-        />
-        <div className={styles.notificationDetailsMeta}>
-          {notification &&
-            notification.type === "system" &&
-            notification.title &&
-            notification.title.toLowerCase().includes("taken down") &&
-            notification.meta?.postId &&
-            (checkingReview ? (
-              <div style={{ marginTop: "1.2rem" }}>Checking post status...</div>
-            ) : !postStatus ? null : !postStatus.isDeleted ? (
-              <div
-                className={styles.appealInfoMsg}
-                style={{ marginTop: "1.2rem", color: "#218838" }}
-              >
-                This post has been restored and is now visible to users.
-              </div>
-            ) : postStatus.underReview === "pending" ? (
-              <div
-                className={styles.appealInfoMsg}
-                style={{ marginTop: "1.2rem", color: "#856404" }}
-              >
-                Review already requested. Awaiting admin action.
-              </div>
-            ) : postStatus.underReview === "rejected" ? (
-              <div
-                className={styles.appealInfoMsg}
-                style={{ marginTop: "1.2rem", color: "#b94a48" }}
-              >
-                Your appeal was rejected by the admin.
-                {postStatus.rejectionReason && (
-                  <div style={{ marginTop: "0.5rem", fontStyle: "italic" }}>
-                    Reason: {postStatus.rejectionReason}
-                  </div>
-                )}
-              </div>
-            ) : postStatus.underReview === "approved" ? (
-              <div
-                className={styles.appealInfoMsg}
-                style={{ marginTop: "1.2rem", color: "#218838" }}
-              >
-                Your post appeal was approved and the post is restored.
-              </div>
-            ) : (
-              <Button
-                className={styles.appealButton}
-                onClick={handleAppeal}
-                disabled={appealing}
-                style={{ marginTop: "1.2rem" }}
-              >
-                {appealing ? "Submitting..." : "Request Review"}
-              </Button>
-            ))}
-        </div>
+
         <div className={styles.footer}>
-          <span className={styles.footerMeta}>
-            <p>Notification ID: {notification._id}</p> •
-            <p>Received: {timeAgo(notification.createdAt)}</p>•<p>Read</p>
-          </span>
+          <div className={styles.footerInfo}>
+            <span>ID: {notification._id}</span>
+            <span>Received: {timeAgo(notification.createdAt)}</span>
+          </div>
           <button
-            className={styles.closeButton}
+            className={styles.markReadBtn}
             onClick={() => navigate(-1)}
-            aria-label="Mark as Read and Close"
           >
             Mark as Read & Close
           </button>

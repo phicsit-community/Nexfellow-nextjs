@@ -9,11 +9,23 @@ const isTokenValid = () => {
   return !isNaN(expiresAt) && expiresAt > new Date();
 };
 
+const getUserFromStorage = () => {
+  try {
+    const userStr = localStorage.getItem("user");
+    if (!userStr || userStr === "undefined") return null;
+    return JSON.parse(userStr);
+  } catch (error) {
+    console.error("Error parsing user from storage", error);
+    localStorage.removeItem("user");
+    return null;
+  }
+};
+
 const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 const initialState = {
   isLoggedIn: isLoggedIn && isTokenValid(),
   isAuthLoading: true,
-  user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
+  user: getUserFromStorage(),
   themePreference: localStorage.getItem("themePreference") || "light",
 };
 

@@ -5,7 +5,7 @@ let apiUrl;
 
 if (import.meta.env.MODE === "development") {
   console.log("Running in development mode");
-  apiUrl = import.meta.env.VITE_LOCALHOST;
+  apiUrl = import.meta.env.VITE_LOCALHOST || "http://localhost:4000";
 } else {
   console.log("Running in production mode");
   apiUrl = import.meta.env.VITE_SERVER_URL;
@@ -74,7 +74,7 @@ export const initializeSocket = (userId) => {
   socket.on("newSystemNotification", (notification) => {
     console.log("newSystemNotification", notification);
   });
-  
+
   socket.on("newCommunityNotification", (notification) => {
     console.log("newCommunityNotification", notification);
   });

@@ -51,7 +51,7 @@ const PostSkeleton = () => (
     </>
 );
 
-const TrendingFeed = () => {
+const TrendingFeed = ({ type = "trending" }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const [isPostsRendered, setIsPostsRendered] = useState(false);
@@ -123,47 +123,100 @@ const TrendingFeed = () => {
         fetchData();
     }, []);
 
+    const [page, setPage] = useState(1);
+
+    // Reset when type changes
+    useEffect(() => {
+        setPosts([]);
+        setCursor(null);
+        setPage(1);
+        setHasMore(true);
+        setLoadingPosts(true);
+        // Clear cache for simplicity when switching tabs, or handle cache keys later
+        // For now, trigger fetch immediately
+        fetchPosts(true);
+    }, [type]);
+
     // Fetch dynamic posts!
     const fetchPosts = useCallback(
         async (isRefresh = false, append = false) => {
-            if (loadingPosts && !isRefresh) return;
+            if (loadingPosts && !isRefresh && posts.length > 0) return;
             if (!hasMore && !isRefresh) return;
+
+            // Prevent multiple concurrent fetches if one is running
+            // But allows refresh
 
             setLoadingPosts(true);
             if (isRefresh) setIsRefreshing(true);
 
             try {
-                const res = await axios.get("/post/dynamic/feed", {
-                    params: {
-                        limit: PAGE_SIZE,
-                        cursor: isRefresh ? null : cursor, // use cursor instead of page
-                    },
-                    timeout: 10000,
-                });
+                let res;
+                let newCursor = null;
+                let newPage = page;
 
-                const resPosts = res.data.posts || [];
+                if (type === "following") {
+                    // Following - no pagination currently supported by backend
+                    res = await axios.get("/post/followed-communities/posts");
+                    // Backend returns array directly or { posts }? 
+                    // Controller: res.status(200).json(posts); -> Array
+                    // Let's handle both
+                    const data = Array.isArray(res.data) ? res.data : (res.data.posts || []);
 
-                if (isRefresh) {
-                    setPosts(resPosts);
-                    setCursor(res.data.nextCursor || null);
-                    setHasMore(!!res.data.nextCursor);
-                } else if (append) {
-                    setPosts((prev) => [
-                        ...prev,
-                        ...resPosts.filter((p) => !prev.some((q) => q._id === p._id)),
-                    ]);
-                    setCursor(res.data.nextCursor || null);
-                    setHasMore(!!res.data.nextCursor);
+                    if (isRefresh) {
+                        setPosts(data);
+                    } else {
+                        // If appending, but backend returns ALL, we shouldn't duplicate.
+                        // Since backend has no pagination for following, we just setPosts and stop.
+                        setPosts(data);
+                    }
+                    setHasMore(false); // No pagination for following yet
+                } else if (type === "newest") {
+                    const p = isRefresh ? 1 : page;
+                    res = await axios.get("/post", {
+                        params: {
+                            limit: PAGE_SIZE,
+                            page: p,
+                        },
+                    });
+                    // returns { posts: [], total: ... }
+                    const data = res.data.posts || [];
+
+                    if (isRefresh) {
+                        setPosts(data);
+                        setPage(2);
+                    } else {
+                        setPosts(prev => [...prev, ...data.filter(x => !prev.some(y => y._id === x._id))]);
+                        setPage(p + 1);
+                    }
+                    if (data.length < PAGE_SIZE) setHasMore(false);
                 } else {
-                    setPosts((prev) => [
-                        ...prev,
-                        ...resPosts.filter((p) => !prev.some((q) => q._id === p._id)),
-                    ]);
-                    setCursor(res.data.nextCursor || null);
-                    setHasMore(!!res.data.nextCursor);
+                    // Trending (Default)
+                    res = await axios.get("/post/dynamic/feed", {
+                        params: {
+                            limit: PAGE_SIZE,
+                            cursor: isRefresh ? null : cursor,
+                        },
+                        timeout: 10000,
+                    });
+
+                    const data = res.data.posts || [];
+                    newCursor = res.data.nextCursor;
+
+                    if (isRefresh) {
+                        setPosts(data);
+                        setCursor(newCursor);
+                    } else {
+                        setPosts((prev) => [
+                            ...prev,
+                            ...data.filter((p) => !prev.some((q) => q._id === p._id)),
+                        ]);
+                        setCursor(newCursor);
+                    }
+                    setHasMore(!!newCursor);
                 }
             } catch (err) {
-                // Silently ignore errors including timeout, do NOT set error state or show toast
+                // Silently ignore or log
+                console.error("Feed fetch error", err);
             } finally {
                 setLoadingPosts(false);
                 if (isRefresh) {
@@ -172,7 +225,7 @@ const TrendingFeed = () => {
                 }
             }
         },
-        [loadingPosts, cursor, hasMore]
+        [loadingPosts, cursor, hasMore, page, type]
     );
 
     // Initial load
@@ -268,8 +321,9 @@ const TrendingFeed = () => {
     // POST FILTERING for muted/blocked/hidden, and handle new post via socket
     const isPostVisible = useCallback(
         (p) =>
-            !mutedUsers.some((u) => u._id === p.author._id) &&
-            !blockedUsers.some((u) => u._id === p.author._id) &&
+            p.author &&
+            !mutedUsers.some((u) => u._id === p.author?._id) &&
+            !blockedUsers.some((u) => u._id === p.author?._id) &&
             !hiddenPosts.some((hp) => hp._id === p._id),
         [mutedUsers, blockedUsers, hiddenPosts]
     );
@@ -440,7 +494,7 @@ const TrendingFeed = () => {
                     isOpen
                     onClose={() => setReportModalOpen(false)}
                     postId={selectedPost._id}
-                    authorId={selectedPost.author._id}
+                    authorId={selectedPost.author?._id}
                 />
             )}
             {muteModalOpen && selectedUser && (
@@ -470,7 +524,7 @@ const TrendingFeed = () => {
                     isOpen
                     onClose={() => setHidePostModalOpen(false)}
                     onConfirm={handleHidePost}
-                    postAuthor={selectedPost.author.name}
+                    postAuthor={selectedPost.author?.name}
                 />
             )}
         </>

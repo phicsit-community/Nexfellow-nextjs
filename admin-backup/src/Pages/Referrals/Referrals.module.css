@@ -1,0 +1,278 @@
+.mainContainer {
+  margin-left: 250px;
+  padding-top: 80px;
+}
+.loader {
+  width: 100%;
+  height: 100%;
+  /* border: 2px solid black; */
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+}
+.container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.headAndSearch {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 20px;
+}
+.title {
+  font-size: 24px;
+  font-weight: 500;
+  color: black;
+  font-family: "Montserrat", sans-serif;
+}
+
+.totalUser {
+  font-size: 16px;
+  font-weight: 600;
+  color: #3c3c3c;
+  font-family: "Inter", sans-serif;
+  padding-left: 2px;
+}
+
+.searchBarAndFilter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-top: 15px;
+  width: 50%;
+}
+
+.searchContainer {
+  position: relative;
+  width: 100%;
+  max-width: 500px; /* Adjust max width as needed */
+  height: 40px;
+}
+
+.searchIcon {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  color: #aaa;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.searchInput {
+  width: 100%;
+  height: 40px;
+  padding-left: 45px; /* Ensure space for the icon */
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  outline: none;
+}
+
+.searchInput:focus {
+  border: 1px solid #3498db;
+}
+
+.searchInput::placeholder {
+  color: #9e9e9e;
+  font-size: 14px;
+  font-family: "Poppins", sans-serif;
+}
+
+
+/* Table css */
+.table {
+  width: 90%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); */
+  border: 1px solid #e6e6e6;
+  padding: 2rem;
+  border-radius: 8px;
+  /* overflow: hidden; */
+  overflow-y: scroll;
+  overflow-x: hidden;
+  max-height: 600px;
+
+  /* Hide scrollbar for WebKit browsers */
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  /* Hide scrollbar for Firefox */
+  scrollbar-width: none;
+
+  /* Hide scrollbar for Internet Explorer and Edge */
+  -ms-overflow-style: none;
+}
+
+.tableHeader {
+  color: black;
+  background-color: #ededed !important;
+  border-radius: 8px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  height: 40px !important;
+}
+
+.tableHeaderItem {
+  background-color: transparent;
+  text-align: start;
+  /* padding-left: 30px; */
+  font-size: 18px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+  width: 100%;
+  text-transform: capitalize;
+  font-family: "Montserrat", sans-serif;
+}
+
+.tableHeaderItem.rank {
+  padding-left: 30px;
+}
+
+.tableHeaderItem.name {
+  transform: translateX(-35%);
+  /* padding-left: 240px; */
+  /* border: 2px solid black; */
+}
+
+.tableHeaderItem.referrals {
+  transform: translateX(10%);
+}
+
+.tableRow {
+  display: flex;
+  /* border-bottom: 2px solid #B3B3B3; */
+  padding: 10px 0;
+}
+
+.tableRowItem {
+  text-align: center;
+  padding: 5px 15px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  /* padding-left: 30px; */
+}
+
+.tableRowItem.rank {
+  padding-left: 50px;
+  font-size: 18px;
+}
+
+.tableRowItem.username {
+  font-size: 18px;
+  transform: translateX(-40%);
+  /* text-align: center !important; */
+  /* border: 2px solid black; */
+}
+
+.tableRowItem.referrals {
+  transform: translateX(10%);
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 1024px) {
+  .tableHeaderItem,
+  .tableRowItem {
+    font-size: 15px !important;
+    /* padding: 8px; */
+  }
+
+  .tableHeaderItem.rank,
+  .tableRowItem.rank {
+    padding-left: 20px;
+  }
+
+  .tableHeaderItem.name,
+  .tableRowItem.username {
+    transform: translateX(30%);
+  }
+
+  .tableHeaderItem.referrals,
+  .tableRowItem.referrals {
+    transform: translateX(40%);
+  }
+}
+
+@media (max-width: 1400px) {
+  .tableHeaderItem,
+  .tableRowItem,
+  .tableRowItem.rank,
+  .tableRowItem.username,
+  .tableRowItem.referrals {
+    font-size: 15px !important;
+  }
+
+  .tableRowItem.username {
+    transform: translateX(116px);
+  }
+
+  .tableHeaderItem.name {
+    transform: translateX(130px);
+  }
+}
+
+@media (max-width: 1300px) {
+  .tableHeaderItem,
+  .tableRowItem,
+  .tableRowItem.rank,
+  .tableRowItem.username,
+  .tableRowItem.referrals {
+    font-size: 14px !important;
+  }
+
+  .tableRowItem.rank {
+    padding-left: 40px;
+  }
+
+  .tableRowItem.username {
+    transform: translateX(100px);
+  }
+
+  .tableRowItem.referrals {
+    transform: translateX(60%);
+  }
+
+  .tableHeaderItem.name {
+    transform: translateX(110px);
+  }
+
+  .tableHeaderItem.referrals {
+    transform: translateX(60%);
+  }
+}
+
+@media (max-width: 1024px) {
+  .tableRowItem,
+  .tableRowItem.rank,
+  .tableRowItem.username,
+  .tableRowItem.referrals {
+    font-size: 14px;
+  }
+
+  .tableRowItem.rank {
+    padding-left: 30px;
+  }
+
+  .tableRowItem.username {
+    transform: translateX(120px);
+  }
+
+  .tableRowItem.referrals {
+    transform: translateX(50%);
+  }
+}

@@ -22,7 +22,7 @@ patchConsoleLog(); // 🧠 Patch early
 // Set the base URL for the axios requests
 if (import.meta.env.DEV) {
   console.log("Running in development mode");
-  axios.defaults.baseURL = import.meta.env.VITE_LOCALHOST;
+  axios.defaults.baseURL = import.meta.env.VITE_LOCALHOST || "http://localhost:4000";
 } else {
   console.log("Running in production mode");
   axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL;

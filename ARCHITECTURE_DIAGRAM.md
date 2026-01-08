@@ -1,0 +1,546 @@
+# Nexfellow Architecture Diagram
+
+## System Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         NEXFELLOW PLATFORM                              │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────┐         ┌──────────────────────┐
+│   USERS / CLIENTS    │         │   ADMIN USERS        │
+│  (Mobile + Desktop)  │         │   (Administrators)   │
+└──────────┬───────────┘         └──────────┬───────────┘
+           │                                │
+           │                                │
+           ▼                                ▼
+┌──────────────────────┐         ┌──────────────────────┐
+│   CLIENT APP         │         │   ADMIN PANEL        │
+│   (React + Vite)     │         │   (Next.js 16)       │
+│   Port: 5173         │         │   Port: 3000         │
+├──────────────────────┤         ├──────────────────────┤
+│ • User Dashboard     │         │ • User Management    │
+│ • Social Feed        │         │ • Content Moderation │
+│ • Communities        │         │ • Analytics          │
+│ • Challenges         │         │ • Quiz Management    │
+│ • Quizzes           │         │ • Challenge Admin    │
+│ • Messaging         │         │ • Notifications      │
+│ • Profile           │         │ • Advertisements     │
+└──────────┬───────────┘         └──────────┬───────────┘
+           │                                │
+           │                                │
+           └────────────┬───────────────────┘
+                        │
+                        │  HTTPS/REST API
+                        │  WebSocket (Socket.io)
+                        │
+                        ▼
+           ┌────────────────────────┐
+           │   BACKEND API          │
+           │   (Node.js + Express)  │
+           │   Port: 5000           │
+           ├────────────────────────┤
+           │ • Authentication       │
+           │ • Business Logic       │
+           │ • Data Validation      │
+           │ • File Upload          │
+           │ • Real-time Events     │
+           │ • Email Service        │
+           │ • Payment Processing   │
+           └───────┬────────────────┘
+                   │
+         ┌─────────┴─────────┐
+         │                   │
+         ▼                   ▼
+┌─────────────────┐  ┌──────────────────┐
+│   DATABASE      │  │  EXTERNAL APIs   │
+│   MongoDB       │  │  & SERVICES      │
+├─────────────────┤  ├──────────────────┤
+│ • Users         │  │ • OAuth Providers│
+│ • Posts         │  │   - Google       │
+│ • Communities   │  │   - LinkedIn     │
+│ • Challenges    │  │   - GitHub       │
+│ • Quizzes       │  │   - Facebook     │
+│ • Messages      │  │ • Cloudinary     │
+│ • Notifications │  │ • Bunny CDN      │
+│ • Analytics     │  │ • Razorpay       │
+│ • 38+ Models    │  │ • Nodemailer     │
+└─────────────────┘  │ • Firebase Admin │
+                     │ • Socket.io      │
+                     └──────────────────┘
+```
+
+---
+
+## Component Architecture
+
+### Frontend Components Hierarchy
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    CLIENT APP STRUCTURE                  │
+└─────────────────────────────────────────────────────────┘
+
+App.jsx (Root)
+├── Redux Provider (State Management)
+├── Router (React Router DOM)
+│   ├── Public Routes
+│   │   ├── Landing Page
+│   │   ├── Login/Signup
+│   │   └── OAuth Callbacks
+│   │
+│   └── Protected Routes (Auth Required)
+│       ├── Home Feed
+│       │   ├── Post Feed
+│       │   ├── Create Post
+│       │   ├── Trending Topics
+│       │   └── Suggested Communities
+│       │
+│       ├── Profile
+│       │   ├── User Info
+│       │   ├── Activity Feed
+│       │   ├── Achievements
+│       │   └── Edit Profile
+│       │
+│       ├── Communities
+│       │   ├── Community List
+│       │   ├── Community Detail
+│       │   │   ├── Posts
+│       │   │   ├── Quizzes
+│       │   │   ├── Challenges
+│       │   │   └── Members
+│       │   └── Create Community
+│       │
+│       ├── Challenges
+│       │   ├── Browse Challenges
+│       │   ├── My Challenges
+│       │   ├── Challenge Detail
+│       │   │   ├── Overview
+│       │   │   ├── Daily Tasks
+│       │   │   ├── Submissions
+│       │   │   ├── Leaderboard
+│       │   │   └── Activity Feed
+│       │   └── Create Challenge (Admin)
+│       │
+│       ├── Quizzes
+│       │   ├── Browse Quizzes
+│       │   ├── Take Quiz
+│       │   ├── Quiz Results
+│       │   └── My Submissions
+│       │
+│       ├── Messaging
+│       │   ├── Conversation List
+│       │   ├── Chat Interface
+│       │   └── New Message
+│       │
+│       └── Notifications
+│           ├── Activity Notifications
+│           ├── System Notifications
+│           └── Settings
+│
+└── Global Components
+    ├── Navigation Bar
+    ├── Sidebar
+    ├── Modals
+    ├── Toast Notifications
+    └── Loading States
+```
+
+### Admin Panel Structure
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                  ADMIN PANEL STRUCTURE                   │
+└─────────────────────────────────────────────────────────┘
+
+Root Layout (Next.js App Router)
+├── Providers (Redux + Toast)
+│
+├── (auth) Route Group
+│   └── /login
+│       └── Login Page
+│
+└── (dashboard) Route Group (Protected)
+    ├── Layout (Sidebar + Navbar)
+    │
+    ├── /users
+    │   ├── User List
+    │   ├── Search & Filter
+    │   ├── User Details Modal
+    │   └── CSV Export
+    │
+    ├── /analytics
+    │   ├── Overview Charts
+    │   ├── User Growth
+    │   ├── Engagement Metrics
+    │   └── Revenue Stats
+    │
+    ├── /blogs
+    │   ├── Blog List
+    │   ├── Create/Edit Blog
+    │   ├── Publish/Unpublish
+    │   └── Blog Analytics
+    │
+    ├── /posts
+    │   ├── Post Moderation Queue
+    │   ├── Takedown/Restore
+    │   └── Report Management
+    │
+    ├── /challenges
+    │   ├── Challenge List
+    │   ├── /create - Create Challenge
+    │   └── /[id]
+    │       ├── Overview
+    │       ├── /edit - Edit Challenge
+    │       ├── /share - Share Options
+    │       ├── Submissions Review
+    │       ├── Participants
+    │       └── Analytics
+    │
+    ├── /quiz
+    │   ├── Quiz List
+    │   ├── /create - Create Quiz
+    │   ├── /[id] - Quiz Detail
+    │   └── Submissions
+    │
+    ├── /rewards
+    │   ├── Reward List
+    │   └── /add/[quizId] - Add Rewards
+    │
+    ├── /notifications
+    │   ├── Send Notification
+    │   └── Notification History
+    │
+    ├── /advertisements
+    │   ├── Ad Management
+    │   └── Upload New Ad
+    │
+    ├── /featured-communities
+    │   ├── Community List
+    │   └── Order Management
+    │
+    ├── /requests
+    │   ├── Verification Requests
+    │   └── Approve/Reject
+    │
+    └── /checkout-details
+        └── Payment Records
+```
+
+---
+
+## Data Flow Architecture
+
+### User Actions Flow
+
+```
+┌─────────────┐      ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+│   CLIENT    │─────▶│   BACKEND   │─────▶│  DATABASE   │─────▶│   RESPONSE  │
+│   ACTION    │      │  VALIDATION │      │   QUERY     │      │   TO USER   │
+└─────────────┘      └─────────────┘      └─────────────┘      └─────────────┘
+      │                     │                     │                     │
+      │                     │                     │                     │
+      ▼                     ▼                     ▼                     ▼
+  User clicks         JWT Auth Check      MongoDB Find/Update     JSON Response
+  "Create Post"       Check permissions   Store post data         Post created
+  Fill form           Validate data       Update relationships    UI updates
+  Submit              Process files       Notify followers        Success toast
+```
+
+### Real-time Flow (Socket.io)
+
+```
+┌──────────────┐                      ┌──────────────┐
+│  User A      │                      │  User B      │
+│  (Client)    │                      │  (Client)    │
+└──────┬───────┘                      └──────▲───────┘
+       │                                     │
+       │  1. Send Message                    │  4. Receive Message
+       │                                     │
+       ▼                                     │
+┌──────────────────────────────────────────────────────┐
+│           SOCKET.IO SERVER (Backend)                 │
+├──────────────────────────────────────────────────────┤
+│  2. Validate & Store in DB                          │
+│  3. Emit to recipient's socket                      │
+│  4. Update conversation                             │
+└──────────────────────────────────────────────────────┘
+```
+
+### Authentication Flow
+
+```
+┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+│   LOGIN     │      │   BACKEND   │      │   OAUTH     │
+│   REQUEST   │      │   SERVER    │      │  PROVIDER   │
+└─────┬───────┘      └─────┬───────┘      └─────┬───────┘
+      │                    │                    │
+      │  1. Login Click    │                    │
+      ├───────────────────▶│                    │
+      │                    │  2. Redirect       │
+      │                    ├───────────────────▶│
+      │                    │                    │
+      │                    │  3. User Approves  │
+      │                    │◀───────────────────┤
+      │                    │                    │
+      │  4. Callback       │                    │
+      │◀───────────────────┤                    │
+      │                    │                    │
+      │  5. JWT Token      │                    │
+      │◀───────────────────┤                    │
+      ▼                    ▼                    ▼
+   Store Token      Store in DB         OAuth Complete
+   in localStorage   Return user data
+```
+
+---
+
+## Database Schema Relationships
+
+```
+┌──────────────┐
+│     USER     │────────┬─────────────┬──────────────┐
+└──────┬───────┘        │             │              │
+       │                │             │              │
+       │ has many       │ creates     │ joins        │ participates
+       │                │             │              │
+       ▼                ▼             ▼              ▼
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│    POSTS     │ │  COMMUNITIES │ │  CHALLENGES  │ │   QUIZZES    │
+└──────┬───────┘ └──────┬───────┘ └──────┬───────┘ └──────┬───────┘
+       │                │                │                │
+       │ has many       │ contains       │ requires       │ has
+       │                │                │                │
+       ▼                ▼                ▼                ▼
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│   COMMENTS   │ │ QUIZZES +    │ │ SUBMISSIONS  │ │  QUESTIONS   │
+│   LIKES      │ │ CHALLENGES   │ │ REWARDS      │ │  SUBMISSIONS │
+│   BOOKMARKS  │ │ POSTS        │ │ ACTIVITIES   │ │  REWARDS     │
+└──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘
+```
+
+---
+
+## Technology Stack Layers
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      PRESENTATION LAYER                         │
+├─────────────────────────────────────────────────────────────────┤
+│  React 18/19  │  Next.js 16  │  Tailwind CSS  │  Radix UI      │
+│  Framer Motion│  GSAP        │  Lottie        │  Chart.js      │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      APPLICATION LAYER                          │
+├─────────────────────────────────────────────────────────────────┤
+│  Redux Toolkit  │  React Router  │  React Hook Form  │  Axios  │
+│  Socket.io Client│ React Query   │  Zod Validation  │  Moment │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                         API LAYER                               │
+├─────────────────────────────────────────────────────────────────┤
+│  Express.js  │  REST API  │  WebSocket  │  Middleware          │
+│  JWT Auth    │  Passport  │  Helmet     │  Rate Limiting       │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      BUSINESS LOGIC LAYER                       │
+├─────────────────────────────────────────────────────────────────┤
+│  Controllers (33)  │  Services  │  Validators  │  Utilities    │
+│  Challenge Logic   │  Quiz Logic│  User Logic  │  Analytics    │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      DATA ACCESS LAYER                          │
+├─────────────────────────────────────────────────────────────────┤
+│  Mongoose ODM  │  Models (38)  │  Schemas  │  Aggregations    │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                       INFRASTRUCTURE LAYER                      │
+├─────────────────────────────────────────────────────────────────┤
+│  MongoDB  │  Cloudinary  │  Bunny CDN  │  Redis (optional)    │
+│  Razorpay │  Nodemailer  │  Firebase   │  OAuth Providers     │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Deployment Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      PRODUCTION DEPLOYMENT                      │
+└─────────────────────────────────────────────────────────────────┘
+
+┌──────────────────┐         ┌──────────────────┐
+│  VERCEL / NETLIFY│         │   VERCEL         │
+│  Client App      │         │   Admin Panel    │
+│  (Static + SSR)  │         │   (SSR)          │
+└────────┬─────────┘         └────────┬─────────┘
+         │                            │
+         │                            │
+         └──────────┬─────────────────┘
+                    │
+                    │  API Calls
+                    │
+                    ▼
+         ┌────────────────────┐
+         │  RENDER / HEROKU   │
+         │  Backend API       │
+         │  (Node.js)         │
+         └────────┬───────────┘
+                  │
+         ┌────────┴────────┐
+         │                 │
+         ▼                 ▼
+┌─────────────────┐ ┌──────────────────┐
+│  MONGODB ATLAS  │ │  EXTERNAL APIS   │
+│  (Database)     │ │  Cloudinary, etc │
+└─────────────────┘ └──────────────────┘
+```
+
+---
+
+## Security Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      SECURITY LAYERS                            │
+└─────────────────────────────────────────────────────────────────┘
+
+Layer 1: Network Security
+├── HTTPS/TLS Encryption
+├── CORS Configuration
+└── Rate Limiting (Express Rate Limit)
+
+Layer 2: Authentication & Authorization
+├── JWT Token-based Auth
+├── OAuth 2.0 (Google, LinkedIn, GitHub, Facebook)
+├── Passport.js Strategies
+└── Session Management
+
+Layer 3: Application Security
+├── Helmet.js (HTTP Headers)
+├── Input Validation (Express Validator)
+├── XSS Protection
+├── CSRF Protection
+└── SQL/NoSQL Injection Prevention
+
+Layer 4: Data Security
+├── Password Hashing (bcryptjs)
+├── Sensitive Data Encryption
+├── Environment Variables
+└── Secure Cookie Settings
+
+Layer 5: API Security
+├── JWT Verification Middleware
+├── Role-based Access Control
+├── Request Sanitization
+└── File Upload Validation
+```
+
+---
+
+## File Upload Flow
+
+```
+┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+│   CLIENT    │      │   BACKEND   │      │  CLOUDINARY │
+│   UPLOAD    │      │   MULTER    │      │   / BUNNY   │
+└─────┬───────┘      └─────┬───────┘      └─────┬───────┘
+      │                    │                    │
+      │ 1. Select File     │                    │
+      ├───────────────────▶│                    │
+      │                    │ 2. Validate        │
+      │                    │    - Size          │
+      │                    │    - Type          │
+      │                    │    - Dimensions    │
+      │                    │                    │
+      │                    │ 3. Process Image   │
+      │                    │    - Compress      │
+      │                    │    - Resize        │
+      │                    │                    │
+      │                    │ 4. Upload to CDN   │
+      │                    ├───────────────────▶│
+      │                    │                    │
+      │                    │ 5. Return URL      │
+      │                    │◀───────────────────┤
+      │                    │                    │
+      │ 6. Save URL to DB  │                    │
+      │◀───────────────────┤                    │
+      │                    │                    │
+      │ 7. Display Image   │                    │
+      ▼                    ▼                    ▼
+```
+
+---
+
+## State Management Flow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      REDUX ARCHITECTURE                         │
+└─────────────────────────────────────────────────────────────────┘
+
+┌──────────────┐
+│  COMPONENT   │
+└──────┬───────┘
+       │
+       │ dispatch(action)
+       │
+       ▼
+┌──────────────────┐
+│     ACTION      │
+│  (Redux Slice)  │
+└──────┬───────────┘
+       │
+       │ async thunk
+       │
+       ▼
+┌──────────────────┐
+│   API CALL      │
+│  (Backend API)  │
+└──────┬───────────┘
+       │
+       │ response
+       │
+       ▼
+┌──────────────────┐
+│    REDUCER      │
+│  (Update State) │
+└──────┬───────────┘
+       │
+       │ new state
+       │
+       ▼
+┌──────────────────┐
+│     STORE       │
+│ (Central State) │
+└──────┬───────────┘
+       │
+       │ useSelector
+       │
+       ▼
+┌──────────────────┐
+│   COMPONENT     │
+│  (Re-render)    │
+└──────────────────┘
+
+Redux Persist
+      │
+      ├── Save to localStorage
+      └── Rehydrate on reload
+```
+
+---
+
+**Document Version:** 1.0  
+**Last Updated:** January 8, 2026

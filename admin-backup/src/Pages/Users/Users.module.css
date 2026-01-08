@@ -1,0 +1,94 @@
+.maincontainer {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-height: 100vh;
+  margin-left: 250px;
+  padding-top: 80px;
+}
+
+.userHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  margin-top: 20px;
+  font-size: 24px;
+  font-weight: 500;
+  color: black;
+  font-family: "Montserrat", sans-serif, "poppins";
+}
+
+.totalUser {
+  font-size: 16px;
+  font-weight: 600;
+  color: #3c3c3c;
+  font-family: "Inter", sans-serif;
+  padding-left: 2px;
+}
+
+.searchBarAndFilter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-top: 15px;
+  width: 50%;
+}
+
+.searchContainer {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  /* Adjust max width as needed */
+  height: 40px;
+}
+
+.searchIcon {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  color: #aaa;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.searchInput {
+  width: 100%;
+  height: 40px;
+  padding-left: 45px;
+  /* Ensure space for the icon */
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  outline: none;
+}
+
+.searchInput:focus {
+  border: 1px solid #3498db;
+}
+
+.searchInput::placeholder {
+  color: #9e9e9e;
+  font-size: 14px;
+  font-family: "Poppins", sans-serif;
+}
+
+.downloadBtn {
+  background-color: #24b2b4;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-left: 16px;
+}
+
+.downloadBtn:hover {
+  background-color: #1a9ca2;
+}

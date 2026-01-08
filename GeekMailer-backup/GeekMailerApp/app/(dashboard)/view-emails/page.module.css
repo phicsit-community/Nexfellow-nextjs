@@ -1,0 +1,173 @@
+/* .pageContainer {
+  height: 100vh; 
+  height: 100%;
+  background-color: #f3f4f6; 
+}
+
+.contentContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem; 
+}
+
+.emailGrid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr); 
+  gap: 1rem; 
+}
+
+@media (min-width: 640px) {
+  .emailGrid {
+    grid-template-columns: repeat(2, 1fr); 
+  }
+}
+
+@media (min-width: 768px) {
+  .emailGrid {
+    grid-template-columns: repeat(3, 1fr); 
+  }
+}
+
+.emailCard {
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
+  border-radius: 0.5rem; 
+  padding: 1rem; 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid transparent;
+  border-image-source: linear-gradient(to right, #4ade80, #3b82f6);
+  border-image-slice: 1; 
+}
+
+.cardHeader {
+  margin-bottom: 1rem;
+}
+
+.headerTop {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+  .headerTop {
+    flex-direction: row; 
+    align-items: center; 
+  }
+}
+
+.emailSubject {
+  font-weight: 600; 
+  font-size: 1.125rem; 
+  background: linear-gradient(to right, #4ade80, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; 
+}
+
+.emailStatus {
+  font-size: 0.875rem; 
+  color: #6b7280; 
+  margin-top: 0.5rem; 
+}
+
+@media (min-width: 768px) {
+  .emailStatus {
+    margin-top: 0; 
+    margin-left: 1rem; 
+  }
+}
+
+.scheduleDate {
+  font-size: 0.875rem; 
+  color: #6b7280; 
+  margin-top: 0.5rem; 
+}
+
+.viewDetailsLink {
+  color: #3b82f6; 
+  text-decoration: underline;
+  margin-top: auto; 
+}
+
+.noEmailsMessage {
+  color: #4b5563; 
+} */
+
+.container {
+  position: relative;
+  overflow-x: hidden;
+  width: 1100px;
+  height: 100%;
+  gap: 0px;
+  opacity: 0px;
+  /* border: 1px solid black; */
+  overflow-y: hidden;
+}
+
+.back {
+  position: absolute;
+  top: 20px;
+  left: 60px;
+  width: 80px;
+  height: 24px;
+  font-size: 18px;
+  font-family: "Inter", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  color: #6a6a6a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 13px;
+  cursor: pointer;
+  /* border: 1px solid black; */
+}
+.heading {
+  /* border: 2px solid black; */
+  width: 90%;
+  height: 40px;
+  position: absolute;
+  top: 70px;
+  left: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.interhead {
+  font-size: 24px;
+  font-family: "Inter", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.addContact {
+  width: 150px;
+  height: 40px;
+  border-radius: 8px;
+  padding-right: 4px;
+  padding-left: 4px;
+  background-color: #24b2b4;
+  color: white;
+  font-size: 16px;
+  font-family: "Inter", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.Viewtable {
+  width: 1020px;
+  height: 500px;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  position: absolute;
+  top: 130px;
+  left: 60px;
+}

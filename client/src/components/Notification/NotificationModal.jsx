@@ -475,9 +475,9 @@ const NotificationModal = ({ closeModal }) => {
               <motion.div
                 key={notification._id}
                 className={`${styles.notificationItem} ${notification.recipients.find((r) => r.user === loggedInUserId)
-                    ?.read
-                    ? styles.readNotification
-                    : styles.unreadNotification
+                  ?.read
+                  ? styles.readNotification
+                  : styles.unreadNotification
                   }`}
                 onClick={() => handleNotificationClick(notification)}
                 variants={itemVariants}

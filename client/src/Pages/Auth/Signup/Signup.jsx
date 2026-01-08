@@ -162,28 +162,28 @@ const Signup = () => {
 
   const googleAuth = () => {
     const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
+      ? (import.meta.env.VITE_LOCALHOST || "http://localhost:4000")
       : import.meta.env.VITE_SERVER_URL;
-    window.open(`${link}/auth/google/callback`, "_self");
+    window.open(`${link}/auth/google`, "_self");
   };
 
   const githubAuth = () => {
     const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
+      ? (import.meta.env.VITE_LOCALHOST || "http://localhost:4000")
       : import.meta.env.VITE_SERVER_URL;
-    window.open(`${link}/auth/github/callback`, "_self");
+    window.open(`${link}/auth/github`, "_self");
   };
 
   const facebookAuth = () => {
     const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
+      ? (import.meta.env.VITE_LOCALHOST || "http://localhost:4000")
       : import.meta.env.VITE_SERVER_URL;
-    window.open(`${link}/auth/facebook/`, "_self");
+    window.open(`${link}/auth/facebook`, "_self");
   };
 
   const linkedinAuth = () => {
     const link = import.meta.env.DEV
-      ? import.meta.env.VITE_LOCALHOST
+      ? (import.meta.env.VITE_LOCALHOST || "http://localhost:4000")
       : import.meta.env.VITE_SERVER_URL;
     window.open(`${link}/auth/linkedin/`, "_self");
   };

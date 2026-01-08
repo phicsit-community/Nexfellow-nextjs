@@ -1,0 +1,160 @@
+.quizContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: rgba(128, 128, 128, 0.8);
+  backdrop-filter: blur(10px);
+
+}
+
+.quizForm {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: 100%;
+}
+
+.quizHeader {
+  text-align: center;
+}
+
+.quizHeader h1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.quizContent {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  gap: 20px;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.formField label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.formField input,
+.formField textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: none;
+}
+
+.formInline {
+  display: flex;
+  align-items: center;
+}
+
+.formInline input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.formInline button {
+  margin-left: 10px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.formInline button:hover {
+  background-color: #0056b3;
+}
+
+.quizContent ul {
+  list-style: none;
+  padding: 0;
+}
+
+.quizContent ul li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.quizContent ul li button {
+  padding: 5px 10px;
+  border: none;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.quizContent ul li button:hover {
+  background-color: #c82333;
+}
+
+.quizContent button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #28a745;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+.quizContent button:hover {
+  background-color: #218838;
+}
+
+.ml2 {
+  margin-left: 10px;
+}
+
+.rulesList {
+  list-style: none;
+  padding: 0;
+}
+
+.rulesList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.ruleText {
+  flex: 1;
+}
+
+.fullWidthBtn {
+  width: 100%;
+  background-color: #0a0e1b;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 16px;
+}

@@ -180,9 +180,9 @@ module.exports.googleCallback = async (req, res) => {
     {
       httpOnly: true,
       maxAge: 15 * 60 * 1000,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       signed: true,
-      sameSite: "none",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     }
   );
 
@@ -440,8 +440,8 @@ module.exports.refreshToken = async (req, res) => {
     // Set the new access token as a cookie
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 2 * 60 * 60 * 1000, // 2 hours, matching token expiry
     });
 
@@ -454,10 +454,10 @@ module.exports.refreshToken = async (req, res) => {
       },
       {
         httpOnly: true,
-        maxAge: 2 * 60 * 60 * 1000, // 2 hours
-        secure: true,
+        maxAge: 2 * 60 * 60 * 1000, // 2 hours,
+        secure: process.env.NODE_ENV === "production",
         signed: true,
-        sameSite: "none",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       }
     );
 

@@ -1,572 +1,263 @@
-.pageContainer {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.layoutContainer {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-  width: 100%;
-}
-
-.notificationContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  border-right: 1px solid #e6e6e6;
-  width: 54%;
-  padding: 24px 40px 0 40px;
-}
-
-.notificationReadPage {
-  height: 85%;
-  width: 88%;
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #e6e6e6;
-  background-color: #ffffff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  overflow: auto;
-  scrollbar-width: none;
-}
-
-.notification_read_page {
-  width: 100%;
-  min-height: 100vh;
-  background: #f8f9fa;
-  padding: 20px;
-}
-
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  margin-right: 13%;
-}
-
-.header {
-  padding: 20px 24px;
-  border-bottom: 1px solid #e0e0e0;
-  background: white;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.back_button {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--color-primary);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 12px;
-  transition: color 0.2s ease;
-}
-
-.back_button:hover {
-  color: var(--color-primary-dark);
-}
-
-.pageHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.pageHeaderTitle {
-  display: flex;
-  align-items: center;
-}
-
-.pageHeader h2 {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0;
-  color: #333;
-}
-
-.backButton {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  color: #666;
-  transition: color 0.3s ease;
-}
-
-.moreButton {
-  background: none;
-  border: none;
-  font-size: 15px;
-  cursor: pointer;
-  color: #666;
-  transition: color 0.3s ease;
-}
-
-.notificationDetails {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  text-align: center;
-  padding: 10px;
-  max-width: 500px;
-}
-
-.profilePic {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-  cursor: pointer;
-}
-
-.description {
-  white-space: pre-wrap;
-  font-size: 15px;
-  line-height: 1.5;
-  color: #444;
-  margin: 15px 0;
-  text-align: start;
-}
-
-.notificationDetailsMeta {
-  display: flex;
-  gap: 8px;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
-
-.appealButton {
-  background: #ffe69c;
-  color: #856404;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 12px;
-  padding: 8px 20px;
-  cursor: pointer;
-  transition: background 0.14s, color 0.14s;
-  margin-top: 1.2rem;
-}
-
-.appealButton:hover:enabled {
-  background: #fff3cd;
-  color: #6d4c00;
-}
-
-.appealInfoMsg {
-  font-weight: 600;
-  font-size: 12px;
-  background: #fff3cd;
-  border-radius: 8px;
-  padding: 10px 16px;
-  margin-top: 1.2rem;
-}
-
-.timestamp {
-  font-size: 13px;
-  color: #9e9e9e;
-}
-
-.mainContainer {
+.overlay {
   position: fixed;
   top: 0;
   left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 9999;
 }
 
-.container {
-  position: relative;
-  width: 70vw;
-  border-radius: 10px;
-  z-index: 10000;
-  background-color: white;
+.modal {
+  background: #fff;
+  width: 700px;
+  max-width: 90vw;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  overflow: hidden;
 }
 
 .header {
-  border-bottom-width: 0.76px;
-  padding: 24px;
-  background: rgba(36, 178, 180, 1);
   display: flex;
   justify-content: space-between;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  align-items: flex-start;
+  padding: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.headerBottom {
-  width: 100%;
-}
-
-.userImg {
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  cursor: pointer;
+.headerContent {
+  flex: 1;
 }
 
 .badge {
-  font-family: Arial, sans-serif;
-  font-weight: 400;
-  font-size: 12px;
-  background: rgba(220, 252, 231, 1);
-  border: 1px solid rgba(226, 232, 240, 1);
-  border-radius: 10px;
-  color: rgba(22, 101, 52, 1);
-  padding: 5px 10px;
-  display: flex;
-  align-items: center;
-  max-width: 160px;
-  gap: 10px;
+  display: inline-block;
+  padding: 4px 10px;
+  background: #e6f7ff;
+  color: #0077cc;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.5px;
 }
 
 .title {
-  margin-top: 20px;
-  font-family: Arial, sans-serif;
+  font-size: 1.5rem;
   font-weight: 700;
-  font-size: 24px;
-  line-height: 32px;
-  color: rgba(255, 255, 255, 1);
+  margin: 0 0 0.75rem;
+  color: var(--color-text, #333);
 }
 
 .meta {
   display: flex;
-  margin-top: 20px;
-  flex-direction: row;
-  color: rgba(241, 241, 241, 1);
-  gap: 20px;
   align-items: center;
+  gap: 0.75rem;
+  color: #777;
+  font-size: 0.85rem;
 }
 
-.user {
+.senderInfo {
   display: flex;
-  flex-direction: row;
-  gap: 5px;
   align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.senderInfo:hover {
+  opacity: 0.8;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.senderName {
+  font-weight: 600;
+  color: var(--color-text, #333);
+}
+
+.dot {
+  color: #ccc;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #aaa;
+  transition: color 0.2s;
+  padding: 4px;
+}
+
+.closeBtn:hover {
+  color: #333;
 }
 
 .body {
-  margin-left: auto;
-  margin-right: auto;
-  font-family: Inter, sans-serif;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 22.75px;
-  color: rgba(107, 114, 128, 1);
-  max-width: 100%;
-  z-index: 5;
-  padding: 20px 16px;
+  padding: 1.5rem;
   overflow-y: auto;
-  max-height: 50vh;
+  flex: 1;
+}
+
+.quillContent {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-text, #333);
+}
+
+/* Override some quill defaults if necessary */
+.quillContent p {
+  margin-bottom: 1rem;
+}
+
+.actionsArea {
+  margin-top: 1.5rem;
+}
+
+.statusMsg {
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.success {
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  color: #52c41a;
+}
+
+.warning {
+  background-color: #fffbe6;
+  border: 1px solid #ffe58f;
+  color: #faad14;
+}
+
+.error {
+  background-color: #fff2f0;
+  border: 1px solid #ffccc7;
+  color: #ff4d4f;
+}
+
+.appealButton {
+  background-color: #000;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.appealButton:hover {
+  background-color: #333;
+}
+
+.appealButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 24px;
-  font-size: 13px;
-  color: #6b7280;
-  background-color: rgba(241, 245, 249, 0.2);
-  border-top: 0.76px solid rgba(226, 232, 240, 1);
-  padding: 10px;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #f0f0f0;
+  background: #fafafa;
 }
 
-.footerMeta {
+.footerInfo {
+  font-size: 0.75rem;
+  color: #999;
   display: flex;
-  flex-direction: row;
-  gap: 15px;
-  align-items: center;
+  gap: 1rem;
 }
 
-.closeButton {
-  background: rgba(20, 184, 166, 1);
-  color: white;
-  padding: 8px 12px;
-  border: none;
+.markReadBtn {
+  background-color: transparent;
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
   border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
+  transition: all 0.2s;
 }
 
-.closeModel {
-  color: white;
+.markReadBtn:hover {
+  background-color: #fff;
+  border-color: #bbb;
+  color: #333;
 }
 
-.closeButton:hover {
-  background-color: rgb(15, 133, 120);
+/* Dark Mode */
+:global(.dark) .modal {
+  background: #1f1f1f;
+  color: #eee;
 }
 
-@media screen and (max-width: 1024px) {
-  .container {
-    margin-right: 10%;
-    width: 60vw;
-  }
+:global(.dark) .header,
+:global(.dark) .footer {
+  border-color: #333;
+  background: #1f1f1f;
+  /* Keep uniform bg */
 }
 
-@media screen and (max-width: 768px) {
-  .layoutContainer {
-    justify-content: center;
-  }
-
-  .notificationContainer {
-    width: 100%;
-    border-right: none;
-    padding: 40px 0 0 0;
-    height: 80%;
-  }
-
-  .notificationReadPage {
-    width: 90%;
-  }
-
-  .container {
-    width: 50vw;
-    max-height: 90vh;
-    border-radius: 10px;
-  }
-
-  .header {
-    padding: 16px;
-    padding-bottom: 6px;
-    width: 100%;
-  }
-
-  .title {
-    font-size: 20px;
-    line-height: 28px;
-    margin-top: 12px;
-  }
-
-  .meta {
-    justify-content: space-between;
-    gap: 8px;
-    font-size: 12px;
-    width: 100%;
-  }
-
-  .badge {
-    font-size: 10px;
-    padding: 4px 8px;
-    max-width: 40%;
-  }
-
-  .body {
-    font-size: 13px;
-    line-height: 20px;
-  }
-
-  .footer {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
-    font-size: 12px;
-    padding: 10px 16px;
-  }
-
-  .dot {
-    display: none;
-  }
-
-  .footerMeta {
-    display: none;
-  }
-
-  .closeButton {
-    width: 100%;
-    text-align: center;
-  }
+:global(.dark) .title {
+  color: #fff;
 }
 
-@media screen and (max-width: 640px) {
-  .container {
-    width: 60vw;
-    margin-right: 25%;
-  }
+:global(.dark) .senderName,
+:global(.dark) .quillContent {
+  color: #eee;
 }
 
-@media screen and (max-width: 480px) {
-  .container {
-    width: 90vw;
-    margin-right: 5%;
-  }
+:global(.dark) .badge {
+  background: #1a2632;
+  color: #4e8cff;
 }
 
-:global(.dark) {
-  .pageContainer {
-    background-color: var(--background);
-    color: var(--foreground);
-  }
+:global(.dark) .closeBtn:hover {
+  color: #fff;
+}
 
-  .layoutContainer {
-    background-color: var(--background);
-  }
+:global(.dark) .markReadBtn {
+  border-color: #444;
+  color: #aaa;
+}
 
-  .notificationContainer {
-    border-color: var(--border);
-    background-color: var(--background);
-  }
+:global(.dark) .markReadBtn:hover {
+  border-color: #666;
+  color: #fff;
+  background: #333;
+}
 
-  .notificationReadPage {
-    background-color: var(--card);
-    color: var(--card-foreground);
-    border-color: var(--border);
-    box-shadow: 0 4px 10px rgba(0 0 0 / 0.8);
-  }
+:global(.dark) .statusMsg.success {
+  background-color: #162312;
+  border-color: #274916;
+}
 
-  .notification_read_page {
-    background-color: var(--background);
-    color: var(--foreground);
-  }
+:global(.dark) .statusMsg.warning {
+  background-color: #2b2111;
+  border-color: #594214;
+}
 
-  .container {
-    background-color: var(--card);
-    color: var(--card-foreground);
-    box-shadow: 0 2px 8px rgba(0 0 0 / 0.8);
-  }
-
-  .header {
-    background-color: var(--primary);
-    border-bottom-color: var(--border);
-    color: var(--primary-foreground);
-  }
-
-  .back_button {
-    color: var(--primary-foreground);
-  }
-
-  .back_button:hover {
-    color: var(--primary);
-  }
-
-  .pageHeader h2 {
-    color: var(--card-foreground);
-  }
-
-  .backButton,
-  .moreButton {
-    color: var(--muted-foreground);
-  }
-
-  .notificationDetails {
-    color: var(--card-foreground);
-  }
-
-  .profilePic {
-    border: 2px solid var(--border);
-  }
-
-  .description {
-    color: var(--card-foreground);
-  }
-
-  .notificationDetailsMeta {
-    color: var(--card-foreground);
-  }
-
-  .appealButton {
-    background: var(--accent);
-    color: var(--accent-foreground);
-  }
-
-  .appealButton:hover:enabled {
-    background: var(--accent-foreground);
-    color: var(--accent);
-  }
-
-  .appealInfoMsg {
-    background-color: var(--destructive);
-    color: var(--destructive-foreground);
-  }
-
-  .timestamp {
-    color: var(--muted-foreground);
-  }
-
-  .mainContainer {
-    background-color: rgba(0, 0, 0, 0.7);
-  }
-
-  .container {
-    background-color: var(--card);
-    color: var(--card-foreground);
-  }
-
-  .header {
-    background-color: var(--primary);
-    color: var(--primary-foreground);
-  }
-
-  .headerBottom {
-    color: var(--card-foreground);
-  }
-
-  .userImg {
-    border: 2px solid var(--border);
-  }
-
-  .badge {
-    background: var(--muted);
-    border-color: var(--border);
-    color: var(--muted-foreground);
-  }
-
-  .title {
-    color: var(--primary-foreground);
-  }
-
-  .meta {
-    color: var(--primary-foreground);
-  }
-
-  .user {
-    color: var(--primary-foreground);
-  }
-
-  .body {
-    color: var(--card-foreground);
-  }
-
-  .footer {
-    background-color: var(--muted);
-    color: var(--muted-foreground);
-    border-top-color: var(--border);
-  }
-
-  .footerMeta {
-    color: var(--muted-foreground);
-  }
-
-  .closeButton {
-    background-color: var(--primary);
-    color: var(--primary-foreground);
-  }
-
-  .closeButton:hover {
-    background-color: var(--primary-foreground);
-    color: var(--primary);
-  }
+:global(.dark) .statusMsg.error {
+  background-color: #2a1215;
+  border-color: #5c2229;
 }

@@ -1,0 +1,82 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent background */
+  z-index: 1000;
+  /* Ensure it is on top of other elements */
+}
+
+.modal {
+  width: 90%;
+  max-width: 500px;
+  /* Set a max width to avoid overflow */
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  position: relative;
+
+  p {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #555;
+  }
+}
+
+.close {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close svg {
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.heading {
+  text-align: left;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+
+
+.buttons {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.deleteButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #e74c3c;
+  /* Red color for delete */
+  color: white;
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  background-color: #c0392b;
+}
+
+.closeButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #161a1f;
+  /* Dark color for close */
+  color: white;
+  cursor: pointer;
+}
+
+.closeButton:hover {
+  background-color: #060708;
+}

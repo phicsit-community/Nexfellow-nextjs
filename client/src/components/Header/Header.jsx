@@ -57,7 +57,13 @@ function Header() {
       setLoading(true);
       setError(null);
       try {
-        const userData = JSON.parse(localStorage.getItem("user"));
+        let userData = null;
+        try {
+          const userStr = localStorage.getItem("user");
+          if (userStr && userStr !== "undefined") userData = JSON.parse(userStr);
+        } catch (e) {
+          console.error("Error parsing user data in Header", e);
+        }
         const userId = userData?.id;
         const username = userData?.username;
 

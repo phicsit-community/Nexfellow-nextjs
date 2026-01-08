@@ -1,0 +1,89 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+.container {
+  position: relative;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 900px;
+  min-height: 500px;
+  padding: 16px 40px;
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  color: #6a6a6a;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+.back:hover {
+  color: #24b2b4;
+}
+
+.heading {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.interhead {
+  font-size: 24px;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  margin: 0;
+}
+
+.addContact {
+  width: 150px;
+  height: 40px;
+  border-radius: 6px;
+  padding: 0 14px;
+  background-color: #24b2b4;
+  color: white;
+  font-size: 14px;
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  border: none;
+}
+
+.addContact:hover {
+  background-color: #1a9a9c;
+}
+
+.mainBox {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 36px;
+  flex-wrap: wrap;
+}
+
+.cc1 {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 14px;
+}
+
+.cc2 {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 14px;
+}

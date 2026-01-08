@@ -83,19 +83,21 @@ const storeRefreshToken = async (userId, refreshToken) => {
  * @param {String} refreshToken - JWT refresh token
  */
 const setAuthCookies = (res, accessToken, refreshToken) => {
+  const isProduction = process.env.NODE_ENV === "production";
+
   // Set access token cookie - short-lived
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
-    secure: true, // Use in production with HTTPS
-    sameSite: "none", // For cross-site requests
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 2 * 60 * 60 * 1000, // 2 hours
   });
 
   // Set refresh token cookie - longer lived
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: true, // Use in production with HTTPS
-    sameSite: "none", // For cross-site requests
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
   });
 };
@@ -105,24 +107,26 @@ const setAuthCookies = (res, accessToken, refreshToken) => {
  * @param {Object} res - Express response object
  */
 const clearAuthCookies = (res) => {
+  const isProduction = process.env.NODE_ENV === "production";
+
   res.clearCookie("accessToken", {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
   });
 
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
   });
 
   // Also clear the old cookie for backward compatibility
   res.clearCookie("userjwt", {
     signed: true,
     httpOnly: true,
-    sameSite: "none",
-    secure: true,
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
   });
 };
 
