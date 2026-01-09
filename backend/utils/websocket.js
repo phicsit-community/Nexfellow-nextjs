@@ -6,8 +6,22 @@ const initializeWebsocket = (server) => {
   try {
     io = new Server(server, {
       cors: {
-        origin: process.env.SITE_URL || "http://localhost:5173",
+        origin: [
+          "http://localhost:3000",
+          "http://localhost:3001",
+          "http://localhost:5173",
+          "http://localhost:5174",
+          "http://localhost:5175",
+          "https://admin.geekclash.in",
+          "https://geekclash.in",
+          "https://nexfellow.com",
+          "https://www.nexfellow.com",
+          "https://admin.nexfellow.com",
+          process.env.SITE_URL,
+          process.env.ADMIN_URL,
+        ].filter(Boolean),
         methods: ["GET", "POST"],
+        credentials: true,
       },
     });
 
