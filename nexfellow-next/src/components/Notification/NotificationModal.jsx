@@ -277,18 +277,12 @@ const NotificationModal = ({ closeModal }) => {
           <p>Notifications</p>
         </div>
       ) : (
-        <div className={styles.notificationListHeader}>
-          <p>Notifications</p>
-          <div className={styles.rightActions}>
-            <motion.button
-              className={styles.closeButton}
-              onClick={closeModal}
-              whileTap={{ scale: 0.9 }}
-            >
-              <IoClose />
-            </motion.button>
-          </div>
-        </div>
+            <div className={styles.notificationListHeader}>
+              <p>Notifications</p>
+              <button className={styles.headerCloseButton} onClick={closeModal}>
+                <IoClose size={24} />
+              </button>
+            </div>
       )}
     </header>
   );
@@ -534,19 +528,18 @@ const NotificationModal = ({ closeModal }) => {
                     <span className={styles.timestamp}>{timeAgo}</span>
                   </div>
                 </div>
-                {!notification.recipients.find((r) => r.user === loggedInUserId)
-                  ?.read && <span className={styles.unreadIndicator}></span>}
-                <button
-                  className={styles.deleteIcon}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteNotification(notification);
-                  }}
-                  aria-label="Delete notification"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </motion.div>
+                  {!notification.recipients.find((r) => r.user === loggedInUserId)
+                    ?.read && <span className={styles.unreadIndicator}></span>}
+                  <button
+                    className={styles.itemMenuButton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Add menu logic if needed
+                    }}
+                  >
+                    <BsThreeDotsVertical size={16} />
+                  </button>
+                </motion.div>
             );
           })}
       </motion.div>
@@ -586,79 +579,24 @@ const NotificationModal = ({ closeModal }) => {
           <Topbar />
 
           {/* Filter */}
-          {(systemNotifications.length > 0 ||
-            communityNotifications.length > 0) &&
-            !selectedNotification && (
-              <div className={styles.filter}>
-                <div className={styles.filterContainer}>
-                  {["all", "system", "community"].map((type) => (
-                    <motion.button
-                      key={type}
-                      onClick={() => setFilter(type)}
-                      className={`${styles.filterButton} ${filter === type ? styles.activeFilter : ""
-                        }`}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
-                    </motion.button>
-                  ))}
+            {(systemNotifications.length > 0 ||
+              communityNotifications.length > 0) &&
+              !selectedNotification && (
+                <div className={styles.filter}>
+                  <div className={styles.filterContainer}>
+                    {["all", "system", "community"].map((type) => (
+                      <button
+                        key={type}
+                        onClick={() => setFilter(type)}
+                        className={`${styles.filterButton} ${filter === type ? styles.activeFilter : ""
+                          }`}
+                      >
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div className={styles.markAllAsRead}>
-                  <motion.div whileTap={{ scale: 0.9 }}>
-                    <Button
-                      className={styles.iconCircleButton}
-                      onClick={(e) => {
-                        if (loading) return; // Prevent click if loading is true
-                        markAllAsRead();
-                      }}
-                      title="Mark all as read"
-                      disabled={
-                        loading ||
-                        !(
-                          systemNotifications.some((n) =>
-                            n.recipients.some(
-                              (r) => r.user === loggedInUserId && !r.read
-                            )
-                          ) ||
-                          communityNotifications.some((n) =>
-                            n.recipients.some(
-                              (r) => r.user === loggedInUserId && !r.read
-                            )
-                          )
-                        )
-                      }
-                    >
-                      <span className={styles.markAllAsReadText}>
-                        Mark All As Read
-                      </span>
-                      <IoCheckmarkDoneSharp />
-                    </Button>
-                  </motion.div>
-                  <motion.div
-                    whileTap={{ scale: 0.9 }}
-                    style={{ display: "inline-block" }}
-                  >
-                    <Button
-                      className={styles.iconCircleButton}
-                      onClick={(e) => {
-                        if (loading) return;
-                        deleteAllNotifications();
-                      }}
-                      title="Delete all notifications"
-                      disabled={
-                        loading ||
-                        (systemNotifications.length === 0 &&
-                          communityNotifications.length === 0)
-                      }
-                      style={{ marginLeft: 8, color: "#4B5563" }}
-                    >
-                      <span className={styles.deleteAllText}>Delete All</span>
-                      <IoTrashOutline />
-                    </Button>
-                  </motion.div>
-                </div>
-              </div>
-            )}
+              )}
 
           <div
             className={styles.modalBody}
@@ -854,22 +792,19 @@ const NotificationModal = ({ closeModal }) => {
               )}
             </AnimatePresence>
           </div>
-          {!selectedNotification && (
-            <div className={styles.modalFooter}>
-              <motion.div whileTap={{ scale: 0.97 }}>
-                <Button
-                  className={styles.viewAllButton}
+            {!selectedNotification && (
+              <div className={styles.modalFooter}>
+                <button
+                  className={styles.viewAllLink}
                   onClick={() => {
                     closeModal();
                     router.push("/notifications");
                   }}
-                  variant="outline"
                 >
                   View All
-                </Button>
-              </motion.div>
-            </div>
-          )}
+                </button>
+              </div>
+            )}
         </motion.div>
       </motion.div>
     </AnimatePresence>,
