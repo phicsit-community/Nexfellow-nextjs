@@ -578,11 +578,9 @@ const NotificationModal = ({ closeModal }) => {
         >
           <Topbar />
 
-          {/* Filter */}
-            {(systemNotifications.length > 0 ||
-              communityNotifications.length > 0) &&
-              !selectedNotification && (
-                <div className={styles.filter}>
+            {/* Filter */}
+              {!selectedNotification && (
+                  <div className={styles.filter}>
                   <div className={styles.filterContainer}>
                     {["all", "system", "community"].map((type) => (
                       <button
