@@ -40,7 +40,7 @@ const authorizeRoles = (allowedRoles = []) => {
       }
 
       return res
-        .status(403)
+        .status(401)
         .json({ message: "Not authorized for this community" });
     } catch (error) {
       console.error("Authorization error:", error);

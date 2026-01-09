@@ -484,7 +484,7 @@ module.exports.getProfile = async (req, res) => {
     const { id } = req.params;
 
     if (req.user.id !== id) {
-      throw new ExpressError("Unauthorized access", 403);
+      throw new ExpressError("Unauthorized access", 401);
     }
 
     // Validate ObjectId
