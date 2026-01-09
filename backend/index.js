@@ -239,10 +239,7 @@ app.use("/blogs", blogRoutes);
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = "Something went wrong!";
-  console.error(`[Error] ${req.method} ${req.url} - Status: ${statusCode} - Message: ${err.message}`);
-  if (err.stack && process.env.NODE_ENV !== "production") {
-    console.error(err.stack);
-  }
+  console.log(err);
   res.status(statusCode).json(err.message);
 });
 

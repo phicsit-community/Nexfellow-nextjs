@@ -748,33 +748,33 @@ const CommentSection = ({ postId, author, className, isModeratorView = false }) 
     fetchUserRole();
   }, [postId, currentUserId]);
 
-    // Fetch comments on mount/postId change
-    useEffect(() => {
-      api
-        .get(`/comment/posts/${postId}/comments`)
-        .then((response) => {
-          const formatComments = (comments) =>
-            comments.map((val) => ({
-              id: val._id,
-              text: val.content,
-              community: val.author.name,
-              user: val.author.username,
-              img: val.author.picture,
-              time: formatDateToAbbreviation(val.createdAt),
-              replies: val.reply ? formatComments(val.reply) : [],
-              likes: val.likes || [],
-              mentions: val.mentions || [],
-              isCommunityAccount: val.author.isCommunityAccount || false,
-              createdCommunity: val.author.createdCommunity || false,
-            }));
-  
-          const data = response.data.comments;
-          setComments(formatComments(data));
-        })
-        .catch((error) => {
-          console.error("Error fetching comments", error);
-        });
-    }, [postId]);
+  // Fetch comments on mount/postId change
+  useEffect(() => {
+    api
+      .get(`/comment/posts/${postId}/comments`)
+      .then((response) => {
+        const formatComments = (comments) =>
+          comments.map((val) => ({
+            id: val._id,
+            text: val.content,
+            community: val.author.name,
+            user: val.author.username,
+            img: val.author.picture,
+            time: formatDateToAbbreviation(val.createdAt),
+            replies: val.reply ? formatComments(val.reply) : [],
+            likes: val.likes || [],
+            mentions: val.mentions || [],
+            isCommunityAccount: val.author.isCommunityAccount || false,
+            createdCommunity: val.author.createdCommunity || false,
+          }));
+
+        const data = response.data.comments;
+        setComments(formatComments(data));
+      })
+      .catch((error) => {
+        console.error("Error fetching comments", error);
+      });
+  }, [postId]);
 
   // Mention helpers for new comment input -----------------------------
   const fetchMentionSuggestionsNewComment = async (query) => {
@@ -824,18 +824,18 @@ const CommentSection = ({ postId, author, className, isModeratorView = false }) 
     }
   };
 
-    const handleAddComment = () => {
-      if (!newComment.trim() || loading) return;
-      setLoading(true);
-      api
-        .post(
-          `/comment/posts/${postId}/comments`,
-          { content: newComment, mentions: mentions.map((m) => m._id) },
-          {
-            headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
-          }
-        )
-        .then((response) => {
+  const handleAddComment = () => {
+    if (!newComment.trim() || loading) return;
+    setLoading(true);
+    api
+      .post(
+        `/comment/posts/${postId}/comments`,
+        { content: newComment, mentions: mentions.map((m) => m._id) },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
+        }
+      )
+      .then((response) => {
         if (!response.data.comment) {
           alert("Failed to add comment");
           return;

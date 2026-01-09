@@ -58,7 +58,7 @@ const isAuthenticated = async (req, res, next) => {
         !user.refreshTokenExpiry ||
         user.refreshTokenExpiry < new Date()
       ) {
-        return res.status(401).json({
+        return res.status(403).json({
           message: "Invalid session. Please log in again.",
         });
       }
@@ -273,7 +273,7 @@ const isCommunityCreator = async (req, res, next) => {
 
     if (!user.isCommunityAccount) {
       return res
-        .status(401)
+        .status(403)
         .json({ message: "Access restricted to community accounts only" });
     }
 
@@ -340,7 +340,7 @@ function isOwnerOrModeratorWithRole(allowedRoles = []) {
       }
 
       if (!isOwner && !matchedRole) {
-        return res.status(401).json({ message: "Not authorized" });
+        return res.status(403).json({ message: "Not authorized" });
       }
 
       // Attach community and moderator role for downstream use
