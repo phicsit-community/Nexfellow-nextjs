@@ -22,7 +22,6 @@ import {
   Progress,
   Empty,
   Timeline,
-  message,
   Upload,
   Card,
   Tag,
@@ -31,6 +30,7 @@ import {
   Skeleton,
   Table,
   Alert,
+  App,
 } from "antd";
 import {
   CheckCircleOutlined,
@@ -180,6 +180,7 @@ const CheckpointSubmissionForm = ({
   onSubmit,
   submissions = [], // Add submissions prop
 }) => {
+  const { message } = App.useApp();
   const [submissionContent, setSubmissionContent] = useState("");
   const [fileList, setFileList] = useState([]);
   const [submitting, setSubmitting] = useState(false);
@@ -707,6 +708,7 @@ const Checkpoints = ({ challenge, userProgress, fetchUserProgress }) => {
 };
 
 const Participants = ({ challenge }) => {
+  const { message } = App.useApp();
   const [leaderboard, setLeaderboard] = useState([]);
   const [totalParticipants, setTotalParticipants] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -1017,6 +1019,7 @@ const Participants = ({ challenge }) => {
 };
 
 const ActivityFeed = ({ challenge, isCreator, currentUserId }) => {
+  const { message } = App.useApp();
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
@@ -2070,6 +2073,7 @@ const Summary = ({ challenge, onPublish, userProgress }) => {
 };
 
 const SingleChallenge = () => {
+  const { message } = App.useApp();
   const router = useRouter();
   const [challenge, setChallenge] = useState(null);
   const [userProgress, setUserProgress] = useState(null);
