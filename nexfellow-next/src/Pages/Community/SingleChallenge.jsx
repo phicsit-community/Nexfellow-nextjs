@@ -2077,7 +2077,21 @@ const SingleChallenge = () => {
   const [joiningChallenge, setJoiningChallenge] = useState(false);
   const { id } = useParams();
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch (error) {
+          console.error("Error parsing user from localStorage:", error);
+        }
+      }
+    }
+  }, []);
+
   const userId = user?.id;
 
   const isCreator = challenge?.creator?._id === userId;
