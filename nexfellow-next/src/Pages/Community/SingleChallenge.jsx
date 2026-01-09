@@ -2161,7 +2161,7 @@ const SingleChallenge = () => {
     } finally {
       setLoading(false);
     }
-  }, [id, fetchUserProgress, navigate]);
+  }, [id, fetchUserProgress, router]);
 
   useEffect(() => {
     if (id) {
