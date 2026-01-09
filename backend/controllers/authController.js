@@ -427,7 +427,7 @@ module.exports.refreshToken = async (req, res) => {
       !user.refreshTokenExpiry ||
       user.refreshTokenExpiry < new Date()
     ) {
-      return res.status(403).json({ message: "Invalid refresh token" });
+      return res.status(401).json({ message: "Invalid refresh token" });
     }
 
     // Generate new access token

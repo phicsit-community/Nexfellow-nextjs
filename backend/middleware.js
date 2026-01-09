@@ -58,7 +58,7 @@ const isAuthenticated = async (req, res, next) => {
         !user.refreshTokenExpiry ||
         user.refreshTokenExpiry < new Date()
       ) {
-        return res.status(403).json({
+        return res.status(401).json({
           message: "Invalid session. Please log in again.",
         });
       }
