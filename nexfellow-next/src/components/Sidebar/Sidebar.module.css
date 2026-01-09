@@ -34,15 +34,15 @@
 .menuItems li {
   box-sizing: border-box;
   min-width: 160px;
-  margin: 5px;
-  padding: 10px 10px;
+  margin: 5px 5px 5px 0px;
+  padding: 10px 10px 10px 15px;
   display: flex;
   align-items: center;
   justify-content: left;
   cursor: pointer;
   font-size: 16px;
   font-weight: 500;
-  border-radius: 5px;
+  border-radius: 0 5px 5px 0;
   background: none;
   transition: all 0.3s cubic-bezier(0.32, 0, 0.67, 0);
   color: var(--color-sidebar-foreground);
