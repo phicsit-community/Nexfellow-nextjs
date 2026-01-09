@@ -45,26 +45,11 @@ const Login = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
-    // Use sessionStorage to prevent auth check on hot reloads
+    // Prevent multiple auth checks
     const authChecked = sessionStorage.getItem("loginAuthChecked");
     if (authChecked === "true" || isRedirecting) return;
+
     sessionStorage.setItem("loginAuthChecked", "true");
-
-    // Clear the flag after 5 seconds to allow re-check if user stays on page
-    const clearTimer = setTimeout(() => {
-      sessionStorage.removeItem("loginAuthChecked");
-    }, 5000);
-
-    // Check for stale token data on mount
-    if (typeof window !== "undefined" && localStorage.getItem("isLoggedIn") === "true") {
-      const expiresIn = localStorage.getItem("expiresIn");
-      if (expiresIn) {
-        const expiresAt = new Date(expiresIn);
-        if (isNaN(expiresAt) || expiresAt <= new Date()) {
-          console.log("Login: Found expired token, will attempt refresh");
-        }
-      }
-    }
 
     const checkAuth = async () => {
       try {
@@ -72,7 +57,7 @@ const Login = () => {
           withCredentials: true,
         });
 
-        if (response.status === 200) {
+        if (response.status === 200 && response.data.payload) {
           const { payload, expiresIn, redirect } = response.data;
 
           dispatch(login({ user: payload, expiresIn }));
@@ -81,24 +66,39 @@ const Login = () => {
           // Ensure redirect is a valid string
           const redirectPath = typeof redirect === "string" ? redirect : "/feed";
 
-          setTimeout(() => {
-            if (redirectPath.startsWith("http")) {
-              window.location.href = redirectPath;
-            } else {
-              router.push(redirectPath);
-            }
-          }, 300);
+          // Use replace to prevent back button issues
+          if (redirectPath.startsWith("http")) {
+            window.location.replace(redirectPath);
+          } else {
+            router.replace(redirectPath);
+          }
         }
       } catch (error) {
-        // Silent fail - user is not logged in, stay on login page
-        console.log("Not authenticated, staying on login page");
+        // Auth failed - clear any stale cookies/localStorage
+        console.log("Not authenticated, clearing stale data");
+
+        // Clear stale auth data
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          localStorage.removeItem("expiresIn");
+
+          // Clear stale cookies by setting them to expire
+          document.cookie = "isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        }
       }
     };
 
     checkAuth();
 
+    // Don't clear the flag automatically - only clear on unmount or successful auth
     return () => {
-      clearTimeout(clearTimer);
+      // Only clear if we're not redirecting
+      if (!isRedirecting) {
+        sessionStorage.removeItem("loginAuthChecked");
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

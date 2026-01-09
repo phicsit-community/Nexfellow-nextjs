@@ -10,7 +10,7 @@ router.get(
   passport.authenticate("google", {
     scope: ["profile", "email"],
     accessType: "offline",
-    prompt: "consent",
+    prompt: "select_account",
   })
 );
 

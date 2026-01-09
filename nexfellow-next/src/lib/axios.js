@@ -91,12 +91,27 @@ api.interceptors.response.use(
                 isRefreshing = false;
                 processQueue(refreshError, null);
 
-                // If refresh fails, redirect to login
+                // If refresh fails, clear auth data and redirect to login
+                // But only if we're NOT already on the login page
                 if (typeof window !== "undefined") {
-                    console.log("Token refresh failed, redirecting to login");
+                    const isOnLoginPage = window.location.pathname === "/login" ||
+                        window.location.pathname === "/signup" ||
+                        window.location.pathname === "/forgotpassword";
+
+                    console.log("Token refresh failed, clearing auth data");
                     localStorage.removeItem("isLoggedIn");
                     localStorage.removeItem("user");
-                    window.location.href = "/login";
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("expiresIn");
+
+                    // Clear stale cookies
+                    document.cookie = "isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+                    // Only redirect if not already on auth pages
+                    if (!isOnLoginPage) {
+                        window.location.href = "/login";
+                    }
                 }
                 return Promise.reject(refreshError);
             }

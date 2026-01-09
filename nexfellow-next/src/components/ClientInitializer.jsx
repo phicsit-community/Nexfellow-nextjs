@@ -20,6 +20,24 @@ export default function ClientInitializer() {
         console.log("ClientInitializer: Initializing...");
 
         const initializeAuth = async () => {
+            // Skip auth check on public pages to avoid unnecessary API calls
+            const isPublicPage = typeof window !== "undefined" &&
+                (window.location.pathname === "/" ||
+                    window.location.pathname === "/login" ||
+                    window.location.pathname === "/signup" ||
+                    window.location.pathname === "/forgotpassword" ||
+                    window.location.pathname === "/contact" ||
+                    window.location.pathname === "/privacy" ||
+                    window.location.pathname === "/terms" ||
+                    window.location.pathname === "/help" ||
+                    window.location.pathname.startsWith("/blogs"));
+
+            if (isPublicPage) {
+                console.log("ClientInitializer: On public page, skipping auth check");
+                dispatch(setAuthLoading(false));
+                return;
+            }
+
             const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
             const userStr = localStorage.getItem("user");
             const hasUser = userStr && userStr !== "null" && userStr !== "undefined";
@@ -48,8 +66,12 @@ export default function ClientInitializer() {
                     dispatch(login({ user: payload, expiresIn }));
                 }
             } catch (error) {
-                // Not authenticated - that's fine, user needs to login
-                console.log("ClientInitializer: Not authenticated");
+                // Not authenticated - clear stale data
+                console.log("ClientInitializer: Not authenticated, clearing stale data");
+                localStorage.removeItem("isLoggedIn");
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                localStorage.removeItem("expiresIn");
             } finally {
                 dispatch(setAuthLoading(false));
             }

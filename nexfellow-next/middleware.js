@@ -55,10 +55,8 @@ export function middleware(request) {
         return NextResponse.redirect(loginUrl);
     }
 
-    // Redirect to feed if accessing auth routes while logged in
-    if (isAuthRoute && isLoggedIn) {
-        return NextResponse.redirect(new URL("/feed", request.url));
-    }
+    // Note: Removed auto-redirect from auth routes to feed
+    // This was causing infinite loops. Login/Signup pages handle their own redirects.
 
     return NextResponse.next();
 }

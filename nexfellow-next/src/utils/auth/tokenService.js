@@ -127,12 +127,20 @@ class TokenRefreshService {
             this.isRefreshing = false;
             this.processQueue(null, error);
 
-            // Only log out on explicit auth rejection, not on network errors
+            // Only redirect on explicit auth rejection if on a private route
+            // Don't redirect from public pages like landing page
             if (!this.justInitialized) {
               localStorage.setItem("isLoggedIn", "false");
-              if (window.location.pathname !== "/login") {
-                window.location.href = "/login";
-              }
+              localStorage.removeItem("user");
+              localStorage.removeItem("token");
+              localStorage.removeItem("expiresIn");
+
+              // Clear cookies
+              document.cookie = "isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+              document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+              // Don't redirect - let the middleware handle protected routes
+              // window.location.href = "/login";
             }
             return Promise.reject(error);
           } else if (error.code === "ECONNABORTED" || !error.response) {
