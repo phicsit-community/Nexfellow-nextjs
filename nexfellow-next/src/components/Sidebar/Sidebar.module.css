@@ -138,14 +138,25 @@
 .amItems {
   border-radius: 5px;
   color: var(--color-sidebar-foreground);
+  display: flex;
+  align-items: center;
+  padding: 10px 10px 10px 15px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.amItems .iconContainer {
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .amItems:hover {
   background-color: var(--color-sidebar-accent);
   border-left: 5px solid var(--color-sidebar-left);
   transition: all 0.3s cubic-bezier(0.32, 0, 0.67, 0);
-  min-width: 170px;
-  width: 170px;
+  min-width: 160px;
   color: var(--color-sidebar-foreground);
 }
 

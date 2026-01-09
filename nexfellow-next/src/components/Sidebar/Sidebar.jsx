@@ -139,41 +139,41 @@ function Sidebar() {
             href={user?.username ? `/dashboard/${user.username}` : "#"}
             onClick={() => setActiveTab("/profile")}
           >
-            <div
-              className={style.amItems}
-              onMouseEnter={() => setHoveredIndex(5)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              <div className={style.iconContainer} style={{ marginLeft: "10px" }}>
-                <PlayOnce
-                  icon={AnimatedAccount}
-                  play={hoveredIndex === 5}
-                  style={{ width: 20, height: 20 }}
-                />
+              <div
+                className={style.amItems}
+                onMouseEnter={() => setHoveredIndex(5)}
+                onMouseLeave={() => setHoveredIndex(null)}
+              >
+                <div className={style.iconContainer}>
+                  <PlayOnce
+                    icon={AnimatedAccount}
+                    play={hoveredIndex === 5}
+                    style={{ width: 20, height: 20 }}
+                  />
+                </div>
+                <span>Profile</span>
               </div>
-              <span>Profile</span>
-            </div>
-          </Link>
+            </Link>
 
-          <Link
-            className={style.amLink}
-            href={`/settings`}
-            onClick={() => setActiveTab("/settings")}
-          >
-            <div
-              className={style.amItems}
-              onMouseEnter={() => setHoveredIndex(6)}
-              onMouseLeave={() => setHoveredIndex(null)}
+            <Link
+              className={style.amLink}
+              href={`/settings`}
+              onClick={() => setActiveTab("/settings")}
             >
-              <div className={style.iconContainer} style={{ marginLeft: "10px" }}>
-                <PlayOnce
-                  icon={AnimatedSettings}
-                  play={hoveredIndex === 6}
-                  style={{ width: 20, height: 20 }}
-                />
+              <div
+                className={style.amItems}
+                onMouseEnter={() => setHoveredIndex(6)}
+                onMouseLeave={() => setHoveredIndex(null)}
+              >
+                <div className={style.iconContainer}>
+                  <PlayOnce
+                    icon={AnimatedSettings}
+                    play={hoveredIndex === 6}
+                    style={{ width: 20, height: 20 }}
+                  />
+                </div>
+                <span>Settings</span>
               </div>
-              <span>Settings</span>
-            </div>
           </Link>
 
           {/* Optional logout block remains commented as in original */}

@@ -21,8 +21,9 @@
 /* Tabs Header */
 .tabsHeader {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
+  gap: 40px;
   border-bottom: 1px solid var(--color-border, #eee);
   background-color: var(--color-card, #fff);
   position: sticky;
@@ -32,10 +33,9 @@
 }
 
 .tabButton {
-  flex: 1;
   background: none;
   border: none;
-  padding: 1rem 0;
+  padding: 1rem 10px;
   font-size: 1rem;
   font-weight: 500;
   color: #6b7280;
@@ -45,6 +45,7 @@
   transition: all 0.2s ease;
   display: flex;
   justify-content: center;
+  width: auto;
 }
 
 .tabButton:hover {
@@ -63,9 +64,8 @@
   content: "";
   position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100px;
+  left: 0;
+  width: 100%;
   height: 3px;
   background-color: #14b8a6;
   /* Teal-500 */
