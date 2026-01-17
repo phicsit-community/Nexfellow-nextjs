@@ -145,7 +145,7 @@ import { setUser } from "./../../slices/userSlice"; // Adjust the path based on 
 import styles from "./Header.module.css";
 
 // assets
-import navbarlogo from "../../assets/NexFellowLogo.svg";
+import navbarlogo from "../../assets/navbarlogo2.svg";
 
 // icons
 import { FaSearch } from "react-icons/fa";

@@ -16,13 +16,12 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
-const DB_URI=
-  "mongodb+srv://kartikaggarwal2004:RAEWTmu3lAmm5anV@cluster0.qaycstr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 app.use(express.json());
 app.use(cookieParser(process.env.SECRET));
 app.use(
   cors({
     origin: [
+      "http://localhost:3000",  // Next.js default port
       "http://localhost:5173",
       process.env.SITE_URL,
       "http://localhost:5174",
@@ -35,8 +34,7 @@ app.use("/uploads", express.static("uploads"));
 app.use(fileUpload());
 
 mongoose
-  // .connect(process.env.DB_URI)
-  .connect(DB_URI)
+  .connect(process.env.DB_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log(err));
 
