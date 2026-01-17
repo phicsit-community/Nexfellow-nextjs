@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { toast } from "sonner";
-import api from "../../lib/axios";
+import api from "../../../lib/axios";
 import { FaGithub, FaFacebook } from "react-icons/fa";
 import { ArrowLeft } from "lucide-react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";

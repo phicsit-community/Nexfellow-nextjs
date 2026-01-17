@@ -94,7 +94,7 @@
   width: 100%;
 }
 
-button {
+:global(button) {
   cursor: pointer;
 }
 

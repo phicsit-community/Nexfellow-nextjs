@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import api from "../../lib/axios";
+import api from "../lib/axios";
 
 const SecurePage = () => {
   const params = useParams();

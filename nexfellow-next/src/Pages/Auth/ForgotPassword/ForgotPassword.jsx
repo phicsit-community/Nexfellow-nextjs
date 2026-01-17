@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import api from "../../lib/axios";
+import api from "../../../lib/axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
