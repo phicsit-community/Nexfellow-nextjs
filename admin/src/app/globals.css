@@ -1,0 +1,175 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --font-inter: "Inter", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+  --font-montserrat: "Montserrat", sans-serif;
+}
+
+/* Tailwind theme customization via CSS variables */
+/* Note: @theme is Tailwind v4 syntax - using CSS vars for IDE compatibility */
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Remove default button styles */
+button {
+  cursor: pointer;
+}
+
+/* React Confirm Alert custom styles */
+.react-confirm-alert-overlay {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+
+.react-confirm-alert {
+  background: #1e293b !important;
+  border-radius: 12px !important;
+  padding: 24px !important;
+}
+
+.react-confirm-alert-body {
+  color: #f1f5f9 !important;
+}
+
+.react-confirm-alert-button-group button {
+  background: #0d9488 !important;
+  border-radius: 6px !important;
+  padding: 8px 20px !important;
+}
+
+.react-confirm-alert-button-group button:first-child {
+  background: #0d9488 !important;
+}
+
+.react-confirm-alert-button-group button:last-child {
+  background: #475569 !important;
+}
+
+/* ============================================
+   RESPONSIVE UTILITIES
+   ============================================ */
+
+/* Responsive tables - horizontal scroll on mobile */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Responsive grid helpers */
+.responsive-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .responsive-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .responsive-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Mobile text adjustments */
+@media (max-width: 767px) {
+  h1 {
+    font-size: 1.5rem !important;
+  }
+
+  h2 {
+    font-size: 1.25rem !important;
+  }
+
+  /* Prevent horizontal overflow */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Better touch targets on mobile */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+  }
+
+  /* Modal adjustments for mobile */
+  .react-confirm-alert {
+    width: 90vw !important;
+    max-width: 400px !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  h1 {
+    font-size: 1.75rem !important;
+  }
+}
+
+/* Hide on mobile utility */
+.hide-mobile {
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Show only on mobile utility */
+.show-mobile {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .show-mobile {
+    display: block !important;
+  }
+}
+
+/* Card component mobile adjustments */
+@media (max-width: 767px) {
+  .bg-slate-800 {
+    border-radius: 8px;
+  }
+}

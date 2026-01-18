@@ -1,0 +1,329 @@
+/* Sidebar Container */
+.sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    background-color: #1e293b;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100%;
+    border-right: 1px solid #1f3a4d;
+    z-index: 50;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Logo Section */
+.logoDiv {
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #0d9488;
+    padding: 0 16px;
+}
+
+.geekLogo {
+    width: 140px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Sidebar Content Wrapper */
+.sideContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+/* Top Half of Sidebar */
+.sidebarUpper {
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Shared NavLink Structure */
+.navLink {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px;
+    width: 90%;
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 10px;
+    position: relative;
+    text-decoration: none;
+    background-color: transparent;
+    transition: all 0.25s ease-in-out;
+}
+
+/* Icon inside link */
+.sideIcon {
+    font-size: 20px;
+    min-width: 20px;
+    color: #94a3b8;
+    transition: color 0.2s ease;
+}
+
+/* Text inside link */
+.navLink p {
+    font-size: 14px;
+    font-weight: 600;
+    color: #94a3b8;
+    margin: 0;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+}
+
+/* Hover Effect */
+.navLink:hover {
+    background-color: rgba(13, 148, 136, 0.12);
+}
+
+.navLink:hover .sideIcon,
+.navLink:hover p {
+    color: #ffffff;
+}
+
+/* Active Link Style */
+.active {
+    background-color: #0d9488;
+}
+
+.active p,
+.active .sideIcon {
+    color: #ffffff;
+}
+
+/* Active Arrow on the right */
+.active::after {
+    content: "›";
+    position: absolute;
+    right: 12px;
+    font-size: 18px;
+    color: #ffffff;
+    opacity: 0.8;
+}
+
+/* Geek Mail section */
+.geekMailerDiv {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 0 16px;
+    width: 90%;
+}
+
+.geekMailerTag {
+    font-size: 14px;
+    font-weight: 600;
+    color: #08aaa2;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.geekMailerTag:hover {
+    color: #0fd3d6;
+}
+
+/* Logout Section */
+.sidebarLower {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.sidebarLower div {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 90%;
+    height: 44px;
+    border: 1px solid #08aaa2;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 0 16px;
+    transition: background-color 0.2s ease;
+}
+
+.sidebarLower div:hover {
+    background-color: rgba(13, 148, 136, 0.15);
+}
+
+.sidebarLower div p {
+    font-size: 14px;
+    color: #94a3b8;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* ============================================
+   MOBILE RESPONSIVE STYLES
+   ============================================ */
+
+/* Mobile Header Bar */
+.mobileHeader {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: #1e293b;
+    border-bottom: 1px solid #0d9488;
+    z-index: 40;
+    padding: 0 16px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hamburger {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.hamburger:hover {
+    background-color: rgba(13, 148, 136, 0.2);
+    color: #ffffff;
+}
+
+.mobileLogo {
+    height: 35px;
+    width: auto;
+}
+
+.mobileHeaderSpacer {
+    width: 40px;
+}
+
+/* Mobile Overlay */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 45;
+    backdrop-filter: blur(2px);
+}
+
+/* Mobile Sidebar State */
+.mobileSidebar {
+    transform: translateX(-100%);
+}
+
+.mobileOpen {
+    transform: translateX(0);
+}
+
+/* Close Button in Sidebar */
+.closeBtn {
+    display: none;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 8px;
+    position: absolute;
+    right: 8px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.closeBtn:hover {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+/* ============================================
+   MEDIA QUERIES
+   ============================================ */
+
+/* Tablet and below */
+@media (max-width: 1024px) {
+    .sidebar {
+        min-width: 220px;
+        max-width: 220px;
+    }
+    
+    .navLink p {
+        font-size: 13px;
+    }
+}
+
+/* Mobile: below 768px */
+@media (max-width: 767px) {
+    .mobileHeader {
+        display: flex;
+    }
+    
+    .overlay {
+        display: block;
+    }
+    
+    .sidebar {
+        min-width: 280px;
+        max-width: 280px;
+        top: 0;
+        height: 100vh;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .logoDiv {
+        justify-content: flex-start;
+        position: relative;
+    }
+    
+    .closeBtn {
+        display: flex;
+    }
+    
+    .sidebarUpper {
+        padding-top: 12px;
+    }
+    
+    .navLink {
+        height: 48px;
+    }
+    
+    .navLink p {
+        font-size: 15px;
+    }
+    
+    .sideIcon {
+        font-size: 22px;
+    }
+}
+
+/* Small Mobile: below 480px */
+@media (max-width: 479px) {
+    .sidebar {
+        min-width: 260px;
+        max-width: 85vw;
+    }
+    
+    .mobileHeader {
+        height: 56px;
+    }
+    
+    .mobileLogo {
+        height: 30px;
+    }
+}

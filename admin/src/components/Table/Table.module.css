@@ -1,0 +1,362 @@
+.loader {
+    width: 100%;
+    height: 100%;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.tableContainer {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th:first-child {
+    border-radius: 8px 0 0 8px;
+}
+
+.table th:last-child {
+    border-radius: 0 8px 8px 0;
+}
+
+.table th,
+.table td {
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table th {
+    background-color: #f4f4f4;
+    font-weight: 500;
+}
+
+.table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.table button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.table button img {
+    width: 20px;
+    height: 20px;
+}
+
+/* User Cell */
+.userCell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left;
+    width: 220px;
+    margin: 0 auto;
+}
+
+.userImg {
+    width: 35px;
+    height: 35px;
+    min-width: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.userImg img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.userInfo {
+    width: calc(100% - 43px);
+}
+
+.userName {
+    font-size: 14px;
+    text-transform: capitalize;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.username {
+    font-size: 12px;
+    color: #6a6a6a;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Contact Info */
+.email {
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    margin: 0 auto;
+    text-align: start;
+}
+
+.phoneNumber {
+    color: #6a6a6a;
+    font-size: 12px;
+    text-align: start;
+}
+
+/* Occupation */
+.occupation {
+    text-transform: capitalize;
+    font-size: 14px;
+}
+
+/* Badge Cell */
+.badgeCell {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    align-items: center;
+}
+
+.verifiedimg {
+    width: 28px;
+    height: 28px;
+}
+
+.unverifiedimg {
+    width: 28px;
+    height: 28px;
+    filter: grayscale(100%);
+}
+
+.badgeButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.3rem;
+    transition: transform 0.2s;
+}
+
+.badgeButton:hover:not(.disabled) {
+    transform: scale(1.05);
+}
+
+.badgeButton.disabled {
+    cursor: not-allowed;
+    filter: grayscale(100%) opacity(0.4);
+}
+
+/* Media Queries */
+@media (max-width: 1440px) {
+
+    .table th,
+    .table td {
+        padding: 10px;
+        font-size: 15px !important;
+    }
+
+    .email,
+    .phoneNumber {
+        font-size: 13px !important;
+    }
+
+    .userCell {
+        width: 200px;
+    }
+}
+
+@media (max-width: 1300px) {
+
+    .table th,
+    .table td {
+        padding: 8px;
+        font-size: 14px !important;
+    }
+
+    .userCell {
+        width: 180px;
+    }
+}
+
+@media (max-width: 1200px) {
+
+    .table th,
+    .table td {
+        padding: 6px;
+        font-size: 12px !important;
+    }
+
+    .userName {
+        font-size: 12px !important;
+    }
+
+    .userImg {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+    }
+
+    .userCell {
+        width: 160px;
+    }
+}
+
+@media (max-width: 1024px) {
+
+    .table th,
+    .table td {
+        padding: 4px;
+        font-size: 11px !important;
+    }
+
+    .userImg {
+        width: 25px;
+        height: 25px;
+        min-width: 25px;
+    }
+
+    .verifiedimg,
+    .unverifiedimg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .userCell {
+        width: 140px;
+    }
+}
+
+/* Tablet responsive styles - horizontal scroll for table */
+@media (max-width: 1024px) and (min-width: 768px) {
+    .tableContainer {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 16px;
+        border-radius: 8px;
+    }
+
+    .table {
+        min-width: 900px;
+        /* Force horizontal scroll on tablet */
+    }
+
+    .table th,
+    .table td {
+        padding: 10px 8px;
+        font-size: 13px !important;
+        white-space: nowrap;
+    }
+
+    .userCell {
+        width: 180px;
+    }
+
+    .userImg {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+    }
+
+    .userName {
+        font-size: 13px !important;
+    }
+
+    .email {
+        max-width: 180px;
+    }
+
+    .verifiedimg,
+    .unverifiedimg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+/* Mobile responsive styles */
+@media (max-width: 767px) {
+    .tableContainer {
+        margin-top: 12px;
+        border-radius: 8px;
+        background-color: #1e293b;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table {
+        min-width: 800px;
+        /* Force horizontal scroll */
+    }
+
+    .table th,
+    .table td {
+        padding: 10px 8px;
+        font-size: 12px !important;
+        white-space: nowrap;
+    }
+
+    .userImg {
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+    }
+
+    .userCell {
+        width: 150px;
+    }
+
+    .userName {
+        font-size: 12px !important;
+    }
+
+    .username {
+        font-size: 10px;
+    }
+
+    .email {
+        font-size: 11px;
+        max-width: 150px;
+    }
+
+    .verifiedimg,
+    .unverifiedimg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .badgeCell {
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 479px) {
+
+    .table th,
+    .table td {
+        padding: 8px 6px;
+        font-size: 11px !important;
+    }
+
+    .userImg {
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+    }
+
+    .userCell {
+        width: 130px;
+    }
+}
