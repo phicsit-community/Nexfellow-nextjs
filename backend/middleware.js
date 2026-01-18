@@ -357,10 +357,21 @@ function isOwnerOrModeratorWithRole(allowedRoles = []) {
 }
 
 const isAdmin = async (req, res, next) => {
-  const token = req.signedCookies.adminjwt;
-  console.log(req.signedCookies);
+  // First try signed cookie (works in Chrome)
+  let token = req.signedCookies.adminjwt;
+
+  // If no cookie, try Authorization header (Safari fallback)
+  if (!token && req.headers.authorization) {
+    const authHeader = req.headers.authorization;
+    if (authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7); // Remove 'Bearer ' prefix
+    }
+  }
+
+  console.log('isAdmin check - has cookie:', !!req.signedCookies.adminjwt, 'has auth header:', !!req.headers.authorization);
+
   if (!token) {
-    return res.status(404).json("No token provided");
+    return res.status(401).json("No token provided");
   }
 
   try {
@@ -375,7 +386,7 @@ const isAdmin = async (req, res, next) => {
     req.adminId = admin._id;
     next();
   } catch (error) {
-    console.error(error);
+    console.error('isAdmin error:', error.message);
     res.status(500).json("Internal server error");
   }
 };
