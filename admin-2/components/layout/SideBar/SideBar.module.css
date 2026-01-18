@@ -1,0 +1,191 @@
+/* Sidebar Container */
+.sidebar {
+    min-width: 250px;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100%;
+    border-right: 1px solid #e5e7eb;
+    z-index: 10;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Logo Section */
+.logoDiv {
+    height: 80px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 20px;
+    border-bottom: 2px solid #4eb8b8;
+}
+
+.geekLogo {
+    width: 140px;
+    height: auto;
+    object-fit: contain;
+}
+
+.brandName {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #4eb8b8;
+}
+
+.brandIcon {
+    width: 32px;
+    height: 32px;
+    background: #4eb8b8;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* Sidebar Content Wrapper */
+.sideContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+/* Top Half of Sidebar */
+.sidebarUpper {
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+}
+
+/* Shared NavLink Structure */
+.navLink {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px;
+    width: 90%;
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 10px;
+    position: relative;
+    text-decoration: none;
+    background-color: transparent;
+    transition: all 0.25s ease-in-out;
+}
+
+/* Icon inside link */
+.sideIcon {
+    font-size: 20px;
+    color: #6b7280;
+    transition: color 0.2s ease;
+}
+
+/* Text inside link */
+.navLink p {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b7280;
+    margin: 0;
+    transition: color 0.2s ease;
+}
+
+/* Hover Effect */
+.navLink:hover {
+    background-color: rgba(36, 178, 180, 0.08);
+}
+
+.navLink:hover .sideIcon,
+.navLink:hover p {
+    color: #24b2b4;
+}
+
+/* Active Link Style */
+.active {
+    background-color: #24b2b4;
+}
+
+.active p,
+.active .sideIcon {
+    color: #ffffff;
+}
+
+/* Active Arrow on the right */
+.active::after {
+    content: "•";
+    position: absolute;
+    right: 12px;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+
+/* Active Arrow - removed for light theme */
+
+/* Geek Mail section */
+.geekMailerDiv {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 0 16px;
+    width: 90%;
+}
+
+.geekMailerTag {
+    font-size: 14px;
+    font-weight: 600;
+    color: #24b2b4;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.geekMailerTag:hover {
+    color: #1a8a8b;
+}
+
+/* Logout Section */
+.sidebarLower {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.logoutBtn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 90%;
+    height: 44px;
+    border: 2px solid #24b2b4;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 0 16px;
+    background: transparent;
+    transition: background-color 0.2s ease;
+}
+
+.logoutBtn:hover {
+    background-color: rgba(36, 178, 180, 0.08);
+}
+
+.logoutBtn .sideIcon {
+    color: #24b2b4;
+}
+
+.logoutBtn p {
+    font-size: 14px;
+    color: #24b2b4;
+    font-weight: 600;
+    margin: 0;
+}

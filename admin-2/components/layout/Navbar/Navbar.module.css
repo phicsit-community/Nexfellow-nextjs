@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+.navbar {
+    height: 80px;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #E5E5E5;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    padding-left: 270px;
+}
+
+.title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #888;
+    margin: 0;
+}

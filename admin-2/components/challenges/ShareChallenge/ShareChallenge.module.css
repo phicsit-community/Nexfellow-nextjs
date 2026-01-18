@@ -1,0 +1,147 @@
+.shareChallengeContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #ccc;
+}
+
+.shareChallenge {
+  background-color: white;
+  padding: 20px;
+  width: 60%;
+  text-align: center;
+  border-radius: 45px;
+  box-shadow: 5px 5px 5px rgb(71, 71, 71);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  height: 80px;
+  position: relative;
+  right: 17px;
+  bottom: 10px;
+  padding: 0 20px;
+}
+
+.header h2 {
+  margin: 0;
+}
+
+.closeIcon {
+  cursor: pointer;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.challengeDetails {
+  display: flex;
+  padding: 20px 0;
+  border-bottom: 1px solid #ccc;
+  align-items: start;
+}
+
+.challengeImage {
+  width: 200px;
+  height: 100px;
+  background-color: #e0f7fa;
+  border-radius: 10px;
+  margin-right: 20px;
+}
+
+.challengeInfo {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.cName {
+  font-weight: 600;
+  font-size: 18px;
+  margin: 0 0 8px 0;
+}
+
+.free {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.shareButtons {
+  display: flex;
+  gap: 15px;
+  padding: 10px 0;
+  margin-top: 10px;
+  justify-content: flex-start;
+}
+
+.shareButtons a {
+  font-size: 25px;
+  width: 50px;
+  height: 50px;
+  text-decoration: none;
+  color: black;
+  border: 2px solid black;
+  padding: 5px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.shareButtons a:hover {
+  background-color: #f0f0f0;
+}
+
+.linkSection {
+  padding-top: 20px;
+  text-align: left;
+}
+
+.linkSection h4 {
+  font-size: 18px;
+  font-weight: normal;
+  margin-bottom: 10px;
+}
+
+.linkBox {
+  background-color: #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.linkBox input {
+  background-color: #ccc;
+  border: none;
+  width: 100%;
+  font-size: 14px;
+}
+
+.linkBox input:focus {
+  outline: none;
+}
+
+.copyButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+
+.copyButton:hover {
+  color: #2C62EE;
+}

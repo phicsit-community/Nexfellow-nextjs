@@ -1,0 +1,275 @@
+.pageWrapper {
+    padding: 30px;
+    background: #f7f9fc;
+    min-height: 100vh;
+}
+
+.panelContainer {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.header {
+    margin-bottom: 24px;
+}
+
+.mainTitle {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.subTitle {
+    color: #666;
+    margin: 0;
+}
+
+.summarySection {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.summaryCard {
+    flex: 1;
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.summaryLabel {
+    color: #666;
+    margin: 0 0 4px;
+    font-size: 0.9rem;
+}
+
+.summaryValue {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+    color: #24b2b4;
+}
+
+.communitySectionMain {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.communitySection {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.communityHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.communityTitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.communityTitleWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.communityTitleWrapper h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.communityCount {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.searchContainer {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: #24b2b4;
+}
+
+.communityList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.communityCard {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+.communityCard:hover {
+    background: #e6f7fa;
+}
+
+.communityInfo {
+    flex: 1;
+}
+
+.communityName {
+    font-weight: 600;
+    margin: 0 0 4px;
+}
+
+.communityDesc {
+    color: #666;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.featureButton {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #24b2b4;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.featureButton:hover {
+    background: #1a8a8b;
+}
+
+.panel {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.featuredList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.featuredItem {
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.orderControls {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.orderBtn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.orderBtn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.orderBtn:hover:not(:disabled) {
+    background: #e6f7fa;
+    border-color: #24b2b4;
+}
+
+.removeBtn {
+    padding: 8px 16px;
+    background: #fee;
+    color: #c00;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.removeBtn:hover {
+    background: #fdd;
+}
+
+.actions {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.saveBtn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #24b2b4, #1a8a8b);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.saveBtn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.successMsg {
+    color: #28a745;
+    font-weight: 500;
+}
+
+.errorMsg {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+@media (max-width: 900px) {
+    .communitySectionMain {
+        grid-template-columns: 1fr;
+    }
+}
