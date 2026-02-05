@@ -33,10 +33,15 @@ const PRIVATE_ROUTES = [
 const AUTH_ROUTES = ["/login", "/signup", "/forgotpassword"];
 
 export function middleware(request) {
-    const { pathname } = request.nextUrl;
+    const { pathname, searchParams } = request.nextUrl;
 
     // Check for auth cookie/token
     const isLoggedIn = request.cookies.get("isLoggedIn")?.value === "true";
+    
+    // Check for OAuth redirect indicator (backend might set this)
+    const hasAuthToken = request.cookies.get("token")?.value || 
+                         request.cookies.get("accessToken")?.value ||
+                         request.cookies.get("connect.sid")?.value;
 
     // Check if current path is a private route
     const isPrivateRoute = PRIVATE_ROUTES.some((route) =>
@@ -48,8 +53,11 @@ export function middleware(request) {
         pathname.startsWith(route)
     );
 
-    // Redirect to login if accessing private route without auth
-    if (isPrivateRoute && !isLoggedIn) {
+    // For private routes: Allow access if either:
+    // 1. isLoggedIn cookie is set, OR
+    // 2. There's an auth token (OAuth flow might not have set isLoggedIn yet)
+    // The page component will do the final auth check
+    if (isPrivateRoute && !isLoggedIn && !hasAuthToken) {
         const loginUrl = new URL("/login", request.url);
         loginUrl.searchParams.set("redirect", pathname);
         return NextResponse.redirect(loginUrl);
