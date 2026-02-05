@@ -122,7 +122,17 @@ function Header() {
       });
 
       if (response.status === 200) {
+        // Clear all storage
         localStorage.clear();
+        sessionStorage.clear();
+
+        // Clear all cookies
+        document.cookie.split(";").forEach((c) => {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+
         router.push("/login");
       } else {
         console.error("Logout failed:", response.data.message);

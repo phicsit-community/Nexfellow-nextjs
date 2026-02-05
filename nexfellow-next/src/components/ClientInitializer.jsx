@@ -64,7 +64,7 @@ export default function ClientInitializer() {
 
                     // Update Redux and localStorage
                     dispatch(login({ user: payload, expiresIn }));
-                    
+
                     // Set the isLoggedIn cookie for middleware (in case backend didn't set it)
                     const expires = new Date();
                     expires.setTime(expires.getTime() + 7 * 24 * 60 * 60 * 1000);

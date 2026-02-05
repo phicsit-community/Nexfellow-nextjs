@@ -37,11 +37,11 @@ export function middleware(request) {
 
     // Check for auth cookie/token
     const isLoggedIn = request.cookies.get("isLoggedIn")?.value === "true";
-    
+
     // Check for OAuth redirect indicator (backend might set this)
-    const hasAuthToken = request.cookies.get("token")?.value || 
-                         request.cookies.get("accessToken")?.value ||
-                         request.cookies.get("connect.sid")?.value;
+    const hasAuthToken = request.cookies.get("token")?.value ||
+        request.cookies.get("accessToken")?.value ||
+        request.cookies.get("connect.sid")?.value;
 
     // Check if current path is a private route
     const isPrivateRoute = PRIVATE_ROUTES.some((route) =>

@@ -83,7 +83,17 @@ function Sidebar() {
     try {
       const response = await api.get("/user/logout", { withCredentials: true });
       if (response.status === 200) {
+        // Clear all storage
         localStorage.clear();
+        sessionStorage.clear();
+
+        // Clear all cookies
+        document.cookie.split(";").forEach((c) => {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+
         router.push("/login");
       } else {
         console.error("Logout failed:", response.data.message);
@@ -139,41 +149,41 @@ function Sidebar() {
             href={user?.username ? `/dashboard/${user.username}` : "#"}
             onClick={() => setActiveTab("/profile")}
           >
-              <div
-                className={style.amItems}
-                onMouseEnter={() => setHoveredIndex(5)}
-                onMouseLeave={() => setHoveredIndex(null)}
-              >
-                <div className={style.iconContainer}>
-                  <PlayOnce
-                    icon={AnimatedAccount}
-                    play={hoveredIndex === 5}
-                    style={{ width: 20, height: 20 }}
-                  />
-                </div>
-                <span>Profile</span>
-              </div>
-            </Link>
-
-            <Link
-              className={style.amLink}
-              href={`/settings`}
-              onClick={() => setActiveTab("/settings")}
+            <div
+              className={style.amItems}
+              onMouseEnter={() => setHoveredIndex(5)}
+              onMouseLeave={() => setHoveredIndex(null)}
             >
-              <div
-                className={style.amItems}
-                onMouseEnter={() => setHoveredIndex(6)}
-                onMouseLeave={() => setHoveredIndex(null)}
-              >
-                <div className={style.iconContainer}>
-                  <PlayOnce
-                    icon={AnimatedSettings}
-                    play={hoveredIndex === 6}
-                    style={{ width: 20, height: 20 }}
-                  />
-                </div>
-                <span>Settings</span>
+              <div className={style.iconContainer}>
+                <PlayOnce
+                  icon={AnimatedAccount}
+                  play={hoveredIndex === 5}
+                  style={{ width: 20, height: 20 }}
+                />
               </div>
+              <span>Profile</span>
+            </div>
+          </Link>
+
+          <Link
+            className={style.amLink}
+            href={`/settings`}
+            onClick={() => setActiveTab("/settings")}
+          >
+            <div
+              className={style.amItems}
+              onMouseEnter={() => setHoveredIndex(6)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              <div className={style.iconContainer}>
+                <PlayOnce
+                  icon={AnimatedSettings}
+                  play={hoveredIndex === 6}
+                  style={{ width: 20, height: 20 }}
+                />
+              </div>
+              <span>Settings</span>
+            </div>
           </Link>
 
           {/* Optional logout block remains commented as in original */}

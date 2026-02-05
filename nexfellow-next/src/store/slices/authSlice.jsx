@@ -36,6 +36,25 @@ const removeCookie = (name) => {
   }
 };
 
+// Helper to clear all cookies
+const clearAllCookies = () => {
+  if (typeof window !== "undefined") {
+    document.cookie.split(";").forEach((c) => {
+      document.cookie = c
+        .replace(/^ +/, "")
+        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+  }
+};
+
+// Helper to clear all storage
+const clearAllStorage = () => {
+  if (typeof window !== "undefined") {
+    localStorage.clear();
+    sessionStorage.clear();
+  }
+};
+
 // Helper to check token expiry
 const isTokenValid = () => {
   const expiresInStr = getLocalStorage("expiresIn");
@@ -87,10 +106,11 @@ const authSlice = createSlice({
     logout: (state) => {
       state.isLoggedIn = false;
       state.user = null;
-      setLocalStorage("isLoggedIn", "false");
-      removeCookie("isLoggedIn"); // Remove cookie for middleware auth
-      removeLocalStorage("user");
-      removeLocalStorage("expiresIn");
+      state.themePreference = "light";
+
+      // Clear all storage and cookies completely
+      clearAllStorage();
+      clearAllCookies();
 
       disconnectSocket();
     },

@@ -158,21 +158,21 @@ const Signup = () => {
     const link = process.env.NODE_ENV === "development"
       ? process.env.NEXT_PUBLIC_LOCALHOST
       : process.env.NEXT_PUBLIC_SERVER_URL;
-    window.open(`${link}/auth/google/callback`, "_self");
+    window.open(`${link}/auth/google`, "_self");
   };
 
   const githubAuth = () => {
     const link = process.env.NODE_ENV === "development"
       ? process.env.NEXT_PUBLIC_LOCALHOST
       : process.env.NEXT_PUBLIC_SERVER_URL;
-    window.open(`${link}/auth/github/callback`, "_self");
+    window.open(`${link}/auth/github`, "_self");
   };
 
   const facebookAuth = () => {
     const link = process.env.NODE_ENV === "development"
       ? process.env.NEXT_PUBLIC_LOCALHOST
       : process.env.NEXT_PUBLIC_SERVER_URL;
-    window.open(`${link}/auth/facebook/`, "_self");
+    window.open(`${link}/auth/facebook`, "_self");
   };
 
   const linkedinAuth = () => {
