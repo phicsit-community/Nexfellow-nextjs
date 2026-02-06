@@ -1,19 +1,29 @@
-/* Base (light) ------------------------------------------------------------- */
+/* Base (light) - Feed page style shimmer ------------------------------------------------------------- */
 .skeleton {
-  background: #e0e0e0;
+  background: var(--skeleton-base, #e8e8e8);
   position: relative;
   overflow: hidden;
   border-radius: 4px;
 }
 
-/* Shared shimmer keyframes (constant-speed sweep across any width) */
-@keyframes shimmerMove {
-  0% {
-    background-position: -200% 0;
-  }
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 20%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.4)) 50%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 80%,
+      rgba(255, 255, 255, 0) 100%);
+  animation: shimmer 1.8s ease-in-out infinite;
+}
 
+/* Shared shimmer keyframes - smooth translateX sweep */
+@keyframes shimmer {
   100% {
-    background-position: 200% 0;
+    transform: translateX(100%);
   }
 }
 
@@ -21,34 +31,35 @@
 .shimmer {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg,
-      #e0e0e0 0%,
-      #e0e0e0 35%,
-      #ffffff 50%,
-      #e0e0e0 65%,
-      #e0e0e0 100%);
-  background-size: 200% 100%;
-  animation: shimmerMove 5s linear infinite;
+  transform: translateX(-100%);
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 20%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.4)) 50%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 80%,
+      rgba(255, 255, 255, 0) 100%);
+  animation: shimmer 1.8s ease-in-out infinite;
 }
 
 /* If you prefer ::after shimmer on a block like .skeletonPost */
 .skeletonPost {
   position: relative;
   overflow: hidden;
+  background-color: var(--card, #fff);
 }
 
 .skeletonPost::after {
   content: "";
   position: absolute;
   inset: 0;
+  transform: translateX(-100%);
   background-image: linear-gradient(90deg,
       rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.2) 30%,
-      rgba(255, 255, 255, 0.5) 50%,
-      rgba(255, 255, 255, 0.2) 70%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 20%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.4)) 50%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 80%,
       rgba(255, 255, 255, 0) 100%);
-  background-size: 200% 100%;
-  animation: shimmerMove 5s linear infinite;
+  animation: shimmer 1.8s ease-in-out infinite;
 }
 
 /* ChallengeCard Skeletons */
@@ -323,8 +334,7 @@
 
   /* Base skeleton with dark gradient */
   .skeleton {
-    background: #222;
-    /* fallback surface under shimmer */
+    background: var(--skeleton-base, #2a2a2a);
     position: relative;
     overflow: hidden;
     border-radius: 4px;
@@ -335,20 +345,20 @@
     position: absolute;
     inset: 0;
     background: linear-gradient(90deg,
-        #444444 0%,
-        #444444 35%,
-        rgba(255, 255, 255, 0.28) 50%,
-        #444444 65%,
-        #444444 100%);
+        var(--skeleton-base, #2a2a2a) 0%,
+        var(--skeleton-base, #2a2a2a) 35%,
+        var(--skeleton-highlight, #3a3a3a) 50%,
+        var(--skeleton-base, #2a2a2a) 65%,
+        var(--skeleton-base, #2a2a2a) 100%);
     background-size: 200% 100%;
-    animation: shimmerMove 5s linear infinite;
+    animation: shimmerMove 2s linear infinite;
   }
 
   /* Dark-mode ::after shimmer for blocks like .skeletonPost */
   .skeletonPost {
     position: relative;
     overflow: hidden;
-    background-color: var(--card, #222);
+    background-color: var(--card, #1a1a1a);
   }
 
   .skeletonPost::after {
@@ -357,39 +367,39 @@
     inset: 0;
     background-image: linear-gradient(90deg,
         rgba(255 255 255 / 0) 0%,
-        rgba(255 255 255 / 0.10) 30%,
-        rgba(255 255 255 / 0.30) 50%,
-        rgba(255 255 255 / 0.10) 70%,
+        var(--skeleton-shimmer, rgba(255, 255, 255, 0.08)) 30%,
+        var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 50%,
+        var(--skeleton-shimmer, rgba(255, 255, 255, 0.08)) 70%,
         rgba(255 255 255 / 0) 100%);
     background-size: 200% 100%;
-    animation: shimmerMove 5s linear infinite;
+    animation: shimmerMove 2s linear infinite;
   }
 
   /* Optional: keep your existing dark surfaces where needed */
   .skeletonAnalytic {
-    background-color: var(--card, #222);
+    background-color: var(--card, #1a1a1a);
     border-radius: 8px;
     padding: 16px;
     box-shadow: 0 1px 3px rgba(255 255 255 / 0.1);
   }
 
   .skeletonAvatar {
-    background-color: #444;
+    background-color: var(--skeleton-highlight, #3a3a3a);
   }
 
   .skeletonText {
-    background-color: #444;
+    background-color: var(--skeleton-highlight, #3a3a3a);
   }
 
   .skeletonImageItem {
-    background-color: #444;
+    background-color: var(--skeleton-highlight, #3a3a3a);
   }
 
   .skeletonImage {
-    background-color: #444;
+    background-color: var(--skeleton-highlight, #3a3a3a);
   }
 
   .skeletonAction {
-    background-color: #444;
+    background-color: var(--skeleton-highlight, #3a3a3a);
   }
 }

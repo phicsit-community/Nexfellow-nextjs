@@ -1,40 +1,24 @@
-/* Global box-sizing and body settings */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  font-family: "Inter", Arial, sans-serif;
-  background: #000;
-}
-
 /* Main container with full viewport coverage and background */
 .mainContainer {
-  min-height: 100vh;
+  height: 100vh;
   width: 100vw;
   background: url("./assets/bg.svg") center center no-repeat;
   background-size: cover;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
+  overflow: hidden;
 }
 
 /* Central content container */
 .container {
-  max-width: 450px;
-  /* was 665px */
-  margin: 0 auto;
-  padding: 1.2rem 0.4rem 1.8rem 0.4rem;
+  max-width: 520px;
+  margin: auto;
+  padding: 0 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 87vh;
   width: 100%;
 }
 
@@ -58,11 +42,11 @@ body {
 }
 
 .bannerImage {
-  width: 440px;
-  height: 110px;
+  width: 100%;
+  height: 120px;
   border-radius: 6px 6px 0 0;
   position: relative;
-  object-fit: fill;
+  object-fit: cover;
 }
 
 /* Profile image wrapper */
@@ -316,17 +300,15 @@ body {
   }
 
   .container {
-    justify-content: center;
-    min-height: 100vh;
+    max-width: 600px;
   }
 }
 
 /* Tablet and below */
 @media (max-width: 1024px) {
   .container {
-    padding: 1.5rem 1rem 2.5rem;
-    justify-content: center;
-    min-height: 100vh;
+    padding: 0 1rem;
+    max-width: 520px;
   }
 
   .headerRow {
@@ -336,7 +318,7 @@ body {
   }
 
   .communityName {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
   }
 
   .username {
@@ -352,12 +334,10 @@ body {
   }
 
   .bannerImage {
-    width: 680px;
-    height: 180px;
-    /* border-radius: 8px; */
+    width: 100%;
+    height: 140px;
     position: relative;
-    /* left: 5%; */
-    object-fit: fill;
+    object-fit: cover;
   }
 
   .profileImageWrapper {

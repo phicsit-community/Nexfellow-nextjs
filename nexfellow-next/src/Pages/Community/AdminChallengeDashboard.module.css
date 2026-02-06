@@ -1,22 +1,42 @@
 .dashboardContainer {
-  padding: 20px;
+  padding: 24px;
   min-height: 100vh;
+  background: #f8f9fa;
 }
 
 .dashboardHeader {
-  margin-bottom: 24px;
-  padding: 20px;
+  margin-bottom: 20px;
+  padding: 20px 24px;
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
-  text-align: left;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
 }
 
 .headerTop {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
+  justify-content: flex-start;
+  margin-bottom: 16px;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #666;
+  font-size: 13px;
+  text-decoration: none;
+  padding: 6px 12px;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.backLink:hover {
+  background: #f5f5f5;
+  color: #333;
 }
 
 .breadcrumb {
@@ -25,39 +45,131 @@
 
 .headerTitleRow {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
+}
+
+.headerTitleLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.headerTitleWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .headerTitleWrap h1 {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 600;
-  margin-bottom: 4px;
-  color: #333;
+  margin: 0;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  line-height: 1.3;
 }
 
 .headerTitleWrap p {
-  color: #777;
-  font-size: 16px;
+  color: #888;
+  font-size: 14px;
   margin: 0;
 }
 
+.headerStatusBadge {
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.statusBadgeUnpublished {
+  background: #fff7e6;
+  color: #d48806;
+  border: 1px solid #ffd591;
+}
+
+.statusBadgeOngoing {
+  background: #f6ffed;
+  color: #389e0d;
+  border: 1px solid #b7eb8f;
+}
+
+.statusBadgeUpcoming {
+  background: #e6f7ff;
+  color: #096dd9;
+  border: 1px solid #91d5ff;
+}
+
+.statusBadgeCompleted {
+  background: #f9f0ff;
+  color: #531dab;
+  border: 1px solid #d3adf7;
+}
+
 .dashboardHeader h1 {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 600;
   margin-bottom: 4px;
-  color: #333;
+  color: #1a1a1a;
 }
 
 .dashboardHeader p {
-  color: #777;
-  font-size: 16px;
-  margin-bottom: 10px;
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 0;
 }
 
+.managementButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.managementButtons :global(.ant-btn) {
+  border-radius: 6px;
+  font-size: 13px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+}
+
+.managementButtons :global(.ant-btn-default) {
+  border-color: #d9d9d9;
+  color: #555;
+  background: #fff;
+}
+
+.managementButtons :global(.ant-btn-default:hover) {
+  border-color: #24b2b4;
+  color: #24b2b4;
+}
+
+.managementButtons :global(.ant-btn-primary) {
+  background: #24b2b4;
+  border-color: #24b2b4;
+  color: #fff;
+}
+
+.managementButtons :global(.ant-btn-dangerous) {
+  color: #ff4d4f;
+  border-color: #ff4d4f;
+  background: #fff;
+}
+
+/* Stats Row */
 .statsRow {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 /* Let card styling be controlled by inline styles for exact design matching */
@@ -72,8 +184,58 @@
 .tabContent {
   background-color: #fff;
   padding: 24px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  border-radius: 0 0 12px 12px;
+  border: 1px solid #e8e8e8;
+  border-top: none;
+}
+
+/* Tabs styling */
+.tabs {
+  background: #fff;
+  border-radius: 12px 12px 0 0;
+  border: 1px solid #e8e8e8;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.tabs :global(.ant-tabs-nav) {
+  margin: 0;
+  padding: 0 8px;
+}
+
+.tabs :global(.ant-tabs-nav::before) {
+  border-bottom: none;
+}
+
+.tabs :global(.ant-tabs-tab) {
+  padding: 14px 16px;
+  margin: 0 4px;
+  color: #666;
+  font-weight: 500;
+  font-size: 14px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.tabs :global(.ant-tabs-tab:hover) {
+  color: #24b2b4;
+}
+
+.tabs :global(.ant-tabs-tab-active) {
+  color: #24b2b4 !important;
+}
+
+.tabs :global(.ant-tabs-tab-active .ant-tabs-tab-btn) {
+  color: #24b2b4 !important;
+  font-weight: 600;
+}
+
+.tabs :global(.ant-tabs-ink-bar) {
+  background: #24b2b4;
+  height: 2px;
+}
+
+.tabs :global(.ant-tabs-content-holder) {
+  padding: 0;
 }
 
 .spinner {
@@ -304,6 +466,22 @@
     padding: 15px;
   }
 
+  .headerTitleRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .headerTitleLeft {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .headerStatusBadge {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+
   .dashboardHeader>div {
     flex-direction: column;
     gap: 15px;
@@ -312,10 +490,38 @@
   .managementButtons {
     flex-direction: column;
     width: 100%;
+    justify-content: flex-start;
   }
 
   .managementButtons .ant-btn {
     width: 100%;
+  }
+
+  /* New responsive styles for overview */
+  .basicInfoGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .timelineGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .configGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .progressSection {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .progressSection>div {
+    padding: 0;
+    text-align: center;
   }
 
   .challengeDetails .detailItem {
@@ -505,6 +711,470 @@
 }
 
 /* Challenge Overview Styles */
+.challengeOverviewCard {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+  margin-bottom: 20px;
+}
+
+.challengeOverviewCard :global(.ant-card-head) {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 18px 24px;
+}
+
+.challengeOverviewCard :global(.ant-card-head-title) {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.challengeOverviewCard :global(.ant-card-body) {
+  padding: 20px 24px 24px;
+}
+
+.cardSubtitle {
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+  font-weight: 400;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.basicInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 32px;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.infoLabel {
+  font-size: 13px;
+  color: #888;
+  font-weight: 400;
+}
+
+.infoValue {
+  font-size: 14px;
+  color: #1a1a1a;
+  font-weight: 500;
+}
+
+.categoryTag {
+  display: inline-block;
+  background: #e6f7ff;
+  color: #1890ff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.difficultyTag {
+  display: inline-block;
+  background: #fff7e6;
+  color: #fa8c16;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Timeline & Configuration Section */
+.timelineSection {
+  margin-top: 24px;
+}
+
+.timelineGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.timelineItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+}
+
+.timelineIconGreen {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e6f7e9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #52c41a;
+}
+
+.timelineIconRed {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffecec;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff4d4f;
+}
+
+.timelineIconBlue {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e6f4ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1890ff;
+}
+
+.timelineIconGold {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fffbe6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #faad14;
+}
+
+.timelineContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timelineLabel {
+  font-size: 12px;
+  color: #888;
+}
+
+.timelineValue {
+  font-size: 14px;
+  color: #1a1a1a;
+  font-weight: 500;
+}
+
+/* Challenge Status Card */
+.statusCard {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+  margin-bottom: 20px;
+}
+
+.statusCard :global(.ant-card-head) {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 18px 24px;
+}
+
+.statusCard :global(.ant-card-head-title) {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.statusCard :global(.ant-card-body) {
+  padding: 16px 24px 20px;
+}
+
+.statusHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.statusLabel {
+  font-size: 14px;
+  color: #666;
+}
+
+.statusBadge {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.statusBadgeUnpublished {
+  background: #fff7e6;
+  color: #fa8c16;
+  border: 1px solid #ffd591;
+}
+
+.statusBadgeOngoing {
+  background: #f6ffed;
+  color: #52c41a;
+  border: 1px solid #b7eb8f;
+}
+
+.statusBadgeUpcoming {
+  background: #e6f7ff;
+  color: #1890ff;
+  border: 1px solid #91d5ff;
+}
+
+.statusBadgeCompleted {
+  background: #f9f0ff;
+  color: #722ed1;
+  border: 1px solid #d3adf7;
+}
+
+.statusInfoBox {
+  background: #fffbe6;
+  border: 1px solid #ffe58f;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.statusInfoTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #d48806;
+  margin-bottom: 8px;
+}
+
+.statusInfoText {
+  font-size: 13px;
+  color: #8c6e00;
+  line-height: 1.5;
+}
+
+.progressSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.progressSection .progressLabel {
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.progressSection :global(.ant-progress) {
+  flex: 1;
+  margin: 0;
+}
+
+.progressValue {
+  font-size: 12px;
+  color: #888;
+  white-space: nowrap;
+}
+
+/* Recent Activity Card */
+.activityCard {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+}
+
+.activityCard :global(.ant-card-head) {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 18px 24px;
+}
+
+.activityCard :global(.ant-card-head-title) {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.activityCard :global(.ant-card-body) {
+  padding: 16px 24px 20px;
+}
+
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.activityItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.activityItem:last-child {
+  border-bottom: none;
+}
+
+.activityIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.activityIconSubmit {
+  background: #e6f4ff;
+  color: #1890ff;
+}
+
+.activityIconApprove {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.activityIconJoin {
+  background: #f9f0ff;
+  color: #722ed1;
+}
+
+.activityIconMilestone {
+  background: #fff7e6;
+  color: #fa8c16;
+}
+
+.activityContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.activityText {
+  font-size: 13px;
+  color: #1a1a1a;
+  margin-bottom: 2px;
+}
+
+.activityTime {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Challenge Configuration Card - Full Width Bottom */
+.configCard {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+  margin-top: 24px;
+}
+
+.configCard :global(.ant-card-head) {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 18px 24px;
+}
+
+.configCard :global(.ant-card-head-title) {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.configSubtitle {
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+  font-weight: 400;
+}
+
+.configCard :global(.ant-card-body) {
+  padding: 20px 24px;
+}
+
+.configGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.configColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.configColumnTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.configItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.configItem:last-child {
+  border-bottom: none;
+}
+
+.configItemLabel {
+  font-size: 13px;
+  color: #555;
+}
+
+.configItemValue {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.configEnabled {
+  color: #389e0d;
+  background: #f6ffed;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.configDisabled {
+  color: #cf1322;
+  background: #fff1f0;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.configPublic {
+  color: #096dd9;
+  background: #e6f7ff;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
 .challengeDetails {
   display: flex;
   flex-direction: column;

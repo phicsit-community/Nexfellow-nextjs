@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import htmr from "htmr";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import Commoncd from "../../components/Contest/Commoncd";
 import { toast } from "sonner";
 import api from "../../lib/axios";
@@ -208,10 +208,9 @@ const ContestDetails = () => {
   const [loadingLeaderboard, setLoadingLeaderboard] = useState(true);
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [loadingRewards, setLoadingRewards] = useState(true);
-  const location = useLocation();
-  const communityId = location.state?.communityId;
+  const searchParams = useSearchParams();
+  const communityId = searchParams?.get('communityId');
   console.log("Community ID:", communityId);
-  console.log("location state:", location.state);
   const isCommunityQuiz = pathname?.startsWith("/community/contests/");
 
   const handleNavClick = (section) => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Helmet } from "react-helmet";
+import Head from "next/head";
 
 const MetaTags = ({
   title = "NexFellow - Bringing Geeks Together",
@@ -41,11 +41,7 @@ const MetaTags = ({
     : `${title} | NexFellow`;
 
   return (
-    <Helmet
-      titleTemplate="%s"
-      defaultTitle="NexFellow"
-      prioritizeSeoTags={true}
-    >
+    <Head>
       {/* Primary meta tags */}
       <title>{siteTitle}</title>
       <meta name="description" content={description} key="description" />
@@ -91,7 +87,7 @@ const MetaTags = ({
         key="mobile-web-app-capable"
       />
       <link rel="canonical" href={currentUrl} key="canonical" />
-    </Helmet>
+    </Head>
   );
 };
 

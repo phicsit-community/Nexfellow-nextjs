@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { initializeSocket } from "@/utils/socket";
-import Header from "@/components/Header/Header";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import style from "./PrivateLayout.module.css";
 
@@ -20,7 +19,6 @@ export default function PrivateLayout({ children }) {
 
     return (
         <div className={style.container}>
-            <Header />
             <div className={style.main}>
                 <div className={style.sidebar}>
                     <Sidebar />

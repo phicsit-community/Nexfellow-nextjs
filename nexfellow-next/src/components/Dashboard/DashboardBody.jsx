@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import api from "../../lib/axios";
 import { toast } from "sonner";
 
@@ -53,11 +53,22 @@ const DashboardBody = ({
   const [newPost, setNewPost] = useState("");
   const [analytics, setAnalytics] = useState(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [verificationStatus, setVerificationStatus] = useState("");
   const [verificationLoading, setVerificationLoading] = useState(false);
   const [analyticsFilter, setAnalyticsFilter] = useState("all"); // Changed default to "all"
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [showPinModal, setShowPinModal] = useState(false);
+
+  // Auto-open post dialog if createPost query param is present
+  useEffect(() => {
+    const createPost = searchParams.get('createPost');
+    if (createPost === 'true' && communityId) {
+      setIsDialogOpen(true);
+      // Remove the query param from URL without refresh
+      router.replace(`/dashboard/${username}`, { scroll: false });
+    }
+  }, [searchParams, communityId, username, router]);
   const [postToPin, setPostToPin] = useState(null);
   const [pinnedPostId, setPinnedPostId] = useState(null);
   const [bookmarkCategory, setBookmarkCategory] = useState(null);

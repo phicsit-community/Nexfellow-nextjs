@@ -3,7 +3,7 @@
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
 import { ThemeProvider } from "@/hooks/useTheme";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, App as AntdApp } from "antd";
 import dynamic from "next/dynamic";
 import ClientInitializer from "@/components/ClientInitializer";
 import "react-toastify/dist/ReactToastify.css";
@@ -31,10 +31,12 @@ export function Providers({ children }) {
                         },
                     }}
                 >
-                    <ClientInitializer />
-                    {children}
-                    <ToastContainer />
-                    <Toaster />
+                    <AntdApp>
+                        <ClientInitializer />
+                        {children}
+                        <ToastContainer />
+                        <Toaster />
+                    </AntdApp>
                 </ConfigProvider>
             </ThemeProvider>
         </Provider>

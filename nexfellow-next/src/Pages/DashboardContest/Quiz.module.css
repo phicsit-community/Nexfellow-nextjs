@@ -536,26 +536,23 @@
   }
 }
 
-/* New shimmer animation for better loading states */
+/* New shimmer animation for better loading states - smooth and easy on eyes */
 .shimmer {
   position: relative;
   overflow: hidden;
-  background-color: #e6e6e6;
+  background-color: var(--skeleton-base, #e8e8e8);
 }
 
 .shimmer::after {
   content: "";
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  inset: 0;
+  transform: translateX(-100%);
   background: linear-gradient(90deg,
       rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0.3) 50%,
       rgba(255, 255, 255, 0) 100%);
-  transform: translateX(-100%);
-  animation: shimmer 3s infinite;
+  animation: shimmer 1.8s ease-in-out infinite;
 }
 
 @keyframes shimmer {
@@ -1145,24 +1142,28 @@ button:focus,
 
 /* Shimmer loading effect */
 .shimmer {
-  background: #e2e8f0;
-  background-image: linear-gradient(to right,
-      #e2e8f0 0%,
-      #f1f5f9 20%,
-      #e2e8f0 40%,
-      #e2e8f0 100%);
-  background-repeat: no-repeat;
-  background-size: 800px 104px;
-  animation: shimmer 3s infinite linear;
+  background: var(--skeleton-base, #e2e8f0);
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 20%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.4)) 50%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 80%,
+      rgba(255, 255, 255, 0) 100%);
+  animation: shimmer 1.8s ease-in-out infinite;
 }
 
 @keyframes shimmer {
-  0% {
-    background-position: -468px 0;
-  }
-
   100% {
-    background-position: 468px 0;
+    transform: translateX(100%);
   }
 }
 

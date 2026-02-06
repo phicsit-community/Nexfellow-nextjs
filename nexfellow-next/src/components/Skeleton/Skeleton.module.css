@@ -1,9 +1,9 @@
 .postSkeleton {
-  background-color: var(--color-card);
+  background-color: var(--card, #fff);
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 3px color-mix(in oklab, var(--color-foreground) 10%, transparent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .postHeader {
@@ -12,7 +12,7 @@
   margin-bottom: 16px;
 }
 
-/* Base skeleton blocks use muted surface */
+/* Base skeleton blocks use consistent skeleton colors */
 .avatar,
 .userName,
 .timestamp,
@@ -29,7 +29,7 @@
 .mailCard,
 .progressBar,
 .circular {
-  background-color: var(--color-muted);
+  background-color: var(--skeleton-base, #e8e8e8);
   border-radius: 4px;
 }
 
@@ -87,9 +87,9 @@
   inset: 0;
   background: linear-gradient(90deg,
       transparent,
-      color-mix(in oklab, var(--color-card) 60%, var(--color-background) 40%),
+      var(--skeleton-highlight, #f5f5f5),
       transparent);
-  animation: shimmer 3s infinite;
+  animation: shimmer 2s infinite;
 }
 
 @keyframes shimmer {
@@ -157,7 +157,8 @@
 /* Dark-mode refinements: deeper base and subtler shimmer */
 :global(.dark) {
   .postSkeleton {
-    box-shadow: 0 1px 3px color-mix(in oklab, var(--color-foreground) 22%, transparent);
+    background-color: var(--card, #1a1a1a);
+    box-shadow: 0 1px 3px rgba(255, 255, 255, 0.08);
   }
 
   .avatar,
@@ -176,14 +177,13 @@
   .mailCard,
   .progressBar,
   .circular {
-    /* slightly deepen muted for dark to improve contrast */
-    background-color: color-mix(in oklab, var(--color-muted) 85%, var(--color-card) 15%);
+    background-color: var(--skeleton-base, #2a2a2a);
   }
 
   .shimmer {
     background: linear-gradient(90deg,
         transparent,
-        color-mix(in oklab, var(--color-foreground) 12%, transparent),
+        var(--skeleton-highlight, #3a3a3a),
         transparent);
   }
 }

@@ -473,34 +473,33 @@
   margin: 0px;
 }
 
-/* Adding shimmer animation for skeleton loading */
+/* Adding shimmer animation for skeleton loading - smooth and easy on eyes */
 .shimmer {
-  background: #f6f7f8;
-  background-image: linear-gradient(to right,
-      #f6f7f8 0%,
-      #edeef1 20%,
-      #f6f7f8 40%,
-      #f6f7f8 100%);
-  background-repeat: no-repeat;
-  background-size: 800px 104px;
+  background: var(--skeleton-base, #e8e8e8);
   display: inline-block;
   position: relative;
-  animation-duration: 1.5s;
-  animation-fill-mode: forwards;
-  animation-iteration-count: infinite;
-  animation-name: shimmerAnimation;
-  animation-timing-function: linear;
+  overflow: hidden;
   border-radius: 4px;
   border: none;
 }
 
-@keyframes shimmerAnimation {
-  0% {
-    background-position: -468px 0;
-  }
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.15) 20%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0.15) 80%,
+      rgba(255, 255, 255, 0) 100%);
+  animation: shimmerAnimation 1.8s ease-in-out infinite;
+}
 
+@keyframes shimmerAnimation {
   100% {
-    background-position: 468px 0;
+    transform: translateX(100%);
   }
 }
 

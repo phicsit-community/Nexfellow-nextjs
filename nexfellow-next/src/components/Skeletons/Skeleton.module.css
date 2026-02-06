@@ -1,19 +1,28 @@
-/* Base skeleton style with shimmer effect */
+/* Base skeleton style with shimmer effect - Feed page style */
 .skeleton {
-  background: #e0e0e0;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 37%, #f0f0f0 63%);
-  background-size: 200% 100%;
-  animation: shimmer 3s infinite linear;
+  background: var(--skeleton-base, #e8e8e8);
+  position: relative;
+  overflow: hidden;
   border-radius: 4px;
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: 100% 50%;
-  }
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 20%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.4)) 50%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 80%,
+      rgba(255, 255, 255, 0) 100%);
+  animation: shimmer 1.8s ease-in-out infinite;
+}
 
+@keyframes shimmer {
   100% {
-    background-position: 0 50%;
+    transform: translateX(100%);
   }
 }
 
@@ -75,10 +84,10 @@
 }
 
 .skeletonAnalytic {
-  background-color: white;
+  background-color: var(--card, #fff);
   border-radius: 8px;
   padding: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .skeletonAnalyticIcon {
@@ -158,11 +167,11 @@
 
 /* Skeleton loading styles */
 .skeletonPost {
-  background-color: white;
+  background-color: var(--card, #fff);
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   position: relative;
   overflow: hidden;
   height: auto;
@@ -179,7 +188,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #e0e0e0;
+  background-color: var(--skeleton-base, #e8e8e8);
   margin-right: 12px;
 }
 
@@ -189,7 +198,7 @@
 
 .skeletonText {
   height: 12px;
-  background-color: #e0e0e0;
+  background-color: var(--skeleton-base, #e8e8e8);
   border-radius: 4px;
   margin-bottom: 8px;
   width: 80%;
@@ -229,7 +238,7 @@
 }
 
 .skeletonImageItem {
-  background-color: #e0e0e0;
+  background-color: var(--skeleton-base, #e8e8e8);
   border-radius: 8px;
   width: 100%;
   height: 100%;
@@ -238,7 +247,7 @@
 .skeletonImage {
   width: 100%;
   height: 200px;
-  background-color: #e0e0e0;
+  background-color: var(--skeleton-base, #e8e8e8);
   border-radius: 8px;
   margin: 12px 0;
 }
@@ -250,7 +259,7 @@
 .skeletonAction {
   width: 40px;
   height: 20px;
-  background-color: #e0e0e0;
+  background-color: var(--skeleton-base, #e8e8e8);
   border-radius: 4px;
   margin-right: 12px;
 }
@@ -266,10 +275,10 @@
   transform: translateX(-100%);
   background-image: linear-gradient(90deg,
       rgba(255, 255, 255, 0) 0,
-      rgba(255, 255, 255, 0.2) 20%,
-      rgba(255, 255, 255, 0.5) 60%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.2)) 20%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.5)) 60%,
       rgba(255, 255, 255, 0));
-  animation: shimmer 3s infinite;
+  animation: shimmer 2s infinite;
 }
 
 @keyframes shimmer {
@@ -283,11 +292,11 @@
   /* Base skeleton style with shimmer effect for dark mode */
   .skeleton {
     background: linear-gradient(90deg,
-        #444444 25%,
-        #555555 37%,
-        #444444 63%);
+        var(--skeleton-base, #2a2a2a) 25%,
+        var(--skeleton-highlight, #3a3a3a) 37%,
+        var(--skeleton-base, #2a2a2a) 63%);
     background-size: 200% 100%;
-    animation: shimmer-dark 3s infinite linear;
+    animation: shimmer-dark 2s infinite linear;
     border-radius: 4px;
   }
 
@@ -322,11 +331,11 @@
     margin-bottom: 12px;
     /* Use the base skeleton style */
     background: linear-gradient(90deg,
-        #444444 25%,
-        #555555 37%,
-        #444444 63%);
+        var(--skeleton-base, #2a2a2a) 25%,
+        var(--skeleton-highlight, #3a3a3a) 37%,
+        var(--skeleton-base, #2a2a2a) 63%);
     background-size: 200% 100%;
-    animation: shimmer-dark 3s infinite linear;
+    animation: shimmer-dark 2s infinite linear;
     border-radius: 4px;
   }
 
@@ -335,11 +344,11 @@
     width: 100%;
     margin-bottom: 8px;
     background: linear-gradient(90deg,
-        #444444 25%,
-        #555555 37%,
-        #444444 63%);
+        var(--skeleton-base, #2a2a2a) 25%,
+        var(--skeleton-highlight, #3a3a3a) 37%,
+        var(--skeleton-base, #2a2a2a) 63%);
     background-size: 200% 100%;
-    animation: shimmer-dark 3s infinite linear;
+    animation: shimmer-dark 2s infinite linear;
     border-radius: 4px;
   }
 
@@ -352,11 +361,11 @@
     height: 24px;
     width: 80px;
     background: linear-gradient(90deg,
-        #444444 25%,
-        #555555 37%,
-        #444444 63%);
+        var(--skeleton-base, #2a2a2a) 25%,
+        var(--skeleton-highlight, #3a3a3a) 37%,
+        var(--skeleton-base, #2a2a2a) 63%);
     background-size: 200% 100%;
-    animation: shimmer-dark 3s infinite linear;
+    animation: shimmer-dark 2s infinite linear;
     border-radius: 4px;
   }
 
@@ -372,11 +381,11 @@
   }
 
   .skeletonAnalytic {
-    background-color: var(--card, #222);
+    background-color: var(--card, #1a1a1a);
     /* dark card bg */
     border-radius: 8px;
     padding: 16px;
-    box-shadow: 0 1px 3px rgba(255 255 255 / 0.1);
+    box-shadow: 0 1px 3px rgba(255 255 255 / 0.08);
   }
 
   .skeletonAnalyticIcon {
@@ -384,11 +393,11 @@
     height: 48px;
     border-radius: 8px;
     background: linear-gradient(90deg,
-        #444444 25%,
-        #555555 37%,
-        #444444 63%);
+        var(--skeleton-base, #2a2a2a) 25%,
+        var(--skeleton-highlight, #3a3a3a) 37%,
+        var(--skeleton-base, #2a2a2a) 63%);
     background-size: 200% 100%;
-    animation: shimmer-dark 3s infinite linear;
+    animation: shimmer-dark 2s infinite linear;
     margin-bottom: 12px;
   }
 
@@ -397,7 +406,7 @@
     width: 60%;
     margin-bottom: 12px;
     background: linear-gradient(90deg,
-        #444444 25%,
+        var(--skeleton-base, #2a2a2a) 25%,
         #555555 37%,
         #444444 63%);
     background-size: 200% 100%;

@@ -11,6 +11,7 @@
   gap: 1rem;
   z-index: 0;
   margin-bottom: 1.5rem;
+  margin-top: 20px;
   padding: 0 0.5rem;
 
   /* margin-left: 50px;  */
@@ -27,13 +28,71 @@
   }
 }
 
+.searchContainer {
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 12px 0;
+  background-color: var(--color-background, #fff);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+:global(.dark) .searchContainer {
+  background-color: #000;
+}
+
+.profileAvatar {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatarImg {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #14b8a6;
+}
+
+.avatarPlaceholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #14b8a6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.statusDot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+
+:global(.dark) .statusDot {
+  border-color: #000;
+}
+
 .imgContainer {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 40px;
+  margin-top: 0;
   gap: 20px;
 }
 
@@ -67,6 +126,66 @@
   font-size: 16px;
   margin: 0;
   font-weight: 500;
+}
+
+/* Community card */
+.communityCard {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.communityCard:hover {
+  background-color: #f6f6f6;
+  cursor: pointer;
+}
+
+:global(.dark) .communityCard:hover {
+  background-color: var(--color-accent);
+}
+
+.communityInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.communityName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-foreground, #000);
+}
+
+.communityFollowers {
+  font-size: 12px;
+  color: #a0a0a0;
+}
+
+:global(.dark) .communityFollowers {
+  color: var(--color-muted-foreground);
+}
+
+.followBtn {
+  background-color: #14b8a6 !important;
+  color: #fff !important;
+  font-size: 12px !important;
+  padding: 6px 16px !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+}
+
+.followBtn:hover {
+  background-color: #0d9488 !important;
+}
+
+.noData {
+  font-size: 13px;
+  color: #a0a0a0;
+  text-align: center;
+  padding: 10px 0;
 }
 
 /* suggestion card */
@@ -266,9 +385,9 @@
   left: 0;
   background: linear-gradient(90deg,
       transparent,
-      rgba(255, 255, 255, 0.4),
+      rgba(255, 255, 255, 0.3),
       transparent);
-  animation: shimmerAnimation 3s infinite;
+  animation: shimmerAnimation 1.8s ease-in-out infinite;
 }
 
 @keyframes shimmerAnimation {

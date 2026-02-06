@@ -54,7 +54,6 @@ import {
 import BackButton from "../../components/BackButton/BackButton";
 import styles from "./AdminChallengeDashboard.module.css";
 
-const { TabPane } = Tabs;
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -1005,63 +1004,70 @@ const AdminChallengeDashboard = () => {
 
   return (
     <div className={styles.dashboardContainer}>
-      <div className={styles.headerTop}>
-        <div
-          className="border rounded-lg hover:bg-accent text-sm w-fit"
-          style={{ padding: "3px 10px" }}
-        >
-          <BackButton
-            onClick={() => router.back()}
-            showText={true}
-            smallText={true}
-            style={{ marginBottom: "0px" }}
-          />
-        </div>
-      </div>
       <div className={styles.dashboardHeader}>
+        <div className={styles.headerTop}>
+          <div
+            className="border rounded-lg hover:bg-accent text-sm w-fit"
+            style={{ padding: "3px 10px" }}
+          >
+            <BackButton
+              onClick={() => router.back()}
+              showText={true}
+              smallText={true}
+              style={{ marginBottom: "0px" }}
+            />
+          </div>
+        </div>
 
         <div className={styles.headerTitleRow}>
-          <div className={styles.headerTitleWrap}>
-            <h1>
-              {challenge?.title || challenge?.challengeTitle} Admin Dashboard
-            </h1>
-            <p>Manage participants, submissions, and rewards</p>
+          <div className={styles.headerTitleLeft}>
+            <div className={styles.headerTitleWrap}>
+              <h1>
+                {challenge?.title || challenge?.challengeTitle} Admin Dashboard
+                {challenge?.status && (
+                  <span
+                    className={`${styles.headerStatusBadge} ${challenge.status === "ongoing"
+                        ? styles.statusBadgeOngoing
+                        : challenge.status === "upcoming"
+                          ? styles.statusBadgeUpcoming
+                          : challenge.status === "completed"
+                            ? styles.statusBadgeCompleted
+                            : styles.statusBadgeUnpublished
+                      }`}
+                  >
+                    {challenge.status.toUpperCase()}
+                  </span>
+                )}
+              </h1>
+              <p>Manage participants, submissions, and rewards</p>
+            </div>
           </div>
-          {challenge?.status && (
-            <Tag
-              className={`${styles.statusTag} ${challenge.status === "ongoing"
-                ? styles.statusOngoing
-                : challenge.status === "upcoming"
-                  ? styles.statusUpcoming
-                  : challenge.status === "completed"
-                    ? styles.statusCompleted
-                    : styles.statusUnpublished
-                }`}
-            >
-              {challenge.status.toUpperCase()}
-            </Tag>
-          )}
-        </div>
 
-        <div className={styles.managementButtons}>
-          <Space wrap>
-            <Button onClick={handleEditChallenge} icon={<FileOutlined />}>
-              Edit Challenge
-            </Button>
-            <Button onClick={handleStatusChange} icon={<CheckCircleOutlined />}>
-              Change Status
-            </Button>
-            <Button
-              danger
-              onClick={handleDeleteChallenge}
-              icon={<CloseCircleOutlined />}
-            >
-              Delete
-            </Button>
-            <Button onClick={handleExportData} icon={<ExportOutlined />}>
-              Export
-            </Button>
-          </Space>
+          <div className={styles.managementButtons}>
+            <Space wrap>
+              <Button onClick={handleEditChallenge} icon={<FileOutlined />}>
+                Edit Challenge
+              </Button>
+              <Button
+                type="primary"
+                onClick={handleStatusChange}
+                icon={<CheckCircleOutlined />}
+                style={{ background: "#24b2b4", borderColor: "#24b2b4" }}
+              >
+                Change Status
+              </Button>
+              <Button
+                danger
+                onClick={handleDeleteChallenge}
+                icon={<CloseCircleOutlined />}
+              >
+                Delete
+              </Button>
+              <Button onClick={handleExportData} icon={<ExportOutlined />}>
+                Export
+              </Button>
+            </Space>
+          </div>
         </div>
       </div>
 
@@ -1095,11 +1101,13 @@ const AdminChallengeDashboard = () => {
                   padding: 0,
                   height: "100%",
                 }}
-                bodyStyle={{
-                  padding: "16px",
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%",
+                styles={{
+                  body: {
+                    padding: "16px",
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                  }
                 }}
               >
                 <div
@@ -1257,7 +1265,7 @@ const AdminChallengeDashboard = () => {
                 <Progress
                   percent={dynamicCompletionRate}
                   strokeColor="#52C41A"
-                  trailColor="#E8E8E8"
+                  railColor="#E8E8E8"
                   style={{ flexGrow: 1 }}
                   showInfo={false}
                 />
@@ -1273,11 +1281,13 @@ const AdminChallengeDashboard = () => {
                   padding: 0,
                   height: "100%",
                 }}
-                bodyStyle={{
-                  padding: "16px",
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%",
+                styles={{
+                  body: {
+                    padding: "16px",
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                  }
                 }}
               >
                 <div
@@ -1357,11 +1367,13 @@ const AdminChallengeDashboard = () => {
                   padding: 0,
                   height: "100%",
                 }}
-                bodyStyle={{
-                  padding: "16px",
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%",
+                styles={{
+                  body: {
+                    padding: "16px",
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                  }
                 }}
               >
                 <div
@@ -1441,11 +1453,13 @@ const AdminChallengeDashboard = () => {
                   padding: 0,
                   height: "100%",
                 }}
-                bodyStyle={{
-                  padding: "16px",
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%",
+                styles={{
+                  body: {
+                    padding: "16px",
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                  }
                 }}
               >
                 <div
@@ -1525,11 +1539,13 @@ const AdminChallengeDashboard = () => {
                   padding: 0,
                   height: "100%",
                 }}
-                bodyStyle={{
-                  padding: "16px",
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%",
+                styles={{
+                  body: {
+                    padding: "16px",
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                  }
                 }}
               >
                 <div
@@ -1591,7 +1607,7 @@ const AdminChallengeDashboard = () => {
                 <Progress
                   percent={dailyEngagement}
                   strokeColor="#F5222D"
-                  trailColor="#F5F5F5"
+                  railColor="#F5F5F5"
                   style={{ flexGrow: 1 }}
                   showInfo={false}
                 />
@@ -1605,562 +1621,591 @@ const AdminChallengeDashboard = () => {
         activeKey={activeTab}
         onChange={setActiveTab}
         className={styles.tabs}
-      >
-        <TabPane tab="Overview" key="overview">
-          <div className={styles.tabContent}>
-            <Row gutter={[24, 24]}>
-              <Col xs={24} lg={16}>
-                <Card title="Challenge Overview" style={{ marginBottom: 16 }}>
-                  <div className={styles.challengeDetails}>
-                    <div className={styles.detailItem}>
-                      <strong>Title:</strong> {challenge?.title}
-                    </div>
-                    <div className={styles.detailItem}>
-                      <strong>Category:</strong>{" "}
-                      {challenge?.category || challenge?.categoryName || "—"}
-                    </div>
-                    <div className={styles.detailItem}>
-                      <strong>Community:</strong>{" "}
-                      {challenge?.community?.name || "Unknown"}
-                    </div>
-                    <div className={styles.detailItem}>
-                      <strong>Difficulty:</strong>{" "}
-                      {challenge?.difficulty || "—"}
-                    </div>
-                    <div className={styles.detailItem}>
-                      <strong>Duration:</strong>{" "}
-                      {challenge?.actualDuration || challenge?.duration} days
-                    </div>
-                    <div className={styles.detailItem}>
-                      <strong>Created:</strong>{" "}
-                      {challenge?.createdAt
-                        ? moment(challenge.createdAt).format("YYYY-MM-DD HH:mm")
-                        : "Unknown"}
-                    </div>
-                    <div className={styles.detailItem}>
-                      <strong>Est. Time:</strong>{" "}
-                      {challenge?.estimatedTime || "2-3 hours daily"}
-                    </div>
-                  </div>
-                </Card>
-
-                <Card
-                  title="Timeline & Configuration"
-                  style={{ marginBottom: 16 }}
-                >
-                  <Row gutter={[16, 16]}>
-                    <Col xs={24} sm={12}>
-                      <Card size="small">
-                        <Space>
-                          <CheckCircleOutlined style={{ color: "#52c41a" }} />
-                          <div>
-                            <div>
-                              <strong>Start Date</strong>
-                            </div>
-                            <div>
-                              {challenge?.startDate
-                                ? moment(challenge.startDate).format(
-                                  "YYYY-MM-DD HH:mm"
-                                )
-                                : "Not set"}
-                            </div>
+        items={[
+          {
+            key: "overview",
+            label: "Overview",
+            children: (
+              <div className={styles.tabContent}>
+                <Row gutter={[24, 24]}>
+                  {/* Left Column - Challenge Overview */}
+                  <Col xs={24} lg={16}>
+                    <Card
+                      className={styles.challengeOverviewCard}
+                      title={
+                        <div>
+                          <span>Challenge Overview</span>
+                          <div className={styles.cardSubtitle}>
+                            Comprehensive details about your challenge configuration
                           </div>
-                        </Space>
-                      </Card>
-                    </Col>
-                    <Col xs={24} sm={12}>
-                      <Card size="small">
-                        <Space>
-                          <FileOutlined style={{ color: "#1890ff" }} />
-                          <div>
-                            <div>
-                              <strong>Daily Tasks</strong>
-                            </div>
-                            <div>
-                              {challenge?.dailyTasks?.length || 0} tasks
-                              configured
-                            </div>
-                          </div>
-                        </Space>
-                      </Card>
-                    </Col>
-                    <Col xs={24} sm={12}>
-                      <Card size="small">
-                        <Space>
-                          <CloseCircleOutlined style={{ color: "#ff4d4f" }} />
-                          <div>
-                            <div>
-                              <strong>End Date</strong>
-                            </div>
-                            <div>
-                              {challenge?.endDate
-                                ? moment(challenge.endDate).format(
-                                  "YYYY-MM-DD HH:mm"
-                                )
-                                : "Not set"}
-                            </div>
-                          </div>
-                        </Space>
-                      </Card>
-                    </Col>
-                    <Col xs={24} sm={12}>
-                      <Card size="small">
-                        <Space>
-                          <TrophyOutlined style={{ color: "#faad14" }} />
-                          <div>
-                            <div>
-                              <strong>Rewards</strong>
-                            </div>
-                            <div>
-                              {challenge?.checkpointRewards?.length || 0}{" "}
-                              rewards configured
-                            </div>
-                          </div>
-                        </Space>
-                      </Card>
-                    </Col>
-                  </Row>
-                </Card>
-
-                <Card title="Challenge Configuration">
-                  <div className={styles.settingsGrid}>
-                    <div className={styles.settingItem}>
-                      <span>Allow Late Submissions</span>
-                      <Tag
-                        color={
-                          challenge?.settings?.allowLateSubmissions
-                            ? "green"
-                            : "red"
-                        }
-                      >
-                        {challenge?.settings?.allowLateSubmissions
-                          ? "Enabled"
-                          : "Disabled"}
-                      </Tag>
-                    </div>
-                    <div className={styles.settingItem}>
-                      <span>Auto-approve Submissions</span>
-                      <Tag
-                        color={
-                          challenge?.settings?.autoApproveSubmissions
-                            ? "green"
-                            : "red"
-                        }
-                      >
-                        {challenge?.settings?.autoApproveSubmissions
-                          ? "Enabled"
-                          : "Disabled"}
-                      </Tag>
-                    </div>
-                    <div className={styles.settingItem}>
-                      <span>Public Leaderboard</span>
-                      <Tag
-                        color={
-                          challenge?.settings?.publicLeaderboard
-                            ? "green"
-                            : "default"
-                        }
-                      >
-                        {challenge?.settings?.publicLeaderboard
-                          ? "Public"
-                          : "Private"}
-                      </Tag>
-                    </div>
-                    <div className={styles.settingItem}>
-                      <span>Peer Reviews</span>
-                      <Tag
-                        color={
-                          challenge?.settings?.peerReviews ? "green" : "default"
-                        }
-                      >
-                        {challenge?.settings?.peerReviews
-                          ? "Enabled"
-                          : "Disabled"}
-                      </Tag>
-                    </div>
-                    <div className={styles.settingItem}>
-                      <span>Approval for Rewards</span>
-                      <Tag
-                        color={
-                          challenge?.settings?.requireApprovalForRewards
-                            ? "orange"
-                            : "green"
-                        }
-                      >
-                        {challenge?.settings?.requireApprovalForRewards
-                          ? "Required"
-                          : "Not Required"}
-                      </Tag>
-                    </div>
-                    <div className={styles.settingItem}>
-                      <span>Discussions</span>
-                      <Tag
-                        color={
-                          challenge?.settings?.discussionsEnabled
-                            ? "green"
-                            : "default"
-                        }
-                      >
-                        {challenge?.settings?.discussionsEnabled
-                          ? "Enabled"
-                          : "Disabled"}
-                      </Tag>
-                    </div>
-                  </div>
-                </Card>
-              </Col>
-
-              <Col xs={24} lg={8}>
-                <Card title="Challenge Status" style={{ marginBottom: 16 }}>
-                  <div className={styles.statusInfo}>
-                    <div className={styles.currentStatus}>
-                      <strong>Current Status:</strong>
-                      <Tag
-                        className={`${styles.statusTag} ${challenge?.status === "ongoing"
-                          ? styles.statusOngoing
-                          : challenge?.status === "upcoming"
-                            ? styles.statusUpcoming
-                            : challenge?.status === "completed"
-                              ? styles.statusCompleted
-                              : styles.statusUnpublished
-                          }`}
-                        style={{ marginLeft: 8 }}
-                      >
-                        {challenge?.status?.toUpperCase()}
-                      </Tag>
-                    </div>
-                    <div style={{ marginTop: 8 }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: 12,
-                          alignItems: "center",
-                        }}
-                      >
-                        <span>Progress:</span>
-                        <div style={{ flex: 1 }}>
-                          <Progress
-                            percent={timelineProgress ?? 0}
-                            size="small"
-                          />
                         </div>
-                        <span>{timelineProgress ?? 0}%</span>
+                      }
+                    >
+                      {/* Basic Information Section */}
+                      <div className={styles.sectionTitle}>Basic Information</div>
+                      <div className={styles.basicInfoGrid}>
+                        <div className={styles.infoItem}>
+                          <span className={styles.infoLabel}>Title:</span>
+                          <span className={styles.infoValue}>
+                            {challenge?.title || "—"}
+                          </span>
+                        </div>
+                        <div className={styles.infoItem}>
+                          <span className={styles.infoLabel}>Duration:</span>
+                          <span className={styles.infoValue}>
+                            {challenge?.actualDuration || challenge?.duration || 30} days
+                          </span>
+                        </div>
+                        <div className={styles.infoItem}>
+                          <span className={styles.infoLabel}>Category:</span>
+                          <span className={styles.categoryTag}>
+                            {challenge?.category || challenge?.categoryName || "General"}
+                          </span>
+                        </div>
+                        <div className={styles.infoItem}>
+                          <span className={styles.infoLabel}>Community:</span>
+                          <span className={styles.infoValue}>
+                            {challenge?.community?.name || "Unknown"}
+                          </span>
+                        </div>
+                        <div className={styles.infoItem}>
+                          <span className={styles.infoLabel}>Difficulty:</span>
+                          <span className={styles.difficultyTag}>
+                            {challenge?.difficulty || "Intermediate"}
+                          </span>
+                        </div>
+                        <div className={styles.infoItem}>
+                          <span className={styles.infoLabel}>Created:</span>
+                          <span className={styles.infoValue}>
+                            {challenge?.createdAt
+                              ? moment(challenge.createdAt).format("YYYY-MM-DD HH:mm")
+                              : "Unknown"}
+                          </span>
+                        </div>
+                        <div className={styles.infoItem}>
+                          <span className={styles.infoLabel}>Est. Time:</span>
+                          <span className={styles.infoValue}>
+                            {challenge?.estimatedTime || "2-3 hours daily"}
+                          </span>
+                        </div>
                       </div>
-                      <div style={{ marginTop: 8, color: "#666" }}>
-                        <ClockCircleOutlined />{" "}
-                        <span style={{ marginLeft: 6 }}>
-                          Time Left: {timeLeft ?? "—"}
+
+                      {/* Timeline & Configuration Section */}
+                      <div className={styles.timelineSection}>
+                        <div className={styles.sectionTitle}>Timeline & Configuration</div>
+                        <div className={styles.timelineGrid}>
+                          <div className={styles.timelineItem}>
+                            <div className={styles.timelineIconGreen}>
+                              <CheckCircleOutlined />
+                            </div>
+                            <div className={styles.timelineContent}>
+                              <span className={styles.timelineLabel}>Start Date</span>
+                              <span className={styles.timelineValue}>
+                                {challenge?.startDate
+                                  ? moment(challenge.startDate).format("YYYY-MM-DD HH:mm")
+                                  : "Not set"}
+                              </span>
+                            </div>
+                          </div>
+                          <div className={styles.timelineItem}>
+                            <div className={styles.timelineIconBlue}>
+                              <FileOutlined />
+                            </div>
+                            <div className={styles.timelineContent}>
+                              <span className={styles.timelineLabel}>Daily Tasks</span>
+                              <span className={styles.timelineValue}>
+                                {challenge?.dailyTasks?.length || 0} tasks configured
+                              </span>
+                            </div>
+                          </div>
+                          <div className={styles.timelineItem}>
+                            <div className={styles.timelineIconRed}>
+                              <CloseCircleOutlined />
+                            </div>
+                            <div className={styles.timelineContent}>
+                              <span className={styles.timelineLabel}>End Date</span>
+                              <span className={styles.timelineValue}>
+                                {challenge?.endDate
+                                  ? moment(challenge.endDate).format("YYYY-MM-DD HH:mm")
+                                  : "Not set"}
+                              </span>
+                            </div>
+                          </div>
+                          <div className={styles.timelineItem}>
+                            <div className={styles.timelineIconGold}>
+                              <TrophyOutlined />
+                            </div>
+                            <div className={styles.timelineContent}>
+                              <span className={styles.timelineLabel}>Rewards</span>
+                              <span className={styles.timelineValue}>
+                                {challenge?.checkpointRewards?.length || 0} rewards configured
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  </Col>
+
+                  {/* Right Column - Challenge Status & Recent Activity */}
+                  <Col xs={24} lg={8}>
+                    <Card className={styles.statusCard} title="Challenge Status">
+                      <div className={styles.statusHeader}>
+                        <span className={styles.statusLabel}>Current Status:</span>
+                        <span
+                          className={`${styles.statusBadge} ${challenge?.status === "ongoing"
+                              ? styles.statusBadgeOngoing
+                              : challenge?.status === "upcoming"
+                                ? styles.statusBadgeUpcoming
+                                : challenge?.status === "completed"
+                                  ? styles.statusBadgeCompleted
+                                  : styles.statusBadgeUnpublished
+                            }`}
+                        >
+                          {challenge?.status?.toUpperCase() || "UNPUBLISHED"}
+                        </span>
+                      </div>
+
+                      <div className={styles.statusInfoBox}>
+                        <div className={styles.statusInfoTitle}>Status Information</div>
+                        <div className={styles.statusInfoText}>
+                          {challenge?.status === "unpublished" &&
+                            "Challenge is not yet published and visible to participants. Use the 'Change Status' button to make it active."}
+                          {challenge?.status === "upcoming" &&
+                            "Challenge is published but has not started yet."}
+                          {challenge?.status === "ongoing" &&
+                            "Challenge is currently active and accepting submissions."}
+                          {challenge?.status === "completed" &&
+                            "Challenge has ended and no more submissions are accepted."}
+                          {!challenge?.status &&
+                            "Challenge is not yet published and visible to participants. Use the 'Change Status' button to make it active."}
+                        </div>
+                      </div>
+
+                      <div className={styles.progressSection}>
+                        <span className={styles.progressLabel}>Progress</span>
+                        <Progress
+                          percent={timelineProgress ?? 0}
+                          showInfo={false}
+                          strokeColor="#24b2b4"
+                          railColor="#e8e8e8"
+                        />
+                        <span className={styles.progressValue}>Time Left: {timeLeft ?? "—"}</span>
+                      </div>
+                    </Card>
+
+                    <Card className={styles.activityCard} title="Recent Activity">
+                      <div className={styles.activityList}>
+                        {(() => {
+                          const items = [];
+                          const latestSubs = [...(submissions || [])]
+                            .sort(
+                              (a, b) =>
+                                new Date(b.submittedAt) - new Date(a.submittedAt)
+                            )
+                            .slice(0, 3)
+                            .map((s) => ({
+                              key: `sub-${s._id}`,
+                              type: "submit",
+                              text: `${s.user?.name || s.user?.username || "User"} submitted Day ${s.day} ${s.submissionType || "submission"}`,
+                              time: moment(s.submittedAt).fromNow(),
+                            }));
+
+                          const latestParticipants = [...(participants || [])]
+                            .sort(
+                              (a, b) => new Date(b.joinedAt) - new Date(a.joinedAt)
+                            )
+                            .slice(0, 2)
+                            .map((p) => ({
+                              key: `join-${p.user?._id}`,
+                              type: "join",
+                              text: `${p.user?.name || p.user?.username || "User"} joined the challenge`,
+                              time: moment(p.joinedAt).fromNow(),
+                            }));
+
+                          items.push(...latestSubs, ...latestParticipants);
+                          if (stats.totalParticipants && items.length < 5) {
+                            items.push({
+                              key: "milestone",
+                              type: "milestone",
+                              text: `${stats.totalParticipants} participants milestone reached`,
+                              time: moment(
+                                challenge?.updatedAt ||
+                                challenge?.createdAt ||
+                                new Date()
+                              ).fromNow(),
+                            });
+                          }
+
+                          return items.slice(0, 5).map((it) => (
+                            <div key={it.key} className={styles.activityItem}>
+                              <div
+                                className={`${styles.activityIcon} ${it.type === "submit"
+                                    ? styles.activityIconSubmit
+                                    : it.type === "approve"
+                                      ? styles.activityIconApprove
+                                      : it.type === "join"
+                                        ? styles.activityIconJoin
+                                        : styles.activityIconMilestone
+                                  }`}
+                              >
+                                {it.type === "submit" && <FileOutlined style={{ fontSize: 14 }} />}
+                                {it.type === "approve" && <CheckCircleOutlined style={{ fontSize: 14 }} />}
+                                {it.type === "join" && <Users size={14} />}
+                                {it.type === "milestone" && <TrophyOutlined style={{ fontSize: 14 }} />}
+                              </div>
+                              <div className={styles.activityContent}>
+                                <div className={styles.activityText}>{it.text}</div>
+                                <div className={styles.activityTime}>{it.time}</div>
+                              </div>
+                            </div>
+                          ));
+                        })()}
+                      </div>
+                    </Card>
+                  </Col>
+                </Row>
+
+                {/* Challenge Configuration Card - Full Width at Bottom */}
+                <Card
+                  className={styles.configCard}
+                  title={
+                    <div>
+                      <span>Challenge Configuration</span>
+                      <div className={styles.configSubtitle}>
+                        Current settings and permissions for your challenge
+                      </div>
+                    </div>
+                  }
+                >
+                  <div className={styles.configGrid}>
+                    <div className={styles.configColumn}>
+                      <div className={styles.configColumnTitle}>Submission Settings</div>
+                      <div className={styles.configItem}>
+                        <span className={styles.configItemLabel}>Allow Late Submissions</span>
+                        <span
+                          className={
+                            challenge?.settings?.allowLateSubmissions
+                              ? styles.configEnabled
+                              : styles.configDisabled
+                          }
+                        >
+                          {challenge?.settings?.allowLateSubmissions ? "Enabled" : "Disabled"}
+                        </span>
+                      </div>
+                      <div className={styles.configItem}>
+                        <span className={styles.configItemLabel}>Auto-approve Submissions</span>
+                        <span
+                          className={
+                            challenge?.settings?.autoApproveSubmissions
+                              ? styles.configEnabled
+                              : styles.configDisabled
+                          }
+                        >
+                          {challenge?.settings?.autoApproveSubmissions ? "Enabled" : "Disabled"}
                         </span>
                       </div>
                     </div>
-                    <div className={styles.statusDescription}>
-                      {challenge?.status === "unpublished" &&
-                        "Challenge is not yet published and visible to participants. Use the 'Change Status' button to make it active."}
-                      {challenge?.status === "upcoming" &&
-                        "Challenge is published but has not started yet."}
-                      {challenge?.status === "ongoing" &&
-                        "Challenge is currently active and accepting submissions."}
-                      {challenge?.status === "completed" &&
-                        "Challenge has ended and no more submissions are accepted."}
+                    <div className={styles.configColumn}>
+                      <div className={styles.configColumnTitle}>Community Features</div>
+                      <div className={styles.configItem}>
+                        <span className={styles.configItemLabel}>Public Leaderboard</span>
+                        <span
+                          className={
+                            challenge?.settings?.publicLeaderboard
+                              ? styles.configPublic
+                              : styles.configDisabled
+                          }
+                        >
+                          {challenge?.settings?.publicLeaderboard ? "Public" : "Private"}
+                        </span>
+                      </div>
+                      <div className={styles.configItem}>
+                        <span className={styles.configItemLabel}>Peer Reviews</span>
+                        <span
+                          className={
+                            challenge?.settings?.peerReviews
+                              ? styles.configEnabled
+                              : styles.configDisabled
+                          }
+                        >
+                          {challenge?.settings?.peerReviews ? "Enabled" : "Disabled"}
+                        </span>
+                      </div>
+                    </div>
+                    <div className={styles.configColumn}>
+                      <div className={styles.configColumnTitle}>Rewards & Permissions</div>
+                      <div className={styles.configItem}>
+                        <span className={styles.configItemLabel}>Approval for Rewards</span>
+                        <span
+                          className={
+                            challenge?.settings?.requireApprovalForRewards
+                              ? styles.configEnabled
+                              : styles.configDisabled
+                          }
+                        >
+                          {challenge?.settings?.requireApprovalForRewards ? "Required" : "Not Required"}
+                        </span>
+                      </div>
+                      <div className={styles.configItem}>
+                        <span className={styles.configItemLabel}>Discussions</span>
+                        <span
+                          className={
+                            challenge?.settings?.discussionsEnabled
+                              ? styles.configEnabled
+                              : styles.configDisabled
+                          }
+                        >
+                          {challenge?.settings?.discussionsEnabled ? "Enabled" : "Disabled"}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </Card>
-
-                <Card title="Recent Activity">
-                  <div>
-                    {(() => {
-                      const items = [];
-                      const latestSubs = [...(submissions || [])]
-                        .sort(
-                          (a, b) =>
-                            new Date(b.submittedAt) - new Date(a.submittedAt)
-                        )
-                        .slice(0, 4)
-                        .map((s) => ({
-                          key: `sub-${s._id}`,
-                          text: `${s.user?.name || s.user?.username || "User"
-                            } submitted Day ${s.day} ${s.submissionType || "submission"
-                            }`,
-                          time: moment(s.submittedAt).fromNow(),
-                        }));
-
-                      const latestParticipants = [...(participants || [])]
-                        .sort(
-                          (a, b) => new Date(b.joinedAt) - new Date(a.joinedAt)
-                        )
-                        .slice(0, 2)
-                        .map((p) => ({
-                          key: `join-${p.user?._id}`,
-                          text: `${p.user?.name || p.user?.username || "User"
-                            } joined the challenge`,
-                          time: moment(p.joinedAt).fromNow(),
-                        }));
-
-                      items.push(...latestSubs, ...latestParticipants);
-                      if (stats.totalParticipants && items.length < 6) {
-                        items.push({
-                          key: "milestone",
-                          text: `system ${stats.totalParticipants} participants milestone reached`,
-                          time: moment(
-                            challenge?.updatedAt ||
-                            challenge?.createdAt ||
-                            new Date()
-                          ).fromNow(),
-                        });
-                      }
-
-                      return items.slice(0, 6).map((it) => (
-                        <div
-                          key={it.key}
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0",
-                            borderBottom: "1px solid #f0f0f0",
-                          }}
-                        >
-                          <span>{it.text}</span>
-                          <span style={{ color: "#8c8c8c" }}>{it.time}</span>
-                        </div>
-                      ));
-                    })()}
-                  </div>
-                </Card>
-              </Col>
-            </Row>
-          </div>
-        </TabPane>
-
-        <TabPane tab="Submissions" key="submissions">
-          <div className={styles.tabContent}>
-            <div className={styles.filterRow}>
-              <Button icon={<FileOutlined />} onClick={handleExportData}>
-                Export Data
-              </Button>
-            </div>
-            <Table
-              columns={submissionsColumns}
-              dataSource={submissions}
-              rowKey="_id"
-              loading={submissionsLoading}
-              pagination={{
-                pageSize: 10,
-                showSizeChanger: true,
-                showQuickJumper: true,
-                showTotal: (total, range) =>
-                  `${range[0]}-${range[1]} of ${total} submissions`,
-              }}
-              scroll={{ x: "max-content" }}
-              responsive={true}
-              size={window.innerWidth <= 768 ? "small" : "default"}
-              rowSelection={{
-                type: "checkbox",
-                onChange: (selectedRowKeys) => {
-                  setSelectedSubmissions(selectedRowKeys);
-                },
-                getCheckboxProps: (record) => ({
-                  disabled: record.status !== "pending",
-                }),
-              }}
-              title={() => (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <span>
-                    Submissions Management ({submissions.length} total)
-                  </span>
-                  <Space>
-                    <Button
-                      type="primary"
-                      size="small"
-                      onClick={handleBulkApprove}
-                    >
-                      Bulk Approve
-                    </Button>
-                    <Button danger size="small" onClick={handleBulkReject}>
-                      Bulk Reject
-                    </Button>
-                  </Space>
-                </div>
-              )}
-            />
-          </div>
-        </TabPane>
-
-        <TabPane tab="Participants" key="participants">
-          <div className={styles.tabContent}>
-            <Table
-              columns={participantsColumns}
-              dataSource={participants}
-              rowKey={(record) => record.user._id}
-              loading={participantsLoading}
-              pagination={{
-                pageSize: 10,
-                showSizeChanger: true,
-                showQuickJumper: true,
-                showTotal: (total, range) =>
-                  `${range[0]}-${range[1]} of ${total} participants`,
-              }}
-              scroll={{ x: "max-content" }}
-              responsive={true}
-              size={window.innerWidth <= 768 ? "small" : "default"}
-              title={() => (
-                <span>
-                  Challenge Participants ({participants.length} total)
-                </span>
-              )}
-            />
-          </div>
-        </TabPane>
-
-        <TabPane tab="Analytics" key="analytics">
-          <div className={styles.tabContent}>
-            <div className={styles.analyticsSection}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: 16,
-                }}
-              >
-                <h2>Challenge Analytics</h2>
-                <Button
-                  type="primary"
-                  icon={<BarChartOutlined />}
-                  onClick={fetchAnalytics}
-                  loading={analyticsLoading}
-                >
-                  Refresh Analytics
-                </Button>
               </div>
-
-              {analyticsLoading ? (
-                <div className={styles.loadingContainer}>
-                  <Spin size="large" />
-                  <p>Loading analytics data...</p>
-                </div>
-              ) : analyticsData ? (
-                <>
-                  <Row gutter={[16, 16]} className={styles.statsRow}>
-                    <Col xs={24} sm={12} md={6}>
-                      <Card>
-                        <Statistic
-                          title="Submission Success Rate"
-                          value={
-                            analyticsData.summary?.approvedCount &&
-                              analyticsData.summary?.submissionCount
-                              ? Math.round(
-                                (analyticsData.summary.approvedCount /
-                                  analyticsData.summary.submissionCount) *
-                                100
-                              )
-                              : 0
-                          }
-                          suffix="%"
-                          prefix={
-                            <CheckCircleOutlined style={{ color: "#52c41a" }} />
-                          }
-                        />
-                      </Card>
-                    </Col>
-                    <Col xs={24} sm={12} md={6}>
-                      <Card>
-                        <Statistic
-                          title="Average Progress"
-                          value={
-                            participants.length > 0
-                              ? Math.round(
-                                participants.reduce(
-                                  (sum, p) => sum + p.progress,
-                                  0
-                                ) / participants.length
-                              )
-                              : 0
-                          }
-                          suffix="%"
-                        />
-                      </Card>
-                    </Col>
-                    <Col xs={24} sm={12} md={6}>
-                      <Card>
-                        <Statistic
-                          title="Total Rewards Issued"
-                          value={
-                            participants.filter((p) => p.reward?.earned)
-                              .length || 0
-                          }
-                          prefix={
-                            <TrophyOutlined style={{ color: "#faad14" }} />
-                          }
-                        />
-                      </Card>
-                    </Col>
-                    <Col xs={24} sm={12} md={6}>
-                      <Card>
-                        <Statistic
-                          title="Rejection Rate"
-                          value={
-                            analyticsData.summary?.rejectedCount &&
-                              analyticsData.summary?.submissionCount
-                              ? Math.round(
-                                (analyticsData.summary.rejectedCount /
-                                  analyticsData.summary.submissionCount) *
-                                100
-                              )
-                              : 0
-                          }
-                          suffix="%"
-                          prefix={
-                            <CloseCircleOutlined style={{ color: "#f5222d" }} />
-                          }
-                        />
-                      </Card>
-                    </Col>
-                  </Row>
-
-                  <Divider />
-
-                  <h3>Checkpoint Completion Rates</h3>
-                  <CheckpointCompletionChart
-                    data={analyticsData.checkpointCompletion}
-                  />
-
-                  <Divider />
-
-                  <h3>Participation Over Time</h3>
-                  <DailyActivityChart
-                    submissions={analyticsData.dailyData?.submissions}
-                    participants={analyticsData.dailyData?.participants}
-                  />
-                </>
-              ) : (
-                <div className={styles.chartPlaceholder}>
-                  <BarChartOutlined />
-                  <p>Click &quot;Refresh Analytics&quot; to load data</p>
-                  <Button
-                    type="primary"
-                    icon={<BarChartOutlined />}
-                    onClick={fetchAnalytics}
-                    style={{ marginTop: "16px" }}
-                  >
-                    Refresh Analytics
+            ),
+          },
+          {
+            key: "submissions",
+            label: "Submissions",
+            children: (
+              <div className={styles.tabContent}>
+                <div className={styles.filterRow}>
+                  <Button icon={<FileOutlined />} onClick={handleExportData}>
+                    Export Data
                   </Button>
                 </div>
-              )}
-            </div>
-          </div>
-        </TabPane>
-      </Tabs>
+                <Table
+                  columns={submissionsColumns}
+                  dataSource={submissions}
+                  rowKey="_id"
+                  loading={submissionsLoading}
+                  pagination={{
+                    pageSize: 10,
+                    showSizeChanger: true,
+                    showQuickJumper: true,
+                    showTotal: (total, range) =>
+                      `${range[0]}-${range[1]} of ${total} submissions`,
+                  }}
+                  scroll={{ x: "max-content" }}
+                  responsive={true}
+                  size={window.innerWidth <= 768 ? "small" : "default"}
+                  rowSelection={{
+                    type: "checkbox",
+                    onChange: (selectedRowKeys) => {
+                      setSelectedSubmissions(selectedRowKeys);
+                    },
+                    getCheckboxProps: (record) => ({
+                      disabled: record.status !== "pending",
+                    }),
+                  }}
+                  title={() => (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span>
+                        Submissions Management ({submissions.length} total)
+                      </span>
+                      <Space>
+                        <Button
+                          type="primary"
+                          size="small"
+                          onClick={handleBulkApprove}
+                        >
+                          Bulk Approve
+                        </Button>
+                        <Button danger size="small" onClick={handleBulkReject}>
+                          Bulk Reject
+                        </Button>
+                      </Space>
+                    </div>
+                  )}
+                />
+              </div>
+            ),
+          },
+          {
+            key: "participants",
+            label: "Participants",
+            children: (
+              <div className={styles.tabContent}>
+                <Table
+                  columns={participantsColumns}
+                  dataSource={participants}
+                  rowKey={(record) => record.user._id}
+                  loading={participantsLoading}
+                  pagination={{
+                    pageSize: 10,
+                    showSizeChanger: true,
+                    showQuickJumper: true,
+                    showTotal: (total, range) =>
+                      `${range[0]}-${range[1]} of ${total} participants`,
+                  }}
+                  scroll={{ x: "max-content" }}
+                  responsive={true}
+                  size={window.innerWidth <= 768 ? "small" : "default"}
+                  title={() => (
+                    <span>
+                      Challenge Participants ({participants.length} total)
+                    </span>
+                  )}
+                />
+              </div>
+            ),
+          },
+          {
+            key: "analytics",
+            label: "Analytics",
+            children: (
+              <div className={styles.tabContent}>
+                <div className={styles.analyticsSection}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: 16,
+                    }}
+                  >
+                    <h2>Challenge Analytics</h2>
+                    <Button
+                      type="primary"
+                      icon={<BarChartOutlined />}
+                      onClick={fetchAnalytics}
+                      loading={analyticsLoading}
+                    >
+                      Refresh Analytics
+                    </Button>
+                  </div>
+
+                  {analyticsLoading ? (
+                    <div className={styles.loadingContainer}>
+                      <Spin size="large" />
+                      <p>Loading analytics data...</p>
+                    </div>
+                  ) : analyticsData ? (
+                    <>
+                      <Row gutter={[16, 16]} className={styles.statsRow}>
+                        <Col xs={24} sm={12} md={6}>
+                          <Card>
+                            <Statistic
+                              title="Submission Success Rate"
+                              value={
+                                analyticsData.summary?.approvedCount &&
+                                  analyticsData.summary?.submissionCount
+                                  ? Math.round(
+                                    (analyticsData.summary.approvedCount /
+                                      analyticsData.summary.submissionCount) *
+                                    100
+                                  )
+                                  : 0
+                              }
+                              suffix="%"
+                              prefix={
+                                <CheckCircleOutlined style={{ color: "#52c41a" }} />
+                              }
+                            />
+                          </Card>
+                        </Col>
+                        <Col xs={24} sm={12} md={6}>
+                          <Card>
+                            <Statistic
+                              title="Average Progress"
+                              value={
+                                participants.length > 0
+                                  ? Math.round(
+                                    participants.reduce(
+                                      (sum, p) => sum + p.progress,
+                                      0
+                                    ) / participants.length
+                                  )
+                                  : 0
+                              }
+                              suffix="%"
+                            />
+                          </Card>
+                        </Col>
+                        <Col xs={24} sm={12} md={6}>
+                          <Card>
+                            <Statistic
+                              title="Total Rewards Issued"
+                              value={
+                                participants.filter((p) => p.reward?.earned)
+                                  .length || 0
+                              }
+                              prefix={
+                                <TrophyOutlined style={{ color: "#faad14" }} />
+                              }
+                            />
+                          </Card>
+                        </Col>
+                        <Col xs={24} sm={12} md={6}>
+                          <Card>
+                            <Statistic
+                              title="Rejection Rate"
+                              value={
+                                analyticsData.summary?.rejectedCount &&
+                                  analyticsData.summary?.submissionCount
+                                  ? Math.round(
+                                    (analyticsData.summary.rejectedCount /
+                                      analyticsData.summary.submissionCount) *
+                                    100
+                                  )
+                                  : 0
+                              }
+                              suffix="%"
+                              prefix={
+                                <CloseCircleOutlined style={{ color: "#f5222d" }} />
+                              }
+                            />
+                          </Card>
+                        </Col>
+                      </Row>
+
+                      <Divider />
+
+                      <h3>Checkpoint Completion Rates</h3>
+                      <CheckpointCompletionChart
+                        data={analyticsData.checkpointCompletion}
+                      />
+
+                      <Divider />
+
+                      <h3>Participation Over Time</h3>
+                      <DailyActivityChart
+                        submissions={analyticsData.dailyData?.submissions}
+                        participants={analyticsData.dailyData?.participants}
+                      />
+                    </>
+                  ) : (
+                    <div className={styles.chartPlaceholder}>
+                      <BarChartOutlined />
+                      <p>Click &quot;Refresh Analytics&quot; to load data</p>
+                      <Button
+                        type="primary"
+                        icon={<BarChartOutlined />}
+                        onClick={fetchAnalytics}
+                        style={{ marginTop: "16px" }}
+                      >
+                        Refresh Analytics
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ),
+          },
+        ]}
+      />
 
       {/* Submission Review Modal */}
       <Modal
         title="Review Submission"
-        visible={reviewModalVisible}
+        open={reviewModalVisible}
         onCancel={() => setReviewModalVisible(false)}
         footer={null}
         width={700}

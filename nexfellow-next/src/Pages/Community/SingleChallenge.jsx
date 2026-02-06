@@ -18,11 +18,11 @@ import BackButton from "../../components/BackButton/BackButton";
 
 // UI components
 import {
+  App,
   Button,
   Progress,
   Empty,
   Timeline,
-  message,
   Upload,
   Card,
   Tag,
@@ -31,6 +31,7 @@ import {
   Skeleton,
   Table,
   Alert,
+  Space,
 } from "antd";
 import {
   CheckCircleOutlined,
@@ -1316,7 +1317,7 @@ const ActivityFeed = ({ challenge, isCreator, currentUserId }) => {
       {/* Enhanced Activity Filters - Only for creators */}
       {isCreator && (
         <div className={styles.activityFilters}>
-          <Button.Group className="gap-4">
+          <Space.Compact className="gap-4">
             <Button
               style={{
                 borderRadius: "50px",
@@ -1377,7 +1378,7 @@ const ActivityFeed = ({ challenge, isCreator, currentUserId }) => {
             >
               🎉 Completions ({activityStats.completions})
             </Button>
-          </Button.Group>
+          </Space.Compact>
         </div>
       )}
 
@@ -1524,9 +1525,9 @@ const ActivityFeed = ({ challenge, isCreator, currentUserId }) => {
             marginBottom: "80px",
           }}
         >
-          {filteredActivities.map((activity) => {
+          {filteredActivities.map((activity, index) => {
             return (
-              <div key={activity.id} className="flex gap-4 items-center w-full">
+              <div key={activity._id || activity.id || `activity-${index}`} className="flex gap-4 items-center w-full">
                 <div
                   style={{
                     backgroundColor: getActivityColor(activity.activityType),
@@ -1792,7 +1793,7 @@ const Summary = ({ challenge, onPublish, userProgress }) => {
                   <Progress
                     type="circle"
                     percent={userProgress.progress}
-                    width={140}
+                    size={[140, 10]}
                     status={
                       userProgress.progress === 100 ? "success" : "active"
                     }
@@ -1800,7 +1801,6 @@ const Summary = ({ challenge, onPublish, userProgress }) => {
                       "0%": "#24b2b4",
                       "100%": "#1e9597",
                     }}
-                    strokeWidth={10}
                     format={(percent) => (
                       <div className={styles.progressCircleContent}>
                         <span className={styles.progressPercent}>
@@ -1941,7 +1941,7 @@ const Summary = ({ challenge, onPublish, userProgress }) => {
                       from: "#24b2b4",
                       to: "#1e9597",
                     }}
-                    strokeWidth={12}
+                    size={[-1, 12]}
                     showInfo={false}
                     className={styles.enhancedProgressBar}
                   />
@@ -2071,6 +2071,7 @@ const Summary = ({ challenge, onPublish, userProgress }) => {
 
 const SingleChallenge = () => {
   const router = useRouter();
+  const { message } = App.useApp();
   const [challenge, setChallenge] = useState(null);
   const [userProgress, setUserProgress] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -2161,7 +2162,7 @@ const SingleChallenge = () => {
     } finally {
       setLoading(false);
     }
-  }, [id, fetchUserProgress, navigate]);
+  }, [id, fetchUserProgress, router]);
 
   useEffect(() => {
     if (id) {

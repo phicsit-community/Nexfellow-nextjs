@@ -5,10 +5,11 @@ import styles from "./Suggestions.module.css";
 import Footerlink from "../FooterLink/Footerlink";
 
 import fallbackTop from "./assets/Advertisement-1.png";
-import fallbackBottom from "./assets/Advertisement-2.png";
 
 import SuggestionCard from "./SuggestionCard";
 import { Button } from "../ui/button";
+import SearchCommand from "../SearchBar/search-command";
+import ProfileDropdown from "../ProfileDropdown/ProfileDropdown";
 
 // Skeleton loading component
 const SkeletonCard = () => (
@@ -26,37 +27,41 @@ const SkeletonCard = () => (
   </div>
 );
 
+// Community Card component
+const CommunityCard = ({ community }) => (
+  <div className={styles.communityCard}>
+    <div className={styles.communityInfo}>
+      <span className={styles.communityName}>{community.name}</span>
+      <span className={styles.communityFollowers}>
+        {community.followersCount?.toLocaleString() || 0} Followers
+      </span>
+    </div>
+    <Button className={styles.followBtn} size="sm">
+      Follow
+    </Button>
+  </div>
+);
+
 const Suggestions = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  const [expanded, setExpanded] = useState(false);
+  const user = useSelector((state) => state.auth.user);
+  const [expandedMembers, setExpandedMembers] = useState(false);
+  const [expandedCommunities, setExpandedCommunities] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
+  const [communities, setCommunities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingCommunities, setLoadingCommunities] = useState(true);
   const [error, setError] = useState(null);
 
   const [topAds, setTopAds] = useState([]);
-  const [bottomAds, setBottomAds] = useState([]);
   const [topIndex, setTopIndex] = useState(0);
-  const [bottomIndex, setBottomIndex] = useState(0);
 
   // Fetch advertisements
   useEffect(() => {
     const fetchAds = async () => {
       try {
-        console.log("Fetching advertisements...");
-
-        const [topRes, bottomRes] = await Promise.all([
-          api.get("/advertisements/?position=top"),
-          api.get("/advertisements/?position=bottom"),
-        ]);
-
-        console.log("Top Ads Response:", topRes);
-        console.log("Bottom Ads Response:", bottomRes);
-
-        console.log("Top Ads Data:", topRes.data);
-        console.log("Bottom Ads Data:", bottomRes.data);
-
+        const topRes = await api.get("/advertisements/?position=top");
         setTopAds(topRes.data || []);
-        setBottomAds(bottomRes.data || []);
       } catch (err) {
         console.error("Failed to load advertisements", err);
       }
@@ -65,23 +70,34 @@ const Suggestions = () => {
     fetchAds();
   }, []);
 
-  // Carousel logic
+  // Carousel logic for single ad
   useEffect(() => {
     const topTimer = setInterval(() => {
       setTopIndex((prev) => (prev + 1) % Math.max(topAds.length || 1, 1));
     }, 5000);
 
-    const bottomTimer = setInterval(() => {
-      setBottomIndex((prev) => (prev + 1) % Math.max(bottomAds.length || 1, 1));
-    }, 5000);
-
     return () => {
       clearInterval(topTimer);
-      clearInterval(bottomTimer);
     };
-  }, [topAds.length, bottomAds.length]);
+  }, [topAds.length]);
 
-  // Fetch suggestions
+  // Fetch popular communities
+  useEffect(() => {
+    const fetchCommunities = async () => {
+      try {
+        const response = await api.get("/explore/all-communities");
+        setCommunities(response.data?.communities || response.data || []);
+        setLoadingCommunities(false);
+      } catch (error) {
+        console.error("Failed to load popular communities:", error);
+        setLoadingCommunities(false);
+      }
+    };
+
+    fetchCommunities();
+  }, []);
+
+  // Fetch suggestions (top members)
   useEffect(() => {
     if (!isLoggedIn) {
       setLoading(false);
@@ -111,11 +127,18 @@ const Suggestions = () => {
     fetchSuggestions();
   }, [isLoggedIn]);
 
-  const toggleShowMore = () => setExpanded(!expanded);
+  const toggleShowMoreMembers = () => setExpandedMembers(!expandedMembers);
+  const toggleShowMoreCommunities = () => setExpandedCommunities(!expandedCommunities);
 
   return (
     <div className={styles.suggestions}>
-      {/* Top and Bottom Banners */}
+      {/* Search Bar and Profile Dropdown at Top */}
+      <div className={styles.searchContainer}>
+        <SearchCommand />
+        <ProfileDropdown />
+      </div>
+
+      {/* Single Advertisement Banner */}
       <div className={styles.imgContainer}>
         <img
           className={styles.image}
@@ -124,23 +147,44 @@ const Suggestions = () => {
               ? topAds[topIndex]?.imageUrl
               : (fallbackTop.src || fallbackTop)
           }
-          alt="Top Advertisement"
-        />
-
-        <img
-          className={styles.image}
-          src={
-            bottomAds.length > 0
-              ? bottomAds[bottomIndex]?.imageUrl
-              : (fallbackBottom.src || fallbackBottom)
-          }
-          alt="Bottom Advertisement"
+          alt="Advertisement"
         />
       </div>
 
-      {/* Suggestions List */}
+      {/* Popular Communities Section */}
       <div className={styles.suggestion}>
-        <h3 className={styles.suggestionTitle}>Suggestions For You</h3>
+        <h3 className={styles.suggestionTitle}>Popular Communities</h3>
+
+        {loadingCommunities ? (
+          <>
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </>
+        ) : communities.length === 0 ? (
+          <p className={styles.noData}>No communities found</p>
+        ) : (
+          communities
+            .slice(0, expandedCommunities ? communities.length : 3)
+            .map((community) => (
+              <CommunityCard key={community._id} community={community} />
+            ))
+        )}
+
+        {!loadingCommunities && communities.length > 3 && (
+          <Button
+            className={styles.footer}
+            onClick={toggleShowMoreCommunities}
+            variant="outline"
+          >
+            {expandedCommunities ? "Show Less" : "Show More"}
+          </Button>
+        )}
+      </div>
+
+      {/* Top Members Section */}
+      <div className={styles.suggestion}>
+        <h3 className={styles.suggestionTitle}>Top Members</h3>
 
         {loading ? (
           <>
@@ -152,17 +196,17 @@ const Suggestions = () => {
           <p className={styles.error}>{error}</p>
         ) : (
           suggestions
-            .slice(0, expanded ? suggestions.length : 3)
+            .slice(0, expandedMembers ? suggestions.length : 3)
             .map((user) => <SuggestionCard key={user._id} user={user} />)
         )}
 
-        {!loading && !error && (
+        {!loading && !error && suggestions.length > 3 && (
           <Button
             className={styles.footer}
-            onClick={toggleShowMore}
+            onClick={toggleShowMoreMembers}
             variant="outline"
           >
-            {expanded ? "Show Less" : "Show More"}
+            {expandedMembers ? "Show Less" : "Show More"}
           </Button>
         )}
       </div>

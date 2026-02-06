@@ -6,15 +6,21 @@ import { useSelector } from "react-redux";
 import Link from "next/link";
 import api from "../../lib/axios";
 import { useMediaQuery } from "react-responsive";
+import { useTheme } from "../../hooks/useTheme";
 
 // styles
 import style from "./Sidebar.module.css";
+
+// Logo assets
+import navbarlogo from "../../assets/NexFellowLogo.svg";
+import navbarlogoDark from "../../assets/NexFellowLogoDark.svg";
 
 import AnimatedHome from "./animated/feed.json";
 import AnimatedExplore from "./animated/explore.json";
 import AnimatedLeaderboard from "./animated/leaderboard.json";
 import AnimatedCommunity from "./animated/community.gif";
 import AnimatedMessenger from "./animated/inbox.json";
+import AnimatedNotification from "../Header/animated/notification.json";
 import PlayOnce from "../animatedIcon/PlayOnce";
 import AnimatedAccount from "./animated/account.json";
 import staticCommuntiy from "./animated/staticCommuntiy.png";
@@ -30,6 +36,14 @@ function Sidebar() {
   const [error, setError] = useState(null);
   const isMobile = useMediaQuery({ maxWidth: 640 });
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const { effectiveTheme } = useTheme();
+
+  const handleLogoClick = (e) => {
+    if (pathname === "/feed") {
+      e.preventDefault();
+      window.location.reload();
+    }
+  };
 
   useEffect(() => {
     setActiveTab(pathname);
@@ -67,10 +81,11 @@ function Sidebar() {
     {
       path: "/communities",
       icon: AnimatedCommunity?.src || AnimatedCommunity,
-      label: "Communities",
+      label: "Community",
       staticIcon: staticCommuntiy?.src || staticCommuntiy,
     },
     { path: "/inbox", icon: AnimatedMessenger, label: "Inbox" },
+    { path: "/notifications", icon: AnimatedNotification, label: "Notification" },
   ];
 
   const displayMenuItems = menuItems;
@@ -107,6 +122,18 @@ function Sidebar() {
 
   return (
     <div className={style.sidebar}>
+      {/* Logo at top of sidebar */}
+      <div className={style.logoContainer}>
+        <Link href="/feed" onClick={handleLogoClick}>
+          <img
+            className={style.logo}
+            src={(effectiveTheme === "dark" ? navbarlogoDark.src || navbarlogoDark : navbarlogo.src || navbarlogo)}
+            alt="NexFellow logo"
+            onError={(e) => (e.target.src = "https://via.placeholder.com/150")}
+          />
+        </Link>
+      </div>
+
       <ul className={style.menuItems}>
         {displayMenuItems.map((item, idx) => (
           <Link
@@ -151,13 +178,13 @@ function Sidebar() {
           >
             <div
               className={style.amItems}
-              onMouseEnter={() => setHoveredIndex(5)}
+              onMouseEnter={() => setHoveredIndex(7)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
               <div className={style.iconContainer}>
                 <PlayOnce
                   icon={AnimatedAccount}
-                  play={hoveredIndex === 5}
+                  play={hoveredIndex === 7}
                   style={{ width: 20, height: 20 }}
                 />
               </div>
@@ -165,37 +192,36 @@ function Sidebar() {
             </div>
           </Link>
 
-          <Link
+          <div
             className={style.amLink}
-            href={`/settings`}
-            onClick={() => setActiveTab("/settings")}
+            onClick={handleLogout}
+            style={{ cursor: loading ? "not-allowed" : "pointer" }}
           >
             <div
-              className={style.amItems}
-              onMouseEnter={() => setHoveredIndex(6)}
+              className={`${style.amItems} ${style.amRedItems}`}
+              onMouseEnter={() => setHoveredIndex(8)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
               <div className={style.iconContainer}>
-                <PlayOnce
-                  icon={AnimatedSettings}
-                  play={hoveredIndex === 6}
-                  style={{ width: 20, height: 20 }}
-                />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
               </div>
-              <span>Settings</span>
+              <span>{loading ? "Logging out..." : "Log Out"}</span>
             </div>
-          </Link>
-
-          {/* Optional logout block remains commented as in original */}
-          {/* <p
-            onClick={handleLogout}
-            className={`${style.amItems} ${style.amRedItems} ${loading ? style.disabled : ""}`}
-          >
-            <div className="w-8" style={{ marginLeft: "10px" }}>
-              <FiLogOut className={style.icon} />
-            </div>
-            <span>{loading ? "Logging out..." : "Logout"}</span>
-          </p> */}
+          </div>
         </div>
       )}
     </div>

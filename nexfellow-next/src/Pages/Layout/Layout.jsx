@@ -6,7 +6,6 @@ import clsx from "clsx";
 
 // components
 import Navbar from "../../components/Navbar/Navbar";
-import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import ViewOnlyHeader from "../ViewOnly/ViewOnlyHeader";
 
@@ -93,9 +92,7 @@ const Layout = ({ isPrivate = false, children }) => {
       {/* Show ViewOnlyHeader ONLY for view-only routes and when NOT logged in */}
       {!isLoggedIn && isViewOnlyRoute ? (
         <ViewOnlyHeader />
-      ) : isPrivate ? (
-        !shouldHideHeader && <Header />
-      ) : !shouldHideNavbar ? (
+      ) : !isPrivate && !shouldHideNavbar ? (
         <Navbar />
       ) : null}
 

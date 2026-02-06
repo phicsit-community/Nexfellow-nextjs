@@ -27,7 +27,7 @@ const UserCommunitySidebar = ({ communityId }) => {
         const res = await api.get(`/event/community/${communityId}`);
         const now = new Date();
 
-        const eventsData = res.data
+        const eventsData = (res.data || [])
           .filter((val) => new Date(val.startDate) >= now)
           .map((val) => {
             const date = new Date(val.startDate);
@@ -47,7 +47,12 @@ const UserCommunitySidebar = ({ communityId }) => {
 
         setEvents(eventsData);
       } catch (error) {
-        console.error("Error fetching events:", error);
+        // Handle 404 (no events) gracefully - just set empty array
+        if (error.response?.status === 404) {
+          setEvents([]);
+        } else {
+          console.error("Error fetching events:", error);
+        }
       }
     };
 

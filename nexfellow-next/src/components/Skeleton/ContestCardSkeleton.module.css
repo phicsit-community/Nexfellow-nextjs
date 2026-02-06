@@ -1,8 +1,8 @@
 .cardSkeleton {
-  background-color: #f5f5f5;
+  background-color: var(--card, #fff);
   border-radius: 8px;
   padding: 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
   height: 100%;
   width: 100%;
   display: flex;
@@ -11,7 +11,7 @@
 
 .headerSkeleton {
   padding-bottom: 12px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--skeleton-base, #e8e8e8);
   margin-bottom: 12px;
 }
 

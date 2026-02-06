@@ -224,13 +224,8 @@ module.exports.getEventsByCommunity = async (req, res) => {
       "name username"
     );
 
-    if (!events.length) {
-      return res
-        .status(404)
-        .json({ message: "No events found for this community" });
-    }
-
-    res.status(200).json(events);
+    // Return empty array with 200 status if no events found
+    res.status(200).json(events || []);
   } catch (error) {
     console.error("Error fetching community events:", error);
     res.status(500).json({ message: "Error fetching community events", error });

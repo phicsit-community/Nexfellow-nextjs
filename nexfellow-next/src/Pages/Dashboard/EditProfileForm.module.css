@@ -358,27 +358,31 @@
   }
 }
 
-/* Skeleton loading animation */
+/* Skeleton loading animation - smooth and easy on eyes */
 @keyframes shimmer {
-  0% {
-    background-position: -468px 0;
-  }
-
   100% {
-    background-position: 468px 0;
+    transform: translateX(100%);
   }
 }
 
 .skeleton {
-  background: #f0f0f0;
-  background-image: linear-gradient(to right,
-      #f0f0f0 0%,
-      #e0e0e0 20%,
-      #f0f0f0 40%,
-      #f0f0f0 100%);
-  background-repeat: no-repeat;
-  background-size: 800px 100%;
-  animation: shimmer 3s infinite linear;
+  background: var(--skeleton-base, #e8e8e8);
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 20%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.4)) 50%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 80%,
+      rgba(255, 255, 255, 0) 100%);
+  animation: shimmer 1.8s ease-in-out infinite;
 }
 
 .skeletonDropzone {

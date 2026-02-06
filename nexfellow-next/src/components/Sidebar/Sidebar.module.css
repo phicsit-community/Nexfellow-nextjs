@@ -1,23 +1,47 @@
 .sidebar {
   width: 220px;
-  height: calc(100vh - 80px);
+  height: 100vh;
   border-right: 1px solid var(--color-sidebar-border);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   background-color: var(--color-card);
   box-sizing: border-box;
-  margin-top: 80px;
-  position: relative;
-  bottom: 0;
-  padding-top: 20px;
+  position: fixed;
+  left: 0;
   top: 0;
+  padding-top: 0;
+  overflow-y: auto;
+  z-index: 30;
 }
 
 /* Dark mode sidebar */
 :global(.dark) .sidebar {
   background-color: var(--color-card);
   border-right-color: var(--color-border-white);
+}
+
+.logoContainer {
+  padding: 20px 20px 10px;
+  margin-top: 15px;
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+:global(.dark) .logoContainer {
+  /* dark mode styles if needed */
+}
+
+.logo {
+  height: 32px;
+  width: auto;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.logo:hover {
+  opacity: 0.8;
 }
 
 .menuItems {
@@ -29,6 +53,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0px;
+  flex-grow: 1;
 }
 
 .menuItems li {
@@ -89,7 +114,7 @@
 
 /* ---------------- Account Management ---------------- */
 .accountManagement {
-  margin-top: -10%;
+  margin-top: auto;
   padding: 10px 20px;
 }
 
@@ -173,13 +198,38 @@
 .amRedItems {
   border-radius: 5px;
   max-width: 170px;
-  color: var(--color-destructive-foreground);
+  color: #e11d48;
+}
+
+.amRedItems svg {
+  stroke: #e11d48;
+}
+
+.amRedItems span {
+  color: #e11d48;
 }
 
 .amRedItems:hover {
-  background-color: var(--color-destructive);
-  border-left: 5px solid var(--color-destructive-foreground);
+  background-color: rgba(225, 29, 72, 0.1);
+  border-left: 5px solid #e11d48;
   transition: all 0.3s cubic-bezier(0.32, 0, 0.67, 0);
+}
+
+:global(.dark) .amRedItems {
+  color: #f87171;
+}
+
+:global(.dark) .amRedItems svg {
+  stroke: #f87171;
+}
+
+:global(.dark) .amRedItems span {
+  color: #f87171;
+}
+
+:global(.dark) .amRedItems:hover {
+  background-color: rgba(248, 113, 113, 0.1);
+  border-left: 5px solid #f87171;
 }
 
 /* setTab = selected menu state */

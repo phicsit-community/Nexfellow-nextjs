@@ -594,27 +594,31 @@
   background-color: #19ae9f16;
 }
 
-/* Skeleton Loading Styles */
+/* Skeleton Loading Styles - smooth and easy on eyes */
 .skeleton {
-  background: #e2e8f0;
-  background-image: linear-gradient(to right,
-      #e2e8f0 0%,
-      #f1f5f9 20%,
-      #e2e8f0 40%,
-      #e2e8f0 100%);
-  background-repeat: no-repeat;
-  background-size: 800px 104px;
-  animation: shimmer 3s infinite linear;
+  background: var(--skeleton-base, #e8e8e8);
+  position: relative;
+  overflow: hidden;
   border-radius: 8px;
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -468px 0;
-  }
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 20%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.4)) 50%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 80%,
+      rgba(255, 255, 255, 0) 100%);
+  animation: shimmer 1.8s ease-in-out infinite;
+}
 
+@keyframes shimmer {
   100% {
-    background-position: 468px 0;
+    transform: translateX(100%);
   }
 }
 

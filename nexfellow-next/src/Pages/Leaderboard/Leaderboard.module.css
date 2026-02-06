@@ -460,14 +460,10 @@ Leaderboard.module.css .leaderboard {
   object-fit: cover;
 }
 
-/* Skeleton Loading Styles */
+/* Skeleton Loading Styles - smooth and easy on eyes */
 @keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-
   100% {
-    background-position: 1000px 0;
+    transform: translateX(100%);
   }
 }
 
