@@ -117,6 +117,7 @@ app.use(
       "https://admin.nexfellow.com",
       "https://nexfellow-dark.onrender.com",
       "https://nexfellow.onrender.com",
+      "https://nexfellow-nextjs.vercel.app",
       process.env.SITE_URL,
       process.env.ADMIN_URL,
     ],

@@ -64,6 +64,9 @@ router.get("/getDetails", isClient, catchAsync(authController.getUserDetails));
 
 router.post("/refresh-token", catchAsync(authController.refreshToken));
 
+// Exchange OAuth code for cookies (for cross-domain auth)
+router.post("/exchange-code", catchAsync(authController.exchangeOAuthCode));
+
 router.get("/logout", authController.logout);
 
 module.exports = router;

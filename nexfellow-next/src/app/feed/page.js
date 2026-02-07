@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import FeedPage from "@/Pages/FeedPage/FeedPage";
@@ -12,22 +12,47 @@ import { login, setAuthLoading } from "@/store/slices/authSlice";
 export default function Feed() {
     const dispatch = useDispatch();
     const router = useRouter();
-    const { isLoggedIn, isAuthLoading } = useSelector((state) => state.auth);
+    const { isLoggedIn, isAuthLoading, user } = useSelector((state) => state.auth);
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+    const hasChecked = useRef(false);
 
     useEffect(() => {
         const checkAuth = async () => {
-            // Check localStorage first
+            // Prevent double execution
+            if (hasChecked.current) return;
+            hasChecked.current = true;
+
+            // Check if we just came from OAuth callback
+            const oauthSuccess = sessionStorage.getItem("oauth_login_success");
+            if (oauthSuccess) {
+                sessionStorage.removeItem("oauth_login_success");
+            }
+
+            // First, check if already logged in via Redux (from OAuth callback)
+            if (isLoggedIn && user) {
+                setIsCheckingAuth(false);
+                return;
+            }
+
+            // Check localStorage 
             const localIsLoggedIn = localStorage.getItem("isLoggedIn") === "true";
             const userStr = localStorage.getItem("user");
             const hasUser = userStr && userStr !== "null" && userStr !== "undefined";
 
             if (localIsLoggedIn && hasUser) {
-                setIsCheckingAuth(false);
-                return;
+                try {
+                    const parsedUser = JSON.parse(userStr);
+                    if (parsedUser && parsedUser.id) {
+                        dispatch(login({ user: parsedUser, expiresIn: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString() }));
+                        setIsCheckingAuth(false);
+                        return;
+                    }
+                } catch (e) {
+                    console.log("Failed to parse user from localStorage");
+                }
             }
 
-            // If no localStorage data, check with server (handles OAuth redirect)
+            // If no localStorage data, check with server
             try {
                 const response = await api.get("/auth/getDetails", {
                     withCredentials: true,
@@ -47,8 +72,9 @@ export default function Feed() {
             router.replace("/login");
         };
 
+        // Run immediately - the full page reload from callback ensures state is fresh
         checkAuth();
-    }, [dispatch, router]);
+    }, [dispatch, router, isLoggedIn, user]);
 
     // Show loader while checking auth
     if (isCheckingAuth || isAuthLoading) {

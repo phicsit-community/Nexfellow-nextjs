@@ -10,10 +10,84 @@ const querystring = require("querystring");
 const randomStringGenerator = require("randomstring");
 const Profile = require("../models/profileModel");
 const tokenUtils = require("../utils/token");
+const crypto = require("crypto");
 const defaultProfilePicture =
   "https://nexfellow.b-cdn.net/defaults/default-profile.png";
 const defaultBanner =
   "https://nexfellow.b-cdn.net/defaults/default-banner.png";
+
+// Temporary storage for OAuth auth codes (in production, use Redis)
+const oauthAuthCodes = new Map();
+
+// Helper function to generate and store a temporary auth code
+const generateOAuthCode = (userId, accessToken, refreshToken) => {
+  const code = crypto.randomBytes(32).toString('hex');
+  oauthAuthCodes.set(code, {
+    userId,
+    accessToken,
+    refreshToken,
+    expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
+  });
+
+  // Clean up expired codes
+  setTimeout(() => oauthAuthCodes.delete(code), 5 * 60 * 1000);
+
+  return code;
+};
+
+// Exchange OAuth code for cookies
+module.exports.exchangeOAuthCode = async (req, res) => {
+  const { code } = req.body;
+
+  if (!code) {
+    return res.status(400).json({ message: "Code is required" });
+  }
+
+  const authData = oauthAuthCodes.get(code);
+
+  if (!authData || authData.expiresAt < Date.now()) {
+    oauthAuthCodes.delete(code);
+    return res.status(401).json({ message: "Invalid or expired code" });
+  }
+
+  // Delete the code immediately (one-time use)
+  oauthAuthCodes.delete(code);
+
+  // Set the cookies
+  tokenUtils.setAuthCookies(res, authData.accessToken, authData.refreshToken);
+
+  // Also set the legacy cookie for backward compatibility
+  res.cookie(
+    "userjwt",
+    { token: authData.accessToken, expiresIn: new Date(Date.now() + 15 * 60 * 1000) },
+    {
+      httpOnly: true,
+      maxAge: 15 * 60 * 1000,
+      secure: process.env.NODE_ENV === "production",
+      signed: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    }
+  );
+
+  // Get user details
+  const user = await User.findById(authData.userId);
+
+  const payload = {
+    id: user._id,
+    name: user.name,
+    username: user.username,
+    email: user.email,
+    picture: user.picture,
+    banner: user.banner,
+    profile: user.profile,
+  };
+
+  res.status(200).json({
+    success: true,
+    payload,
+    redirect: "/feed",
+  });
+};
 
 const {
   LINKEDIN_CLIENT_ID,
@@ -125,12 +199,10 @@ module.exports.googleCallback = async (req, res) => {
   const googleRefreshToken = req.user.refreshToken;
 
   let existingUser = await User.findOne({ email: req.user._json.email });
-  const redirectUrl = `${process.env.SITE_URL}/feed`;
 
   if (existingUser) {
     if (!existingUser.googleId) {
       existingUser.googleId = req.user._json.sub;
-      // existingUser.picture = req.user._json.picture;
     }
 
     // Update Google tokens
@@ -170,22 +242,11 @@ module.exports.googleCallback = async (req, res) => {
   // Store refresh token in database
   await tokenUtils.storeRefreshToken(existingUser._id, refreshToken);
 
-  // Set the tokens as cookies
-  tokenUtils.setAuthCookies(res, accessToken, refreshToken);
+  // Generate a temporary auth code for cross-domain auth
+  const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken);
 
-  // For backward compatibility, maintain the old cookie for now
-  res.cookie(
-    "userjwt",
-    { token: accessToken, expiresIn: new Date(Date.now() + 15 * 60 * 1000) },
-    {
-      httpOnly: true,
-      maxAge: 15 * 60 * 1000,
-      secure: process.env.NODE_ENV === "production",
-      signed: true,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    }
-  );
-
+  // Redirect to frontend with auth code
+  const redirectUrl = `${process.env.SITE_URL}/auth/callback?code=${authCode}`;
   return res.redirect(redirectUrl);
 };
 
@@ -199,13 +260,10 @@ module.exports.githubCallback = async (req, res) => {
     req.user.emails?.[0]?.value || `${req.user.username}@github.com`;
 
   let existingUser = await User.findOne({ email });
-  const redirectUrl = `${process.env.SITE_URL}/feed`;
 
   if (existingUser) {
     if (!existingUser.githubId) {
       existingUser.githubId = req.user.id;
-      // existingUser.picture =
-      //   req.user.photos?.[0]?.value || defaultProfilePicture;
     }
 
     existingUser.githubAccessToken = githubAccessToken;
@@ -242,20 +300,11 @@ module.exports.githubCallback = async (req, res) => {
   const refreshToken = tokenUtils.generateRefreshToken(existingUser);
   await tokenUtils.storeRefreshToken(existingUser._id, refreshToken);
 
-  tokenUtils.setAuthCookies(res, accessToken, refreshToken);
+  // Generate a temporary auth code for cross-domain auth
+  const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken);
 
-  res.cookie(
-    "userjwt",
-    { token: accessToken, expiresIn: new Date(Date.now() + 15 * 60 * 1000) },
-    {
-      httpOnly: true,
-      maxAge: 15 * 60 * 1000,
-      secure: true,
-      signed: true,
-      sameSite: "none",
-    }
-  );
-
+  // Redirect to frontend with auth code
+  const redirectUrl = `${process.env.SITE_URL}/auth/callback?code=${authCode}`;
   return res.redirect(redirectUrl);
 };
 
@@ -276,13 +325,9 @@ module.exports.facebookCallback = async (req, res) => {
     $or: [{ email }, { facebookId: req.user.id }],
   });
 
-  const redirectUrl = `${process.env.SITE_URL}/feed`;
-
   if (existingUser) {
     if (!existingUser.facebookId) {
       existingUser.facebookId = req.user.id;
-      // existingUser.picture =
-      //   req.user.photos?.[0]?.value || existingUser.picture;
     }
 
     // Update Facebook tokens
@@ -325,22 +370,11 @@ module.exports.facebookCallback = async (req, res) => {
   // Store refresh token in database
   await tokenUtils.storeRefreshToken(existingUser._id, refreshToken);
 
-  // Set the tokens as cookies
-  tokenUtils.setAuthCookies(res, accessToken, refreshToken);
+  // Generate a temporary auth code for cross-domain auth
+  const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken);
 
-  // For backward compatibility, maintain the old cookie for now
-  res.cookie(
-    "userjwt",
-    { token: accessToken, expiresIn: new Date(Date.now() + 15 * 60 * 1000) },
-    {
-      httpOnly: true,
-      maxAge: 15 * 60 * 1000,
-      secure: true,
-      signed: true,
-      sameSite: "none",
-    }
-  );
-
+  // Redirect to frontend with auth code
+  const redirectUrl = `${process.env.SITE_URL}/auth/callback?code=${authCode}`;
   return res.redirect(redirectUrl);
 };
 
@@ -489,7 +523,8 @@ exports.linkedinCallback = async (req, res) => {
   }
 
   try {
-    const response = await axios.post(
+    // Get access token from LinkedIn
+    const tokenResponse = await axios.post(
       "https://www.linkedin.com/oauth/v2/accessToken",
       querystring.stringify({
         grant_type: "authorization_code",
@@ -501,16 +536,78 @@ exports.linkedinCallback = async (req, res) => {
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );
 
-    const { access_token } = response.data;
+    const { access_token } = tokenResponse.data;
 
-    // Redirect to frontend with access token or handle login
-    res.redirect(`${SITE_URL}/feed`);
+    // Get user profile from LinkedIn
+    const profileResponse = await axios.get(
+      "https://api.linkedin.com/v2/userinfo",
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
+    );
+
+    const profile = profileResponse.data;
+    const email = profile.email;
+    const linkedinId = profile.sub;
+    const name = profile.name || `${profile.given_name || ''} ${profile.family_name || ''}`.trim();
+
+    let existingUser = await User.findOne({
+      $or: [{ email }, { linkedinId }]
+    });
+
+    if (existingUser) {
+      if (!existingUser.linkedinId) {
+        existingUser.linkedinId = linkedinId;
+      }
+      existingUser.linkedinAccessToken = access_token;
+      await existingUser.save();
+    } else {
+      console.log("Creating new LinkedIn User");
+      const username = await generateUsername(name);
+
+      existingUser = await User.create({
+        name,
+        email,
+        picture: profile.picture || defaultProfilePicture,
+        banner: defaultBanner,
+        linkedinId,
+        linkedinAccessToken: access_token,
+        verified: true,
+        username,
+      });
+
+      const referralCodeString = randomStringGenerator.generate(7).toUpperCase();
+      const profileDoc = await Profile.create({
+        userId: existingUser._id,
+        referralCodeString,
+      });
+
+      await profileDoc.save();
+      existingUser.profile = profileDoc._id;
+      await existingUser.save();
+    }
+
+    // Generate access and refresh tokens
+    const accessToken = tokenUtils.generateAccessToken(existingUser);
+    const refreshToken = tokenUtils.generateRefreshToken(existingUser);
+
+    // Store refresh token in database
+    await tokenUtils.storeRefreshToken(existingUser._id, refreshToken);
+
+    // Generate a temporary auth code for cross-domain auth
+    const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken);
+
+    // Redirect to frontend with auth code
+    const redirectUrl = `${SITE_URL}/auth/callback?code=${authCode}`;
+    return res.redirect(redirectUrl);
   } catch (error) {
     console.error(
-      "Error getting token:",
+      "Error in LinkedIn callback:",
       error.response?.data || error.message
     );
-    res.status(500).send("Login failed");
+    res.redirect(`${SITE_URL}/login?error=linkedin_auth_failed`);
   }
 };
 

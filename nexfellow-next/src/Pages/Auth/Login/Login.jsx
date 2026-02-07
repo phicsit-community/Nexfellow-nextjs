@@ -150,15 +150,21 @@ const Login = () => {
         richColors: true,
       });
 
-      // Ensure redirect is a valid string
-      const redirectPath = typeof redirect === "string" ? redirect : "/feed";
+      // Ensure redirect is a valid string - extract path from URL if it's a full URL
+      let redirectPath = typeof redirect === "string" ? redirect : "/feed";
+
+      // If it's a full URL, extract just the pathname
+      if (redirectPath.startsWith("http")) {
+        try {
+          const url = new URL(redirectPath);
+          redirectPath = url.pathname + url.search + url.hash;
+        } catch {
+          redirectPath = "/feed";
+        }
+      }
 
       setTimeout(() => {
-        if (redirectPath.startsWith("http")) {
-          window.location.href = redirectPath;
-        } else {
-          router.push(redirectPath);
-        }
+        router.push(redirectPath);
       }, 300);
     } catch (error) {
       console.error("Login error:", error);
@@ -186,15 +192,21 @@ const Login = () => {
         richColors: true,
       });
 
-      // Ensure redirect is a valid string
-      const redirectPath = typeof redirect === "string" ? redirect : "/feed";
+      // Ensure redirect is a valid string - extract path from URL if it's a full URL
+      let redirectPath = typeof redirect === "string" ? redirect : "/feed";
+
+      // If it's a full URL, extract just the pathname
+      if (redirectPath.startsWith("http")) {
+        try {
+          const url = new URL(redirectPath);
+          redirectPath = url.pathname + url.search + url.hash;
+        } catch {
+          redirectPath = "/feed";
+        }
+      }
 
       setTimeout(() => {
-        if (redirectPath.startsWith("http")) {
-          window.location.href = redirectPath;
-        } else {
-          router.push(redirectPath);
-        }
+        router.push(redirectPath);
       }, 300);
     } catch (error) {
       console.error("OTP verification error:", error);

@@ -61,6 +61,12 @@ module.exports.login = async (req, res) => {
   const user = await User.findOne({ email }).select("+password +email +isOtpVerified");
 
   if (!user) throw new ExpressError("invalid credentials", 400);
+
+  // Check if user has a password (OAuth users might not have one)
+  if (!user.password) {
+    throw new ExpressError("This account uses social login (Google/LinkedIn/GitHub). Please sign in using that method.", 400);
+  }
+
   if (!bcrypt.compareSync(password, user.password)) {
     throw new ExpressError("invalid credentials password", 400);
   }
