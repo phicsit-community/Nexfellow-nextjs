@@ -1,9 +1,0 @@
-{
-  "projectId": "cc0e8748-af9a-4cd5-891a-beda7204e084",
-  "createdAt": 1736417720877,
-  "startupCommands": [
-    "cd backend && bun run dev",
-    "cd nexfellow-next && bun run dev",
-    "cd admin && bun run dev -- -p 3001"
-  ]
-}
