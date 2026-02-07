@@ -18,12 +18,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom: 1px solid #0d9488;
+    border-bottom: 1px solid #24b2b4;
     padding: 0 16px;
 }
 
 .geekLogo {
-    width: 140px;
+    width: 180px;
     height: auto;
     object-fit: contain;
 }
@@ -83,7 +83,7 @@
 
 /* Hover Effect */
 .navLink:hover {
-    background-color: rgba(13, 148, 136, 0.12);
+    background-color: rgba(36, 178, 180, 0.12);
 }
 
 .navLink:hover .sideIcon,
@@ -93,7 +93,7 @@
 
 /* Active Link Style */
 .active {
-    background-color: #0d9488;
+    background-color: #24b2b4;
 }
 
 .active p,
@@ -124,13 +124,13 @@
 .geekMailerTag {
     font-size: 14px;
     font-weight: 600;
-    color: #08aaa2;
+    color: #24b2b4;
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
 .geekMailerTag:hover {
-    color: #0fd3d6;
+    color: #1d9698;
 }
 
 /* Logout Section */
@@ -146,7 +146,7 @@
     gap: 14px;
     width: 90%;
     height: 44px;
-    border: 1px solid #08aaa2;
+    border: 1px solid #24b2b4;
     border-radius: 10px;
     cursor: pointer;
     padding: 0 16px;
@@ -154,7 +154,7 @@
 }
 
 .sidebarLower div:hover {
-    background-color: rgba(13, 148, 136, 0.15);
+    background-color: rgba(36, 178, 180, 0.15);
 }
 
 .sidebarLower div p {
@@ -177,7 +177,7 @@
     right: 0;
     height: 60px;
     background-color: #1e293b;
-    border-bottom: 1px solid #0d9488;
+    border-bottom: 1px solid #24b2b4;
     z-index: 40;
     padding: 0 16px;
     align-items: center;
@@ -198,7 +198,7 @@
 }
 
 .hamburger:hover {
-    background-color: rgba(13, 148, 136, 0.2);
+    background-color: rgba(36, 178, 180, 0.2);
     color: #ffffff;
 }
 
@@ -262,7 +262,7 @@
         min-width: 220px;
         max-width: 220px;
     }
-    
+
     .navLink p {
         font-size: 13px;
     }
@@ -273,11 +273,11 @@
     .mobileHeader {
         display: flex;
     }
-    
+
     .overlay {
         display: block;
     }
-    
+
     .sidebar {
         min-width: 280px;
         max-width: 280px;
@@ -285,28 +285,28 @@
         height: 100vh;
         box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
     }
-    
+
     .logoDiv {
         justify-content: flex-start;
         position: relative;
     }
-    
+
     .closeBtn {
         display: flex;
     }
-    
+
     .sidebarUpper {
         padding-top: 12px;
     }
-    
+
     .navLink {
         height: 48px;
     }
-    
+
     .navLink p {
         font-size: 15px;
     }
-    
+
     .sideIcon {
         font-size: 22px;
     }
@@ -318,11 +318,11 @@
         min-width: 260px;
         max-width: 85vw;
     }
-    
+
     .mobileHeader {
         height: 56px;
     }
-    
+
     .mobileLogo {
         height: 30px;
     }

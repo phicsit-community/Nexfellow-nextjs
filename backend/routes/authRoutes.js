@@ -5,14 +5,15 @@ const authController = require("../controllers/authController");
 const { isClient } = require("../middleware");
 const catchAsync = require("../utils/CatchAsync");
 
-router.get(
-  "/google",
+router.get("/google", (req, res, next) => {
+  const state = req.query.state || "user";
   passport.authenticate("google", {
     scope: ["profile", "email"],
     accessType: "offline",
     prompt: "select_account consent",
-  })
-);
+    state: state,
+  })(req, res, next);
+});
 
 router.get(
   "/google/callback",

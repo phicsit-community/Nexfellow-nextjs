@@ -80,10 +80,10 @@ const SideBar = () => {
                 <div className={styles.logoDiv}>
                     <Image
                         className={styles.geekLogo}
-                        src="/images/NexFellowLogo.svg"
-                        alt="NexFellow Logo"
-                        width={140}
-                        height={40}
+                        src="/images/Navbar/GeekClashLogo.svg"
+                        alt="Geek Clash Logo"
+                        width={180}
+                        height={50}
                     />
                 </div>
                 <div className={styles.sideContainer}>
@@ -115,10 +115,10 @@ const SideBar = () => {
                         {isMobileOpen ? <FiX size={24} /> : <FiMenu size={24} />}
                     </button>
                     <Image
-                        src="/images/NexFellowLogo.svg"
-                        alt="NexFellow Logo"
-                        width={120}
-                        height={35}
+                        src="/images/Navbar/GeekClashLogo.svg"
+                        alt="Geek Clash Logo"
+                        width={150}
+                        height={45}
                         className={styles.mobileLogo}
                     />
                     <div className={styles.mobileHeaderSpacer} />
@@ -137,10 +137,10 @@ const SideBar = () => {
                     <div className={styles.logoDiv}>
                         <Image
                             className={styles.geekLogo}
-                            src="/images/NexFellowLogo.svg"
-                            alt="NexFellow Logo"
-                            width={140}
-                            height={40}
+                            src="/images/Navbar/GeekClashLogo.svg"
+                            alt="Geek Clash Logo"
+                            width={180}
+                            height={50}
                         />
                         <button
                             className={styles.closeBtn}
@@ -173,10 +173,10 @@ const SideBar = () => {
             <div className={styles.logoDiv}>
                 <Image
                     className={styles.geekLogo}
-                    src="/images/NexFellowLogo.svg"
-                    alt="NexFellow Logo"
-                    width={140}
-                    height={40}
+                    src="/images/Navbar/GeekClashLogo.svg"
+                    alt="Geek Clash Logo"
+                    width={180}
+                    height={50}
                 />
             </div>
             <div className={styles.sideContainer}>
@@ -273,7 +273,7 @@ function NavLinks({ isActive }: { isActive: (path: string) => boolean }) {
             <div className={styles.geekMailerDiv}>
                 <FiSend className={styles.sideIcon} />
                 <a
-                    href="https://geekmailer-a7do.onrender.com"
+                    href="http://localhost:3001"
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.geekMailerTag}

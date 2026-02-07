@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const catchAsync = require("../utils/CatchAsync");
 const admin = require("../controllers/adminController.js");
+const featuredCommunitiesController = require("../controllers/featuredCommunitiesController");
 const { isClient, isAdmin, upload } = require("../middleware.js");
 
 router.route("/login").post(catchAsync(admin.adminlogin));
@@ -65,8 +66,12 @@ router
 
 // Community routes
 router
-  .route("/featured-communities")
+  .route("/communities")
   .get(isAdmin, catchAsync(admin.getAllCommunities));
+
+router
+  .route("/featured-communities")
+  .get(isAdmin, catchAsync(featuredCommunitiesController.getFeaturedCommunities));
 
 // --------------------------
 // NEW POST CONTROL ROUTES

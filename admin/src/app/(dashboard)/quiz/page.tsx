@@ -52,9 +52,9 @@ export default function QuizListPage() {
         const start = new Date(quiz.startTime || '');
         const end = quiz.endTime ? new Date(quiz.endTime) : new Date(start.getTime() + (quiz.duration || 60) * 60000);
 
-        if (now < start) return { bg: 'bg-blue-500/20', text: 'text-blue-400', label: 'Upcoming' };
-        if (now >= start && now <= end) return { bg: 'bg-green-500/20', text: 'text-green-400', label: 'Active' };
-        return { bg: 'bg-slate-500/20', text: 'text-slate-400', label: 'Ended' };
+        if (now < start) return { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Upcoming' };
+        if (now >= start && now <= end) return { bg: 'bg-green-100', text: 'text-green-700', label: 'Active' };
+        return { bg: 'bg-gray-100', text: 'text-gray-600', label: 'Ended' };
     };
 
     const filteredQuizzes = quizzes.filter((q) =>
@@ -63,15 +63,15 @@ export default function QuizListPage() {
     );
 
     return (
-        <div className="min-h-screen p-6">
+        <div className="min-h-screen bg-gray-50 p-6 md:p-8">
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-2xl font-semibold text-white">Contests</h1>
-                    <p className="text-slate-400">Manage quizzes and coding contests</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Contests</h1>
+                    <p className="text-gray-500">Manage quizzes and coding contests</p>
                 </div>
                 <button
                     onClick={() => router.push('/create-quiz')}
-                    className="flex items-center gap-2 px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-lg transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors"
                 >
                     <FiPlus /> Create Contest
                 </button>
@@ -79,11 +79,11 @@ export default function QuizListPage() {
 
             {/* Search */}
             <div className="relative mb-6">
-                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                     type="text"
                     placeholder="Search contests..."
-                    className="w-full max-w-md pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400"
+                    className="w-full max-w-md pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
@@ -91,25 +91,25 @@ export default function QuizListPage() {
 
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-slate-700 rounded-lg p-4">
-                    <p className="text-slate-400 text-sm">Total Contests</p>
-                    <p className="text-2xl font-bold text-white">{quizzes.length}</p>
+                <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                    <p className="text-gray-500 text-sm">Total Contests</p>
+                    <p className="text-2xl font-bold text-gray-900">{quizzes.length}</p>
                 </div>
-                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-                    <p className="text-blue-400 text-sm">Upcoming</p>
-                    <p className="text-2xl font-bold text-blue-400">
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                    <p className="text-blue-700 text-sm">Upcoming</p>
+                    <p className="text-2xl font-bold text-blue-700">
                         {quizzes.filter((q) => getStatusColor(q).label === 'Upcoming').length}
                     </p>
                 </div>
-                <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-                    <p className="text-green-400 text-sm">Active</p>
-                    <p className="text-2xl font-bold text-green-400">
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                    <p className="text-green-700 text-sm">Active</p>
+                    <p className="text-2xl font-bold text-green-700">
                         {quizzes.filter((q) => getStatusColor(q).label === 'Active').length}
                     </p>
                 </div>
-                <div className="bg-slate-700 rounded-lg p-4">
-                    <p className="text-slate-400 text-sm">Total Participants</p>
-                    <p className="text-2xl font-bold text-teal-400">
+                <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                    <p className="text-gray-500 text-sm">Total Participants</p>
+                    <p className="text-2xl font-bold text-teal-600">
                         {quizzes.reduce((acc, q) => acc + (q.totalRegistered || 0), 0).toLocaleString()}
                     </p>
                 </div>
@@ -122,10 +122,10 @@ export default function QuizListPage() {
                 </div>
             ) : filteredQuizzes.length === 0 ? (
                 <div className="text-center py-12">
-                    <p className="text-slate-400 mb-4">No contests found</p>
+                    <p className="text-gray-500 mb-4">No contests found</p>
                     <button
                         onClick={() => router.push('/create-quiz')}
-                        className="px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-lg transition-colors"
+                        className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors"
                     >
                         Create your first contest
                     </button>
@@ -138,31 +138,31 @@ export default function QuizListPage() {
                             <div
                                 key={quiz._id}
                                 onClick={() => router.push(`/quiz/${quiz._id}`)}
-                                className="bg-slate-800 rounded-xl overflow-hidden cursor-pointer hover:ring-2 hover:ring-teal-500/50 transition-all"
+                                className="bg-white rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition-all border border-gray-100 shadow-sm"
                             >
-                                <div className="h-32 bg-gradient-to-br from-teal-500/20 to-purple-500/20 flex items-center justify-center">
+                                <div className="h-32 bg-gradient-to-br from-teal-100 to-purple-100 flex items-center justify-center">
                                     <span className="text-5xl">📝</span>
                                 </div>
                                 <div className="p-4">
                                     <div className="flex justify-between items-start mb-2">
-                                        <span className="text-xs px-2 py-1 bg-slate-700 text-slate-300 rounded">{quiz.category || 'General'}</span>
-                                        <span className={`text-xs px-2 py-1 rounded ${status.bg} ${status.text}`}>
+                                        <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">{quiz.category || 'General'}</span>
+                                        <span className={`text-xs px-2 py-1 rounded font-medium ${status.bg} ${status.text}`}>
                                             {status.label}
                                         </span>
                                     </div>
-                                    <h3 className="text-white font-semibold mb-3">{quiz.title}</h3>
-                                    <div className="flex items-center gap-4 text-sm text-slate-400">
+                                    <h3 className="text-gray-900 font-semibold mb-3">{quiz.title}</h3>
+                                    <div className="flex items-center gap-4 text-sm text-gray-600">
                                         <div className="flex items-center gap-1">
-                                            <FiClock className="text-teal-400" />
+                                            <FiClock className="text-teal-600" />
                                             {quiz.duration || 60} mins
                                         </div>
                                         <div className="flex items-center gap-1">
-                                            <FiUsers className="text-teal-400" />
+                                            <FiUsers className="text-teal-600" />
                                             {quiz.totalRegistered || 0}
                                         </div>
                                     </div>
                                     {quiz.startTime && (
-                                        <p className="text-slate-500 text-xs mt-2">
+                                        <p className="text-gray-500 text-xs mt-2">
                                             {new Date(quiz.startTime).toLocaleString()}
                                         </p>
                                     )}

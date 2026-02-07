@@ -3,6 +3,7 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const GitHubStrategy = require("passport-github2").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const User = require("../models/userModel.js");
+const Admin = require("../models/adminModel.js");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
@@ -20,12 +21,13 @@ const defaultBanner =
 const oauthAuthCodes = new Map();
 
 // Helper function to generate and store a temporary auth code
-const generateOAuthCode = (userId, accessToken, refreshToken) => {
+const generateOAuthCode = (userId, accessToken, refreshToken, isAdmin = false) => {
   const code = crypto.randomBytes(32).toString('hex');
   oauthAuthCodes.set(code, {
     userId,
     accessToken,
     refreshToken,
+    isAdmin,
     expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
   });
 
@@ -69,22 +71,37 @@ module.exports.exchangeOAuthCode = async (req, res) => {
     }
   );
 
-  // Get user details
-  const user = await User.findById(authData.userId);
+  let payload;
+  if (authData.isAdmin) {
+    const admin = await Admin.findById(authData.userId);
+    payload = {
+      id: admin._id,
+      name: admin.username,
+      username: admin.username,
+      email: admin.email,
+      picture: admin.picture,
+      isAdmin: true,
+    };
+  } else {
+    // Get user details
+    const user = await User.findById(authData.userId);
 
-  const payload = {
-    id: user._id,
-    name: user.name,
-    username: user.username,
-    email: user.email,
-    picture: user.picture,
-    banner: user.banner,
-    profile: user.profile,
-  };
+    payload = {
+      id: user._id,
+      name: user.name,
+      username: user.username,
+      email: user.email,
+      picture: user.picture,
+      banner: user.banner,
+      profile: user.profile,
+    };
+  }
 
   res.status(200).json({
     success: true,
     payload,
+    token: authData.accessToken,
+    expiresIn: new Date(Date.now() + 15 * 60 * 1000),
     redirect: "/feed",
   });
 };
@@ -194,10 +211,53 @@ async function generateUsername(fullName) {
 module.exports.googleCallback = async (req, res) => {
   console.log("\n******** Inside handleGoogleLoginCallback function ********");
 
+  const { state } = req.query;
+
   // Get Google tokens from the profile object
   const googleAccessToken = req.user.accessToken;
   const googleRefreshToken = req.user.refreshToken;
 
+  if (state === "admin") {
+    console.log("Processing Admin Google Login");
+    const email = req.user._json.email;
+    let existingAdmin = await Admin.findOne({ email });
+
+    if (!existingAdmin) {
+      console.log("Creating potentially new Unregistered Admin via Google");
+      const randomPassword = crypto.randomBytes(16).toString("hex");
+      const username =
+        req.user._json.name.replace(/[^a-zA-Z0-9]/g, "").toLowerCase() +
+        Math.floor(Math.random() * 1000);
+
+      existingAdmin = await Admin.create({
+        username,
+        email,
+        password: randomPassword,
+        picture: req.user._json.picture || defaultProfilePicture,
+      });
+    }
+
+    // Generate Admin Token signed with ADMIN_SECRET
+    const adminToken = jwt.sign(
+      { adminId: existingAdmin._id },
+      process.env.ADMIN_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    // Generate Auth Code (isAdmin = true)
+    const authCode = generateOAuthCode(
+      existingAdmin._id,
+      adminToken,
+      null, // No refresh token needed for admin session duration managed by token logic
+      true
+    );
+
+    // Redirect to frontend with auth code
+    const redirectUrl = `${process.env.SITE_URL}/auth/callback?code=${authCode}`;
+    return res.redirect(redirectUrl);
+  }
+
+  // Regular User Flow
   let existingUser = await User.findOne({ email: req.user._json.email });
 
   if (existingUser) {
@@ -243,7 +303,11 @@ module.exports.googleCallback = async (req, res) => {
   await tokenUtils.storeRefreshToken(existingUser._id, refreshToken);
 
   // Generate a temporary auth code for cross-domain auth
-  const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken);
+  const authCode = generateOAuthCode(
+    existingUser._id,
+    accessToken,
+    refreshToken
+  );
 
   // Redirect to frontend with auth code
   const redirectUrl = `${process.env.SITE_URL}/auth/callback?code=${authCode}`;

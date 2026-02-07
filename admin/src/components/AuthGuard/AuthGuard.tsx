@@ -71,7 +71,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     if (authState === 'checking') {
         return (
             <div className="flex items-center justify-center min-h-screen bg-slate-900">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#24b2b4]"></div>
             </div>
         );
     }

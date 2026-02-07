@@ -27,11 +27,21 @@ export function useAuth(): AuthData {
         let adminId = user;
         let authToken = token;
 
+        if (adminId && typeof adminId === 'object') {
+            // @ts-ignore
+            adminId = adminId.id || adminId._id || null;
+        }
+
         if (!adminId) {
             try {
                 const storedUser = localStorage.getItem('user');
                 if (storedUser) {
-                    adminId = JSON.parse(storedUser);
+                    const parsedUser = JSON.parse(storedUser);
+                    if (typeof parsedUser === 'object' && parsedUser !== null) {
+                        adminId = parsedUser.id || parsedUser._id;
+                    } else {
+                        adminId = parsedUser;
+                    }
                 }
             } catch (e) {
                 console.error('Error reading user from localStorage:', e);

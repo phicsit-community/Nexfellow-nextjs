@@ -22,6 +22,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",  // Next.js default port
+      "http://localhost:3001",  // GeekMailer Frontend when Admin is on 3000
       "http://localhost:5173",
       process.env.SITE_URL,
       "http://localhost:5174",

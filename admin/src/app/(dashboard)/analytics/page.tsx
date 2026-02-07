@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import {
     BsPeople, BsCardText, BsActivity, BsChatDots, BsBookmarkCheck,
     BsAward, BsCalendar2Check, BsFlag, BsHandThumbsUp, BsGift,
-    BsPersonWorkspace, BsEnvelope, BsBarChart
+    BsGlobe, BsBell
 } from 'react-icons/bs';
+import { FiTrendingUp } from 'react-icons/fi';
 import Loader from '@/components/Loader/Loader';
 import { safeFetch } from '@/lib/safeFetch';
 
@@ -26,93 +27,324 @@ interface AnalyticsData {
     postsDelta?: number;
     activeUsersDelta?: number;
     commentsDelta?: number;
+    bookmarksDelta?: number;
+    quizzesDelta?: number;
+    eventsDelta?: number;
+    challengesDelta?: number;
+    likesDelta?: number;
+    rewardsDelta?: number;
+    communitiesDelta?: number;
+    notificationsDelta?: number;
     userGrowth?: { label: string; value: number }[];
     postGrowth?: { label: string; value: number }[];
     activeUsersChart?: { label: string; value: number }[];
+    userRoles?: { role: string; count: number }[];
+    topCountries?: { country: string; count: number }[];
 }
 
 const metricDefs = [
-    { key: 'totalUsers', label: 'Total Users', icon: BsPeople, color: '#2563eb', deltaKey: 'totalUsersDelta' },
-    { key: 'totalPosts', label: 'Posts', icon: BsCardText, color: '#fb923c', deltaKey: 'postsDelta' },
-    { key: 'activeUsers', label: 'Active Users (30d)', icon: BsActivity, color: '#16a34a', deltaKey: 'activeUsersDelta' },
-    { key: 'totalComments', label: 'Comments', icon: BsChatDots, color: '#8b5cf6', deltaKey: 'commentsDelta' },
-    { key: 'totalBookmarks', label: 'Bookmarks', icon: BsBookmarkCheck, color: '#2563eb' },
-    { key: 'totalQuizzes', label: 'Quizzes', icon: BsAward, color: '#fb923c' },
-    { key: 'totalEvents', label: 'Events', icon: BsCalendar2Check, color: '#16a34a' },
-    { key: 'totalChallenges', label: 'Challenges', icon: BsFlag, color: '#8b5cf6' },
-    { key: 'totalLikes', label: 'Likes', icon: BsHandThumbsUp, color: '#2563eb' },
-    { key: 'totalRewards', label: 'Rewards', icon: BsGift, color: '#fb923c' },
-    { key: 'totalCommunities', label: 'Communities', icon: BsPersonWorkspace, color: '#16a34a' },
-    { key: 'totalNotifications', label: 'Notifications Sent', icon: BsEnvelope, color: '#8b5cf6' },
+    { key: 'totalUsers', label: 'Total Users', icon: BsPeople, bgColor: 'bg-blue-100', iconColor: 'text-blue-600', deltaKey: 'totalUsersDelta' },
+    { key: 'totalPosts', label: 'Posts', icon: BsCardText, bgColor: 'bg-orange-100', iconColor: 'text-orange-500', deltaKey: 'postsDelta' },
+    { key: 'activeUsers', label: 'Active Users (30d)', icon: BsActivity, bgColor: 'bg-green-100', iconColor: 'text-green-600', deltaKey: 'activeUsersDelta' },
+    { key: 'totalComments', label: 'Comments', icon: BsChatDots, bgColor: 'bg-pink-100', iconColor: 'text-pink-500', deltaKey: 'commentsDelta' },
+    { key: 'totalBookmarks', label: 'Bookmarks', icon: BsBookmarkCheck, bgColor: 'bg-blue-100', iconColor: 'text-blue-600', deltaKey: 'bookmarksDelta' },
+    { key: 'totalQuizzes', label: 'Quizzes', icon: BsAward, bgColor: 'bg-orange-100', iconColor: 'text-orange-500', deltaKey: 'quizzesDelta' },
+    { key: 'totalEvents', label: 'Events', icon: BsCalendar2Check, bgColor: 'bg-green-100', iconColor: 'text-green-600', deltaKey: 'eventsDelta' },
+    { key: 'totalChallenges', label: 'Challenges', icon: BsFlag, bgColor: 'bg-purple-100', iconColor: 'text-purple-600', deltaKey: 'challengesDelta' },
+    { key: 'totalLikes', label: 'Likes', icon: BsHandThumbsUp, bgColor: 'bg-blue-100', iconColor: 'text-blue-600', deltaKey: 'likesDelta' },
+    { key: 'totalRewards', label: 'Rewards', icon: BsGift, bgColor: 'bg-orange-100', iconColor: 'text-orange-500', deltaKey: 'rewardsDelta' },
+    { key: 'totalCommunities', label: 'Communities', icon: BsGlobe, bgColor: 'bg-green-100', iconColor: 'text-green-600', deltaKey: 'communitiesDelta' },
+    { key: 'totalNotifications', label: 'Notifications Sent', icon: BsBell, bgColor: 'bg-purple-100', iconColor: 'text-purple-600', deltaKey: 'notificationsDelta' },
 ];
 
 function formatDelta(delta?: number) {
     if (typeof delta !== 'number' || isNaN(delta)) return null;
     return {
-        icon: delta < 0 ? '▼' : '▲',
-        color: delta < 0 ? '#e11d48' : '#16a34a',
-        value: Math.abs(delta).toFixed(2),
+        isPositive: delta >= 0,
+        value: Math.abs(delta).toFixed(1),
     };
 }
 
-function MetricCard({ label, value, Icon, color, delta }: {
+function MetricCard({ label, value, Icon, bgColor, iconColor, delta }: {
     label: string;
     value?: number;
     Icon: React.ElementType;
-    color: string;
-    delta?: { icon: string; color: string; value: string } | null;
+    bgColor: string;
+    iconColor: string;
+    delta?: { isPositive: boolean; value: string } | null;
 }) {
     return (
-        <div className="bg-slate-700 rounded-xl p-3 md:p-5 flex items-start gap-2 md:gap-4 min-w-0">
-            <div
-                className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: color + '20' }}
-            >
-                <Icon className="text-lg md:text-xl" style={{ color }} />
-            </div>
-            <div className="flex-1 min-w-0 overflow-hidden">
-                <div className="text-xl md:text-2xl font-bold text-white truncate">
-                    {value !== undefined && value !== null ? value.toLocaleString() : '—'}
+        <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-start justify-between">
+                <div className="flex-1">
+                    <p className="text-gray-500 text-sm mb-1">{label}</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                        {value !== undefined && value !== null ? value.toLocaleString() : '—'}
+                    </p>
+                    {delta && (
+                        <div className={`flex items-center gap-1 mt-2 text-sm ${delta.isPositive ? 'text-green-600' : 'text-red-500'}`}>
+                            <FiTrendingUp className={`text-xs ${!delta.isPositive ? 'rotate-180' : ''}`} />
+                            <span>{delta.isPositive ? '+' : '-'}{delta.value}%</span>
+                        </div>
+                    )}
                 </div>
-                <div className="text-slate-400 text-xs md:text-sm truncate">{label}</div>
-                {delta && (
-                    <div className="text-xs md:text-sm mt-1 truncate" style={{ color: delta.color }}>
-                        {delta.icon} {delta.value}%
-                    </div>
-                )}
+                <div className={`w-12 h-12 ${bgColor} rounded-xl flex items-center justify-center`}>
+                    <Icon className={`text-xl ${iconColor}`} />
+                </div>
             </div>
         </div>
     );
 }
 
-function SimpleChart({ data, color, label }: { data: { label: string; value: number }[]; color: string; label: string }) {
+function UserGrowthChart({ data }: { data: { label: string; value: number }[] }) {
     if (!data || data.length === 0) return null;
-
     const max = Math.max(...data.map(d => d.value), 1);
+    const currentValue = data[data.length - 1]?.value || 0;
+    const currentLabel = data[data.length - 1]?.label || '';
 
     return (
-        <div className="bg-slate-700 rounded-xl p-4 md:p-6 overflow-hidden">
-            <h3 className="text-white font-semibold mb-4 text-sm md:text-base">{label}</h3>
-            <div className="overflow-x-auto">
-                <div className="flex items-end gap-1 h-32 md:h-40 min-w-[400px]">
-                    {data.map((d, i) => (
-                        <div key={i} className="flex-1 flex flex-col items-center min-w-[20px]">
-                            <div
-                                className="w-full rounded-t transition-all duration-300"
-                                style={{
-                                    height: `${(d.value / max) * 100}%`,
-                                    backgroundColor: color,
-                                    minHeight: '4px',
-                                }}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="flex items-center gap-2 mb-6">
+                <div className="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center">
+                    <FiTrendingUp className="text-teal-600" />
+                </div>
+                <span className="text-gray-900 font-semibold">User Growth (12mo)</span>
+                <span className="text-gray-500 text-sm">- Current: {currentValue.toLocaleString()} users in {currentLabel}</span>
+            </div>
+            <div className="h-48 flex items-end gap-1 relative">
+                <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-xs text-gray-400 w-8">
+                    <span>{max}</span>
+                    <span>{Math.round(max * 0.75)}</span>
+                    <span>{Math.round(max * 0.5)}</span>
+                    <span>{Math.round(max * 0.25)}</span>
+                    <span>0</span>
+                </div>
+                <div className="flex-1 ml-10 h-full flex items-end">
+                    <svg className="w-full h-full" viewBox="0 0 400 160" preserveAspectRatio="none">
+                        <polyline
+                            fill="none"
+                            stroke="#10b981"
+                            strokeWidth="2"
+                            points={data.map((d, i) => `${(i / (data.length - 1)) * 400},${160 - (d.value / max) * 150}`).join(' ')}
+                        />
+                        {data.map((d, i) => (
+                            <circle
+                                key={i}
+                                cx={(i / (data.length - 1)) * 400}
+                                cy={160 - (d.value / max) * 150}
+                                r="4"
+                                fill="#10b981"
                             />
-                            <span className="text-[8px] md:text-xs text-slate-400 mt-2 truncate w-full text-center">{d.label}</span>
-                        </div>
-                    ))}
+                        ))}
+                    </svg>
                 </div>
             </div>
-            <div className="mt-4 text-right text-xs md:text-sm text-slate-400">
-                Latest: <span className="text-white font-semibold">{data[data.length - 1]?.value.toLocaleString()}</span>
+            <div className="flex justify-between mt-2 ml-10 text-xs text-gray-400">
+                {data.filter((_, i) => i % 2 === 0).map((d, i) => (
+                    <span key={i}>{d.label}</span>
+                ))}
             </div>
+        </div>
+    );
+}
+
+function PostsTrendChart({ data }: { data: { label: string; value: number }[] }) {
+    if (!data || data.length === 0) return null;
+    const max = Math.max(...data.map(d => d.value), 1);
+    const currentValue = data[data.length - 1]?.value || 0;
+    const currentLabel = data[data.length - 1]?.label || '';
+
+    return (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="flex items-center gap-2 mb-6">
+                <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <BsCardText className="text-orange-500" />
+                </div>
+                <span className="text-gray-900 font-semibold">Posts Trend (12mo)</span>
+                <span className="text-gray-500 text-sm">- Current: {currentValue} posts in {currentLabel}</span>
+            </div>
+            <div className="h-48 flex items-end gap-2">
+                {data.map((d, i) => (
+                    <div key={i} className="flex-1 flex flex-col items-center">
+                        <div
+                            className="w-full bg-orange-400 rounded-t-md transition-all duration-300"
+                            style={{
+                                height: `${(d.value / max) * 100}%`,
+                                minHeight: '8px',
+                            }}
+                        />
+                        <span className="text-[10px] text-gray-400 mt-2 truncate">{d.label}</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function DailyActiveUsersChart({ data }: { data: { label: string; value: number }[] }) {
+    if (!data || data.length === 0) return null;
+    const max = Math.max(...data.map(d => d.value), 1);
+    const currentValue = data[data.length - 1]?.value || 0;
+    const currentLabel = data[data.length - 1]?.label || '';
+
+    return (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="flex items-center gap-2 mb-6">
+                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <BsPeople className="text-blue-600" />
+                </div>
+                <span className="text-gray-900 font-semibold">Daily Active Users (30d)</span>
+                <span className="text-gray-500 text-sm">- Current: {currentValue} users on {currentLabel}</span>
+            </div>
+            <div className="h-48 flex items-end relative">
+                <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-xs text-gray-400 w-8">
+                    <span>{max}</span>
+                    <span>{Math.round(max * 0.66)}</span>
+                    <span>{Math.round(max * 0.33)}</span>
+                    <span>0</span>
+                </div>
+                <div className="flex-1 ml-10 h-full flex items-end">
+                    <svg className="w-full h-full" viewBox="0 0 400 160" preserveAspectRatio="none">
+                        <polyline
+                            fill="none"
+                            stroke="#3b82f6"
+                            strokeWidth="2"
+                            points={data.map((d, i) => `${(i / (data.length - 1)) * 400},${160 - (d.value / max) * 150}`).join(' ')}
+                        />
+                        {data.map((d, i) => (
+                            <circle
+                                key={i}
+                                cx={(i / (data.length - 1)) * 400}
+                                cy={160 - (d.value / max) * 150}
+                                r="3"
+                                fill="#3b82f6"
+                            />
+                        ))}
+                    </svg>
+                </div>
+            </div>
+            <div className="flex justify-between mt-2 ml-10 text-xs text-gray-400">
+                {data.filter((_, i) => i % 4 === 0).map((d, i) => (
+                    <span key={i}>{d.label}</span>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function UserRolesChart({ data }: { data?: { role: string; count: number }[] }) {
+    const roleColors: Record<string, string> = {
+        'Member': '#10b981',
+        'Admin': '#3b82f6',
+        'Moderator': '#f59e0b',
+        'User': '#10b981',
+        'default': '#6b7280'
+    };
+
+    // Use API data or show empty state
+    const roles = data && data.length > 0 ? data : [];
+    const total = roles.reduce((sum, r) => sum + r.count, 0) || 1;
+
+    // Calculate stroke dash arrays for the donut chart
+    const circumference = 2 * Math.PI * 40; // radius = 40
+    let offset = 0;
+
+    return (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="flex items-center gap-2 mb-6">
+                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <BsPeople className="text-blue-600" />
+                </div>
+                <span className="text-gray-900 font-semibold">User Roles</span>
+            </div>
+            {roles.length === 0 ? (
+                <p className="text-gray-500 text-center py-8">No role data available</p>
+            ) : (
+                <>
+                    <div className="flex items-center justify-center">
+                        <div className="relative w-40 h-40">
+                            <svg viewBox="0 0 100 100" className="w-full h-full">
+                                {roles.map((role, i) => {
+                                    const percentage = (role.count / total) * 100;
+                                    const dashLength = (percentage / 100) * circumference;
+                                    const color = roleColors[role.role] || roleColors['default'];
+                                    const currentOffset = offset;
+                                    offset += dashLength;
+
+                                    return (
+                                        <circle
+                                            key={i}
+                                            cx="50"
+                                            cy="50"
+                                            r="40"
+                                            fill="none"
+                                            stroke={color}
+                                            strokeWidth="20"
+                                            strokeDasharray={`${dashLength} ${circumference}`}
+                                            strokeDashoffset={-currentOffset}
+                                            transform="rotate(-90 50 50)"
+                                        />
+                                    );
+                                })}
+                                <circle cx="50" cy="50" r="28" fill="white" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div className="flex justify-center gap-6 mt-4 flex-wrap">
+                        {roles.map((role) => (
+                            <div key={role.role} className="flex items-center gap-2">
+                                <div
+                                    className="w-3 h-3 rounded-full"
+                                    style={{ backgroundColor: roleColors[role.role] || roleColors['default'] }}
+                                />
+                                <span className="text-sm text-gray-600">{role.role}</span>
+                            </div>
+                        ))}
+                    </div>
+                </>
+            )}
+        </div>
+    );
+}
+
+function TopCountriesChart({ data }: { data?: { country: string; count: number }[] }) {
+    // Use API data or show empty state
+    const countries = data && data.length > 0 ? data : [];
+    const max = countries.length > 0 ? Math.max(...countries.map(c => c.count)) : 1;
+
+    return (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="flex items-center gap-2 mb-6">
+                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <BsGlobe className="text-blue-600" />
+                </div>
+                <span className="text-gray-900 font-semibold">Top Countries</span>
+            </div>
+            {countries.length === 0 ? (
+                <p className="text-gray-500 text-center py-8">No country data available</p>
+            ) : (
+                <>
+                    <div className="h-48 flex items-end gap-3">
+                        {countries.map((c) => (
+                            <div key={c.country} className="flex-1 flex flex-col items-center">
+                                <div
+                                    className="w-full bg-blue-500 rounded-t-md transition-all duration-300"
+                                    style={{
+                                        height: `${(c.count / max) * 100}%`,
+                                        minHeight: '8px',
+                                    }}
+                                />
+                                <span className="text-[10px] text-gray-400 mt-2 truncate">{c.country}</span>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex justify-between mt-2 text-xs text-gray-400">
+                        <span>0</span>
+                        <span>{Math.round(max / 2).toLocaleString()}</span>
+                        <span>{max.toLocaleString()}</span>
+                    </div>
+                </>
+            )}
         </div>
     );
 }
@@ -142,7 +374,7 @@ export default function AnalyticsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <Loader />
             </div>
         );
@@ -150,12 +382,12 @@ export default function AnalyticsPage() {
 
     if (error) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <div className="text-center">
-                    <p className="text-red-400 mb-4">{error}</p>
+                    <p className="text-red-500 mb-4">{error}</p>
                     <button
                         onClick={() => window.location.reload()}
-                        className="px-4 py-2 bg-teal-500 text-white rounded-lg"
+                        className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
                     >
                         Retry
                     </button>
@@ -165,80 +397,52 @@ export default function AnalyticsPage() {
     }
 
     return (
-        <div className="min-h-screen p-3 md:p-6 overflow-hidden">
-            <div className="flex items-center gap-3 mb-6 md:mb-8">
-                <BsBarChart className="text-xl md:text-2xl text-teal-400 flex-shrink-0" />
-                <div className="min-w-0">
-                    <h1 className="text-xl md:text-2xl font-semibold text-white truncate">Platform Analytics</h1>
-                    <p className="text-slate-400 text-xs md:text-base truncate">Actionable, real-time insights for data-driven decisions</p>
+        <div className="min-h-screen bg-gray-50 p-6 md:p-8">
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-8">
+                <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
+                    <FiTrendingUp className="text-teal-600 text-xl" />
+                </div>
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-900">Platform Analytics</h1>
+                    <p className="text-gray-500">Actionable, real-time insights for data-driven decisions.</p>
                 </div>
             </div>
 
-            {/* Metrics Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+            {/* Metrics Grid - 4x3 */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 {metricDefs.map((m) => (
                     <MetricCard
                         key={m.key}
                         label={m.label}
                         value={(stats as Record<string, number | undefined>)[m.key]}
                         Icon={m.icon}
-                        color={m.color}
-                        delta={m.deltaKey ? formatDelta((stats as Record<string, number | undefined>)[m.deltaKey]) : undefined}
+                        bgColor={m.bgColor}
+                        iconColor={m.iconColor}
+                        delta={formatDelta((stats as Record<string, number | undefined>)[m.deltaKey])}
                     />
                 ))}
             </div>
 
-            {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                <SimpleChart
-                    data={stats.userGrowth || []}
-                    color="#10b981"
-                    label="User Growth (12 months)"
-                />
-                <SimpleChart
-                    data={stats.postGrowth || []}
-                    color="#fb923c"
-                    label="Posts Trend (12 months)"
-                />
-                <SimpleChart
-                    data={stats.activeUsersChart || []}
-                    color="#2563eb"
-                    label="Daily Active Users (30 days)"
-                />
+            {/* User Growth Chart - Full Width */}
+            <div className="mb-6">
+                <UserGrowthChart data={stats.userGrowth || []} />
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                <div className="bg-slate-800 rounded-xl p-6">
-                    <h3 className="text-white font-semibold mb-4">Engagement Rate</h3>
-                    <div className="flex items-center gap-4">
-                        <div className="text-4xl font-bold text-teal-400">
-                            {stats.totalUsers && stats.activeUsers
-                                ? ((stats.activeUsers / stats.totalUsers) * 100).toFixed(1)
-                                : '0'}
-                            %
-                        </div>
-                        <div className="text-slate-400">
-                            <p>of users are active</p>
-                            <p className="text-sm">in the last 30 days</p>
-                        </div>
-                    </div>
-                </div>
+            {/* Posts Trend Chart - Full Width */}
+            <div className="mb-6">
+                <PostsTrendChart data={stats.postGrowth || []} />
+            </div>
 
-                <div className="bg-slate-800 rounded-xl p-6">
-                    <h3 className="text-white font-semibold mb-4">Content per User</h3>
-                    <div className="flex items-center gap-4">
-                        <div className="text-4xl font-bold text-orange-400">
-                            {stats.totalUsers && stats.totalPosts
-                                ? (stats.totalPosts / stats.totalUsers).toFixed(2)
-                                : '0'}
-                        </div>
-                        <div className="text-slate-400">
-                            <p>posts per user</p>
-                            <p className="text-sm">average across platform</p>
-                        </div>
-                    </div>
-                </div>
+            {/* Daily Active Users Chart - Full Width */}
+            <div className="mb-6">
+                <DailyActiveUsersChart data={stats.activeUsersChart || []} />
+            </div>
+
+            {/* Bottom Charts - 2 Column */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <UserRolesChart data={stats.userRoles} />
+                <TopCountriesChart data={stats.topCountries} />
             </div>
         </div>
     );

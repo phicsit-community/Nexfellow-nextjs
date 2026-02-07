@@ -726,7 +726,7 @@ module.exports.getAllCommunities = async (req, res) => {
     ); // populate owner details
 
     if (!communities || communities.length === 0) {
-      return res.status(404).json({ message: "No communities found" });
+      return res.status(200).json([]);
     }
 
     return res.status(200).json(communities);

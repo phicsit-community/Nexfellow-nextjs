@@ -62,22 +62,22 @@ export default function ReferralsPage() {
     };
 
     return (
-        <div className="min-h-screen p-6">
+        <div className="min-h-screen bg-gray-50 p-6 md:p-8">
             <div className="flex justify-between items-center mb-8">
                 <div className="flex items-center gap-3">
-                    <FiTrendingUp className="text-2xl text-teal-400" />
+                    <FiTrendingUp className="text-2xl text-teal-600" />
                     <div>
-                        <h1 className="text-2xl font-semibold text-white">Referral Leaderboard</h1>
-                        <p className="text-slate-400">Top users by referral coins</p>
+                        <h1 className="text-2xl font-bold text-gray-900">Referral Leaderboard</h1>
+                        <p className="text-gray-500">Top users by referral coins</p>
                     </div>
                 </div>
 
                 <div className="relative">
-                    <IoIosSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl" />
+                    <IoIosSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
                     <input
                         type="text"
                         placeholder="Search user"
-                        className="pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 w-64"
+                        className="pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 w-64 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
@@ -86,64 +86,64 @@ export default function ReferralsPage() {
 
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-slate-700 rounded-lg p-4">
-                    <p className="text-slate-400 text-sm">Total Participants</p>
-                    <p className="text-2xl font-bold text-white">{data.length}</p>
+                <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                    <p className="text-gray-500 text-sm">Total Participants</p>
+                    <p className="text-2xl font-bold text-gray-900">{data.length}</p>
                 </div>
-                <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 rounded-lg p-4 border border-yellow-500/30">
-                    <p className="text-yellow-400 text-sm">🥇 Top Referrer</p>
-                    <p className="text-xl font-bold text-white">{sortedData[0]?.username || 'N/A'}</p>
-                    <p className="text-yellow-400 text-sm">{sortedData[0]?.coins || 0} coins</p>
+                <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl p-4 border border-yellow-200">
+                    <p className="text-yellow-700 text-sm">🥇 Top Referrer</p>
+                    <p className="text-xl font-bold text-gray-900">{sortedData[0]?.username || 'N/A'}</p>
+                    <p className="text-yellow-700 text-sm">{sortedData[0]?.coins || 0} coins</p>
                 </div>
-                <div className="bg-slate-700 rounded-lg p-4">
-                    <p className="text-slate-400 text-sm">Total Coins</p>
-                    <p className="text-2xl font-bold text-teal-400">{data.reduce((acc, u) => acc + (u.coins || 0), 0).toLocaleString()}</p>
+                <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                    <p className="text-gray-500 text-sm">Total Coins</p>
+                    <p className="text-2xl font-bold text-teal-600">{data.reduce((acc, u) => acc + (u.coins || 0), 0).toLocaleString()}</p>
                 </div>
-                <div className="bg-slate-700 rounded-lg p-4">
-                    <p className="text-slate-400 text-sm">Active Referrers</p>
-                    <p className="text-2xl font-bold text-white">{data.filter((u) => (u.coins || 0) > 0).length}</p>
+                <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                    <p className="text-gray-500 text-sm">Active Referrers</p>
+                    <p className="text-2xl font-bold text-gray-900">{data.filter((u) => (u.coins || 0) > 0).length}</p>
                 </div>
             </div>
 
             {/* Leaderboard Table */}
-            <div className="bg-slate-800 rounded-xl overflow-hidden">
-                <div className="grid grid-cols-4 gap-4 p-4 bg-slate-700 text-slate-300 font-semibold">
+            <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+                <div className="grid grid-cols-4 gap-4 p-4 bg-gray-50 text-gray-700 font-semibold border-b border-gray-100">
                     <div>Rank</div>
                     <div className="col-span-2">Username</div>
                     <div className="text-right">Referral Coins</div>
                 </div>
 
-                <div className="divide-y divide-slate-700">
+                <div className="divide-y divide-gray-100">
                     {loading ? (
                         <div className="flex justify-center py-12">
                             <Loader />
                         </div>
                     ) : paginatedData.length === 0 ? (
-                        <div className="text-slate-400 text-center py-12">No users found</div>
+                        <div className="text-gray-500 text-center py-12">No users found</div>
                     ) : (
                         paginatedData.map((user, index) => {
                             const globalRank = (currentPage - 1) * itemsPerPage + index + 1;
                             return (
                                 <div
                                     key={user._id}
-                                    className={`grid grid-cols-4 gap-4 p-4 items-center hover:bg-slate-700/50 transition-colors ${globalRank <= 3 ? 'bg-gradient-to-r from-yellow-500/5 to-transparent' : ''
+                                    className={`grid grid-cols-4 gap-4 p-4 items-center hover:bg-gray-50 transition-colors ${globalRank <= 3 ? 'bg-gradient-to-r from-yellow-50 to-transparent' : ''
                                         }`}
                                 >
                                     <div className="text-2xl">{getRankBadge(globalRank)}</div>
                                     <div className="col-span-2 flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-slate-600 rounded-full overflow-hidden">
+                                        <div className="w-10 h-10 bg-gray-200 rounded-full overflow-hidden">
                                             {user.picture && (
                                                 <img src={user.picture} alt={user.username} className="w-full h-full object-cover" />
                                             )}
                                         </div>
                                         <div>
-                                            <p className="text-white font-medium">{user.username}</p>
-                                            <p className="text-slate-400 text-sm">{user.name}</p>
+                                            <p className="text-gray-900 font-medium">{user.username}</p>
+                                            <p className="text-gray-500 text-sm">{user.name}</p>
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <span className="text-teal-400 font-bold text-lg">{(user.coins || 0).toLocaleString()}</span>
-                                        <span className="text-slate-400 text-sm ml-1">coins</span>
+                                        <span className="text-teal-600 font-bold text-lg">{(user.coins || 0).toLocaleString()}</span>
+                                        <span className="text-gray-500 text-sm ml-1">coins</span>
                                     </div>
                                 </div>
                             );
