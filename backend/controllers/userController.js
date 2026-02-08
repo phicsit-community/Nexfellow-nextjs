@@ -125,7 +125,8 @@ module.exports.login = async (req, res) => {
     registeredQuizzes: user.registeredQuizzes,
     followedCommunities: user.followedCommunities,
     themePreference: user.themePreference,
-    owner: user?.createdCommunity
+    owner: user?.createdCommunity,
+    verified: user.verified
   };
 
   const redirectUrl = req.signedCookies.redirectUrl || "/feed";
@@ -213,6 +214,7 @@ module.exports.verifyOtp = async (req, res) => {
     profile: user.profile,
     registeredQuizzes: user.registeredQuizzes,
     followedCommunities: user.followedCommunities,
+    verified: user.verified,
   };
 
   const redirectUrl = req.signedCookies.redirectUrl || "/feed";

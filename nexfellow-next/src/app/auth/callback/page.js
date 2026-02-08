@@ -42,11 +42,12 @@ export default function AuthCallback() {
                         })
                     );
 
-                    // Set a flag in sessionStorage to indicate successful OAuth login
+                    // Set flags in sessionStorage to indicate successful OAuth login
                     sessionStorage.setItem("oauth_login_success", "true");
+                    sessionStorage.setItem("oauth_login_time", Date.now().toString());
 
                     // Wait for localStorage to be updated, then do a hard redirect
-                    await new Promise(resolve => setTimeout(resolve, 300));
+                    await new Promise(resolve => setTimeout(resolve, 500));
 
                     // Use window.location for a full page reload to ensure state is fresh
                     window.location.href = "/feed";

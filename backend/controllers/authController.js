@@ -94,6 +94,7 @@ module.exports.exchangeOAuthCode = async (req, res) => {
       picture: user.picture,
       banner: user.banner,
       profile: user.profile,
+      verified: user.verified,
     };
   }
 
@@ -459,6 +460,7 @@ exports.getUserDetails = async (req, res) => {
       googleId: user.googleId,
       profile: user.profile,
       registeredQuizzes: user.registeredQuizzes,
+      verified: user.verified,
     };
 
     // Calculate token expiration times

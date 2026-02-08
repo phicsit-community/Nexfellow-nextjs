@@ -24,6 +24,9 @@ export default function Feed() {
 
             // Check if we just came from OAuth callback
             const oauthSuccess = sessionStorage.getItem("oauth_login_success");
+            const oauthLoginTime = sessionStorage.getItem("oauth_login_time");
+            const justCompletedOAuth = oauthLoginTime && (Date.now() - parseInt(oauthLoginTime)) < 10000;
+
             if (oauthSuccess) {
                 sessionStorage.removeItem("oauth_login_success");
             }
@@ -34,7 +37,7 @@ export default function Feed() {
                 return;
             }
 
-            // Check localStorage 
+            // Check localStorage - prioritize this for OAuth flow
             const localIsLoggedIn = localStorage.getItem("isLoggedIn") === "true";
             const userStr = localStorage.getItem("user");
             const hasUser = userStr && userStr !== "null" && userStr !== "undefined";
@@ -49,6 +52,29 @@ export default function Feed() {
                     }
                 } catch (e) {
                     console.log("Failed to parse user from localStorage");
+                }
+            }
+
+            // If we just completed OAuth but localStorage isn't ready, wait a bit
+            if (justCompletedOAuth) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Re-check localStorage after waiting
+                const retryLocalIsLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+                const retryUserStr = localStorage.getItem("user");
+                const retryHasUser = retryUserStr && retryUserStr !== "null" && retryUserStr !== "undefined";
+
+                if (retryLocalIsLoggedIn && retryHasUser) {
+                    try {
+                        const parsedUser = JSON.parse(retryUserStr);
+                        if (parsedUser && parsedUser.id) {
+                            dispatch(login({ user: parsedUser, expiresIn: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString() }));
+                            setIsCheckingAuth(false);
+                            return;
+                        }
+                    } catch (e) {
+                        console.log("Failed to parse user from localStorage on retry");
+                    }
                 }
             }
 

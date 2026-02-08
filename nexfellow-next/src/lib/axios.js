@@ -59,6 +59,11 @@ api.interceptors.response.use(
                 return Promise.reject(error);
             }
 
+            // Don't try to refresh on exchange-code endpoint - this is part of OAuth flow
+            if (originalRequest.url?.includes('/auth/exchange-code')) {
+                return Promise.reject(error);
+            }
+
             originalRequest._retry = true;
 
             if (isRefreshing) {
@@ -92,24 +97,29 @@ api.interceptors.response.use(
                 processQueue(refreshError, null);
 
                 // If refresh fails, clear auth data and redirect to login
-                // But only if we're NOT already on the login page
+                // But only if we're NOT already on the login page or auth callback
                 if (typeof window !== "undefined") {
-                    const isOnLoginPage = window.location.pathname === "/login" ||
+                    const isOnAuthPage = window.location.pathname === "/login" ||
                         window.location.pathname === "/signup" ||
-                        window.location.pathname === "/forgotpassword";
+                        window.location.pathname === "/forgotpassword" ||
+                        window.location.pathname === "/auth/callback" ||
+                        window.location.pathname.startsWith("/auth/");
 
-                    console.log("Token refresh failed, clearing auth data");
-                    localStorage.removeItem("isLoggedIn");
-                    localStorage.removeItem("user");
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("expiresIn");
+                    // Check if we just completed OAuth login (within last 5 seconds)
+                    const oauthLoginTime = sessionStorage.getItem("oauth_login_time");
+                    const justCompletedOAuth = oauthLoginTime && (Date.now() - parseInt(oauthLoginTime)) < 5000;
 
-                    // Clear stale cookies
-                    document.cookie = "isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    if (!isOnAuthPage && !justCompletedOAuth) {
+                        console.log("Token refresh failed, clearing auth data");
+                        localStorage.removeItem("isLoggedIn");
+                        localStorage.removeItem("user");
+                        localStorage.removeItem("token");
+                        localStorage.removeItem("expiresIn");
 
-                    // Only redirect if not already on auth pages
-                    if (!isOnLoginPage) {
+                        // Clear stale cookies
+                        document.cookie = "isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
                         window.location.href = "/login";
                     }
                 }

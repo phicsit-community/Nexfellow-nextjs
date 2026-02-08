@@ -44,45 +44,47 @@ const FeedPage = () => {
           </button>
         </div>
 
-        {/* Create Post Box */}
-        <div className={styles.createPostBox}>
-          <div className={styles.inputBox} onClick={handleCreatePostClick}>
-            <div className={styles.avatarWrapper}>
-              {user?.picture ? (
-                <img
-                  src={user.picture}
-                  alt="User Avatar"
-                  className={styles.avatar}
-                />
-              ) : (
-                <div className={styles.avatarPlaceholder}>
-                  {user?.name?.charAt(0) || "U"}
-                </div>
-              )}
+        {/* Create Post Box - Only show for verified users */}
+        {user?.verified && (
+          <div className={styles.createPostBox}>
+            <div className={styles.inputBox} onClick={handleCreatePostClick}>
+              <div className={styles.avatarWrapper}>
+                {user?.picture ? (
+                  <img
+                    src={user.picture}
+                    alt="User Avatar"
+                    className={styles.avatar}
+                  />
+                ) : (
+                  <div className={styles.avatarPlaceholder}>
+                    {user?.name?.charAt(0) || "U"}
+                  </div>
+                )}
+              </div>
+              <input
+                type="text"
+                placeholder="What are you working on?"
+                className={styles.postInput}
+                readOnly
+              />
             </div>
-            <input
-              type="text"
-              placeholder="What are you working on?"
-              className={styles.postInput}
-              readOnly
-            />
+            <div className={styles.postActions}>
+              <button className={styles.actionBtn} onClick={handleCreatePostClick} title="Add Photo">
+                <MdPhotoLibrary />
+              </button>
+              <button className={`${styles.actionBtn} ${styles.disabledBtn}`} disabled title="Polls coming soon">
+                <BiPoll />
+              </button>
+              <button className={`${styles.actionBtn} ${styles.disabledBtn}`} disabled title="Links coming soon">
+                <MdInsertLink />
+              </button>
+              <button className={`${styles.actionBtn} ${styles.disabledBtn}`} disabled title="Documents coming soon">
+                <MdOutlineDescription />
+              </button>
+              <button className={styles.postBtn} onClick={handleCreatePostClick}>Post</button>
+            </div>
           </div>
-          <div className={styles.postActions}>
-            <button className={styles.actionBtn} onClick={handleCreatePostClick} title="Add Photo">
-              <MdPhotoLibrary />
-            </button>
-            <button className={`${styles.actionBtn} ${styles.disabledBtn}`} disabled title="Polls coming soon">
-              <BiPoll />
-            </button>
-            <button className={`${styles.actionBtn} ${styles.disabledBtn}`} disabled title="Links coming soon">
-              <MdInsertLink />
-            </button>
-            <button className={`${styles.actionBtn} ${styles.disabledBtn}`} disabled title="Documents coming soon">
-              <MdOutlineDescription />
-            </button>
-            <button className={styles.postBtn} onClick={handleCreatePostClick}>Post</button>
-          </div>
-        </div>
+        )}
 
         <TrendingFeed type={activeTab} />
       </div>
