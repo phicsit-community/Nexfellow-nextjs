@@ -77,13 +77,37 @@ const storeRefreshToken = async (userId, refreshToken) => {
 };
 
 /**
+ * Check if we're in production environment
+ * Uses multiple signals to determine production mode
+ */
+const isProductionEnvironment = () => {
+  // Check NODE_ENV
+  if (process.env.NODE_ENV === "production") return true;
+  
+  // Check if running on Render or other cloud platforms
+  if (process.env.RENDER || process.env.RENDER_SERVICE_ID) return true;
+  
+  // Check if BACKEND_DOMAIN contains production URLs
+  const backendDomain = process.env.BACKEND_DOMAIN || "";
+  if (backendDomain.includes("onrender.com") || 
+      backendDomain.includes("vercel.app") ||
+      backendDomain.includes("nexfellow.com")) {
+    return true;
+  }
+  
+  return false;
+};
+
+/**
  * Set authentication cookies
  * @param {Object} res - Express response object
  * @param {String} accessToken - JWT access token
  * @param {String} refreshToken - JWT refresh token
  */
 const setAuthCookies = (res, accessToken, refreshToken) => {
-  const isProduction = process.env.NODE_ENV === "production";
+  const isProduction = isProductionEnvironment();
+  
+  console.log(`[token/index.js] Setting auth cookies | Production mode: ${isProduction}`);
 
   // Set access token cookie - short-lived
   res.cookie("accessToken", accessToken, {
@@ -107,7 +131,7 @@ const setAuthCookies = (res, accessToken, refreshToken) => {
  * @param {Object} res - Express response object
  */
 const clearAuthCookies = (res) => {
-  const isProduction = process.env.NODE_ENV === "production";
+  const isProduction = isProductionEnvironment();
 
   res.clearCookie("accessToken", {
     httpOnly: true,

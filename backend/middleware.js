@@ -119,7 +119,10 @@ const isClient = async (req, res, next) => {
     const accessToken = req.cookies.accessToken;
     const refreshToken = req.cookies.refreshToken;
 
+    console.log(`[middleware:isClient] Cookies received - accessToken: ${accessToken ? 'present' : 'missing'}, refreshToken: ${refreshToken ? 'present' : 'missing'}, userjwt: ${req.signedCookies.userjwt ? 'present' : 'missing'}`);
+
     if (!accessToken && !refreshToken && !req.signedCookies.userjwt) {
+      console.log(`[middleware:isClient] No auth cookies found`);
       return res.status(401).json("Not Logged In");
     }
 

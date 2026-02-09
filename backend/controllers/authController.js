@@ -55,6 +55,13 @@ module.exports.exchangeOAuthCode = async (req, res) => {
   // Delete the code immediately (one-time use)
   oauthAuthCodes.delete(code);
 
+  // Determine if production environment
+  const isProduction = process.env.NODE_ENV === "production" || 
+                       process.env.RENDER || 
+                       (process.env.BACKEND_DOMAIN || "").includes("onrender.com");
+
+  console.log(`[authController] Exchange code | Production mode: ${isProduction}`);
+
   // Set the cookies
   tokenUtils.setAuthCookies(res, authData.accessToken, authData.refreshToken);
 
@@ -65,9 +72,9 @@ module.exports.exchangeOAuthCode = async (req, res) => {
     {
       httpOnly: true,
       maxAge: 15 * 60 * 1000,
-      secure: process.env.NODE_ENV === "production",
+      secure: isProduction,
       signed: true,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      sameSite: isProduction ? "none" : "lax",
     }
   );
 
@@ -97,6 +104,8 @@ module.exports.exchangeOAuthCode = async (req, res) => {
       verified: user.verified,
     };
   }
+
+  console.log(`[authController] Exchange code successful for user: ${payload.email}`);
 
   res.status(200).json({
     success: true,
