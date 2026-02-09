@@ -83,18 +83,18 @@ const storeRefreshToken = async (userId, refreshToken) => {
 const isProductionEnvironment = () => {
   // Check NODE_ENV
   if (process.env.NODE_ENV === "production") return true;
-  
+
   // Check if running on Render or other cloud platforms
   if (process.env.RENDER || process.env.RENDER_SERVICE_ID) return true;
-  
+
   // Check if BACKEND_DOMAIN contains production URLs
   const backendDomain = process.env.BACKEND_DOMAIN || "";
-  if (backendDomain.includes("onrender.com") || 
-      backendDomain.includes("vercel.app") ||
-      backendDomain.includes("nexfellow.com")) {
+  if (backendDomain.includes("onrender.com") ||
+    backendDomain.includes("vercel.app") ||
+    backendDomain.includes("nexfellow.com")) {
     return true;
   }
-  
+
   return false;
 };
 
@@ -106,7 +106,7 @@ const isProductionEnvironment = () => {
  */
 const setAuthCookies = (res, accessToken, refreshToken) => {
   const isProduction = isProductionEnvironment();
-  
+
   console.log(`[token/index.js] Setting auth cookies | Production mode: ${isProduction}`);
 
   // Set access token cookie - short-lived

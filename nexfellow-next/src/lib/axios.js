@@ -108,9 +108,9 @@ api.interceptors.response.use(
                     const justCompletedOAuth = oauthLoginTime && (Date.now() - parseInt(oauthLoginTime)) < 30000;
 
                     // Check if localStorage has valid auth data
-                    const hasLocalAuth = localStorage.getItem("isLoggedIn") === "true" && 
-                                         localStorage.getItem("user") && 
-                                         localStorage.getItem("user") !== "null";
+                    const hasLocalAuth = localStorage.getItem("isLoggedIn") === "true" &&
+                        localStorage.getItem("user") &&
+                        localStorage.getItem("user") !== "null";
 
                     // Only clear and redirect if:
                     // 1. Not on auth page

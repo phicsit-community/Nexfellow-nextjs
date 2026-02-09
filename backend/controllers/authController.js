@@ -56,9 +56,9 @@ module.exports.exchangeOAuthCode = async (req, res) => {
   oauthAuthCodes.delete(code);
 
   // Determine if production environment
-  const isProduction = process.env.NODE_ENV === "production" || 
-                       process.env.RENDER || 
-                       (process.env.BACKEND_DOMAIN || "").includes("onrender.com");
+  const isProduction = process.env.NODE_ENV === "production" ||
+    process.env.RENDER ||
+    (process.env.BACKEND_DOMAIN || "").includes("onrender.com");
 
   console.log(`[authController] Exchange code | Production mode: ${isProduction}`);
 

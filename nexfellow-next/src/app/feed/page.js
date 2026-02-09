@@ -25,7 +25,7 @@ export default function Feed() {
             // Check if we just came from OAuth callback
             const oauthSuccess = sessionStorage.getItem("oauth_login_success");
             const oauthLoginTime = sessionStorage.getItem("oauth_login_time");
-            const justCompletedOAuth = oauthLoginTime && (Date.now() - parseInt(oauthLoginTime)) < 30000; // 30 seconds
+            const justCompletedOAuth = oauthLoginTime && (Date.now() - parseInt(oauthLoginTime)) < 60000; // 60 seconds
 
             if (oauthSuccess) {
                 sessionStorage.removeItem("oauth_login_success");
@@ -43,32 +43,36 @@ export default function Feed() {
             const userStr = localStorage.getItem("user");
             const hasUser = userStr && userStr !== "null" && userStr !== "undefined";
 
+            console.log("Feed: Checking localStorage - isLoggedIn:", localIsLoggedIn, "hasUser:", hasUser);
+
             if (localIsLoggedIn && hasUser) {
                 try {
                     const parsedUser = JSON.parse(userStr);
                     if (parsedUser && parsedUser.id) {
-                        console.log("Feed: Restored auth from localStorage");
+                        console.log("Feed: Restored auth from localStorage for user:", parsedUser.email);
                         dispatch(login({ user: parsedUser, expiresIn: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString() }));
                         setIsCheckingAuth(false);
                         // Don't make API call - localStorage is the source of truth after OAuth
                         return;
                     }
                 } catch (e) {
-                    console.log("Failed to parse user from localStorage");
+                    console.log("Failed to parse user from localStorage:", e);
                 }
             }
 
             // If we just completed OAuth but localStorage isn't ready yet, wait and retry
             if (justCompletedOAuth) {
                 console.log("Feed: Just completed OAuth, waiting for localStorage...");
-                
+
                 // Wait and retry multiple times
-                for (let i = 0; i < 5; i++) {
-                    await new Promise(resolve => setTimeout(resolve, 300));
+                for (let i = 0; i < 10; i++) {
+                    await new Promise(resolve => setTimeout(resolve, 200));
 
                     const retryLocalIsLoggedIn = localStorage.getItem("isLoggedIn") === "true";
                     const retryUserStr = localStorage.getItem("user");
                     const retryHasUser = retryUserStr && retryUserStr !== "null" && retryUserStr !== "undefined";
+
+                    console.log("Feed: Retry", i + 1, "- isLoggedIn:", retryLocalIsLoggedIn, "hasUser:", retryHasUser);
 
                     if (retryLocalIsLoggedIn && retryHasUser) {
                         try {
@@ -84,6 +88,9 @@ export default function Feed() {
                         }
                     }
                 }
+                
+                // If still not found after retries, check one more time then redirect
+                console.log("Feed: OAuth completed but no localStorage data found after 10 retries");
             }
 
             // Only check with server if no localStorage data and not just after OAuth
@@ -102,7 +109,7 @@ export default function Feed() {
                         return;
                     }
                 } catch (error) {
-                    console.log("Feed: Server auth check failed");
+                    console.log("Feed: Server auth check failed:", error.message);
                 }
             }
 

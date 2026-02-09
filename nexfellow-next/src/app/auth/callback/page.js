@@ -34,7 +34,7 @@ export default function AuthCallback() {
                 const response = await api.post("/auth/exchange-code", { code });
 
                 if (response.data.success) {
-                    // Store user in Redux
+                    // Store user in Redux (this also saves to localStorage)
                     dispatch(
                         login({
                             user: response.data.payload,
@@ -46,8 +46,33 @@ export default function AuthCallback() {
                     sessionStorage.setItem("oauth_login_success", "true");
                     sessionStorage.setItem("oauth_login_time", Date.now().toString());
 
-                    // Wait for localStorage to be updated, then do a hard redirect
-                    await new Promise(resolve => setTimeout(resolve, 500));
+                    // CRITICAL: Wait and verify localStorage is set before redirecting
+                    // This prevents the race condition where feed page doesn't see the auth data
+                    let verified = false;
+                    for (let i = 0; i < 10; i++) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        
+                        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+                        const userStr = localStorage.getItem("user");
+                        const hasUser = userStr && userStr !== "null" && userStr !== "undefined";
+                        
+                        if (isLoggedIn && hasUser) {
+                            console.log("OAuth callback: localStorage verified after", (i + 1) * 100, "ms");
+                            verified = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!verified) {
+                        // Force set localStorage directly as fallback
+                        console.log("OAuth callback: Force setting localStorage");
+                        localStorage.setItem("isLoggedIn", "true");
+                        localStorage.setItem("user", JSON.stringify(response.data.payload));
+                        localStorage.setItem("expiresIn", new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString());
+                    }
+
+                    // Final wait to ensure everything is synced
+                    await new Promise(resolve => setTimeout(resolve, 200));
 
                     // Use window.location for a full page reload to ensure state is fresh
                     window.location.href = "/feed";
