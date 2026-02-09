@@ -404,6 +404,7 @@ const UsersPage = () => {
                                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                                     <img src="/images/badges/community-badge.svg" alt="Community" className="w-6 h-6" />
                                                 </button>
+                                                {/* Premium badge - uncomment when needed
                                                 <button
                                                     onClick={() => togglePremium(user._id, user.premiumBadge || false)}
                                                     className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${user.premiumBadge
@@ -412,9 +413,9 @@ const UsersPage = () => {
                                                         }`}
                                                     title={user.premiumBadge ? 'Remove Premium' : 'Add Premium'}
                                                 >
-                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
                                                     <img src="/images/badges/premium-badge.svg" alt="Premium" className="w-6 h-6" />
                                                 </button>
+                                                */}
                                             </div>
                                         </td>
 

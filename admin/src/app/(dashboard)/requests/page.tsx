@@ -5,37 +5,45 @@ import { FiCheckCircle, FiX, FiCheck, FiEye } from 'react-icons/fi';
 import { AiOutlineUser } from 'react-icons/ai';
 import { MdPending, MdCheckCircle, MdCancel } from 'react-icons/md';
 import { toast } from 'sonner';
-import Image from 'next/image';
+import { safeFetch } from '@/lib/safeFetch';
 
-interface Request {
+interface PopulatedUser {
     _id: string;
-    user: {
-        _id: string;
-        username: string;
-        email: string;
-        name?: string;
-        picture?: string;
-    };
-    type: string;
-    status: 'pending' | 'approved' | 'rejected';
+    username: string;
+    email: string;
+    name?: string;
+    picture?: string;
+}
+
+interface VerificationRequest {
+    _id: string;
+    action: string;
+    userId: PopulatedUser;
+    message?: string;
+    status: 'Pending' | 'Approved' | 'Rejected';
+    communityName: string;
+    description: string;
+    email: string;
+    accountType: 'Individual' | 'Organization';
+    socialMediaLink?: string;
+    category: string;
     createdAt: string;
-    documents?: string[];
-    reason?: string;
+    updatedAt: string;
 }
 
 export default function RequestsPage() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const [requests, setRequests] = useState<Request[]>([]);
+    const [requests, setRequests] = useState<VerificationRequest[]>([]);
     const [loading, setLoading] = useState(false);
-    const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
-    const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
+    const [filter, setFilter] = useState<'all' | 'Pending' | 'Approved' | 'Rejected'>('Pending');
+    const [selectedRequest, setSelectedRequest] = useState<VerificationRequest | null>(null);
     const [showDetail, setShowDetail] = useState(false);
     const [activeUsers, setActiveUsers] = useState(0);
 
     useEffect(() => {
         const fetchActiveUsers = async () => {
             try {
-                const res = await fetch(`${apiUrl}/admin/active-users/count`, { credentials: 'include' });
+                const res = await safeFetch(`${apiUrl}/admin/active-users/count`);
                 if (res.ok) {
                     const data = await res.json();
                     setActiveUsers(data.activeUsers || 0);
@@ -51,7 +59,7 @@ export default function RequestsPage() {
         const fetchRequests = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`${apiUrl}/admin/verification-requests`, { credentials: 'include' });
+                const res = await safeFetch(`${apiUrl}/requests`);
                 if (res.ok) {
                     const data = await res.json();
                     setRequests(Array.isArray(data) ? data : []);
@@ -67,13 +75,12 @@ export default function RequestsPage() {
 
     const handleApprove = async (id: string) => {
         try {
-            const res = await fetch(`${apiUrl}/admin/verification-requests/${id}/approve`, {
-                method: 'POST',
-                credentials: 'include',
+            const res = await safeFetch(`${apiUrl}/requests/${id}/approve`, {
+                method: 'PUT',
             });
             if (res.ok) {
                 setRequests((prev) =>
-                    prev.map((req) => (req._id === id ? { ...req, status: 'approved' } : req))
+                    prev.map((req) => (req._id === id ? { ...req, status: 'Approved' as const } : req))
                 );
                 toast.success('Request approved successfully');
                 setShowDetail(false);
@@ -87,13 +94,12 @@ export default function RequestsPage() {
 
     const handleReject = async (id: string) => {
         try {
-            const res = await fetch(`${apiUrl}/admin/verification-requests/${id}/reject`, {
-                method: 'POST',
-                credentials: 'include',
+            const res = await safeFetch(`${apiUrl}/requests/${id}/reject`, {
+                method: 'PUT',
             });
             if (res.ok) {
                 setRequests((prev) =>
-                    prev.map((req) => (req._id === id ? { ...req, status: 'rejected' } : req))
+                    prev.map((req) => (req._id === id ? { ...req, status: 'Rejected' as const } : req))
                 );
                 toast.success('Request rejected');
                 setShowDetail(false);
@@ -111,18 +117,18 @@ export default function RequestsPage() {
 
     const stats = {
         total: requests.length,
-        pending: requests.filter((r) => r.status === 'pending').length,
-        approved: requests.filter((r) => r.status === 'approved').length,
-        rejected: requests.filter((r) => r.status === 'rejected').length,
+        pending: requests.filter((r) => r.status === 'Pending').length,
+        approved: requests.filter((r) => r.status === 'Approved').length,
+        rejected: requests.filter((r) => r.status === 'Rejected').length,
     };
 
     const getStatusIcon = (status: string) => {
         switch (status) {
-            case 'pending':
+            case 'Pending':
                 return <MdPending className="text-yellow-600" />;
-            case 'approved':
+            case 'Approved':
                 return <MdCheckCircle className="text-green-600" />;
-            case 'rejected':
+            case 'Rejected':
                 return <MdCancel className="text-red-600" />;
             default:
                 return null;
@@ -168,7 +174,7 @@ export default function RequestsPage() {
 
             {/* Filter Tabs */}
             <div className="flex gap-2 mb-6">
-                {(['all', 'pending', 'approved', 'rejected'] as const).map((status) => (
+                {(['all', 'Pending', 'Approved', 'Rejected'] as const).map((status) => (
                     <button
                         key={status}
                         onClick={() => setFilter(status)}
@@ -177,7 +183,7 @@ export default function RequestsPage() {
                             : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
                             }`}
                     >
-                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                        {status === 'all' ? 'All' : status}
                         {status !== 'all' && (
                             <span className="ml-2 bg-gray-100 px-2 py-0.5 rounded text-xs">
                                 {stats[status as keyof typeof stats]}
@@ -201,9 +207,9 @@ export default function RequestsPage() {
                         >
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden shrink-0">
-                                    {request.user?.picture ? (
+                                    {request.userId?.picture ? (
                                         <img
-                                            src={request.user.picture}
+                                            src={request.userId.picture}
                                             alt="User"
                                             className="w-full h-full object-cover"
                                         />
@@ -214,10 +220,10 @@ export default function RequestsPage() {
                                     )}
                                 </div>
                                 <div>
-                                    <p className="text-gray-900 font-medium">{request.user?.name || request.user?.username}</p>
-                                    <p className="text-gray-500 text-sm">@{request.user?.username} • {request.user?.email}</p>
+                                    <p className="text-gray-900 font-medium">{request.communityName || request.userId?.name || request.userId?.username}</p>
+                                    <p className="text-gray-500 text-sm">@{request.userId?.username} • {request.userId?.email || request.email}</p>
                                     <p className="text-gray-400 text-xs mt-1">
-                                        Type: <span className="text-teal-600">{request.type}</span> •{' '}
+                                        Category: <span className="text-teal-600">{request.category}</span> •{' '}
                                         {new Date(request.createdAt).toLocaleDateString()}
                                     </p>
                                 </div>
@@ -226,9 +232,9 @@ export default function RequestsPage() {
                                 <div className="flex items-center gap-2">
                                     {getStatusIcon(request.status)}
                                     <span
-                                        className={`px-3 py-1 rounded text-sm capitalize font-medium ${request.status === 'approved'
+                                        className={`px-3 py-1 rounded text-sm capitalize font-medium ${request.status === 'Approved'
                                             ? 'bg-green-100 text-green-700'
-                                            : request.status === 'rejected'
+                                            : request.status === 'Rejected'
                                                 ? 'bg-red-100 text-red-700'
                                                 : 'bg-yellow-100 text-yellow-700'
                                             }`}
@@ -242,7 +248,7 @@ export default function RequestsPage() {
                                 >
                                     <FiEye />
                                 </button>
-                                {request.status === 'pending' && (
+                                {request.status === 'Pending' && (
                                     <>
                                         <button
                                             onClick={() => handleApprove(request._id)}
@@ -281,9 +287,9 @@ export default function RequestsPage() {
 
                             <div className="flex items-center gap-4 mb-6">
                                 <div className="w-16 h-16 bg-gray-200 rounded-full overflow-hidden">
-                                    {selectedRequest.user?.picture ? (
+                                    {selectedRequest.userId?.picture ? (
                                         <img
-                                            src={selectedRequest.user.picture}
+                                            src={selectedRequest.userId.picture}
                                             alt="User"
                                             className="w-full h-full object-cover"
                                         />
@@ -294,16 +300,20 @@ export default function RequestsPage() {
                                     )}
                                 </div>
                                 <div>
-                                    <p className="text-gray-900 font-medium text-lg">{selectedRequest.user?.name || selectedRequest.user?.username}</p>
-                                    <p className="text-gray-500">@{selectedRequest.user?.username}</p>
-                                    <p className="text-gray-400 text-sm">{selectedRequest.user?.email}</p>
+                                    <p className="text-gray-900 font-medium text-lg">{selectedRequest.communityName || selectedRequest.userId?.name || selectedRequest.userId?.username}</p>
+                                    <p className="text-gray-500">@{selectedRequest.userId?.username}</p>
+                                    <p className="text-gray-400 text-sm">{selectedRequest.userId?.email || selectedRequest.email}</p>
                                 </div>
                             </div>
 
                             <div className="space-y-4 mb-6">
                                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
-                                    <p className="text-gray-500 text-sm">Request Type</p>
-                                    <p className="text-gray-900">{selectedRequest.type}</p>
+                                    <p className="text-gray-500 text-sm">Category</p>
+                                    <p className="text-gray-900">{selectedRequest.category}</p>
+                                </div>
+                                <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                                    <p className="text-gray-500 text-sm">Account Type</p>
+                                    <p className="text-gray-900">{selectedRequest.accountType}</p>
                                 </div>
                                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
                                     <p className="text-gray-500 text-sm">Submitted On</p>
@@ -316,15 +326,15 @@ export default function RequestsPage() {
                                         <span className="text-gray-900 capitalize">{selectedRequest.status}</span>
                                     </div>
                                 </div>
-                                {selectedRequest.reason && (
+                                {selectedRequest.description && (
                                     <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
-                                        <p className="text-gray-500 text-sm">Reason Provided</p>
-                                        <p className="text-gray-900">{selectedRequest.reason}</p>
+                                        <p className="text-gray-500 text-sm">Description</p>
+                                        <p className="text-gray-900">{selectedRequest.description}</p>
                                     </div>
                                 )}
                             </div>
 
-                            {selectedRequest.status === 'pending' && (
+                            {selectedRequest.status === 'Pending' && (
                                 <div className="flex gap-3">
                                     <button
                                         onClick={() => handleApprove(selectedRequest._id)}

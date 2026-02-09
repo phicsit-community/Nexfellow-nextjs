@@ -174,15 +174,15 @@ export default function PostsPage() {
     const regularPosts = posts.filter((p) => !(p.isDeleted && p.underReview === 'pending'));
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6 md:p-8">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-900">Admin Posts Control</h1>
+        <div className="min-h-screen bg-gray-50 p-4 sm:p-6 md:p-8">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Admin Posts Control</h1>
                 <div className="relative">
                     <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input
                         type="text"
                         placeholder="Search posts..."
-                        className="pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 w-80 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                        className="w-full sm:w-80 pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
@@ -206,7 +206,7 @@ export default function PostsPage() {
             </div>
 
             {/* Posts List */}
-            <div className="space-y-4 max-h-[65vh] overflow-y-auto">
+            <div className="space-y-3">
                 {activeTab === 'posts' && (
                     <>
                         {regularPosts.length === 0 && !loading && <div className="text-gray-500 text-center py-8">No posts found.</div>}
@@ -214,15 +214,15 @@ export default function PostsPage() {
                             <div
                                 key={post._id}
                                 ref={idx === regularPosts.length - 1 ? lastPostRef : null}
-                                className={`p-4 rounded-xl border ${post.isDeleted ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100 shadow-sm'}`}
+                                className={`p-3 sm:p-4 rounded-xl border ${post.isDeleted ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100 shadow-sm'}`}
                             >
-                                <div className="flex flex-wrap items-center gap-3 mb-2 text-sm">
+                                <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-1.5 text-sm">
                                     <span className="text-teal-600 font-semibold">{post.author?.name || 'Unknown'} (@{post.author?.username || 'user'})</span>
-                                    <span className="text-gray-500">{new Date(post.createdAt).toLocaleString()}</span>
+                                    <span className="text-gray-500 text-xs sm:text-sm">{new Date(post.createdAt).toLocaleString()}</span>
                                     {post.isDeleted && <span className="bg-red-100 text-red-700 px-3 py-1 rounded-lg text-xs font-semibold">Taken Down</span>}
                                 </div>
-                                <p className="text-gray-700 mb-3">{post.content?.slice(0, 200)}{post.content && post.content.length > 200 ? '...' : ''}</p>
-                                <div className="flex gap-3">
+                                <p className="text-gray-700 text-sm sm:text-base mb-2">{post.content?.slice(0, 200)}{post.content && post.content.length > 200 ? '...' : ''}</p>
+                                <div className="flex flex-wrap gap-2 sm:gap-3">
                                     {!post.isDeleted && (
                                         <button
                                             className="flex items-center gap-2 px-4 py-2 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 transition-colors"

@@ -263,8 +263,8 @@ function NavLinks({ isActive }: { isActive: (path: string) => boolean }) {
             </Link>
 
             <Link
-                href="/requests"
-                className={`${styles.navLink} ${isActive('/requests') ? styles.active : ''}`}
+                href="/verifications"
+                className={`${styles.navLink} ${isActive('/verifications') ? styles.active : ''}`}
             >
                 <FiCheckCircle className={styles.sideIcon} />
                 <p>Verifications</p>

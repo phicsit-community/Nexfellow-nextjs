@@ -245,7 +245,7 @@ export default function FeaturedCommunitiesPage() {
 
                 {/* Featured Communities - Right Side */}
                 <div>
-                    <div className="bg-white rounded-2xl border-2 border-dashed border-teal-200 p-6">
+                    <div className="bg-teal-50/50 rounded-2xl border-2 border-dashed border-teal-200 p-6">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-2">
                                 <FiStar className="text-teal-500" />
@@ -265,7 +265,7 @@ export default function FeaturedCommunitiesPage() {
                                         onDragStart={() => handleDragStart(index)}
                                         onDragOver={(e) => handleDragOver(e, index)}
                                         onDragEnd={handleDragEnd}
-                                        className={`relative bg-gray-50 border border-teal-200 rounded-2xl p-5 transition-all ${
+                                        className={`relative bg-white border border-teal-200 rounded-2xl p-5 transition-all ${
                                             dragIndex === index ? 'opacity-50 scale-95' : ''
                                         } ${dragOverIndex === index && dragIndex !== index ? 'border-teal-500 border-2' : ''}`}
                                     >
