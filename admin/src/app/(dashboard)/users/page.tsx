@@ -164,6 +164,28 @@ const UsersPage = () => {
         }
     };
 
+    const toggleCommunityBadge = async (id: string, currentStatus: boolean) => {
+        try {
+            const res = await authFetch(
+                `${apiUrl}/admin/communitybadge/${id}`,
+                token,
+                { method: "PUT" }
+            );
+            if (res.ok) {
+                const result = await res.json();
+                setData(prev => prev.map(u =>
+                    u._id === id ? {
+                        ...u,
+                        communityBadge: result.communityBadge,
+                        verificationBadge: result.verificationBadge
+                    } : u
+                ));
+            }
+        } catch (error) {
+            console.error("Error toggling community badge:", error);
+        }
+    };
+
     const downloadCSV = () => {
         if (!data || data.length === 0) return;
 
@@ -324,7 +346,7 @@ const UsersPage = () => {
                                         {/* User Info */}
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                                                <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 shrink-0">
                                                     {user.picture ? (
                                                         <Image
                                                             src={user.picture}
@@ -363,22 +385,35 @@ const UsersPage = () => {
                                                 <button
                                                     onClick={() => toggleVerification(user._id, user.verificationBadge || false)}
                                                     className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${user.verificationBadge
-                                                        ? 'bg-blue-100 text-blue-500 hover:bg-blue-200'
-                                                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                                                        ? 'opacity-100 hover:opacity-80'
+                                                        : 'opacity-30 grayscale hover:opacity-50'
                                                         }`}
                                                     title={user.verificationBadge ? 'Remove Verification' : 'Add Verification'}
                                                 >
-                                                    <BsCheckCircleFill className="text-lg" />
+                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                    <img src="/images/badges/verification.svg" alt="Verification" className="w-6 h-6" />
+                                                </button>
+                                                <button
+                                                    onClick={() => toggleCommunityBadge(user._id, user.communityBadge || false)}
+                                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${user.communityBadge
+                                                        ? 'opacity-100 hover:opacity-80'
+                                                        : 'opacity-30 grayscale hover:opacity-50'
+                                                        }`}
+                                                    title={user.communityBadge ? 'Remove Community Badge' : 'Add Community Badge'}
+                                                >
+                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                    <img src="/images/badges/community-badge.svg" alt="Community" className="w-6 h-6" />
                                                 </button>
                                                 <button
                                                     onClick={() => togglePremium(user._id, user.premiumBadge || false)}
                                                     className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${user.premiumBadge
-                                                        ? 'bg-teal-100 text-teal-500 hover:bg-teal-200'
-                                                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                                                        ? 'opacity-100 hover:opacity-80'
+                                                        : 'opacity-30 grayscale hover:opacity-50'
                                                         }`}
                                                     title={user.premiumBadge ? 'Remove Premium' : 'Add Premium'}
                                                 >
-                                                    <BsStarFill className="text-lg" />
+                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                    <img src="/images/badges/premium-badge.svg" alt="Premium" className="w-6 h-6" />
                                                 </button>
                                             </div>
                                         </td>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/slices/userSlice';
@@ -11,6 +11,7 @@ export default function AuthCallbackPage() {
     const searchParams = useSearchParams();
     const dispatch = useDispatch();
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const exchanged = useRef(false);
 
     useEffect(() => {
         const code = searchParams.get('code');
@@ -20,6 +21,10 @@ export default function AuthCallbackPage() {
             router.replace('/login');
             return;
         }
+
+        // Prevent double-exchange in React strict mode
+        if (exchanged.current) return;
+        exchanged.current = true;
 
         const exchangeCode = async () => {
             try {

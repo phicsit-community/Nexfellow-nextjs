@@ -266,7 +266,7 @@ export default function AdvertisementsPage() {
                         ◎ Position: {newPosition}
                     </div>
 
-                    <div className="border border-dashed border-gray-200 rounded-xl p-8 min-h-[200px] flex items-center justify-center">
+                    <div className="border border-dashed border-gray-200 rounded-xl p-8 min-h-50 flex items-center justify-center">
                         {previewUrl ? (
                             <img src={previewUrl} alt="Preview" className="max-h-40 rounded-lg object-contain" />
                         ) : (

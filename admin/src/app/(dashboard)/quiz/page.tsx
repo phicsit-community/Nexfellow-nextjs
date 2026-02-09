@@ -140,7 +140,7 @@ export default function QuizListPage() {
                                 onClick={() => router.push(`/quiz/${quiz._id}`)}
                                 className="bg-white rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition-all border border-gray-100 shadow-sm"
                             >
-                                <div className="h-32 bg-gradient-to-br from-teal-100 to-purple-100 flex items-center justify-center">
+                                <div className="h-32 bg-linear-to-br from-teal-100 to-purple-100 flex items-center justify-center">
                                     <span className="text-5xl">📝</span>
                                 </div>
                                 <div className="p-4">

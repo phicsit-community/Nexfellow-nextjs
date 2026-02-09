@@ -22,8 +22,8 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Geek Clash Admin",
-  description: "Geek Clash Admin Dashboard",
+  title: "NexFellow Admin",
+  description: "NexFellow Admin Dashboard",
 };
 
 export default function RootLayout({

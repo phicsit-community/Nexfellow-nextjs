@@ -85,7 +85,7 @@ export default function FeaturedCommunitiesPage() {
         fetchCommunities();
     }, [apiUrl]);
 
-    const getCommunityName = (c: Community) => c.owner?.name || c.name || c.communityName || 'Unnamed Community';
+    const getCommunityName = (c: Community) => c.owner?.name || c.owner?.username || c.name || c.communityName || 'Unnamed Community';
     const getCommunityInitials = (c: Community) => {
         const name = getCommunityName(c);
         return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();

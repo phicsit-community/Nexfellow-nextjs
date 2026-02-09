@@ -78,12 +78,12 @@ const SideBar = () => {
         return (
             <div className={styles.sidebar}>
                 <div className={styles.logoDiv}>
-                    <Image
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
                         className={styles.geekLogo}
-                        src="/images/Navbar/GeekClashLogo.svg"
-                        alt="Geek Clash Logo"
-                        width={180}
-                        height={50}
+                        src="/images/Navbar/NexFellowLogoDark.svg"
+                        alt="NexFellow Logo"
+                        style={{ height: '40px', width: 'auto' }}
                     />
                 </div>
                 <div className={styles.sideContainer}>
@@ -114,11 +114,11 @@ const SideBar = () => {
                     >
                         {isMobileOpen ? <FiX size={24} /> : <FiMenu size={24} />}
                     </button>
-                    <Image
-                        src="/images/Navbar/GeekClashLogo.svg"
-                        alt="Geek Clash Logo"
-                        width={150}
-                        height={45}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                        src="/images/Navbar/NexFellowLogoDark.svg"
+                        alt="NexFellow Logo"
+                        style={{ height: '35px', width: 'auto' }}
                         className={styles.mobileLogo}
                     />
                     <div className={styles.mobileHeaderSpacer} />
@@ -135,12 +135,12 @@ const SideBar = () => {
                 {/* Mobile Sidebar */}
                 <div className={`${styles.sidebar} ${styles.mobileSidebar} ${isMobileOpen ? styles.mobileOpen : ''}`}>
                     <div className={styles.logoDiv}>
-                        <Image
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
                             className={styles.geekLogo}
-                            src="/images/Navbar/GeekClashLogo.svg"
-                            alt="Geek Clash Logo"
-                            width={180}
-                            height={50}
+                            src="/images/Navbar/NexFellowLogoDark.svg"
+                            alt="NexFellow Logo"
+                            style={{ height: '40px', width: 'auto' }}
                         />
                         <button
                             className={styles.closeBtn}
@@ -173,10 +173,10 @@ const SideBar = () => {
             <div className={styles.logoDiv}>
                 <Image
                     className={styles.geekLogo}
-                    src="/images/Navbar/GeekClashLogo.svg"
-                    alt="Geek Clash Logo"
+                    src="/images/Navbar/NexFellowLogoDark.svg"
+                    alt="NexFellow Logo"
                     width={180}
-                    height={50}
+                    height={41}
                 />
             </div>
             <div className={styles.sideContainer}>
@@ -259,7 +259,7 @@ function NavLinks({ isActive }: { isActive: (path: string) => boolean }) {
                 className={`${styles.navLink} ${isActive('/featured-communities') ? styles.active : ''}`}
             >
                 <FiGlobe className={styles.sideIcon} />
-                <p>Communities</p>
+                <p>All Communities</p>
             </Link>
 
             <Link

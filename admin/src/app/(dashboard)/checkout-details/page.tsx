@@ -120,13 +120,13 @@ export default function CheckoutDetailsPage() {
                         <h3 className="text-lg font-semibold text-white mb-4">
                             {checkpoints.length} Checkpoints
                         </h3>
-                        <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                        <div className="space-y-3 max-h-100 overflow-y-auto pr-2">
                             {checkpoints.map((checkpoint) => (
                                 <div
                                     key={checkpoint.id}
                                     className="flex items-center gap-4 bg-slate-700 rounded-lg p-4 hover:bg-slate-600/50 transition-colors cursor-pointer"
                                 >
-                                    <div className="w-10 h-10 bg-teal-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <div className="w-10 h-10 bg-teal-500/20 rounded-lg flex items-center justify-center shrink-0">
                                         <FiFlag className="text-teal-400" />
                                     </div>
                                     <div>

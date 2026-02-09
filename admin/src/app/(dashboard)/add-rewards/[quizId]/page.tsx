@@ -109,7 +109,7 @@ export default function AddRewardsPage() {
 
                     <div className="space-y-6">
                         {/* 1st Place */}
-                        <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/10 rounded-lg p-4 border border-yellow-500/30">
+                        <div className="bg-linear-to-r from-yellow-500/20 to-yellow-600/10 rounded-lg p-4 border border-yellow-500/30">
                             <label className="block text-yellow-400 text-sm font-semibold mb-2">
                                 🥇 1st Place Reward
                             </label>
@@ -136,7 +136,7 @@ export default function AddRewardsPage() {
                         </div>
 
                         {/* 2nd Place */}
-                        <div className="bg-gradient-to-r from-slate-400/20 to-slate-500/10 rounded-lg p-4 border border-slate-400/30">
+                        <div className="bg-linear-to-r from-slate-400/20 to-slate-500/10 rounded-lg p-4 border border-slate-400/30">
                             <label className="block text-slate-300 text-sm font-semibold mb-2">
                                 🥈 2nd Place Reward
                             </label>
@@ -163,7 +163,7 @@ export default function AddRewardsPage() {
                         </div>
 
                         {/* 3rd Place */}
-                        <div className="bg-gradient-to-r from-orange-500/20 to-orange-600/10 rounded-lg p-4 border border-orange-500/30">
+                        <div className="bg-linear-to-r from-orange-500/20 to-orange-600/10 rounded-lg p-4 border border-orange-500/30">
                             <label className="block text-orange-400 text-sm font-semibold mb-2">
                                 🥉 3rd Place Reward
                             </label>

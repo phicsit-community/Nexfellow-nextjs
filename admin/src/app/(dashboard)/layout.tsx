@@ -11,7 +11,7 @@ export default function DashboardLayout({
             <div className="flex min-h-screen bg-slate-800">
                 <SideBar />
                 {/* Main content - responsive margin with proper overflow handling */}
-                <main className="flex-1 md:ml-[250px] lg:ml-[250px] mt-[60px] md:mt-0 w-full overflow-x-hidden overflow-y-auto">
+                <main className="flex-1 md:ml-62.5 lg:ml-62.5 mt-15 md:mt-0 w-full overflow-x-hidden overflow-y-auto">
                     <div className="min-h-screen">
                         {children}
                     </div>

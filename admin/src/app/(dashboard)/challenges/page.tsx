@@ -182,7 +182,7 @@ export default function ChallengesPage() {
                                 onClick={() => router.push(`/challenges/${challenge._id}`)}
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className="w-12 h-12 bg-gradient-to-br from-teal-500/20 to-purple-500/20 rounded-lg flex items-center justify-center text-2xl">
+                                    <div className="w-12 h-12 bg-linear-to-br from-teal-500/20 to-purple-500/20 rounded-lg flex items-center justify-center text-2xl">
                                         🎯
                                     </div>
                                     <div>

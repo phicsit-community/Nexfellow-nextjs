@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import {
-    BsPeople, BsCardText, BsActivity, BsChatDots, BsBookmarkCheck,
-    BsAward, BsCalendar2Check, BsFlag, BsHandThumbsUp, BsGift,
+    BsPeople, BsChatSquare, BsActivity, BsHeart, BsBook,
+    BsAward, BsCalendar2Check, BsTrophy, BsHandThumbsUp, BsStar,
     BsGlobe, BsBell
 } from 'react-icons/bs';
 import { FiTrendingUp } from 'react-icons/fi';
@@ -38,23 +38,23 @@ interface AnalyticsData {
     userGrowth?: { label: string; value: number }[];
     postGrowth?: { label: string; value: number }[];
     activeUsersChart?: { label: string; value: number }[];
-    userRoles?: { role: string; count: number }[];
-    topCountries?: { country: string; count: number }[];
+    roleDistribution?: Record<string, number>;
+    countryDistribution?: Record<string, number>;
 }
 
 const metricDefs = [
-    { key: 'totalUsers', label: 'Total Users', icon: BsPeople, bgColor: 'bg-blue-100', iconColor: 'text-blue-600', deltaKey: 'totalUsersDelta' },
-    { key: 'totalPosts', label: 'Posts', icon: BsCardText, bgColor: 'bg-orange-100', iconColor: 'text-orange-500', deltaKey: 'postsDelta' },
-    { key: 'activeUsers', label: 'Active Users (30d)', icon: BsActivity, bgColor: 'bg-green-100', iconColor: 'text-green-600', deltaKey: 'activeUsersDelta' },
-    { key: 'totalComments', label: 'Comments', icon: BsChatDots, bgColor: 'bg-pink-100', iconColor: 'text-pink-500', deltaKey: 'commentsDelta' },
-    { key: 'totalBookmarks', label: 'Bookmarks', icon: BsBookmarkCheck, bgColor: 'bg-blue-100', iconColor: 'text-blue-600', deltaKey: 'bookmarksDelta' },
-    { key: 'totalQuizzes', label: 'Quizzes', icon: BsAward, bgColor: 'bg-orange-100', iconColor: 'text-orange-500', deltaKey: 'quizzesDelta' },
-    { key: 'totalEvents', label: 'Events', icon: BsCalendar2Check, bgColor: 'bg-green-100', iconColor: 'text-green-600', deltaKey: 'eventsDelta' },
-    { key: 'totalChallenges', label: 'Challenges', icon: BsFlag, bgColor: 'bg-purple-100', iconColor: 'text-purple-600', deltaKey: 'challengesDelta' },
-    { key: 'totalLikes', label: 'Likes', icon: BsHandThumbsUp, bgColor: 'bg-blue-100', iconColor: 'text-blue-600', deltaKey: 'likesDelta' },
-    { key: 'totalRewards', label: 'Rewards', icon: BsGift, bgColor: 'bg-orange-100', iconColor: 'text-orange-500', deltaKey: 'rewardsDelta' },
-    { key: 'totalCommunities', label: 'Communities', icon: BsGlobe, bgColor: 'bg-green-100', iconColor: 'text-green-600', deltaKey: 'communitiesDelta' },
-    { key: 'totalNotifications', label: 'Notifications Sent', icon: BsBell, bgColor: 'bg-purple-100', iconColor: 'text-purple-600', deltaKey: 'notificationsDelta' },
+    { key: 'totalUsers', label: 'Total Users', icon: BsPeople, gradient: 'from-blue-400 to-blue-600', bgTint: 'bg-blue-50', deltaKey: 'totalUsersDelta' },
+    { key: 'totalPosts', label: 'Posts', icon: BsChatSquare, gradient: 'from-orange-400 to-orange-600', bgTint: 'bg-orange-50', deltaKey: 'postsDelta' },
+    { key: 'activeUsers', label: 'Active Users (30d)', icon: BsActivity, gradient: 'from-green-400 to-green-600', bgTint: 'bg-green-50', deltaKey: 'activeUsersDelta' },
+    { key: 'totalComments', label: 'Comments', icon: BsHeart, gradient: 'from-purple-400 to-purple-600', bgTint: 'bg-purple-50', deltaKey: 'commentsDelta' },
+    { key: 'totalBookmarks', label: 'Bookmarks', icon: BsBook, gradient: 'from-blue-400 to-blue-600', bgTint: 'bg-blue-50', deltaKey: 'bookmarksDelta' },
+    { key: 'totalQuizzes', label: 'Quizzes', icon: BsAward, gradient: 'from-orange-400 to-orange-600', bgTint: 'bg-orange-50', deltaKey: 'quizzesDelta' },
+    { key: 'totalEvents', label: 'Events', icon: BsCalendar2Check, gradient: 'from-green-400 to-green-600', bgTint: 'bg-green-50', deltaKey: 'eventsDelta' },
+    { key: 'totalChallenges', label: 'Challenges', icon: BsTrophy, gradient: 'from-purple-400 to-purple-600', bgTint: 'bg-purple-50', deltaKey: 'challengesDelta' },
+    { key: 'totalLikes', label: 'Likes', icon: BsHandThumbsUp, gradient: 'from-blue-400 to-blue-600', bgTint: 'bg-blue-50', deltaKey: 'likesDelta' },
+    { key: 'totalRewards', label: 'Rewards', icon: BsStar, gradient: 'from-orange-400 to-orange-600', bgTint: 'bg-orange-50', deltaKey: 'rewardsDelta' },
+    { key: 'totalCommunities', label: 'Communities', icon: BsGlobe, gradient: 'from-green-400 to-green-600', bgTint: 'bg-green-50', deltaKey: 'communitiesDelta' },
+    { key: 'totalNotifications', label: 'Notifications Sent', icon: BsBell, gradient: 'from-purple-400 to-purple-600', bgTint: 'bg-purple-50', deltaKey: 'notificationsDelta' },
 ];
 
 function formatDelta(delta?: number) {
@@ -65,16 +65,16 @@ function formatDelta(delta?: number) {
     };
 }
 
-function MetricCard({ label, value, Icon, bgColor, iconColor, delta }: {
+function MetricCard({ label, value, Icon, gradient, bgTint, delta }: {
     label: string;
     value?: number;
     Icon: React.ElementType;
-    bgColor: string;
-    iconColor: string;
+    gradient: string;
+    bgTint: string;
     delta?: { isPositive: boolean; value: string } | null;
 }) {
     return (
-        <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+        <div className={`${bgTint} rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow`}>
             <div className="flex items-start justify-between">
                 <div className="flex-1">
                     <p className="text-gray-500 text-sm mb-1">{label}</p>
@@ -88,8 +88,8 @@ function MetricCard({ label, value, Icon, bgColor, iconColor, delta }: {
                         </div>
                     )}
                 </div>
-                <div className={`w-12 h-12 ${bgColor} rounded-xl flex items-center justify-center`}>
-                    <Icon className={`text-xl ${iconColor}`} />
+                <div className={`w-12 h-12 bg-linear-to-br ${gradient} rounded-xl flex items-center justify-center shadow-lg`}>
+                    <Icon className="text-xl text-white" />
                 </div>
             </div>
         </div>
@@ -158,7 +158,7 @@ function PostsTrendChart({ data }: { data: { label: string; value: number }[] })
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
             <div className="flex items-center gap-2 mb-6">
                 <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                    <BsCardText className="text-orange-500" />
+                    <BsChatSquare className="text-orange-500" />
                 </div>
                 <span className="text-gray-900 font-semibold">Posts Trend (12mo)</span>
                 <span className="text-gray-500 text-sm">- Current: {currentValue} posts in {currentLabel}</span>
@@ -235,9 +235,11 @@ function DailyActiveUsersChart({ data }: { data: { label: string; value: number 
 function UserRolesChart({ data }: { data?: { role: string; count: number }[] }) {
     const roleColors: Record<string, string> = {
         'Member': '#10b981',
+        'Community Creator': '#3b82f6',
+        'Verified': '#f59e0b',
+        'Premium': '#8b5cf6',
         'Admin': '#3b82f6',
         'Moderator': '#f59e0b',
-        'User': '#10b981',
         'default': '#6b7280'
     };
 
@@ -298,6 +300,7 @@ function UserRolesChart({ data }: { data?: { role: string; count: number }[] }) 
                                     style={{ backgroundColor: roleColors[role.role] || roleColors['default'] }}
                                 />
                                 <span className="text-sm text-gray-600">{role.role}</span>
+                                <span className="text-sm font-semibold text-gray-800">({role.count.toLocaleString()})</span>
                             </div>
                         ))}
                     </div>
@@ -312,6 +315,9 @@ function TopCountriesChart({ data }: { data?: { country: string; count: number }
     const countries = data && data.length > 0 ? data : [];
     const max = countries.length > 0 ? Math.max(...countries.map(c => c.count)) : 1;
 
+    // Generate Y-axis tick values
+    const ticks = Array.from({ length: 6 }, (_, i) => Math.round((max / 5) * (5 - i)));
+
     return (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
             <div className="flex items-center gap-2 mb-6">
@@ -323,27 +329,41 @@ function TopCountriesChart({ data }: { data?: { country: string; count: number }
             {countries.length === 0 ? (
                 <p className="text-gray-500 text-center py-8">No country data available</p>
             ) : (
-                <>
-                    <div className="h-48 flex items-end gap-3">
-                        {countries.map((c) => (
-                            <div key={c.country} className="flex-1 flex flex-col items-center">
-                                <div
-                                    className="w-full bg-blue-500 rounded-t-md transition-all duration-300"
-                                    style={{
-                                        height: `${(c.count / max) * 100}%`,
-                                        minHeight: '8px',
-                                    }}
-                                />
-                                <span className="text-[10px] text-gray-400 mt-2 truncate">{c.country}</span>
-                            </div>
+                <div className="flex">
+                    {/* Y-axis labels */}
+                    <div className="flex flex-col justify-between h-52 pr-3 text-xs text-gray-400 py-1">
+                        {ticks.map((t, i) => (
+                            <span key={i} className="text-right min-w-7.5">
+                                {t >= 1000 ? `${(t / 1000).toFixed(0)}k` : t}
+                            </span>
                         ))}
                     </div>
-                    <div className="flex justify-between mt-2 text-xs text-gray-400">
-                        <span>0</span>
-                        <span>{Math.round(max / 2).toLocaleString()}</span>
-                        <span>{max.toLocaleString()}</span>
+                    {/* Bars area */}
+                    <div className="flex-1">
+                        <div className="h-52 flex items-end justify-center gap-4 border-l border-b border-gray-200 pl-2 pb-1">
+                            {countries.map((c) => (
+                                <div key={c.country} className="flex flex-col items-center" style={{ width: `${Math.max(100 / Math.max(countries.length, 6), 10)}%`, maxWidth: '60px' }}>
+                                    <span className="text-xs font-semibold text-gray-700 mb-1">{c.count.toLocaleString()}</span>
+                                    <div
+                                        className="w-full bg-blue-500 rounded-t-md transition-all duration-300"
+                                        style={{
+                                            height: `${(c.count / max) * 100}%`,
+                                            minHeight: '4px',
+                                        }}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                        {/* X-axis labels */}
+                        <div className="flex justify-center gap-4 mt-2">
+                            {countries.map((c) => (
+                                <span key={c.country} className="text-xs text-gray-500 text-center" style={{ width: `${Math.max(100 / Math.max(countries.length, 6), 10)}%`, maxWidth: '60px' }}>
+                                    {c.country}
+                                </span>
+                            ))}
+                        </div>
                     </div>
-                </>
+                </div>
             )}
         </div>
     );
@@ -417,8 +437,8 @@ export default function AnalyticsPage() {
                         label={m.label}
                         value={(stats as Record<string, number | undefined>)[m.key]}
                         Icon={m.icon}
-                        bgColor={m.bgColor}
-                        iconColor={m.iconColor}
+                        gradient={m.gradient}
+                        bgTint={m.bgTint}
                         delta={formatDelta((stats as Record<string, number | undefined>)[m.deltaKey])}
                     />
                 ))}
@@ -441,8 +461,8 @@ export default function AnalyticsPage() {
 
             {/* Bottom Charts - 2 Column */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <UserRolesChart data={stats.userRoles} />
-                <TopCountriesChart data={stats.topCountries} />
+                <UserRolesChart data={stats.roleDistribution ? Object.entries(stats.roleDistribution).map(([role, count]) => ({ role, count })) : undefined} />
+                <TopCountriesChart data={stats.countryDistribution ? Object.entries(stats.countryDistribution).map(([country, count]) => ({ country, count })) : undefined} />
             </div>
         </div>
     );

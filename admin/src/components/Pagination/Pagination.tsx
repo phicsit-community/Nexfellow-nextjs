@@ -91,21 +91,26 @@ const styles: { [key: string]: CSSProperties } = {
         fontSize: "24px",
         cursor: "pointer",
         opacity: 0.7,
-        margin: '0px 10px'
+        margin: '0px 10px',
+        color: '#6b7280',
     },
     pageButton: {
         margin: "0 5px",
         padding: "8px 16px",
-        border: "1px solid #A7D7D5",
-        borderRadius: "4px",
+        border: "1px solid #d1d5db",
+        borderRadius: "8px",
         cursor: "pointer",
-        background: "#f0f0f0",
+        background: "#ffffff",
+        color: "#374151",
+        fontWeight: 500,
+        fontSize: "14px",
         transition: "background-color 0.3s",
     },
     activePageButton: {
-        background: "#A7D7D5",
-        color: "#fff",
-        border: "none",
+        background: "#0d9488",
+        color: "#ffffff",
+        border: "1px solid #0d9488",
+        fontWeight: 600,
     },
 };
 

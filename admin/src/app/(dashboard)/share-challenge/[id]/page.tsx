@@ -50,7 +50,7 @@ export default function ShareChallengePage() {
 
                 {/* Challenge Preview */}
                 <div className="flex gap-4 mb-6 p-4 bg-slate-700 rounded-lg">
-                    <div className="w-20 h-20 bg-gradient-to-br from-teal-500/30 to-purple-500/30 rounded-lg flex items-center justify-center text-3xl">
+                    <div className="w-20 h-20 bg-linear-to-br from-teal-500/30 to-purple-500/30 rounded-lg flex items-center justify-center text-3xl">
                         🏆
                     </div>
                     <div className="flex-1">

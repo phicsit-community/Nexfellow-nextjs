@@ -365,7 +365,7 @@ export default function NotificationsPage() {
                         </div>
                         <div className="bg-teal-50 border border-teal-100 rounded-xl p-4">
                             <div className="flex items-start gap-3">
-                                <div className="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <div className="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center shrink-0">
                                     <span className="text-white font-bold text-lg">N</span>
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -396,14 +396,14 @@ export default function NotificationsPage() {
                                 recentNotifications.map((noti, idx) => (
                                     <li key={idx} className="flex items-start justify-between gap-4">
                                         <div className="flex items-start gap-2 flex-1 min-w-0">
-                                            <BsCheckCircle className="text-green-500 mt-0.5 flex-shrink-0" />
+                                            <BsCheckCircle className="text-green-500 mt-0.5 shrink-0" />
                                             <div className="min-w-0">
                                                 <p className="text-gray-900 font-medium truncate">{noti.title}</p>
                                                 <p className="text-gray-500 text-sm">{noti.time}</p>
                                             </div>
                                         </div>
                                         <span className="text-gray-500 text-sm whitespace-nowrap">
-                                            {noti.recipients.toLocaleString()} recipients
+                                            {noti.recipients.toLocaleString()} {noti.recipients === 1 ? 'recipient' : 'recipients'}
                                         </span>
                                     </li>
                                 ))

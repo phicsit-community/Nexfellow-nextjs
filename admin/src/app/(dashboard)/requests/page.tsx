@@ -200,7 +200,7 @@ export default function RequestsPage() {
                             className="bg-white rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-all border border-gray-100 shadow-sm"
                         >
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
+                                <div className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden shrink-0">
                                     {request.user?.picture ? (
                                         <img
                                             src={request.user.picture}

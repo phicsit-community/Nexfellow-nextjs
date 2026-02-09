@@ -225,12 +225,12 @@ const BlogWriter: React.FC<BlogWriterProps> = ({ blogToEdit, onCancel, onSave })
                 {!showPreview ? (
                     <textarea
                         placeholder="Write your blog content in markdown..."
-                        className="w-full min-h-[300px] px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 resize-y font-mono focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                        className="w-full min-h-75 px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 resize-y font-mono focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                     />
                 ) : (
-                    <div className="bg-white rounded-lg p-6 text-gray-800 min-h-[300px]">
+                    <div className="bg-white rounded-lg p-6 text-gray-800 min-h-75">
                         <span className="text-xs bg-gray-200 px-2 py-1 rounded">{category || 'Uncategorized'}</span>
                         <h1 className="text-2xl font-bold mt-2">{title || 'Untitled'}</h1>
                         {coverPreviewUrl && <img src={coverPreviewUrl} alt="Cover" className="w-full mt-4 rounded-lg" />}

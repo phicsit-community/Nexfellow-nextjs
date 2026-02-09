@@ -278,12 +278,17 @@ exports.getOverview = async (req, res) => {
       return { label, value: safeValue(match?.count) };
     });
 
-    // Distributions: role, country
-    const rolesAgg = await User.aggregate([
-      { $group: { _id: "$role", count: { $sum: 1 } } },
-    ]);
+    // Distributions: role (derived from user fields), country
+    const totalUserCount = await User.countDocuments();
+    const communityCreators = await User.countDocuments({ createdCommunity: { $exists: true, $ne: null } });
+    const verifiedUsers = await User.countDocuments({ verificationBadge: true, createdCommunity: { $in: [null, undefined] } });
+    const premiumUsers = await User.countDocuments({ premiumBadge: true, verificationBadge: { $ne: true }, createdCommunity: { $in: [null, undefined] } });
+    const memberCount = totalUserCount - communityCreators - verifiedUsers - premiumUsers;
     const roleDistribution = {};
-    rolesAgg.forEach((r) => (roleDistribution[r._id] = r.count));
+    if (memberCount > 0) roleDistribution["Member"] = memberCount;
+    if (communityCreators > 0) roleDistribution["Community Creator"] = communityCreators;
+    if (verifiedUsers > 0) roleDistribution["Verified"] = verifiedUsers;
+    if (premiumUsers > 0) roleDistribution["Premium"] = premiumUsers;
     const countryAgg = await User.aggregate([
       { $group: { _id: "$country", count: { $sum: 1 } } },
       { $sort: { count: -1 } },

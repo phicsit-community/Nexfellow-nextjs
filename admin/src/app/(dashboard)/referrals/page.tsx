@@ -55,10 +55,10 @@ export default function ReferralsPage() {
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
     const getRankBadge = (rank: number) => {
-        if (rank === 1) return '🥇';
-        if (rank === 2) return '🥈';
-        if (rank === 3) return '🥉';
-        return rank;
+        if (rank === 1) return <span className="text-2xl">🥇</span>;
+        if (rank === 2) return <span className="text-2xl">🥈</span>;
+        if (rank === 3) return <span className="text-2xl">🥉</span>;
+        return <span className="text-lg font-semibold text-gray-500">{rank}</span>;
     };
 
     return (
@@ -90,7 +90,7 @@ export default function ReferralsPage() {
                     <p className="text-gray-500 text-sm">Total Participants</p>
                     <p className="text-2xl font-bold text-gray-900">{data.length}</p>
                 </div>
-                <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl p-4 border border-yellow-200">
+                <div className="bg-linear-to-r from-yellow-50 to-yellow-100 rounded-xl p-4 border border-yellow-200">
                     <p className="text-yellow-700 text-sm">🥇 Top Referrer</p>
                     <p className="text-xl font-bold text-gray-900">{sortedData[0]?.username || 'N/A'}</p>
                     <p className="text-yellow-700 text-sm">{sortedData[0]?.coins || 0} coins</p>
@@ -126,10 +126,10 @@ export default function ReferralsPage() {
                             return (
                                 <div
                                     key={user._id}
-                                    className={`grid grid-cols-4 gap-4 p-4 items-center hover:bg-gray-50 transition-colors ${globalRank <= 3 ? 'bg-gradient-to-r from-yellow-50 to-transparent' : ''
+                                    className={`grid grid-cols-4 gap-4 p-4 items-center hover:bg-gray-50 transition-colors ${globalRank <= 3 ? 'bg-linear-to-r from-yellow-50 to-transparent' : ''
                                         }`}
                                 >
-                                    <div className="text-2xl">{getRankBadge(globalRank)}</div>
+                                    <div className="flex items-center">{getRankBadge(globalRank)}</div>
                                     <div className="col-span-2 flex items-center gap-3">
                                         <div className="w-10 h-10 bg-gray-200 rounded-full overflow-hidden">
                                             {user.picture && (
