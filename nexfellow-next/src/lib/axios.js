@@ -2,12 +2,10 @@ import axios from "axios";
 
 // Determine base URL for API calls
 const getBaseURL = () => {
-    const isDevelopment = process.env.NODE_ENV === "development";
-    const baseURL = isDevelopment
-        ? process.env.NEXT_PUBLIC_LOCALHOST
-        : process.env.NEXT_PUBLIC_SERVER_URL;
-
-    console.log("API Base URL configured:", baseURL, "| Environment:", process.env.NODE_ENV);
+    // Use NEXT_PUBLIC_SERVER_URL for production (deployed on Vercel)
+    // In production, NODE_ENV is "production" and we use the server URL
+    const baseURL = process.env.NEXT_PUBLIC_SERVER_URL || "https://nexfellow-nextjs.onrender.com";
+    console.log("API Base URL configured:", baseURL);
     return baseURL;
 };
 
@@ -96,8 +94,8 @@ api.interceptors.response.use(
                 isRefreshing = false;
                 processQueue(refreshError, null);
 
-                // If refresh fails, clear auth data and redirect to login
-                // But only if we're NOT already on the login page or auth callback
+                // If refresh fails, DON'T immediately clear auth and redirect
+                // Let the page handle auth state - just reject the request
                 if (typeof window !== "undefined") {
                     const isOnAuthPage = window.location.pathname === "/login" ||
                         window.location.pathname === "/signup" ||
@@ -105,22 +103,24 @@ api.interceptors.response.use(
                         window.location.pathname === "/auth/callback" ||
                         window.location.pathname.startsWith("/auth/");
 
-                    // Check if we just completed OAuth login (within last 5 seconds)
+                    // Check if we just completed OAuth login (within last 30 seconds - increased from 5)
                     const oauthLoginTime = sessionStorage.getItem("oauth_login_time");
-                    const justCompletedOAuth = oauthLoginTime && (Date.now() - parseInt(oauthLoginTime)) < 5000;
+                    const justCompletedOAuth = oauthLoginTime && (Date.now() - parseInt(oauthLoginTime)) < 30000;
 
-                    if (!isOnAuthPage && !justCompletedOAuth) {
-                        console.log("Token refresh failed, clearing auth data");
-                        localStorage.removeItem("isLoggedIn");
-                        localStorage.removeItem("user");
-                        localStorage.removeItem("token");
-                        localStorage.removeItem("expiresIn");
+                    // Check if localStorage has valid auth data
+                    const hasLocalAuth = localStorage.getItem("isLoggedIn") === "true" && 
+                                         localStorage.getItem("user") && 
+                                         localStorage.getItem("user") !== "null";
 
-                        // Clear stale cookies
-                        document.cookie = "isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
+                    // Only clear and redirect if:
+                    // 1. Not on auth page
+                    // 2. Did not just complete OAuth
+                    // 3. No valid local auth data (user likely truly logged out)
+                    if (!isOnAuthPage && !justCompletedOAuth && !hasLocalAuth) {
+                        console.log("Token refresh failed and no local auth, redirecting to login");
                         window.location.href = "/login";
+                    } else {
+                        console.log("Token refresh failed but local auth exists or OAuth just completed, not redirecting");
                     }
                 }
                 return Promise.reject(refreshError);

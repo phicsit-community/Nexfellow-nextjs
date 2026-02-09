@@ -25,7 +25,7 @@ export default function Feed() {
             // Check if we just came from OAuth callback
             const oauthSuccess = sessionStorage.getItem("oauth_login_success");
             const oauthLoginTime = sessionStorage.getItem("oauth_login_time");
-            const justCompletedOAuth = oauthLoginTime && (Date.now() - parseInt(oauthLoginTime)) < 10000;
+            const justCompletedOAuth = oauthLoginTime && (Date.now() - parseInt(oauthLoginTime)) < 30000; // 30 seconds
 
             if (oauthSuccess) {
                 sessionStorage.removeItem("oauth_login_success");
@@ -33,11 +33,12 @@ export default function Feed() {
 
             // First, check if already logged in via Redux (from OAuth callback)
             if (isLoggedIn && user) {
+                console.log("Feed: Already logged in via Redux");
                 setIsCheckingAuth(false);
                 return;
             }
 
-            // Check localStorage - prioritize this for OAuth flow
+            // Check localStorage - THIS IS THE PRIMARY AUTH SOURCE after OAuth
             const localIsLoggedIn = localStorage.getItem("isLoggedIn") === "true";
             const userStr = localStorage.getItem("user");
             const hasUser = userStr && userStr !== "null" && userStr !== "undefined";
@@ -46,8 +47,10 @@ export default function Feed() {
                 try {
                     const parsedUser = JSON.parse(userStr);
                     if (parsedUser && parsedUser.id) {
+                        console.log("Feed: Restored auth from localStorage");
                         dispatch(login({ user: parsedUser, expiresIn: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString() }));
                         setIsCheckingAuth(false);
+                        // Don't make API call - localStorage is the source of truth after OAuth
                         return;
                     }
                 } catch (e) {
@@ -55,50 +58,60 @@ export default function Feed() {
                 }
             }
 
-            // If we just completed OAuth but localStorage isn't ready, wait a bit
+            // If we just completed OAuth but localStorage isn't ready yet, wait and retry
             if (justCompletedOAuth) {
-                await new Promise(resolve => setTimeout(resolve, 500));
+                console.log("Feed: Just completed OAuth, waiting for localStorage...");
+                
+                // Wait and retry multiple times
+                for (let i = 0; i < 5; i++) {
+                    await new Promise(resolve => setTimeout(resolve, 300));
 
-                // Re-check localStorage after waiting
-                const retryLocalIsLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-                const retryUserStr = localStorage.getItem("user");
-                const retryHasUser = retryUserStr && retryUserStr !== "null" && retryUserStr !== "undefined";
+                    const retryLocalIsLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+                    const retryUserStr = localStorage.getItem("user");
+                    const retryHasUser = retryUserStr && retryUserStr !== "null" && retryUserStr !== "undefined";
 
-                if (retryLocalIsLoggedIn && retryHasUser) {
-                    try {
-                        const parsedUser = JSON.parse(retryUserStr);
-                        if (parsedUser && parsedUser.id) {
-                            dispatch(login({ user: parsedUser, expiresIn: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString() }));
-                            setIsCheckingAuth(false);
-                            return;
+                    if (retryLocalIsLoggedIn && retryHasUser) {
+                        try {
+                            const parsedUser = JSON.parse(retryUserStr);
+                            if (parsedUser && parsedUser.id) {
+                                console.log("Feed: Restored auth from localStorage after retry", i + 1);
+                                dispatch(login({ user: parsedUser, expiresIn: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString() }));
+                                setIsCheckingAuth(false);
+                                return;
+                            }
+                        } catch (e) {
+                            console.log("Failed to parse user from localStorage on retry", i + 1);
                         }
-                    } catch (e) {
-                        console.log("Failed to parse user from localStorage on retry");
                     }
                 }
             }
 
-            // If no localStorage data, check with server
-            try {
-                const response = await api.get("/auth/getDetails", {
-                    withCredentials: true,
-                });
+            // Only check with server if no localStorage data and not just after OAuth
+            if (!justCompletedOAuth) {
+                try {
+                    console.log("Feed: Checking auth with server...");
+                    const response = await api.get("/auth/getDetails", {
+                        withCredentials: true,
+                    });
 
-                if (response.status === 200 && response.data.payload) {
-                    const { payload, expiresIn } = response.data;
-                    dispatch(login({ user: payload, expiresIn }));
-                    setIsCheckingAuth(false);
-                    return;
+                    if (response.status === 200 && response.data.payload) {
+                        const { payload, expiresIn } = response.data;
+                        console.log("Feed: Auth confirmed by server");
+                        dispatch(login({ user: payload, expiresIn }));
+                        setIsCheckingAuth(false);
+                        return;
+                    }
+                } catch (error) {
+                    console.log("Feed: Server auth check failed");
                 }
-            } catch (error) {
-                console.log("Feed: Auth check failed, redirecting to login");
             }
 
             // Not authenticated - redirect to login
+            console.log("Feed: Not authenticated, redirecting to login");
             router.replace("/login");
         };
 
-        // Run immediately - the full page reload from callback ensures state is fresh
+        // Run immediately
         checkAuth();
     }, [dispatch, router, isLoggedIn, user]);
 
