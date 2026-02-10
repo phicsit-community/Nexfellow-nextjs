@@ -102,48 +102,128 @@ function UserGrowthChart({ data }: { data: { label: string; value: number }[] })
     const currentValue = data[data.length - 1]?.value || 0;
     const currentLabel = data[data.length - 1]?.label || '';
 
+    // Nice round Y-axis ticks (0, 250, 500, 750, 1000 style)
+    const step = Math.ceil(max / 4 / 50) * 50 || Math.ceil(max / 4);
+    const yMax = step * 4;
+    const ticks = [yMax, step * 3, step * 2, step, 0];
+
+    // SVG chart dimensions
+    const svgW = 1040;
+    const svgH = 320;
+    const plotL = 64;   // ~6.2% of svgW
+    const plotR = svgW - 5;  // ~0.48% from right
+    const plotT = 5;    // ~1.56% of svgH
+    const plotB = 285;  // ~89.06% of svgH
+    const plotW = plotR - plotL;
+    const plotH = plotB - plotT;
+
+    const points = data.map((d, i) => ({
+        x: plotL + (i / (data.length - 1)) * plotW,
+        y: plotB - (d.value / yMax) * plotH,
+    }));
+
+    // Generate smooth bezier curve
+    const pathD = points.reduce((acc, p, i, arr) => {
+        if (i === 0) return `M ${p.x},${p.y}`;
+        const prev = arr[i - 1];
+        const cpx1 = prev.x + (p.x - prev.x) * 0.4;
+        const cpx2 = p.x - (p.x - prev.x) * 0.4;
+        return `${acc} C ${cpx1},${prev.y} ${cpx2},${p.y} ${p.x},${p.y}`;
+    }, '');
+
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <div className="flex items-center gap-2 mb-6">
-                <div className="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center">
-                    <FiTrendingUp className="text-teal-600" />
+        <div
+            className="rounded-lg p-6"
+            style={{
+                background: 'linear-gradient(135deg, #FFFFFF 0%, rgba(249, 250, 251, 0.5) 100%), #FFFFFF',
+                boxShadow: '0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1)',
+                borderRadius: '8px',
+            }}
+        >
+            {/* Header */}
+            <div className="flex items-center gap-2.5 mb-4">
+                <div
+                    className="w-9 h-9 rounded-lg flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)' }}
+                >
+                    <FiTrendingUp className="text-white" size={20} />
                 </div>
-                <span className="text-gray-900 font-semibold">User Growth (12mo)</span>
-                <span className="text-gray-500 text-sm">- Current: {currentValue.toLocaleString()} users in {currentLabel}</span>
+                <span style={{ color: '#020817', fontWeight: 600, fontSize: '18px', letterSpacing: '-0.45px' }}>
+                    User Growth (12mo)
+                </span>
+                <span style={{ color: '#64748B', fontSize: '14px', marginLeft: '2px' }}>
+                    - Current: {currentValue.toLocaleString()} users in {currentLabel}
+                </span>
             </div>
-            <div className="h-48 flex items-end gap-1 relative">
-                <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-xs text-gray-400 w-8">
-                    <span>{max}</span>
-                    <span>{Math.round(max * 0.75)}</span>
-                    <span>{Math.round(max * 0.5)}</span>
-                    <span>{Math.round(max * 0.25)}</span>
-                    <span>0</span>
-                </div>
-                <div className="flex-1 ml-10 h-full flex items-end">
-                    <svg className="w-full h-full" viewBox="0 0 400 160" preserveAspectRatio="none">
-                        <polyline
-                            fill="none"
-                            stroke="#10b981"
-                            strokeWidth="2"
-                            points={data.map((d, i) => `${(i / (data.length - 1)) * 400},${160 - (d.value / max) * 150}`).join(' ')}
-                        />
-                        {data.map((d, i) => (
-                            <circle
-                                key={i}
-                                cx={(i / (data.length - 1)) * 400}
-                                cy={160 - (d.value / max) * 150}
-                                r="4"
-                                fill="#10b981"
-                            />
-                        ))}
-                    </svg>
-                </div>
-            </div>
-            <div className="flex justify-between mt-2 ml-10 text-xs text-gray-400">
-                {data.filter((_, i) => i % 2 === 0).map((d, i) => (
-                    <span key={i}>{d.label}</span>
+
+            {/* Chart SVG */}
+            <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full" style={{ height: '320px' }} preserveAspectRatio="xMidYMid meet">
+                {/* Horizontal dashed grid lines */}
+                {[0, 1, 2, 3, 4].map(i => {
+                    const y = plotB - (i / 4) * plotH;
+                    return <line key={`hg-${i}`} x1={plotL} y1={y} x2={plotR} y2={y} stroke="#E5E7EB" strokeWidth="1" strokeDasharray="4 3" />;
+                })}
+
+                {/* Vertical dashed grid lines */}
+                {data.map((_, i) => {
+                    const x = plotL + (i / (data.length - 1)) * plotW;
+                    return <line key={`vg-${i}`} x1={x} y1={plotT} x2={x} y2={plotB} stroke="#E5E7EB" strokeWidth="1" strokeDasharray="4 3" />;
+                })}
+
+                {/* Y-axis solid line */}
+                <line x1={plotL} y1={plotT} x2={plotL} y2={plotB} stroke="#6B7280" strokeWidth="1" />
+                {/* X-axis solid line */}
+                <line x1={plotL} y1={plotB} x2={plotR} y2={plotB} stroke="#6B7280" strokeWidth="1" />
+
+                {/* Y-axis labels and tick marks */}
+                {ticks.map((t, i) => {
+                    const y = plotB - (t / yMax) * plotH;
+                    return (
+                        <g key={`yt-${i}`}>
+                            <line x1={plotL - 4} y1={y} x2={plotL} y2={y} stroke="#6B7280" strokeWidth="1" />
+                            <text x={plotL - 8} y={y + 4} textAnchor="end" fill="#64748B" fontSize="12" fontFamily="Inter, sans-serif">
+                                {t}
+                            </text>
+                        </g>
+                    );
+                })}
+
+                {/* X-axis labels and tick marks */}
+                {data.map((d, i) => {
+                    const x = plotL + (i / (data.length - 1)) * plotW;
+                    return (
+                        <g key={`xt-${i}`}>
+                            <line x1={x} y1={plotB} x2={x} y2={plotB + 4} stroke="#6B7280" strokeWidth="1" />
+                            <text x={x} y={plotB + 20} textAnchor="middle" fill="#64748B" fontSize="12" fontFamily="Inter, sans-serif">
+                                {d.label}
+                            </text>
+                        </g>
+                    );
+                })}
+
+                {/* Smooth curve line */}
+                <path
+                    d={pathD}
+                    fill="none"
+                    stroke="#10B981"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+
+                {/* Data points - filled green with green border */}
+                {points.map((p, i) => (
+                    <circle
+                        key={i}
+                        cx={p.x}
+                        cy={p.y}
+                        r="5"
+                        fill="#10B981"
+                        stroke={i === points.length - 1 ? '#FFFFFF' : '#10B981'}
+                        strokeWidth="2"
+                    />
                 ))}
-            </div>
+            </svg>
         </div>
     );
 }
@@ -154,29 +234,116 @@ function PostsTrendChart({ data }: { data: { label: string; value: number }[] })
     const currentValue = data[data.length - 1]?.value || 0;
     const currentLabel = data[data.length - 1]?.label || '';
 
+    // Nice round Y-axis ticks (0, 15, 30, 45, 60 style)
+    const step = Math.ceil(max / 4 / 5) * 5 || Math.ceil(max / 4);
+    const yMax = step * 4;
+    const ticks = [yMax, step * 3, step * 2, step, 0];
+
+    // SVG chart dimensions (same as UserGrowthChart)
+    const svgW = 1040;
+    const svgH = 320;
+    const plotL = 64;
+    const plotR = svgW - 5;
+    const plotT = 5;
+    const plotB = 285;
+    const plotW = plotR - plotL;
+    const plotH = plotB - plotT;
+
+    // Bar width and spacing
+    const barSpacing = plotW / data.length;
+    const barWidth = barSpacing * 0.65;
+
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <div className="flex items-center gap-2 mb-6">
-                <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                    <BsChatSquare className="text-orange-500" />
+        <div
+            className="rounded-lg p-6"
+            style={{
+                background: 'linear-gradient(135deg, #FFFFFF 0%, rgba(249, 250, 251, 0.5) 100%), #FFFFFF',
+                boxShadow: '0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1)',
+                borderRadius: '8px',
+            }}
+        >
+            {/* Header */}
+            <div className="flex items-center gap-2.5 mb-4">
+                <div
+                    className="w-9 h-9 rounded-lg flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)' }}
+                >
+                    <BsChatSquare className="text-white" size={20} />
                 </div>
-                <span className="text-gray-900 font-semibold">Posts Trend (12mo)</span>
-                <span className="text-gray-500 text-sm">- Current: {currentValue} posts in {currentLabel}</span>
+                <span style={{ color: '#020817', fontWeight: 600, fontSize: '18px', letterSpacing: '-0.45px' }}>
+                    Posts Trend (12mo)
+                </span>
+                <span style={{ color: '#64748B', fontSize: '14px', marginLeft: '2px' }}>
+                    - Current: {currentValue} posts in {currentLabel}
+                </span>
             </div>
-            <div className="h-48 flex items-end gap-2">
-                {data.map((d, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center">
-                        <div
-                            className="w-full bg-orange-400 rounded-t-md transition-all duration-300"
-                            style={{
-                                height: `${(d.value / max) * 100}%`,
-                                minHeight: '8px',
-                            }}
+
+            {/* Chart SVG */}
+            <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full" style={{ height: '320px' }} preserveAspectRatio="xMidYMid meet">
+                {/* Horizontal dashed grid lines */}
+                {[0, 1, 2, 3, 4].map(i => {
+                    const y = plotB - (i / 4) * plotH;
+                    return <line key={`hg-${i}`} x1={plotL} y1={y} x2={plotR} y2={y} stroke="#E5E7EB" strokeWidth="1" strokeDasharray="4 3" />;
+                })}
+
+                {/* Vertical dashed grid lines at each bar center */}
+                {data.map((_, i) => {
+                    const x = plotL + barSpacing * i + barSpacing / 2;
+                    return <line key={`vg-${i}`} x1={x} y1={plotT} x2={x} y2={plotB} stroke="#E5E7EB" strokeWidth="1" strokeDasharray="4 3" />;
+                })}
+                {/* Left and right edge vertical dashed lines */}
+                <line x1={plotL} y1={plotT} x2={plotL} y2={plotB} stroke="#E5E7EB" strokeWidth="1" strokeDasharray="4 3" />
+                <line x1={plotR} y1={plotT} x2={plotR} y2={plotB} stroke="#E5E7EB" strokeWidth="1" strokeDasharray="4 3" />
+
+                {/* Y-axis solid line */}
+                <line x1={plotL} y1={plotT} x2={plotL} y2={plotB} stroke="#6B7280" strokeWidth="1" />
+                {/* X-axis solid line */}
+                <line x1={plotL} y1={plotB} x2={plotR} y2={plotB} stroke="#6B7280" strokeWidth="1" />
+
+                {/* Y-axis labels and tick marks */}
+                {ticks.map((t, i) => {
+                    const y = plotB - (t / yMax) * plotH;
+                    return (
+                        <g key={`yt-${i}`}>
+                            <line x1={plotL - 4} y1={y} x2={plotL} y2={y} stroke="#6B7280" strokeWidth="1" />
+                            <text x={plotL - 8} y={y + 4} textAnchor="end" fill="#64748B" fontSize="12" fontFamily="Inter, sans-serif">
+                                {t}
+                            </text>
+                        </g>
+                    );
+                })}
+
+                {/* Bars */}
+                {data.map((d, i) => {
+                    const barH = (d.value / yMax) * plotH;
+                    const x = plotL + barSpacing * i + (barSpacing - barWidth) / 2;
+                    const y = plotB - barH;
+                    return (
+                        <rect
+                            key={`bar-${i}`}
+                            x={x}
+                            y={y}
+                            width={barWidth}
+                            height={Math.max(barH, 2)}
+                            fill="#F59E0B"
+                            rx="0"
                         />
-                        <span className="text-[10px] text-gray-400 mt-2 truncate">{d.label}</span>
-                    </div>
-                ))}
-            </div>
+                    );
+                })}
+
+                {/* X-axis labels and tick marks */}
+                {data.map((d, i) => {
+                    const x = plotL + barSpacing * i + barSpacing / 2;
+                    return (
+                        <g key={`xt-${i}`}>
+                            <line x1={x} y1={plotB} x2={x} y2={plotB + 4} stroke="#6B7280" strokeWidth="1" />
+                            <text x={x} y={plotB + 20} textAnchor="middle" fill="#64748B" fontSize="12" fontFamily="Inter, sans-serif">
+                                {d.label}
+                            </text>
+                        </g>
+                    );
+                })}
+            </svg>
         </div>
     );
 }
@@ -187,47 +354,136 @@ function DailyActiveUsersChart({ data }: { data: { label: string; value: number 
     const currentValue = data[data.length - 1]?.value || 0;
     const currentLabel = data[data.length - 1]?.label || '';
 
+    // Nice round Y-axis ticks (0, 55, 110, 165, 220 style)
+    const step = Math.ceil(max / 4 / 5) * 5 || Math.ceil(max / 4);
+    const yMax = step * 4;
+    const ticks = [yMax, step * 3, step * 2, step, 0];
+
+    // SVG chart dimensions
+    const svgW = 1040;
+    const svgH = 320;
+    const plotL = 64;
+    const plotR = svgW - 5;
+    const plotT = 5;
+    const plotB = 285;
+    const plotW = plotR - plotL;
+    const plotH = plotB - plotT;
+
+    const points = data.map((d, i) => ({
+        x: plotL + (i / (data.length - 1)) * plotW,
+        y: plotB - (d.value / yMax) * plotH,
+    }));
+
+    // Generate smooth bezier curve
+    const pathD = points.reduce((acc, p, i, arr) => {
+        if (i === 0) return `M ${p.x},${p.y}`;
+        const prev = arr[i - 1];
+        const cpx1 = prev.x + (p.x - prev.x) * 0.4;
+        const cpx2 = p.x - (p.x - prev.x) * 0.4;
+        return `${acc} C ${cpx1},${prev.y} ${cpx2},${p.y} ${p.x},${p.y}`;
+    }, '');
+
+    // Show every Nth label so they don't overlap (30 days → show ~10 labels)
+    const labelStep = Math.max(1, Math.floor(data.length / 9));
+
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <div className="flex items-center gap-2 mb-6">
-                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <BsPeople className="text-blue-600" />
+        <div
+            className="rounded-lg p-6"
+            style={{
+                background: 'linear-gradient(135deg, #FFFFFF 0%, rgba(249, 250, 251, 0.5) 100%), #FFFFFF',
+                boxShadow: '0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1)',
+                borderRadius: '8px',
+            }}
+        >
+            {/* Header */}
+            <div className="flex items-center gap-2.5 mb-4">
+                <div
+                    className="w-9 h-9 rounded-lg flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)' }}
+                >
+                    <BsPeople className="text-white" size={20} />
                 </div>
-                <span className="text-gray-900 font-semibold">Daily Active Users (30d)</span>
-                <span className="text-gray-500 text-sm">- Current: {currentValue} users on {currentLabel}</span>
+                <span style={{ color: '#020817', fontWeight: 600, fontSize: '18px', letterSpacing: '-0.45px' }}>
+                    Daily Active Users (30d)
+                </span>
+                <span style={{ color: '#64748B', fontSize: '14px', marginLeft: '2px' }}>
+                    - Current: {currentValue} users on {currentLabel}
+                </span>
             </div>
-            <div className="h-48 flex items-end relative">
-                <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-xs text-gray-400 w-8">
-                    <span>{max}</span>
-                    <span>{Math.round(max * 0.66)}</span>
-                    <span>{Math.round(max * 0.33)}</span>
-                    <span>0</span>
-                </div>
-                <div className="flex-1 ml-10 h-full flex items-end">
-                    <svg className="w-full h-full" viewBox="0 0 400 160" preserveAspectRatio="none">
-                        <polyline
-                            fill="none"
-                            stroke="#3b82f6"
-                            strokeWidth="2"
-                            points={data.map((d, i) => `${(i / (data.length - 1)) * 400},${160 - (d.value / max) * 150}`).join(' ')}
-                        />
-                        {data.map((d, i) => (
-                            <circle
-                                key={i}
-                                cx={(i / (data.length - 1)) * 400}
-                                cy={160 - (d.value / max) * 150}
-                                r="3"
-                                fill="#3b82f6"
-                            />
-                        ))}
-                    </svg>
-                </div>
-            </div>
-            <div className="flex justify-between mt-2 ml-10 text-xs text-gray-400">
-                {data.filter((_, i) => i % 4 === 0).map((d, i) => (
-                    <span key={i}>{d.label}</span>
+
+            {/* Chart SVG */}
+            <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full" style={{ height: '320px' }} preserveAspectRatio="xMidYMid meet">
+                {/* Horizontal dashed grid lines */}
+                {[0, 1, 2, 3, 4].map(i => {
+                    const y = plotB - (i / 4) * plotH;
+                    return <line key={`hg-${i}`} x1={plotL} y1={y} x2={plotR} y2={y} stroke="#E5E7EB" strokeWidth="1" strokeDasharray="4 3" />;
+                })}
+
+                {/* Vertical dashed grid lines at labeled points */}
+                {data.map((_, i) => {
+                    if (i % labelStep !== 0 && i !== data.length - 1) return null;
+                    const x = plotL + (i / (data.length - 1)) * plotW;
+                    return <line key={`vg-${i}`} x1={x} y1={plotT} x2={x} y2={plotB} stroke="#E5E7EB" strokeWidth="1" strokeDasharray="4 3" />;
+                })}
+                {/* Left and right edge vertical dashed lines */}
+                <line x1={plotL} y1={plotT} x2={plotL} y2={plotB} stroke="#E5E7EB" strokeWidth="1" strokeDasharray="4 3" />
+                <line x1={plotR} y1={plotT} x2={plotR} y2={plotB} stroke="#E5E7EB" strokeWidth="1" strokeDasharray="4 3" />
+
+                {/* Y-axis solid line */}
+                <line x1={plotL} y1={plotT} x2={plotL} y2={plotB} stroke="#6B7280" strokeWidth="1" />
+                {/* X-axis solid line */}
+                <line x1={plotL} y1={plotB} x2={plotR} y2={plotB} stroke="#6B7280" strokeWidth="1" />
+
+                {/* Y-axis labels and tick marks */}
+                {ticks.map((t, i) => {
+                    const y = plotB - (t / yMax) * plotH;
+                    return (
+                        <g key={`yt-${i}`}>
+                            <line x1={plotL - 4} y1={y} x2={plotL} y2={y} stroke="#6B7280" strokeWidth="1" />
+                            <text x={plotL - 8} y={y + 4} textAnchor="end" fill="#64748B" fontSize="12" fontFamily="Inter, sans-serif">
+                                {t}
+                            </text>
+                        </g>
+                    );
+                })}
+
+                {/* X-axis labels and tick marks (every Nth + last) */}
+                {data.map((d, i) => {
+                    if (i % labelStep !== 0 && i !== data.length - 1) return null;
+                    const x = plotL + (i / (data.length - 1)) * plotW;
+                    return (
+                        <g key={`xt-${i}`}>
+                            <line x1={x} y1={plotB} x2={x} y2={plotB + 4} stroke="#6B7280" strokeWidth="1" />
+                            <text x={x} y={plotB + 20} textAnchor="middle" fill="#64748B" fontSize="12" fontFamily="Inter, sans-serif">
+                                {d.label}
+                            </text>
+                        </g>
+                    );
+                })}
+
+                {/* Smooth curve line */}
+                <path
+                    d={pathD}
+                    fill="none"
+                    stroke="#3B82F6"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+
+                {/* Data points - filled blue with blue border, last has white border */}
+                {points.map((p, i) => (
+                    <circle
+                        key={i}
+                        cx={p.x}
+                        cy={p.y}
+                        r="5"
+                        fill="#3B82F6"
+                        stroke={i === points.length - 1 ? '#FFFFFF' : '#3B82F6'}
+                        strokeWidth="2"
+                    />
                 ))}
-            </div>
+            </svg>
         </div>
     );
 }

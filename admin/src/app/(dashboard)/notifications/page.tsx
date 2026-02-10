@@ -176,7 +176,7 @@ export default function NotificationsPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 {/* Left Panel: Form */}
                 <div className="lg:col-span-2">
                     <form onSubmit={handleSend} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
@@ -356,7 +356,7 @@ export default function NotificationsPage() {
                 </div>
 
                 {/* Right Panel: Preview & History */}
-                <div className="space-y-6">
+                <div className="flex flex-col gap-6 lg:max-h-[calc(100vh-140px)]">
                     {/* Live Preview */}
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                         <div className="flex items-center gap-2 mb-4">
@@ -385,26 +385,26 @@ export default function NotificationsPage() {
                     </div>
 
                     {/* Recent Notifications */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                        <h3 className="text-gray-700 font-medium mb-4">Recent Notifications Sent</h3>
-                        <ul className="space-y-4">
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex-1 flex flex-col min-h-0 overflow-hidden">
+                        <h3 className="text-[#111827] font-semibold text-lg mb-5">Recent Notifications Sent</h3>
+                        <ul className="space-y-3 flex-1 overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin', scrollbarColor: '#08AAA2 transparent' }}>
                             {loadingRecent ? (
                                 <li className="text-gray-500">Loading...</li>
                             ) : recentNotifications.length === 0 ? (
                                 <li className="text-gray-500">No notifications sent yet.</li>
                             ) : (
                                 recentNotifications.map((noti, idx) => (
-                                    <li key={idx} className="flex items-start justify-between gap-4">
-                                        <div className="flex items-start gap-2 flex-1 min-w-0">
-                                            <BsCheckCircle className="text-green-500 mt-0.5 shrink-0" />
-                                            <div className="min-w-0">
-                                                <p className="text-gray-900 font-medium truncate">{noti.title}</p>
-                                                <p className="text-gray-500 text-sm">{noti.time}</p>
-                                            </div>
+                                    <li key={idx} className="bg-[#F9FAFB] rounded-xl p-4">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <BsCheckCircle className="text-green-500 shrink-0 text-lg" />
+                                            <p className="text-[#111827] font-semibold text-base truncate">{noti.title}</p>
                                         </div>
-                                        <span className="text-gray-500 text-sm whitespace-nowrap">
-                                            {noti.recipients.toLocaleString()} {noti.recipients === 1 ? 'recipient' : 'recipients'}
-                                        </span>
+                                        <div className="flex items-center justify-between">
+                                            <p className="text-[#6B7280] text-sm">{noti.time}</p>
+                                            <span className="text-[#6B7280] text-sm">
+                                                {noti.recipients.toLocaleString()} {noti.recipients === 1 ? 'recipient' : 'recipients'}
+                                            </span>
+                                        </div>
                                     </li>
                                 ))
                             )}

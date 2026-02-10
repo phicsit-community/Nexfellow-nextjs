@@ -309,113 +309,118 @@ export default function VerificationsPage() {
             {/* Detail Modal */}
             {showDetail && selectedRequest && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 pl-48">
-                    <div className="bg-white rounded-2xl w-155 shadow-2xl">
-                        <div className="p-8">
-                            {/* Modal Header */}
-                            <div className="flex justify-between items-center mb-8">
-                                <h2 className="text-xl font-bold text-gray-900">Community Verification Request Details</h2>
+                    <div className="bg-white shadow-2xl" style={{ width: 960, minHeight: 521, borderRadius: 16, padding: '20px 31px' }}>
+
+                        {/* Header */}
+                        <div className="flex flex-row flex-wrap justify-between items-start p-4 gap-3" style={{ height: 72 }}>
+                            <h2 style={{ fontSize: 26, lineHeight: '40px', fontWeight: 700, color: '#121717' }}>
+                                Community Verification Request Details
+                            </h2>
+                            <button
+                                onClick={() => setShowDetail(false)}
+                                className="flex items-center justify-center hover:bg-gray-100 transition-colors"
+                                style={{ width: 36, height: 36, borderRadius: 8 }}
+                            >
+                                <FiX style={{ width: 20, height: 20, color: '#9CA3AF' }} />
+                            </button>
+                        </div>
+
+                        {/* User Profile */}
+                        <div className="flex flex-row items-start p-4" style={{ height: 174 }}>
+                            <div className="shrink-0 overflow-hidden" style={{ width: 101, height: 101, borderRadius: 100 }}>
+                                {selectedRequest.userId?.picture ? (
+                                    <img
+                                        src={selectedRequest.userId.picture}
+                                        alt="User"
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                        <AiOutlineUser style={{ fontSize: 40, color: '#9CA3AF' }} />
+                                    </div>
+                                )}
+                            </div>
+                            <div className="flex flex-col justify-center flex-1 min-w-[288px]" style={{ padding: 16, gap: 4, height: 142 }}>
+                                {/* Name + Badge */}
+                                <div className="flex flex-row items-center" style={{ gap: 13, height: 30 }}>
+                                    <span style={{ fontSize: 18, fontWeight: 700, lineHeight: '23px', color: '#121717' }}>
+                                        {selectedRequest.communityName || selectedRequest.userId?.name || selectedRequest.userId?.username}
+                                    </span>
+                                    <span
+                                        className="inline-flex items-center rounded-full capitalize"
+                                        style={{
+                                            padding: '5px 13px',
+                                            gap: 10,
+                                            fontSize: 14,
+                                            lineHeight: '20px',
+                                            background: selectedRequest.status === 'Approved' ? '#DCFCE7' : selectedRequest.status === 'Rejected' ? '#FEE2E2' : '#FEF9C3',
+                                            border: `0.76px solid ${selectedRequest.status === 'Approved' ? '#86EFAC' : selectedRequest.status === 'Rejected' ? '#FECACA' : '#FEF08A'}`,
+                                            color: selectedRequest.status === 'Approved' ? '#166534' : selectedRequest.status === 'Rejected' ? '#991B1B' : '#854D0E',
+                                        }}
+                                    >
+                                        {selectedRequest.status.toLowerCase()}
+                                    </span>
+                                </div>
+
+                                {/* Username + Description */}
+                                <div className="flex flex-col" style={{ gap: 0 }}>
+                                    <p style={{ fontSize: 16, lineHeight: '24px', color: '#638787' }}>
+                                        @{selectedRequest.userId?.username}
+                                    </p>
+                                    {selectedRequest.description && (
+                                        <p className="line-clamp-2" style={{ fontSize: 16, lineHeight: '24px', color: '#638787' }}>
+                                            {selectedRequest.description}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Details Grid */}
+                        <div className="flex flex-col" style={{ padding: 16, gap: 24 }}>
+                            {/* Row 1: Category + Request Date */}
+                            <div className="flex flex-row" style={{ gap: 24 }}>
+                                <div className="flex flex-col" style={{ width: 186, paddingTop: 20, borderTop: '1px solid #E6E8EB', gap: 12 }}>
+                                    <p style={{ fontSize: 14, lineHeight: '21px', color: '#08AAA2' }}>Category</p>
+                                    <p style={{ fontSize: 14, lineHeight: '21px', color: '#121717' }}>{selectedRequest.category || 'N/A'}</p>
+                                </div>
+                                <div className="flex flex-col flex-1" style={{ paddingTop: 20, borderTop: '1px solid #E6E8EB', gap: 12 }}>
+                                    <p style={{ fontSize: 14, lineHeight: '21px', color: '#08AAA2' }}>Request Date</p>
+                                    <p style={{ fontSize: 14, lineHeight: '21px', color: '#121717' }}>{new Date(selectedRequest.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                                </div>
+                            </div>
+                            {/* Row 2: Account Type + Status */}
+                            <div className="flex flex-row" style={{ gap: 24 }}>
+                                <div className="flex flex-col" style={{ width: 186, paddingTop: 20, borderTop: '1px solid #E6E8EB', gap: 12 }}>
+                                    <p style={{ fontSize: 14, lineHeight: '21px', color: '#08AAA2' }}>Account Type</p>
+                                    <p style={{ fontSize: 14, lineHeight: '21px', color: '#121717' }}>{selectedRequest.accountType || 'N/A'}</p>
+                                </div>
+                                <div className="flex flex-col flex-1" style={{ paddingTop: 20, borderTop: '1px solid #E6E8EB', gap: 12 }}>
+                                    <p style={{ fontSize: 14, lineHeight: '21px', color: '#08AAA2' }}>Status</p>
+                                    <p style={{ fontSize: 14, lineHeight: '21px', color: '#121717' }}>{selectedRequest.status}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        {selectedRequest.status === 'Pending' && (
+                            <div className="flex flex-row flex-wrap justify-between items-start" style={{ padding: '12px 16px' }}>
                                 <button
-                                    onClick={() => setShowDetail(false)}
-                                    className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                                    onClick={() => handleReject(selectedRequest._id)}
+                                    className="flex items-center justify-center transition-colors hover:opacity-80"
+                                    style={{ width: 160, height: 40, background: '#F0F5F5', borderRadius: 8, fontSize: 14, fontWeight: 700, lineHeight: '21px', color: '#121717' }}
                                 >
-                                    <FiX className="text-gray-500 text-lg" />
+                                    Reject
+                                </button>
+                                <button
+                                    onClick={() => handleApprove(selectedRequest._id)}
+                                    className="flex items-center justify-center transition-colors hover:opacity-90"
+                                    style={{ width: 160, height: 40, background: '#24B2B4', borderRadius: 8, fontSize: 14, fontWeight: 700, lineHeight: '21px', color: '#FFFFFF' }}
+                                >
+                                    Approve
                                 </button>
                             </div>
-
-                            {/* User Profile */}
-                            <div className="flex items-center gap-4 mb-8">
-                                <div className="w-20 h-20 bg-gray-200 rounded-full overflow-hidden shrink-0">
-                                    {selectedRequest.userId?.picture ? (
-                                        <img
-                                            src={selectedRequest.userId.picture}
-                                            alt="User"
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-100">
-                                            <AiOutlineUser className="text-3xl" />
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-3 flex-wrap">
-                                        <p className="text-gray-900 font-bold text-xl">{selectedRequest.communityName || selectedRequest.userId?.name || selectedRequest.userId?.username}</p>
-                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
-                                            selectedRequest.status === 'Approved' ? 'border-green-400 text-green-600 bg-green-50' :
-                                            selectedRequest.status === 'Rejected' ? 'border-red-400 text-red-600 bg-red-50' :
-                                            'border-orange-400 text-orange-600 bg-orange-50'
-                                        }`}>
-                                            <span className={`w-1.5 h-1.5 rounded-full ${
-                                                selectedRequest.status === 'Approved' ? 'bg-green-500' :
-                                                selectedRequest.status === 'Rejected' ? 'bg-red-500' :
-                                                'bg-orange-500'
-                                            }`} />
-                                            {selectedRequest.status}
-                                        </span>
-                                    </div>
-                                    <p className="text-gray-500 text-sm mt-0.5">@{selectedRequest.userId?.username}</p>
-                                    {selectedRequest.description && (
-                                        <p className="text-teal-600 text-sm mt-1 line-clamp-2">{selectedRequest.description}</p>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Details Grid */}
-                            <div className="grid grid-cols-2 gap-x-16 gap-y-6 mb-8">
-                                <div>
-                                    <p className="text-teal-600 text-sm font-semibold mb-1">Category</p>
-                                    <p className="text-gray-900 text-base font-medium">{selectedRequest.category || 'N/A'}</p>
-                                </div>
-                                <div>
-                                    <p className="text-teal-600 text-sm font-semibold mb-1">Request Date</p>
-                                    <p className="text-gray-900 text-base font-medium">{new Date(selectedRequest.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-                                </div>
-                                <div>
-                                    <p className="text-teal-600 text-sm font-semibold mb-1">Account Type</p>
-                                    <p className="text-gray-900 text-base font-medium">{selectedRequest.accountType || 'N/A'}</p>
-                                </div>
-                                <div>
-                                    <p className="text-teal-600 text-sm font-semibold mb-1">Status</p>
-                                    <p className="text-gray-900 text-base font-medium">{selectedRequest.status}</p>
-                                </div>
-                            </div>
-
-                            {/* Additional Info */}
-                            {(selectedRequest.email || selectedRequest.socialMediaLink) && (
-                                <div className="space-y-4 mb-8 pt-5 border-t border-gray-100">
-                                    {selectedRequest.email && (
-                                        <div>
-                                            <p className="text-teal-600 text-sm font-semibold mb-1">Email</p>
-                                            <p className="text-gray-900 text-base">{selectedRequest.email}</p>
-                                        </div>
-                                    )}
-                                    {selectedRequest.socialMediaLink && (
-                                        <div>
-                                            <p className="text-teal-600 text-sm font-semibold mb-1">Social Media</p>
-                                            <a href={selectedRequest.socialMediaLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 text-base hover:underline break-all">{selectedRequest.socialMediaLink}</a>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-
-                            {/* Action Buttons */}
-                            {selectedRequest.status === 'Pending' && (
-                                <div className="flex justify-between items-center pt-4">
-                                    <button
-                                        onClick={() => handleReject(selectedRequest._id)}
-                                        className="px-10 py-3 bg-white border-2 border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl font-semibold transition-colors"
-                                    >
-                                        Reject
-                                    </button>
-                                    <button
-                                        onClick={() => handleApprove(selectedRequest._id)}
-                                        className="px-10 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-semibold transition-colors shadow-lg shadow-teal-200"
-                                    >
-                                        Approve
-                                    </button>
-                                </div>
-                            )}
-                        </div>
+                        )}
                     </div>
                 </div>
             )}
