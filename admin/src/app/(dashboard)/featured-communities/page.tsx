@@ -153,15 +153,15 @@ export default function FeaturedCommunitiesPage() {
     );
 
     return (
-        <div className="min-h-screen bg-gray-50 p-8">
+        <div className="h-screen flex flex-col bg-gray-50 p-8 overflow-hidden">
             {/* Header */}
-            <div className="mb-8">
+            <div className="mb-4 shrink-0">
                 <h1 className="text-2xl font-bold text-gray-900">All Communities</h1>
                 <p className="text-gray-500 mt-1">Manage and feature your communities</p>
             </div>
 
             {/* Stats Cards */}
-            <div className="flex gap-4 mb-8">
+            <div className="flex gap-4 mb-4 shrink-0">
                 <div className="bg-white rounded-[15px] border border-[#E5E7EB] px-6 py-4 flex items-center justify-between gap-4 shadow-sm">
                     <div>
                         <p className="text-[#4B5563] text-sm">Total Communities</p>
@@ -182,9 +182,9 @@ export default function FeaturedCommunitiesPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-0">
                 {/* All Communities - Left Side */}
-                <div className="bg-white rounded-[15px] border border-[#E5E7EB] shadow-sm p-6">
+                <div className="bg-white rounded-[15px] border border-[#E5E7EB] shadow-sm p-6 flex flex-col min-h-0">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-lg font-normal text-[#111827]">All Communities</h2>
                         <span className="text-[#6B7280] text-sm">{availableCommunities.length} communities</span>
@@ -203,7 +203,7 @@ export default function FeaturedCommunitiesPage() {
                     </div>
 
                     {/* Communities List */}
-                    <div className="space-y-2.75 max-h-164 overflow-y-auto p-4 rounded-xl border-2 border-dashed border-[#E5E7EB] bg-[#F9FAFB]" style={{ scrollbarWidth: 'thin', scrollbarColor: '#08AAA2 transparent' }}>
+                    <div className="space-y-2.75 flex-1 min-h-0 overflow-y-auto p-4 rounded-xl border-2 border-dashed border-[#E5E7EB] bg-[#F9FAFB]" style={{ scrollbarWidth: 'thin', scrollbarColor: '#08AAA2 transparent' }}>
                         {loading ? (
                             <p className="text-[#6B7280] text-center py-8">Loading...</p>
                         ) : availableCommunities.length === 0 ? (
@@ -246,8 +246,8 @@ export default function FeaturedCommunitiesPage() {
                 </div>
 
                 {/* Featured Communities - Right Side */}
-                <div>
-                    <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-sm p-6">
+                <div className="flex flex-col min-h-0">
+                    <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-sm p-6 flex flex-col flex-1 min-h-0">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-2">
                                 <FiStar className="text-[#0D9488]" />
@@ -259,7 +259,7 @@ export default function FeaturedCommunitiesPage() {
                         {featuredCommunities.length === 0 ? (
                             <p className="text-gray-500 text-center py-8">No featured communities. Add from the list on the left.</p>
                         ) : (
-                            <div className="space-y-4 max-h-155 overflow-y-auto border-2 border-dashed border-[#99F6E4] bg-[#F0FDFA] rounded-xl p-4" style={{ scrollbarWidth: 'thin', scrollbarColor: '#08AAA2 transparent' }}>
+                            <div className="space-y-4 flex-1 min-h-0 overflow-y-auto border-2 border-dashed border-[#99F6E4] bg-[#F0FDFA] rounded-xl p-4" style={{ scrollbarWidth: 'thin', scrollbarColor: '#08AAA2 transparent' }}>
                                 {featuredCommunities.map((comm, index) => (
                                     <div
                                         key={comm._id}
@@ -321,7 +321,7 @@ export default function FeaturedCommunitiesPage() {
                     <button
                         onClick={handleSave}
                         disabled={saving || !hasChanges}
-                        className="w-full mt-6 py-3 bg-[#08AAA2] hover:bg-[#079892] text-white rounded-xl font-bold text-base transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full mt-4 py-3 bg-[#08AAA2] hover:bg-[#079892] text-white rounded-xl font-bold text-base transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
                     >
                         {saving ? 'Saving...' : 'Save Featured Order'}
                     </button>

@@ -163,9 +163,9 @@ export default function NotificationsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 p-8">
+        <div className="h-screen flex flex-col bg-gray-50 p-8 overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-4 shrink-0">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Send Notification</h1>
                     <p className="text-gray-500 mt-1">Communicate with your users instantly</p>
@@ -176,9 +176,9 @@ export default function NotificationsPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
                 {/* Left Panel: Form */}
-                <div className="lg:col-span-2">
+                <div className="lg:col-span-2 overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#08AAA2 transparent' }}>
                     <form onSubmit={handleSend} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
                         {/* Notification Title */}
                         <div className="mb-6">
@@ -356,7 +356,7 @@ export default function NotificationsPage() {
                 </div>
 
                 {/* Right Panel: Preview & History */}
-                <div className="flex flex-col gap-6 lg:max-h-[calc(100vh-140px)]">
+                <div className="flex flex-col gap-4 min-h-0">
                     {/* Live Preview */}
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                         <div className="flex items-center gap-2 mb-4">
