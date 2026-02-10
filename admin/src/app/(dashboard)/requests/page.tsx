@@ -136,8 +136,8 @@ export default function RequestsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6 md:p-8">
-            <div className="flex items-center gap-3 mb-8">
+        <div className="h-full bg-gray-50 p-6 md:p-8 flex flex-col overflow-hidden">
+            <div className="flex items-center gap-3 mb-4 shrink-0">
                 <FiCheckCircle className="text-2xl text-teal-600" />
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Verification Requests</h1>
@@ -146,7 +146,7 @@ export default function RequestsPage() {
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4 shrink-0">
                 <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
                     <div className="flex items-center gap-3 mb-2">
                         <AiOutlineUser className="text-xl text-teal-600" />
@@ -173,7 +173,7 @@ export default function RequestsPage() {
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex gap-2 mb-6">
+            <div className="flex gap-2 mb-4 shrink-0">
                 {(['all', 'Pending', 'Approved', 'Rejected'] as const).map((status) => (
                     <button
                         key={status}
@@ -194,7 +194,7 @@ export default function RequestsPage() {
             </div>
 
             {/* Requests List */}
-            <div className="space-y-3">
+            <div className="flex-1 min-h-0 overflow-y-auto space-y-3">
                 {loading ? (
                     <p className="text-gray-500 text-center py-8">Loading...</p>
                 ) : filteredRequests.length === 0 ? (

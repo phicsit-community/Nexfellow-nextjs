@@ -349,7 +349,7 @@ export default function BlogsPage() {
 
     if (isWriting) {
         return (
-            <div className="min-h-screen bg-gray-50 p-6 md:p-8">
+            <div className="h-full bg-gray-50 p-6 md:p-8 flex flex-col overflow-hidden">
                 <BlogWriter
                     blogToEdit={editBlog}
                     onCancel={() => handleWriterClose(false)}
@@ -360,8 +360,8 @@ export default function BlogsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6 md:p-8">
-            <div className="flex justify-between items-center mb-8">
+        <div className="h-full bg-gray-50 p-6 md:p-8 flex flex-col overflow-hidden">
+            <div className="flex justify-between items-center mb-4 shrink-0">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">All Blogs</h1>
                     <p className="text-gray-500">Manage and moderate blog posts</p>
@@ -376,7 +376,7 @@ export default function BlogsPage() {
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 shrink-0">
                 <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
                     <p className="text-gray-500 text-sm">Total Blogs</p>
                     <p className="text-2xl font-bold text-gray-900">{blogs.length}</p>
@@ -392,7 +392,7 @@ export default function BlogsPage() {
             </div>
 
             {/* Search */}
-            <div className="relative mb-6">
+            <div className="relative mb-4 shrink-0">
                 <IoIosSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
                 <input
                     type="text"
@@ -404,6 +404,7 @@ export default function BlogsPage() {
             </div>
 
             {/* Blog Grid */}
+            <div className="flex-1 min-h-0 overflow-y-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {loading ? (
                     <p className="text-gray-500">Loading...</p>
@@ -464,6 +465,7 @@ export default function BlogsPage() {
                         </div>
                     ))
                 )}
+            </div>
             </div>
         </div>
     );

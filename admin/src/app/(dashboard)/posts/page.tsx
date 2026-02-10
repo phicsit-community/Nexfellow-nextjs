@@ -174,8 +174,8 @@ export default function PostsPage() {
     const regularPosts = posts.filter((p) => !(p.isDeleted && p.underReview === 'pending'));
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4 sm:p-6 md:p-8">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+        <div className="h-full bg-gray-50 p-4 sm:p-6 md:p-8 flex flex-col overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 shrink-0">
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Admin Posts Control</h1>
                 <div className="relative">
                     <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -190,7 +190,7 @@ export default function PostsPage() {
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-6 border-b-2 border-gray-200 mb-6">
+            <div className="flex gap-6 border-b-2 border-gray-200 mb-4 shrink-0">
                 <button
                     className={`pb-3 font-semibold transition-colors ${activeTab === 'posts' ? 'text-teal-600 border-b-2 border-teal-600 -mb-0.5' : 'text-gray-500'}`}
                     onClick={() => setActiveTab('posts')}
@@ -206,7 +206,7 @@ export default function PostsPage() {
             </div>
 
             {/* Posts List */}
-            <div className="space-y-3">
+            <div className="flex-1 min-h-0 overflow-y-auto space-y-3">
                 {activeTab === 'posts' && (
                     <>
                         {regularPosts.length === 0 && !loading && <div className="text-gray-500 text-center py-8">No posts found.</div>}

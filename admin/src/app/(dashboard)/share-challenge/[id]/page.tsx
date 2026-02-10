@@ -35,7 +35,7 @@ export default function ShareChallengePage() {
     };
 
     return (
-        <div className="min-h-screen p-6 flex items-center justify-center">
+        <div className="h-full p-6 flex items-center justify-center overflow-hidden">
             <div className="bg-slate-800 rounded-xl max-w-md w-full p-6">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-6">

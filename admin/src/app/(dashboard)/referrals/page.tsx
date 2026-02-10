@@ -62,8 +62,8 @@ export default function ReferralsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6 md:p-8">
-            <div className="flex justify-between items-center mb-8">
+        <div className="h-full bg-gray-50 p-6 md:p-8 flex flex-col overflow-hidden">
+            <div className="flex justify-between items-center mb-4 shrink-0">
                 <div className="flex items-center gap-3">
                     <FiTrendingUp className="text-2xl text-teal-600" />
                     <div>
@@ -85,7 +85,7 @@ export default function ReferralsPage() {
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 shrink-0">
                 <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
                     <p className="text-gray-500 text-sm">Total Participants</p>
                     <p className="text-2xl font-bold text-gray-900">{data.length}</p>
@@ -106,14 +106,15 @@ export default function ReferralsPage() {
             </div>
 
             {/* Leaderboard Table */}
-            <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+            <div className="flex-1 min-h-0 flex flex-col">
+            <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm flex flex-col flex-1 min-h-0">
                 <div className="grid grid-cols-4 gap-4 p-4 bg-gray-50 text-gray-700 font-semibold border-b border-gray-100">
                     <div>Rank</div>
                     <div className="col-span-2">Username</div>
                     <div className="text-right">Referral Coins</div>
                 </div>
 
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-gray-100 flex-1 min-h-0 overflow-y-auto">
                     {loading ? (
                         <div className="flex justify-center py-12">
                             <Loader />
@@ -153,8 +154,9 @@ export default function ReferralsPage() {
             </div>
 
             {/* Pagination */}
-            <div className="mt-6">
+            <div className="mt-2 shrink-0">
                 <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={setCurrentPage} />
+            </div>
             </div>
         </div>
     );

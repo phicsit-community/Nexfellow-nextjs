@@ -153,7 +153,7 @@ export default function FeaturedCommunitiesPage() {
     );
 
     return (
-        <div className="h-screen flex flex-col bg-gray-50 p-8 overflow-hidden">
+        <div className="h-full flex flex-col bg-gray-50 p-8 overflow-hidden">
             {/* Header */}
             <div className="mb-4 shrink-0">
                 <h1 className="text-2xl font-bold text-gray-900">All Communities</h1>

@@ -110,8 +110,8 @@ export default function CreateQuizPage() {
     };
 
     return (
-        <div className="min-h-screen p-6">
-            <div className="max-w-3xl mx-auto">
+        <div className="h-full p-6 flex flex-col overflow-hidden">
+            <div className="max-w-3xl mx-auto flex-1 min-h-0 overflow-y-auto w-full">
                 <div className="bg-slate-800 rounded-xl p-6">
                     <h1 className="text-2xl font-bold text-white mb-6">Create Contest</h1>
 

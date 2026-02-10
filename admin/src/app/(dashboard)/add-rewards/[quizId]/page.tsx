@@ -88,15 +88,15 @@ export default function AddRewardsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="h-full flex items-center justify-center">
                 <Loader />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen p-6">
-            <div className="max-w-2xl mx-auto">
+        <div className="h-full p-6 flex flex-col overflow-hidden">
+            <div className="max-w-2xl mx-auto flex-1 min-h-0 overflow-y-auto w-full">
                 <div className="bg-slate-800 rounded-xl p-6">
                     <div className="flex items-center gap-3 mb-6">
                         <FiAward className="text-2xl text-teal-400" />

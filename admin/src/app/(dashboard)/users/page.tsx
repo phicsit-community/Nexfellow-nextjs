@@ -283,16 +283,16 @@ const UsersPage = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="h-full bg-gray-50 flex items-center justify-center">
                 <Loader />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6 md:p-8">
+        <div className="h-full flex flex-col bg-gray-50 p-6 md:p-8 overflow-hidden">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 shrink-0">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Users</h1>
                     <p className="text-gray-600">Total Users: {data.length.toLocaleString()}</p>
@@ -321,8 +321,8 @@ const UsersPage = () => {
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm flex-1 min-h-0 flex flex-col overflow-hidden">
+                <div className="overflow-auto flex-1 min-h-0">
                     <table className="w-full">
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-100">

@@ -149,9 +149,9 @@ export default function VerificationsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4 sm:p-6 md:p-8">
+        <div className="h-full bg-gray-50 p-4 sm:p-6 md:p-8 flex flex-col overflow-hidden">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 shrink-0">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Verification</h1>
                     <p className="text-gray-500 text-sm">Communicate with your users instantly</p>
@@ -163,7 +163,7 @@ export default function VerificationsPage() {
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 shrink-0">
                 <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
                     <div className="flex items-center justify-between">
                         <div>
@@ -211,7 +211,7 @@ export default function VerificationsPage() {
             </div>
 
             {/* Search + Filter */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-6">
+            <div className="flex flex-col sm:flex-row gap-3 mb-4 shrink-0">
                 <div className="relative flex-1">
                     <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input
@@ -235,8 +235,8 @@ export default function VerificationsPage() {
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex-1 min-h-0 flex flex-col">
+                <div className="overflow-auto flex-1 min-h-0">
                     <table className="w-full">
                         <thead>
                             <tr className="border-b border-gray-100">

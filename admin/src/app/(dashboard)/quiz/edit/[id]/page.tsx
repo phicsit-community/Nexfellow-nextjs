@@ -117,7 +117,7 @@ export default function EditQuizPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="h-full flex items-center justify-center">
                 <Loader />
             </div>
         );
@@ -125,15 +125,15 @@ export default function EditQuizPage() {
 
     if (!quiz) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="h-full flex items-center justify-center">
                 <p className="text-slate-400">Quiz not found</p>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen p-6">
-            <div className="max-w-3xl mx-auto">
+        <div className="h-full p-6 flex flex-col overflow-hidden">
+            <div className="max-w-3xl mx-auto flex-1 min-h-0 overflow-y-auto w-full">
                 <div className="bg-slate-800 rounded-xl p-6">
                     <div className="flex justify-between items-center mb-6">
                         <h1 className="text-2xl font-bold text-white">Edit Contest</h1>

@@ -125,8 +125,8 @@ export default function ChallengesPage() {
     };
 
     return (
-        <div className="min-h-screen p-6">
-            <div className="flex justify-between items-center mb-8">
+        <div className="h-full p-6 flex flex-col overflow-hidden">
+            <div className="flex justify-between items-center mb-4 shrink-0">
                 <h1 className="text-2xl font-semibold text-white">Challenges</h1>
                 <button
                     onClick={() => setShowCreateModal(true)}
@@ -137,7 +137,7 @@ export default function ChallengesPage() {
             </div>
 
             {/* Templates */}
-            <div className="mb-8">
+            <div className="mb-4 shrink-0">
                 <h2 className="text-slate-400 text-sm mb-4">Pick a template</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <TemplateCard
@@ -162,14 +162,14 @@ export default function ChallengesPage() {
             </div>
 
             {/* Challenges List */}
-            <div className="bg-slate-800 rounded-xl overflow-hidden">
+            <div className="bg-slate-800 rounded-xl overflow-hidden flex-1 min-h-0 flex flex-col">
                 <div className="grid grid-cols-3 gap-4 p-4 bg-slate-700 text-slate-300 font-semibold">
                     <div>Name</div>
                     <div className="text-center">Participants</div>
                     <div className="text-right">Status</div>
                 </div>
 
-                <div className="divide-y divide-slate-700">
+                <div className="divide-y divide-slate-700 flex-1 min-h-0 overflow-y-auto">
                     {loading ? (
                         <div className="p-8 text-center text-slate-400">Loading...</div>
                     ) : challenges.length === 0 ? (

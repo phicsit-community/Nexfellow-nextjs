@@ -91,9 +91,9 @@ export default function ChallengeDetailPage() {
     };
 
     return (
-        <div className="min-h-screen p-6">
+        <div className="h-full p-6 flex flex-col overflow-hidden">
             {/* Header */}
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-4 shrink-0">
                 <button
                     onClick={() => router.push('/challenges')}
                     className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
@@ -115,13 +115,13 @@ export default function ChallengeDetailPage() {
             </div>
 
             {/* Challenge Name */}
-            <div className="mb-6">
+            <div className="mb-4 shrink-0">
                 <h1 className="text-2xl font-bold text-white">{challenge.name}</h1>
                 <p className="text-slate-400">{challenge.description}</p>
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-6 border-b border-slate-700 mb-6">
+            <div className="flex gap-6 border-b border-slate-700 mb-4 shrink-0">
                 {(['overview', 'checkpoints', 'participants'] as Tab[]).map((tab) => (
                     <button
                         key={tab}
@@ -136,6 +136,8 @@ export default function ChallengeDetailPage() {
                 ))}
             </div>
 
+            {/* Tab Content */}
+            <div className="flex-1 min-h-0 overflow-y-auto">
             {/* Overview Tab */}
             {activeTab === 'overview' && (
                 <div className="space-y-6">
@@ -247,6 +249,7 @@ export default function ChallengeDetailPage() {
                     )}
                 </div>
             )}
+            </div>
 
             {/* Edit Modal */}
             {showEditModal && (

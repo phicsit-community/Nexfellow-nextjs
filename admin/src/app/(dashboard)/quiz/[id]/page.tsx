@@ -178,7 +178,7 @@ export default function QuizDetailPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="h-full flex items-center justify-center">
                 <Loader />
             </div>
         );
@@ -186,16 +186,16 @@ export default function QuizDetailPage() {
 
     if (!quiz) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="h-full flex items-center justify-center">
                 <p className="text-slate-400">Quiz not found</p>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen p-6">
+        <div className="h-full p-6 flex flex-col overflow-hidden">
             {/* Quiz Header */}
-            <div className="bg-slate-800 rounded-xl p-6 mb-6">
+            <div className="bg-slate-800 rounded-xl p-6 mb-4 shrink-0">
                 <div className="flex justify-between items-start mb-4">
                     <div>
                         <h1 className="text-2xl font-bold text-white">{quiz.title}</h1>
@@ -276,7 +276,7 @@ export default function QuizDetailPage() {
             </div>
 
             {/* Questions Section */}
-            <div className="bg-slate-800 rounded-xl p-6">
+            <div className="bg-slate-800 rounded-xl p-6 flex-1 min-h-0 overflow-y-auto">
                 <h2 className="text-xl font-semibold text-white mb-4">Questions ({questions.length})</h2>
                 {questionsLoading ? (
                     <div className="flex justify-center py-8"><Loader /></div>

@@ -103,8 +103,8 @@ export default function CreateRewardPage() {
     };
 
     return (
-        <div className="min-h-screen p-6">
-            <div className="flex items-center gap-3 mb-8">
+        <div className="h-full p-6 flex flex-col overflow-hidden">
+            <div className="flex items-center gap-3 mb-4 shrink-0">
                 <FiGift className="text-2xl text-teal-400" />
                 <div>
                     <h1 className="text-2xl font-semibold text-white">Create Rewards</h1>
@@ -112,7 +112,7 @@ export default function CreateRewardPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-0 overflow-y-auto">
                 {/* Create Form */}
                 <div className="bg-slate-800 rounded-xl p-6">
                     <h2 className="text-lg font-semibold text-white mb-4">New Reward</h2>

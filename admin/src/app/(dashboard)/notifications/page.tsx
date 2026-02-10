@@ -8,6 +8,7 @@ import { FaBell, FaPaperPlane } from 'react-icons/fa';
 import { IoRocketOutline, IoCalendarOutline } from 'react-icons/io5';
 import { toast } from 'sonner';
 import { safeFetch } from '@/lib/safeFetch';
+import DateTimePicker from '@/components/DateTimePicker';
 
 interface User {
     _id: string;
@@ -163,7 +164,7 @@ export default function NotificationsPage() {
     };
 
     return (
-        <div className="h-screen flex flex-col bg-gray-50 p-8 overflow-hidden">
+        <div className="h-full flex flex-col bg-gray-50 p-8 overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between mb-4 shrink-0">
                 <div>
@@ -330,13 +331,10 @@ export default function NotificationsPage() {
 
                         {scheduleType === 'schedule' && (
                             <div className="mb-8">
-                                <input
-                                    type="datetime-local"
-                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                <DateTimePicker
                                     value={scheduledDate}
-                                    onChange={(e) => setScheduledDate(e.target.value)}
+                                    onChange={(val) => setScheduledDate(val)}
                                     min={new Date().toISOString().slice(0, 16)}
-                                    required
                                 />
                             </div>
                         )}

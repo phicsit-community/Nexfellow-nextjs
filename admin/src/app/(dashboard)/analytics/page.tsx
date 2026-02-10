@@ -650,7 +650,7 @@ export default function AnalyticsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="h-full bg-gray-50 flex items-center justify-center">
                 <Loader />
             </div>
         );
@@ -658,7 +658,7 @@ export default function AnalyticsPage() {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="h-full bg-gray-50 flex items-center justify-center">
                 <div className="text-center">
                     <p className="text-red-500 mb-4">{error}</p>
                     <button
@@ -673,9 +673,9 @@ export default function AnalyticsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6 md:p-8">
+        <div className="h-full bg-gray-50 flex flex-col overflow-hidden">
             {/* Header */}
-            <div className="flex items-center gap-3 mb-8">
+            <div className="flex items-center gap-3 px-6 md:px-8 pt-6 md:pt-8 pb-4 shrink-0">
                 <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
                     <FiTrendingUp className="text-teal-600 text-xl" />
                 </div>
@@ -685,6 +685,8 @@ export default function AnalyticsPage() {
                 </div>
             </div>
 
+            {/* Scrollable Content */}
+            <div className="flex-1 min-h-0 overflow-y-auto px-6 md:px-8 pb-6 md:pb-8">
             {/* Metrics Grid - 4x3 */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 {metricDefs.map((m) => (
@@ -719,6 +721,7 @@ export default function AnalyticsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <UserRolesChart data={stats.roleDistribution ? Object.entries(stats.roleDistribution).map(([role, count]) => ({ role, count })) : undefined} />
                 <TopCountriesChart data={stats.countryDistribution ? Object.entries(stats.countryDistribution).map(([country, count]) => ({ country, count })) : undefined} />
+            </div>
             </div>
         </div>
     );

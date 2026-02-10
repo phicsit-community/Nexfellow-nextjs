@@ -145,15 +145,17 @@ export default function AdvertisementsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6 md:p-8">
+        <div className="h-full bg-gray-50 p-6 md:p-8 flex flex-col overflow-hidden">
             {/* Header */}
-            <div className="mb-8">
+            <div className="mb-4 shrink-0">
                 <h1 className="text-2xl font-bold text-gray-900">Advertisement Management</h1>
                 <p className="text-gray-500">Upload and manage your advertisements</p>
             </div>
 
+            {/* Scrollable Content */}
+            <div className="flex-1 min-h-0 overflow-y-auto space-y-6">
             {/* Upload Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Upload Form */}
                 <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                     <h2 className="text-lg font-semibold text-gray-900 mb-6">Upload New Advertisement</h2>
@@ -382,6 +384,7 @@ export default function AdvertisementsPage() {
                         ))}
                     </div>
                 )}
+            </div>
             </div>
         </div>
     );
