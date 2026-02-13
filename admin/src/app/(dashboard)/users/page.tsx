@@ -222,7 +222,7 @@ const UsersPage = () => {
         }
 
         return (
-            <div className="flex items-center justify-center gap-2 mt-6">
+            <div className="flex items-center justify-center gap-2 py-4">
                 <button
                     onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                     disabled={currentPage === 1}
@@ -290,7 +290,7 @@ const UsersPage = () => {
     }
 
     return (
-        <div className="h-full flex flex-col bg-gray-50 p-4 sm:p-6 md:p-8 overflow-hidden">
+        <div className="min-h-full bg-gray-50 p-4 sm:p-6 md:p-8 overflow-auto">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 shrink-0">
                 <div>
@@ -321,8 +321,8 @@ const UsersPage = () => {
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm flex-1 min-h-0 flex flex-col overflow-hidden">
-                <div className="overflow-auto flex-1 min-h-0">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div className="overflow-auto">
                     <table className="w-full min-w-[700px]">
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-100">

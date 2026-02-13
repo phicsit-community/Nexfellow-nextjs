@@ -14,7 +14,7 @@
 
 /* Logo Section */
 .logoDiv {
-    height: 80px;
+    height: 65px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -23,7 +23,7 @@
 }
 
 .geekLogo {
-    width: 180px;
+    width: 150px;
     height: auto;
     object-fit: contain;
 }
@@ -40,10 +40,10 @@
 
 /* Top Half of Sidebar */
 .sidebarUpper {
-    padding-top: 20px;
+    padding-top: 16px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     align-items: center;
 }
 
@@ -52,10 +52,10 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 14px;
+    gap: 12px;
     width: 90%;
-    height: 44px;
-    padding: 0 16px;
+    height: 40px;
+    padding: 0 14px;
     border-radius: 10px;
     position: relative;
     text-decoration: none;
@@ -65,16 +65,16 @@
 
 /* Icon inside link */
 .sideIcon {
-    font-size: 20px;
-    min-width: 20px;
+    font-size: 18px;
+    min-width: 18px;
     color: #94a3b8;
     transition: color 0.2s ease;
 }
 
 /* Text inside link */
 .navLink p {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 500;
     color: #94a3b8;
     margin: 0;
     transition: color 0.2s ease;
@@ -116,14 +116,14 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-top: 16px;
-    padding: 0 16px;
+    margin-top: 12px;
+    padding: 0 14px;
     width: 90%;
 }
 
 .geekMailerTag {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 500;
     color: #24b2b4;
     text-decoration: none;
     transition: color 0.2s ease;
@@ -143,13 +143,13 @@
 .sidebarLower div {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     width: 90%;
-    height: 44px;
+    height: 40px;
     border: 1px solid #24b2b4;
     border-radius: 10px;
     cursor: pointer;
-    padding: 0 16px;
+    padding: 0 14px;
     transition: background-color 0.2s ease;
 }
 
@@ -158,9 +158,9 @@
 }
 
 .sidebarLower div p {
-    font-size: 14px;
+    font-size: 13px;
     color: #94a3b8;
-    font-weight: 600;
+    font-weight: 500;
     margin: 0;
 }
 

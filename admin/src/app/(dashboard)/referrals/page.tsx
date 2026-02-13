@@ -62,7 +62,7 @@ export default function ReferralsPage() {
     };
 
     return (
-        <div className="h-full bg-gray-50 p-4 sm:p-6 md:p-8 flex flex-col overflow-hidden">
+        <div className="min-h-full bg-gray-50 p-4 sm:p-6 md:p-8 overflow-auto">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 shrink-0">
                 <div className="flex items-center gap-3">
                     <FiTrendingUp className="text-2xl text-teal-600" />
@@ -106,15 +106,15 @@ export default function ReferralsPage() {
             </div>
 
             {/* Leaderboard Table */}
-            <div className="flex-1 min-h-0 flex flex-col">
-                <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm flex flex-col flex-1 min-h-0">
+            <div>
+                <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm">
                     <div className="grid grid-cols-4 gap-4 p-4 bg-gray-50 text-gray-700 font-semibold border-b border-gray-100">
                         <div>Rank</div>
                         <div className="col-span-2">Username</div>
                         <div className="text-right">Referral Coins</div>
                     </div>
 
-                    <div className="divide-y divide-gray-100 flex-1 min-h-0 overflow-y-auto">
+                    <div className="divide-y divide-gray-100">
                         {loading ? (
                             <div className="flex justify-center py-12">
                                 <Loader />

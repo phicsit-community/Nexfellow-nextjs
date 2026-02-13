@@ -145,7 +145,7 @@ export default function AdvertisementsPage() {
     };
 
     return (
-        <div className="h-full bg-gray-50 p-4 sm:p-6 md:p-8 flex flex-col overflow-hidden">
+        <div className="min-h-full bg-gray-50 p-4 sm:p-6 md:p-8 overflow-auto">
             {/* Header */}
             <div className="mb-4 shrink-0">
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Advertisement Management</h1>
@@ -153,11 +153,11 @@ export default function AdvertisementsPage() {
             </div>
 
             {/* Scrollable Content */}
-            <div className="flex-1 min-h-0 overflow-y-auto space-y-6">
+            <div className="space-y-6">
                 {/* Upload Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Upload Form */}
-                    <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                         <h2 className="text-lg font-semibold text-gray-900 mb-6">Upload New Advertisement</h2>
 
                         {/* Image Upload */}
@@ -268,11 +268,11 @@ export default function AdvertisementsPage() {
                             ◎ Position: {newPosition}
                         </div>
 
-                        <div className="border border-dashed border-gray-200 rounded-xl p-8 min-h-50 flex items-center justify-center">
+                        <div className="border border-dashed border-gray-200 rounded-xl p-3 flex items-center justify-center">
                             {previewUrl ? (
-                                <img src={previewUrl} alt="Preview" className="max-h-40 rounded-lg object-contain" />
+                                <img src={previewUrl} alt="Preview" className="w-full h-auto rounded-lg object-contain" />
                             ) : (
-                                <div className="text-center">
+                                <div className="text-center py-8">
                                     <div className="w-12 h-12 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center">
                                         <BsImage className="text-gray-300 text-2xl" />
                                     </div>

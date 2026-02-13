@@ -83,7 +83,7 @@ const SideBar = () => {
                         className={styles.geekLogo}
                         src="/images/Navbar/NexFellowLogoDark.svg"
                         alt="NexFellow Logo"
-                        style={{ height: '40px', width: 'auto' }}
+                        style={{ height: '34px', width: 'auto' }}
                     />
                 </div>
                 <div className={styles.sideContainer}>
@@ -175,8 +175,8 @@ const SideBar = () => {
                     className={styles.geekLogo}
                     src="/images/Navbar/NexFellowLogoDark.svg"
                     alt="NexFellow Logo"
-                    width={180}
-                    height={41}
+                    width={150}
+                    height={34}
                 />
             </div>
             <div className={styles.sideContainer}>
