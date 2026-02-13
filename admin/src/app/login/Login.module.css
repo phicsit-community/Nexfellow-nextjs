@@ -1,25 +1,42 @@
+/* Override body/html background when login page is active */
+:global(body):has(.container) {
+    background: #e5fffe !important;
+}
+
+:global(html):has(.container) {
+    background: #e5fffe !important;
+}
+
 .container {
     display: flex;
-    align-items: center;
-    height: 100vh;
+    align-items: stretch;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background-color: #e5fffe;
+    overflow: hidden;
 }
 
 .infoContainer {
     flex: 1;
-    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     color: black;
+    overflow: hidden;
 }
 
 .info {
-    width: 500px;
-    height: 450px;
+    width: 100%;
+    max-width: 500px;
+    height: auto;
     object-fit: contain;
-    margin: 0 auto;
-    margin-right: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
 }
 
 .logo {
@@ -44,7 +61,6 @@
 .loginContainer {
     background-color: white;
     color: black;
-    height: 100%;
     border-radius: 0 40px 40px 0;
     flex: 1;
     display: flex;
@@ -52,6 +68,9 @@
     justify-content: center;
     align-items: center;
     gap: 2.5rem;
+    position: relative;
+    z-index: 1;
+    min-height: 100%;
 }
 
 .loginFormContainer {

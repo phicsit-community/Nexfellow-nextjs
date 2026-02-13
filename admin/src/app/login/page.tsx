@@ -195,6 +195,7 @@ const LoginPage = () => {
                         alt="Login Illustration"
                         width={500}
                         height={450}
+                        style={{ width: '100%', height: 'auto', maxWidth: '500px' }}
                     />
                 </div>
             </div>
