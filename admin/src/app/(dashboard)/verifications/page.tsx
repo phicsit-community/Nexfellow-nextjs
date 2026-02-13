@@ -308,12 +308,12 @@ export default function VerificationsPage() {
 
             {/* Detail Modal */}
             {showDetail && selectedRequest && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 pl-48">
-                    <div className="bg-white shadow-2xl" style={{ width: 960, minHeight: 521, borderRadius: 16, padding: '20px 31px' }}>
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl p-4 sm:p-5 sm:px-8">
 
                         {/* Header */}
-                        <div className="flex flex-row flex-wrap justify-between items-start p-4 gap-3" style={{ height: 72 }}>
-                            <h2 style={{ fontSize: 26, lineHeight: '40px', fontWeight: 700, color: '#121717' }}>
+                        <div className="flex flex-row flex-wrap justify-between items-start p-2 sm:p-4 gap-3">
+                            <h2 className="text-lg sm:text-xl md:text-[26px] leading-tight sm:leading-10 font-bold text-[#121717]">
                                 Community Verification Request Details
                             </h2>
                             <button
@@ -326,8 +326,8 @@ export default function VerificationsPage() {
                         </div>
 
                         {/* User Profile */}
-                        <div className="flex flex-row items-start p-4" style={{ height: 174 }}>
-                            <div className="shrink-0 overflow-hidden" style={{ width: 101, height: 101, borderRadius: 100 }}>
+                        <div className="flex flex-col sm:flex-row items-center sm:items-start p-2 sm:p-4 gap-4">
+                            <div className="shrink-0 overflow-hidden w-20 h-20 sm:w-[101px] sm:h-[101px] rounded-full">
                                 {selectedRequest.userId?.picture ? (
                                     <img
                                         src={selectedRequest.userId.picture}
@@ -340,7 +340,7 @@ export default function VerificationsPage() {
                                     </div>
                                 )}
                             </div>
-                            <div className="flex flex-col justify-center flex-1 min-w-[288px]" style={{ padding: 16, gap: 4, height: 142 }}>
+                            <div className="flex flex-col justify-center flex-1 min-w-0 p-2 sm:p-4 gap-1">
                                 {/* Name + Badge */}
                                 <div className="flex flex-row items-center" style={{ gap: 13, height: 30 }}>
                                     <span style={{ fontSize: 18, fontWeight: 700, lineHeight: '23px', color: '#121717' }}>
@@ -377,9 +377,9 @@ export default function VerificationsPage() {
                         </div>
 
                         {/* Details Grid */}
-                        <div className="flex flex-col" style={{ padding: 16, gap: 24 }}>
+                        <div className="flex flex-col p-2 sm:p-4 gap-4 sm:gap-6">
                             {/* Row 1: Category + Request Date */}
-                            <div className="flex flex-row" style={{ gap: 24 }}>
+                            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                                 <div className="flex flex-col" style={{ width: 186, paddingTop: 20, borderTop: '1px solid #E6E8EB', gap: 12 }}>
                                     <p style={{ fontSize: 14, lineHeight: '21px', color: '#08AAA2' }}>Category</p>
                                     <p style={{ fontSize: 14, lineHeight: '21px', color: '#121717' }}>{selectedRequest.category || 'N/A'}</p>
@@ -390,7 +390,7 @@ export default function VerificationsPage() {
                                 </div>
                             </div>
                             {/* Row 2: Account Type + Status */}
-                            <div className="flex flex-row" style={{ gap: 24 }}>
+                            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                                 <div className="flex flex-col" style={{ width: 186, paddingTop: 20, borderTop: '1px solid #E6E8EB', gap: 12 }}>
                                     <p style={{ fontSize: 14, lineHeight: '21px', color: '#08AAA2' }}>Account Type</p>
                                     <p style={{ fontSize: 14, lineHeight: '21px', color: '#121717' }}>{selectedRequest.accountType || 'N/A'}</p>

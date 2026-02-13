@@ -74,11 +74,11 @@ function MetricCard({ label, value, Icon, gradient, bgTint, delta }: {
     delta?: { isPositive: boolean; value: string } | null;
 }) {
     return (
-        <div className={`${bgTint} rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow`}>
+        <div className={`${bgTint} rounded-xl p-3 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow`}>
             <div className="flex items-start justify-between">
-                <div className="flex-1">
-                    <p className="text-gray-500 text-sm mb-1">{label}</p>
-                    <p className="text-2xl font-bold text-gray-900">
+                <div className="flex-1 min-w-0">
+                    <p className="text-gray-500 text-xs sm:text-sm mb-1 truncate">{label}</p>
+                    <p className="text-xl sm:text-2xl font-bold text-gray-900">
                         {value !== undefined && value !== null ? value.toLocaleString() : '—'}
                     </p>
                     {delta && (
@@ -88,7 +88,7 @@ function MetricCard({ label, value, Icon, gradient, bgTint, delta }: {
                         </div>
                     )}
                 </div>
-                <div className={`w-12 h-12 bg-linear-to-br ${gradient} rounded-xl flex items-center justify-center shadow-lg`}>
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-br ${gradient} rounded-xl flex items-center justify-center shadow-lg shrink-0`}>
                     <Icon className="text-xl text-white" />
                 </div>
             </div>
@@ -133,7 +133,7 @@ function UserGrowthChart({ data }: { data: { label: string; value: number }[] })
 
     return (
         <div
-            className="rounded-lg p-6"
+            className="rounded-lg p-3 sm:p-6"
             style={{
                 background: 'linear-gradient(135deg, #FFFFFF 0%, rgba(249, 250, 251, 0.5) 100%), #FFFFFF',
                 boxShadow: '0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1)',
@@ -141,23 +141,23 @@ function UserGrowthChart({ data }: { data: { label: string; value: number }[] })
             }}
         >
             {/* Header */}
-            <div className="flex items-center gap-2.5 mb-4">
+            <div className="flex flex-wrap items-center gap-2.5 mb-4">
                 <div
-                    className="w-9 h-9 rounded-lg flex items-center justify-center"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
                     style={{ background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)' }}
                 >
                     <FiTrendingUp className="text-white" size={20} />
                 </div>
-                <span style={{ color: '#020817', fontWeight: 600, fontSize: '18px', letterSpacing: '-0.45px' }}>
+                <span className="text-[#020817] font-semibold text-base sm:text-lg" style={{ letterSpacing: '-0.45px' }}>
                     User Growth (12mo)
                 </span>
-                <span style={{ color: '#64748B', fontSize: '14px', marginLeft: '2px' }}>
-                    - Current: {currentValue.toLocaleString()} users in {currentLabel}
+                <span className="text-[#64748B] text-xs sm:text-sm">
+                    Current: {currentValue.toLocaleString()} users in {currentLabel}
                 </span>
             </div>
 
             {/* Chart SVG */}
-            <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full" style={{ height: '320px' }} preserveAspectRatio="xMidYMid meet">
+            <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
                 {/* Horizontal dashed grid lines */}
                 {[0, 1, 2, 3, 4].map(i => {
                     const y = plotB - (i / 4) * plotH;
@@ -263,23 +263,23 @@ function PostsTrendChart({ data }: { data: { label: string; value: number }[] })
             }}
         >
             {/* Header */}
-            <div className="flex items-center gap-2.5 mb-4">
+            <div className="flex flex-wrap items-center gap-2.5 mb-4">
                 <div
-                    className="w-9 h-9 rounded-lg flex items-center justify-center"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
                     style={{ background: 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)' }}
                 >
                     <BsChatSquare className="text-white" size={20} />
                 </div>
-                <span style={{ color: '#020817', fontWeight: 600, fontSize: '18px', letterSpacing: '-0.45px' }}>
+                <span className="text-[#020817] font-semibold text-base sm:text-lg" style={{ letterSpacing: '-0.45px' }}>
                     Posts Trend (12mo)
                 </span>
-                <span style={{ color: '#64748B', fontSize: '14px', marginLeft: '2px' }}>
-                    - Current: {currentValue} posts in {currentLabel}
+                <span className="text-[#64748B] text-xs sm:text-sm">
+                    Current: {currentValue} posts in {currentLabel}
                 </span>
             </div>
 
             {/* Chart SVG */}
-            <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full" style={{ height: '320px' }} preserveAspectRatio="xMidYMid meet">
+            <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
                 {/* Horizontal dashed grid lines */}
                 {[0, 1, 2, 3, 4].map(i => {
                     const y = plotB - (i / 4) * plotH;
@@ -396,23 +396,23 @@ function DailyActiveUsersChart({ data }: { data: { label: string; value: number 
             }}
         >
             {/* Header */}
-            <div className="flex items-center gap-2.5 mb-4">
+            <div className="flex flex-wrap items-center gap-2.5 mb-4">
                 <div
-                    className="w-9 h-9 rounded-lg flex items-center justify-center"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
                     style={{ background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)' }}
                 >
                     <BsPeople className="text-white" size={20} />
                 </div>
-                <span style={{ color: '#020817', fontWeight: 600, fontSize: '18px', letterSpacing: '-0.45px' }}>
+                <span className="text-[#020817] font-semibold text-base sm:text-lg" style={{ letterSpacing: '-0.45px' }}>
                     Daily Active Users (30d)
                 </span>
-                <span style={{ color: '#64748B', fontSize: '14px', marginLeft: '2px' }}>
-                    - Current: {currentValue} users on {currentLabel}
+                <span className="text-[#64748B] text-xs sm:text-sm">
+                    Current: {currentValue} users on {currentLabel}
                 </span>
             </div>
 
             {/* Chart SVG */}
-            <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full" style={{ height: '320px' }} preserveAspectRatio="xMidYMid meet">
+            <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
                 {/* Horizontal dashed grid lines */}
                 {[0, 1, 2, 3, 4].map(i => {
                     const y = plotB - (i / 4) * plotH;
@@ -675,53 +675,53 @@ export default function AnalyticsPage() {
     return (
         <div className="h-full bg-gray-50 flex flex-col overflow-hidden">
             {/* Header */}
-            <div className="flex items-center gap-3 px-6 md:px-8 pt-6 md:pt-8 pb-4 shrink-0">
+            <div className="flex items-center gap-3 px-4 sm:px-6 md:px-8 pt-4 sm:pt-6 md:pt-8 pb-4 shrink-0">
                 <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
                     <FiTrendingUp className="text-teal-600 text-xl" />
                 </div>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Platform Analytics</h1>
-                    <p className="text-gray-500">Actionable, real-time insights for data-driven decisions.</p>
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Platform Analytics</h1>
+                    <p className="text-gray-500 text-sm sm:text-base">Actionable, real-time insights for data-driven decisions.</p>
                 </div>
             </div>
 
             {/* Scrollable Content */}
-            <div className="flex-1 min-h-0 overflow-y-auto px-6 md:px-8 pb-6 md:pb-8">
-            {/* Metrics Grid - 4x3 */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                {metricDefs.map((m) => (
-                    <MetricCard
-                        key={m.key}
-                        label={m.label}
-                        value={(stats as Record<string, number | undefined>)[m.key]}
-                        Icon={m.icon}
-                        gradient={m.gradient}
-                        bgTint={m.bgTint}
-                        delta={formatDelta((stats as Record<string, number | undefined>)[m.deltaKey])}
-                    />
-                ))}
-            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 md:px-8 pb-4 sm:pb-6 md:pb-8">
+                {/* Metrics Grid - 4x3 */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    {metricDefs.map((m) => (
+                        <MetricCard
+                            key={m.key}
+                            label={m.label}
+                            value={(stats as Record<string, number | undefined>)[m.key]}
+                            Icon={m.icon}
+                            gradient={m.gradient}
+                            bgTint={m.bgTint}
+                            delta={formatDelta((stats as Record<string, number | undefined>)[m.deltaKey])}
+                        />
+                    ))}
+                </div>
 
-            {/* User Growth Chart - Full Width */}
-            <div className="mb-6">
-                <UserGrowthChart data={stats.userGrowth || []} />
-            </div>
+                {/* User Growth Chart - Full Width */}
+                <div className="mb-6">
+                    <UserGrowthChart data={stats.userGrowth || []} />
+                </div>
 
-            {/* Posts Trend Chart - Full Width */}
-            <div className="mb-6">
-                <PostsTrendChart data={stats.postGrowth || []} />
-            </div>
+                {/* Posts Trend Chart - Full Width */}
+                <div className="mb-6">
+                    <PostsTrendChart data={stats.postGrowth || []} />
+                </div>
 
-            {/* Daily Active Users Chart - Full Width */}
-            <div className="mb-6">
-                <DailyActiveUsersChart data={stats.activeUsersChart || []} />
-            </div>
+                {/* Daily Active Users Chart - Full Width */}
+                <div className="mb-6">
+                    <DailyActiveUsersChart data={stats.activeUsersChart || []} />
+                </div>
 
-            {/* Bottom Charts - 2 Column */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <UserRolesChart data={stats.roleDistribution ? Object.entries(stats.roleDistribution).map(([role, count]) => ({ role, count })) : undefined} />
-                <TopCountriesChart data={stats.countryDistribution ? Object.entries(stats.countryDistribution).map(([country, count]) => ({ country, count })) : undefined} />
-            </div>
+                {/* Bottom Charts - 2 Column */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <UserRolesChart data={stats.roleDistribution ? Object.entries(stats.roleDistribution).map(([role, count]) => ({ role, count })) : undefined} />
+                    <TopCountriesChart data={stats.countryDistribution ? Object.entries(stats.countryDistribution).map(([country, count]) => ({ country, count })) : undefined} />
+                </div>
             </div>
         </div>
     );

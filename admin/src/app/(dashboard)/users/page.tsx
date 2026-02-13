@@ -290,15 +290,15 @@ const UsersPage = () => {
     }
 
     return (
-        <div className="h-full flex flex-col bg-gray-50 p-6 md:p-8 overflow-hidden">
+        <div className="h-full flex flex-col bg-gray-50 p-4 sm:p-6 md:p-8 overflow-hidden">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 shrink-0">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Users</h1>
-                    <p className="text-gray-600">Total Users: {data.length.toLocaleString()}</p>
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Users</h1>
+                    <p className="text-gray-600 text-sm sm:text-base">Total Users: {data.length.toLocaleString()}</p>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
                     {/* Search */}
                     <div className="relative flex-1 md:w-80">
                         <IoIosSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
@@ -323,7 +323,7 @@ const UsersPage = () => {
             {/* Table */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm flex-1 min-h-0 flex flex-col overflow-hidden">
                 <div className="overflow-auto flex-1 min-h-0">
-                    <table className="w-full">
+                    <table className="w-full min-w-[700px]">
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-100">
                                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Users</th>

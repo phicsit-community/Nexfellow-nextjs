@@ -153,15 +153,15 @@ export default function FeaturedCommunitiesPage() {
     );
 
     return (
-        <div className="h-full flex flex-col bg-gray-50 p-8 overflow-hidden">
+        <div className="h-full flex flex-col bg-gray-50 p-4 sm:p-6 md:p-8 overflow-hidden">
             {/* Header */}
             <div className="mb-4 shrink-0">
-                <h1 className="text-2xl font-bold text-gray-900">All Communities</h1>
-                <p className="text-gray-500 mt-1">Manage and feature your communities</p>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">All Communities</h1>
+                <p className="text-gray-500 mt-1 text-sm sm:text-base">Manage and feature your communities</p>
             </div>
 
             {/* Stats Cards */}
-            <div className="flex gap-4 mb-4 shrink-0">
+            <div className="flex flex-wrap gap-4 mb-4 shrink-0">
                 <div className="bg-white rounded-[15px] border border-[#E5E7EB] px-6 py-4 flex items-center justify-between gap-4 shadow-sm">
                     <div>
                         <p className="text-[#4B5563] text-sm">Total Communities</p>
@@ -267,9 +267,8 @@ export default function FeaturedCommunitiesPage() {
                                         onDragStart={() => handleDragStart(index)}
                                         onDragOver={(e) => handleDragOver(e, index)}
                                         onDragEnd={handleDragEnd}
-                                        className={`relative bg-white border-[1.5px] border-[#99F6E4] rounded-2xl p-5 transition-all hover:shadow-lg ${
-                                            dragIndex === index ? 'opacity-50 scale-95' : ''
-                                        } ${dragOverIndex === index && dragIndex !== index ? 'border-[#08AAA2] border-2' : ''}`}
+                                        className={`relative bg-white border-[1.5px] border-[#99F6E4] rounded-2xl p-5 transition-all hover:shadow-lg ${dragIndex === index ? 'opacity-50 scale-95' : ''
+                                            } ${dragOverIndex === index && dragIndex !== index ? 'border-[#08AAA2] border-2' : ''}`}
                                     >
                                         {/* Rank Badge */}
                                         <div className="absolute top-3 right-3 flex items-center gap-1 z-10">

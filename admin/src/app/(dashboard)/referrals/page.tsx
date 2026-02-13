@@ -62,13 +62,13 @@ export default function ReferralsPage() {
     };
 
     return (
-        <div className="h-full bg-gray-50 p-6 md:p-8 flex flex-col overflow-hidden">
-            <div className="flex justify-between items-center mb-4 shrink-0">
+        <div className="h-full bg-gray-50 p-4 sm:p-6 md:p-8 flex flex-col overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 shrink-0">
                 <div className="flex items-center gap-3">
                     <FiTrendingUp className="text-2xl text-teal-600" />
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Referral Leaderboard</h1>
-                        <p className="text-gray-500">Top users by referral coins</p>
+                        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Referral Leaderboard</h1>
+                        <p className="text-gray-500 text-sm sm:text-base">Top users by referral coins</p>
                     </div>
                 </div>
 
@@ -77,7 +77,7 @@ export default function ReferralsPage() {
                     <input
                         type="text"
                         placeholder="Search user"
-                        className="pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 w-64 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                        className="pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 w-full sm:w-64 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
@@ -85,7 +85,7 @@ export default function ReferralsPage() {
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 shrink-0">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-4 shrink-0">
                 <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
                     <p className="text-gray-500 text-sm">Total Participants</p>
                     <p className="text-2xl font-bold text-gray-900">{data.length}</p>
@@ -107,56 +107,56 @@ export default function ReferralsPage() {
 
             {/* Leaderboard Table */}
             <div className="flex-1 min-h-0 flex flex-col">
-            <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm flex flex-col flex-1 min-h-0">
-                <div className="grid grid-cols-4 gap-4 p-4 bg-gray-50 text-gray-700 font-semibold border-b border-gray-100">
-                    <div>Rank</div>
-                    <div className="col-span-2">Username</div>
-                    <div className="text-right">Referral Coins</div>
-                </div>
+                <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm flex flex-col flex-1 min-h-0">
+                    <div className="grid grid-cols-4 gap-4 p-4 bg-gray-50 text-gray-700 font-semibold border-b border-gray-100">
+                        <div>Rank</div>
+                        <div className="col-span-2">Username</div>
+                        <div className="text-right">Referral Coins</div>
+                    </div>
 
-                <div className="divide-y divide-gray-100 flex-1 min-h-0 overflow-y-auto">
-                    {loading ? (
-                        <div className="flex justify-center py-12">
-                            <Loader />
-                        </div>
-                    ) : paginatedData.length === 0 ? (
-                        <div className="text-gray-500 text-center py-12">No users found</div>
-                    ) : (
-                        paginatedData.map((user, index) => {
-                            const globalRank = (currentPage - 1) * itemsPerPage + index + 1;
-                            return (
-                                <div
-                                    key={user._id}
-                                    className={`grid grid-cols-4 gap-4 p-4 items-center hover:bg-gray-50 transition-colors ${globalRank <= 3 ? 'bg-linear-to-r from-yellow-50 to-transparent' : ''
-                                        }`}
-                                >
-                                    <div className="flex items-center">{getRankBadge(globalRank)}</div>
-                                    <div className="col-span-2 flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-gray-200 rounded-full overflow-hidden">
-                                            {user.picture && (
-                                                <img src={user.picture} alt={user.username} className="w-full h-full object-cover" />
-                                            )}
+                    <div className="divide-y divide-gray-100 flex-1 min-h-0 overflow-y-auto">
+                        {loading ? (
+                            <div className="flex justify-center py-12">
+                                <Loader />
+                            </div>
+                        ) : paginatedData.length === 0 ? (
+                            <div className="text-gray-500 text-center py-12">No users found</div>
+                        ) : (
+                            paginatedData.map((user, index) => {
+                                const globalRank = (currentPage - 1) * itemsPerPage + index + 1;
+                                return (
+                                    <div
+                                        key={user._id}
+                                        className={`grid grid-cols-4 gap-4 p-4 items-center hover:bg-gray-50 transition-colors ${globalRank <= 3 ? 'bg-linear-to-r from-yellow-50 to-transparent' : ''
+                                            }`}
+                                    >
+                                        <div className="flex items-center">{getRankBadge(globalRank)}</div>
+                                        <div className="col-span-2 flex items-center gap-3">
+                                            <div className="w-10 h-10 bg-gray-200 rounded-full overflow-hidden">
+                                                {user.picture && (
+                                                    <img src={user.picture} alt={user.username} className="w-full h-full object-cover" />
+                                                )}
+                                            </div>
+                                            <div>
+                                                <p className="text-gray-900 font-medium">{user.username}</p>
+                                                <p className="text-gray-500 text-sm">{user.name}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="text-gray-900 font-medium">{user.username}</p>
-                                            <p className="text-gray-500 text-sm">{user.name}</p>
+                                        <div className="text-right">
+                                            <span className="text-teal-600 font-bold text-lg">{(user.coins || 0).toLocaleString()}</span>
+                                            <span className="text-gray-500 text-sm ml-1">coins</span>
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <span className="text-teal-600 font-bold text-lg">{(user.coins || 0).toLocaleString()}</span>
-                                        <span className="text-gray-500 text-sm ml-1">coins</span>
-                                    </div>
-                                </div>
-                            );
-                        })
-                    )}
+                                );
+                            })
+                        )}
+                    </div>
                 </div>
-            </div>
 
-            {/* Pagination */}
-            <div className="mt-2 shrink-0">
-                <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={setCurrentPage} />
-            </div>
+                {/* Pagination */}
+                <div className="mt-2 shrink-0">
+                    <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={setCurrentPage} />
+                </div>
             </div>
         </div>
     );

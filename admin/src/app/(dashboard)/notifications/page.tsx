@@ -164,23 +164,23 @@ export default function NotificationsPage() {
     };
 
     return (
-        <div className="h-full flex flex-col bg-gray-50 p-8 overflow-hidden">
+        <div className="h-full flex flex-col bg-gray-50 p-4 sm:p-6 md:p-8 overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between mb-4 shrink-0">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 shrink-0">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Send Notification</h1>
-                    <p className="text-gray-500 mt-1">Communicate with your users instantly</p>
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Send Notification</h1>
+                    <p className="text-gray-500 mt-1 text-sm sm:text-base">Communicate with your users instantly</p>
                 </div>
-                <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200">
+                <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200 self-start sm:self-auto">
                     <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                    <span className="text-gray-700 font-medium">{activeUsers.toLocaleString()} Active Users</span>
+                    <span className="text-gray-700 font-medium text-sm sm:text-base">{activeUsers.toLocaleString()} Active Users</span>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
                 {/* Left Panel: Form */}
                 <div className="lg:col-span-2 overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#08AAA2 transparent' }}>
-                    <form onSubmit={handleSend} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                    <form onSubmit={handleSend} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 md:p-8">
                         {/* Notification Title */}
                         <div className="mb-6">
                             <label className="block text-gray-700 font-medium mb-2">Notification Title</label>
@@ -222,11 +222,11 @@ export default function NotificationsPage() {
                         {/* Select Recipients */}
                         <div className="mb-6">
                             <label className="block text-gray-700 font-medium mb-3">Select Recipients</label>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div
                                     className={`p-5 rounded-xl cursor-pointer border-2 transition-all duration-200 ${sendToAll
-                                            ? 'border-teal-500 bg-teal-50 shadow-sm'
-                                            : 'border-gray-200 bg-white hover:border-gray-300'
+                                        ? 'border-teal-500 bg-teal-50 shadow-sm'
+                                        : 'border-gray-200 bg-white hover:border-gray-300'
                                         }`}
                                     onClick={() => setSendToAll(true)}
                                 >
@@ -236,8 +236,8 @@ export default function NotificationsPage() {
                                 </div>
                                 <div
                                     className={`p-5 rounded-xl cursor-pointer border-2 transition-all duration-200 ${!sendToAll
-                                            ? 'border-teal-500 bg-teal-50 shadow-sm'
-                                            : 'border-gray-200 bg-white hover:border-gray-300'
+                                        ? 'border-teal-500 bg-teal-50 shadow-sm'
+                                        : 'border-gray-200 bg-white hover:border-gray-300'
                                         }`}
                                     onClick={() => setSendToAll(false)}
                                 >
@@ -303,11 +303,11 @@ export default function NotificationsPage() {
                         {/* Delivery Schedule */}
                         <div className="mb-8">
                             <label className="block text-gray-700 font-medium mb-3">Delivery Schedule</label>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div
                                     className={`p-5 rounded-xl cursor-pointer border-2 transition-all duration-200 ${scheduleType === 'now'
-                                            ? 'border-teal-500 bg-teal-50 shadow-sm'
-                                            : 'border-gray-200 bg-white hover:border-gray-300'
+                                        ? 'border-teal-500 bg-teal-50 shadow-sm'
+                                        : 'border-gray-200 bg-white hover:border-gray-300'
                                         }`}
                                     onClick={() => setScheduleType('now')}
                                 >
@@ -317,8 +317,8 @@ export default function NotificationsPage() {
                                 </div>
                                 <div
                                     className={`p-5 rounded-xl cursor-pointer border-2 transition-all duration-200 ${scheduleType === 'schedule'
-                                            ? 'border-teal-500 bg-teal-50 shadow-sm'
-                                            : 'border-gray-200 bg-white hover:border-gray-300'
+                                        ? 'border-teal-500 bg-teal-50 shadow-sm'
+                                        : 'border-gray-200 bg-white hover:border-gray-300'
                                         }`}
                                     onClick={() => setScheduleType('schedule')}
                                 >

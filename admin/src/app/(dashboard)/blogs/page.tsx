@@ -123,7 +123,7 @@ const BlogWriter: React.FC<BlogWriterProps> = ({ blogToEdit, onCancel, onSave })
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                 />
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <input
                         type="text"
                         placeholder="Category (e.g. Networking)"
@@ -170,7 +170,7 @@ const BlogWriter: React.FC<BlogWriterProps> = ({ blogToEdit, onCancel, onSave })
 
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
                     <h3 className="text-gray-900 font-medium mb-3">Author Information</h3>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <input
                             type="text"
                             placeholder="Author Name"
@@ -349,7 +349,7 @@ export default function BlogsPage() {
 
     if (isWriting) {
         return (
-            <div className="h-full bg-gray-50 p-6 md:p-8 flex flex-col overflow-y-auto">
+            <div className="h-full bg-gray-50 p-4 sm:p-6 md:p-8 flex flex-col overflow-y-auto">
                 <BlogWriter
                     blogToEdit={editBlog}
                     onCancel={() => handleWriterClose(false)}
@@ -360,15 +360,15 @@ export default function BlogsPage() {
     }
 
     return (
-        <div className="h-full bg-gray-50 p-6 md:p-8 flex flex-col overflow-hidden">
-            <div className="flex justify-between items-center mb-4 shrink-0">
+        <div className="h-full bg-gray-50 p-4 sm:p-6 md:p-8 flex flex-col overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 shrink-0">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">All Blogs</h1>
-                    <p className="text-gray-500">Manage and moderate blog posts</p>
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900">All Blogs</h1>
+                    <p className="text-gray-500 text-sm sm:text-base">Manage and moderate blog posts</p>
                 </div>
                 <button
                     onClick={() => { setEditBlog(null); setIsWriting(true); }}
-                    className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg transition-colors"
+                    className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg transition-colors self-start sm:self-auto"
                 >
                     <FiPlus className="w-5 h-5" />
                     Write New Blog
@@ -376,7 +376,7 @@ export default function BlogsPage() {
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 shrink-0">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-4 shrink-0">
                 <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
                     <p className="text-gray-500 text-sm">Total Blogs</p>
                     <p className="text-2xl font-bold text-gray-900">{blogs.length}</p>
