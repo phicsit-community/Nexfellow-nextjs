@@ -349,7 +349,7 @@ export default function BlogsPage() {
 
     if (isWriting) {
         return (
-            <div className="h-full bg-gray-50 p-6 md:p-8 flex flex-col overflow-hidden">
+            <div className="h-full bg-gray-50 p-6 md:p-8 flex flex-col overflow-y-auto">
                 <BlogWriter
                     blogToEdit={editBlog}
                     onCancel={() => handleWriterClose(false)}
@@ -405,67 +405,67 @@ export default function BlogsPage() {
 
             {/* Blog Grid */}
             <div className="flex-1 min-h-0 overflow-y-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {loading ? (
-                    <p className="text-gray-500">Loading...</p>
-                ) : filteredBlogs.length === 0 ? (
-                    <p className="text-gray-500">No blogs found</p>
-                ) : (
-                    filteredBlogs.map((blog) => (
-                        <div key={blog._id} className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                            {blog.coverUrl && (
-                                <div className="h-40 overflow-hidden">
-                                    <img src={blog.coverUrl} alt="cover" className="w-full h-full object-cover" />
-                                </div>
-                            )}
-                            <div className="p-4">
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-600">{blog.category || 'Uncategorized'}</span>
-                                    <span className={`text-xs px-2 py-1 rounded font-medium ${blog.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                                        {blog.status}
-                                    </span>
-                                </div>
-                                <h3 className="text-gray-900 font-semibold mb-2">{blog.title}</h3>
-                                {blog.tags && blog.tags.length > 0 && (
-                                    <div className="flex flex-wrap gap-1 mb-2">
-                                        {blog.tags.slice(0, 3).map((tag, i) => (
-                                            <span key={i} className="text-xs text-teal-600">#{tag}</span>
-                                        ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {loading ? (
+                        <p className="text-gray-500">Loading...</p>
+                    ) : filteredBlogs.length === 0 ? (
+                        <p className="text-gray-500">No blogs found</p>
+                    ) : (
+                        filteredBlogs.map((blog) => (
+                            <div key={blog._id} className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                {blog.coverUrl && (
+                                    <div className="h-40 overflow-hidden">
+                                        <img src={blog.coverUrl} alt="cover" className="w-full h-full object-cover" />
                                     </div>
                                 )}
-                                <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
-                                    {blog.author?.imageUrl && (
-                                        <img src={blog.author.imageUrl} alt="author" className="w-6 h-6 rounded-full" />
+                                <div className="p-4">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-600">{blog.category || 'Uncategorized'}</span>
+                                        <span className={`text-xs px-2 py-1 rounded font-medium ${blog.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                            {blog.status}
+                                        </span>
+                                    </div>
+                                    <h3 className="text-gray-900 font-semibold mb-2">{blog.title}</h3>
+                                    {blog.tags && blog.tags.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 mb-2">
+                                            {blog.tags.slice(0, 3).map((tag, i) => (
+                                                <span key={i} className="text-xs text-teal-600">#{tag}</span>
+                                            ))}
+                                        </div>
                                     )}
-                                    <span>{blog.author?.name || 'Unknown'}</span>
-                                    <span>•</span>
-                                    <span>{formatDate(blog.publishedAt) || formatDate(blog.createdAt)}</span>
-                                </div>
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => openEditBlogWriter(blog)}
-                                        className="flex items-center gap-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded transition-colors"
-                                    >
-                                        <FiEdit2 className="w-3 h-3" /> Edit
-                                    </button>
-                                    <button
-                                        onClick={() => handleAction(blog._id, 'delete')}
-                                        className="flex items-center gap-1 text-xs bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded transition-colors"
-                                    >
-                                        <FiTrash2 className="w-3 h-3" /> Delete
-                                    </button>
-                                    <button
-                                        onClick={() => handleAction(blog._id, blog.status === 'published' ? 'unpublish' : 'publish')}
-                                        className="text-xs bg-teal-50 hover:bg-teal-100 text-teal-600 px-3 py-1.5 rounded transition-colors"
-                                    >
-                                        {blog.status === 'published' ? 'Unpublish' : 'Publish'}
-                                    </button>
+                                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                                        {blog.author?.imageUrl && (
+                                            <img src={blog.author.imageUrl} alt="author" className="w-6 h-6 rounded-full" />
+                                        )}
+                                        <span>{blog.author?.name || 'Unknown'}</span>
+                                        <span>•</span>
+                                        <span>{formatDate(blog.publishedAt) || formatDate(blog.createdAt)}</span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => openEditBlogWriter(blog)}
+                                            className="flex items-center gap-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded transition-colors"
+                                        >
+                                            <FiEdit2 className="w-3 h-3" /> Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleAction(blog._id, 'delete')}
+                                            className="flex items-center gap-1 text-xs bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded transition-colors"
+                                        >
+                                            <FiTrash2 className="w-3 h-3" /> Delete
+                                        </button>
+                                        <button
+                                            onClick={() => handleAction(blog._id, blog.status === 'published' ? 'unpublish' : 'publish')}
+                                            className="text-xs bg-teal-50 hover:bg-teal-100 text-teal-600 px-3 py-1.5 rounded transition-colors"
+                                        >
+                                            {blog.status === 'published' ? 'Unpublish' : 'Publish'}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))
-                )}
-            </div>
+                        ))
+                    )}
+                </div>
             </div>
         </div>
     );
