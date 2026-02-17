@@ -59,7 +59,7 @@ const LoginPage = () => {
         setIsSubmitting(true);
 
         try {
-            const response = await fetch(`${apiUrl}/login`, {
+            const response = await fetch(`${apiUrl}/admin/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
