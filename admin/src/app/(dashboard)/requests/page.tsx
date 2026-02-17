@@ -59,7 +59,7 @@ export default function RequestsPage() {
         const fetchRequests = async () => {
             setLoading(true);
             try {
-                const res = await safeFetch(`${apiUrl}/requests`);
+                const res = await safeFetch(`${apiUrl}/requests/`);
                 if (res.ok) {
                     const data = await res.json();
                     setRequests(Array.isArray(data) ? data : []);
