@@ -154,32 +154,33 @@ const Signup = () => {
 
   const togglePasswordVisibility = () => setPasswordVisible((v) => !v);
 
+  const getBackendUrl = () => {
+    if (process.env.NEXT_PUBLIC_SERVER_URL && process.env.NEXT_PUBLIC_SERVER_URL !== "http://localhost:4000") {
+      return process.env.NEXT_PUBLIC_SERVER_URL;
+    }
+    if (typeof window !== "undefined") {
+      const hostname = window.location.hostname;
+      if (hostname.includes("vercel.app") || hostname.includes("nexfellow.com")) {
+        return "https://nexfellow-nextjs.onrender.com";
+      }
+    }
+    return process.env.NEXT_PUBLIC_LOCALHOST || "http://localhost:4000";
+  };
+
   const googleAuth = () => {
-    const link = process.env.NODE_ENV === "development"
-      ? process.env.NEXT_PUBLIC_LOCALHOST
-      : process.env.NEXT_PUBLIC_SERVER_URL;
-    window.open(`${link}/auth/google`, "_self");
+    window.open(`${getBackendUrl()}/auth/google`, "_self");
   };
 
   const githubAuth = () => {
-    const link = process.env.NODE_ENV === "development"
-      ? process.env.NEXT_PUBLIC_LOCALHOST
-      : process.env.NEXT_PUBLIC_SERVER_URL;
-    window.open(`${link}/auth/github`, "_self");
+    window.open(`${getBackendUrl()}/auth/github`, "_self");
   };
 
   const facebookAuth = () => {
-    const link = process.env.NODE_ENV === "development"
-      ? process.env.NEXT_PUBLIC_LOCALHOST
-      : process.env.NEXT_PUBLIC_SERVER_URL;
-    window.open(`${link}/auth/facebook`, "_self");
+    window.open(`${getBackendUrl()}/auth/facebook`, "_self");
   };
 
   const linkedinAuth = () => {
-    const link = process.env.NODE_ENV === "development"
-      ? process.env.NEXT_PUBLIC_LOCALHOST
-      : process.env.NEXT_PUBLIC_SERVER_URL;
-    window.open(`${link}/auth/linkedin/`, "_self");
+    window.open(`${getBackendUrl()}/auth/linkedin/`, "_self");
   };
 
   const formatTime = (seconds) => {

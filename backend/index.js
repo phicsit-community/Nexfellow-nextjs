@@ -81,15 +81,26 @@ app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+const isProduction = process.env.NODE_ENV === "production" || !!process.env.RENDER;
+
 app.use(cookieParser(process.env.SECRET));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({ extended: true }));
+
+if (isProduction) {
+  app.set("trust proxy", 1); // Trust first proxy (Render)
+}
+
 app.use(
   session({
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false, httpOnly: true },
+    cookie: {
+      secure: isProduction,
+      httpOnly: true,
+      sameSite: isProduction ? "none" : "lax",
+    },
   })
 );
 

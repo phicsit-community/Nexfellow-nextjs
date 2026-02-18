@@ -5,6 +5,19 @@ const authController = require("../controllers/authController");
 const { isClient } = require("../middleware");
 const catchAsync = require("../utils/CatchAsync");
 
+// Helper to get production-safe site URL for failure redirects
+const getSiteUrl = () => {
+  if (process.env.SITE_URL && process.env.SITE_URL !== "http://localhost:3000") {
+    return process.env.SITE_URL;
+  }
+  if (process.env.RENDER || process.env.NODE_ENV === "production") {
+    return "https://nexfellow-nextjs.vercel.app";
+  }
+  return process.env.SITE_URL || "http://localhost:3000";
+};
+
+const SITE_URL = getSiteUrl();
+
 router.get("/google", (req, res, next) => {
   const state = req.query.state || "user";
   passport.authenticate("google", {
@@ -19,7 +32,7 @@ router.get(
   "/google/callback",
   passport.authenticate("google", {
     scope: ["profile", "email"],
-    failureRedirect: `${process.env.SITE_URL}/login`,
+    failureRedirect: `${SITE_URL}/login`,
     session: false,
   }),
   catchAsync(authController.googleCallback)
@@ -33,7 +46,7 @@ router.get(
 router.get(
   "/github/callback",
   passport.authenticate("github", {
-    failureRedirect: `${process.env.SITE_URL}/login`,
+    failureRedirect: `${SITE_URL}/login`,
     session: false,
   }),
   catchAsync(authController.githubCallback)
@@ -44,7 +57,7 @@ router.get("/linkedin", authController.linkedinAuth);
 router.get(
   "/linkedin/callback",
   passport.authenticate("linkedin", {
-    failureRedirect: `${process.env.SITE_URL}/login`,
+    failureRedirect: `${SITE_URL}/login`,
     session: false,
   }),
   catchAsync(authController.linkedinCallback)
@@ -55,7 +68,7 @@ router.get("/facebook", passport.authenticate("facebook"));
 router.get(
   "/facebook/callback",
   passport.authenticate("facebook", {
-    failureRedirect: `${process.env.SITE_URL}/login`,
+    failureRedirect: `${SITE_URL}/login`,
     session: false,
   }),
   catchAsync(authController.facebookCallback)

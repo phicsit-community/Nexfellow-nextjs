@@ -2,11 +2,22 @@ import axios from "axios";
 
 // Determine base URL for API calls
 const getBaseURL = () => {
-    // Use NEXT_PUBLIC_SERVER_URL for production (deployed on Vercel)
-    // In production, NODE_ENV is "production" and we use the server URL
-    const baseURL = process.env.NEXT_PUBLIC_SERVER_URL || "https://nexfellow-nextjs.onrender.com";
-    console.log("API Base URL configured:", baseURL);
-    return baseURL;
+    // Use NEXT_PUBLIC_SERVER_URL if set, otherwise detect production vs development
+    if (process.env.NEXT_PUBLIC_SERVER_URL) {
+        return process.env.NEXT_PUBLIC_SERVER_URL;
+    }
+    // In browser, check if we're on the production domain
+    if (typeof window !== "undefined") {
+        const hostname = window.location.hostname;
+        if (hostname.includes("vercel.app") || hostname.includes("nexfellow.com")) {
+            return "https://nexfellow-nextjs.onrender.com";
+        }
+    }
+    // SSR production check
+    if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
+        return "https://nexfellow-nextjs.onrender.com";
+    }
+    return "http://localhost:4000";
 };
 
 // Create axios instance with base configuration

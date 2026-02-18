@@ -1,4 +1,4 @@
-const LinkedInStrategy = require("passport-linkedin-oauth2").Strategy;
+﻿const LinkedInStrategy = require("passport-linkedin-oauth2").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const GitHubStrategy = require("passport-github2").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
@@ -19,6 +19,28 @@ const defaultBanner =
 
 // Temporary storage for OAuth auth codes (in production, use Redis)
 const oauthAuthCodes = new Map();
+
+// Helper to get production-safe URLs
+const getSiteUrl = () => {
+  if (process.env.SITE_URL && process.env.SITE_URL !== "http://localhost:3000") {
+    return process.env.SITE_URL;
+  }
+  // Auto-detect production
+  if (process.env.RENDER || process.env.NODE_ENV === "production") {
+    return "https://nexfellow-nextjs.vercel.app";
+  }
+  return process.env.SITE_URL || "http://localhost:3000";
+};
+
+const getBackendDomain = () => {
+  if (process.env.BACKEND_DOMAIN && process.env.BACKEND_DOMAIN !== "http://localhost:4000") {
+    return process.env.BACKEND_DOMAIN;
+  }
+  if (process.env.RENDER || process.env.NODE_ENV === "production") {
+    return "https://nexfellow-nextjs.onrender.com";
+  }
+  return process.env.BACKEND_DOMAIN || "http://localhost:4000";
+};
 
 // Helper function to generate and store a temporary auth code
 const generateOAuthCode = (userId, accessToken, refreshToken, isAdmin = false) => {
@@ -120,16 +142,20 @@ const {
   LINKEDIN_CLIENT_ID,
   LINKEDIN_CLIENT_SECRET,
   LINKEDIN_REDIRECT_URI,
-  BACKEND_DOMAIN,
-  SITE_URL,
 } = process.env;
+
+const SITE_URL = getSiteUrl();
+const BACKEND_DOMAIN = getBackendDomain();
+
+console.log(`[authController] Using SITE_URL: ${SITE_URL}`);
+console.log(`[authController] Using BACKEND_DOMAIN: ${BACKEND_DOMAIN}`);
 
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: `${process.env.BACKEND_DOMAIN}/auth/google/callback`,
+      callbackURL: `${BACKEND_DOMAIN}/auth/google/callback`,
     },
     async (accessToken, refreshToken, profile, done) => {
       // Store tokens along with profile data
@@ -162,7 +188,7 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: `${process.env.BACKEND_DOMAIN}/auth/github/callback`,
+      callbackURL: `${BACKEND_DOMAIN}/auth/github/callback`,
       scope: ["user:email"],
     },
     async (accessToken, refreshToken, profile, done) => {
@@ -263,7 +289,7 @@ module.exports.googleCallback = async (req, res) => {
     );
 
     // Redirect to frontend with auth code
-    const redirectUrl = `${process.env.SITE_URL}/auth/callback?code=${authCode}`;
+    const redirectUrl = `${SITE_URL}/auth/callback?code=${authCode}`;
     return res.redirect(redirectUrl);
   }
 
@@ -320,7 +346,7 @@ module.exports.googleCallback = async (req, res) => {
   );
 
   // Redirect to frontend with auth code
-  const redirectUrl = `${process.env.SITE_URL}/auth/callback?code=${authCode}`;
+  const redirectUrl = `${SITE_URL}/auth/callback?code=${authCode}`;
   return res.redirect(redirectUrl);
 };
 
@@ -378,7 +404,7 @@ module.exports.githubCallback = async (req, res) => {
   const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken);
 
   // Redirect to frontend with auth code
-  const redirectUrl = `${process.env.SITE_URL}/auth/callback?code=${authCode}`;
+  const redirectUrl = `${SITE_URL}/auth/callback?code=${authCode}`;
   return res.redirect(redirectUrl);
 };
 
@@ -448,7 +474,7 @@ module.exports.facebookCallback = async (req, res) => {
   const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken);
 
   // Redirect to frontend with auth code
-  const redirectUrl = `${process.env.SITE_URL}/auth/callback?code=${authCode}`;
+  const redirectUrl = `${SITE_URL}/auth/callback?code=${authCode}`;
   return res.redirect(redirectUrl);
 };
 
@@ -504,7 +530,7 @@ module.exports.logout = (req, res) => {
     }).catch((err) => console.error("Error clearing refresh token:", err));
   }
 
-  const redirectUrl = `${process.env.SITE_URL}/login`;
+  const redirectUrl = `${SITE_URL}/login`;
   res.redirect(redirectUrl);
 };
 
