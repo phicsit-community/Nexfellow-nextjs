@@ -1,4 +1,4 @@
-/* Spinner Container */
+﻿/* Spinner Container */
 .spinnerContainer {
   display: flex;
   justify-content: center;
@@ -21,4 +21,59 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+
+/* Responsive Design for Community Pages */
+@media (max-width: 1200px) {
+    .spinnerContainer {
+        height: calc(100vh - 80px);
+    }
+}
+
+@media (max-width: 1024px) {
+    .spinnerContainer {
+        height: calc(100vh - 60px);
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border-width: 3px;
+    }
+}
+
+@media (max-width: 768px) {
+    .spinnerContainer {
+        height: calc(100vh - 50px);
+        padding: 20px;
+    }
+
+    .spinner {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+@media (max-width: 640px) {
+    .spinnerContainer {
+        height: calc(100vh - 120px);
+    }
+
+    .spinner {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    .spinnerContainer {
+        padding: 16px;
+    }
+
+    .spinner {
+        width: 28px;
+        height: 28px;
+        border-width: 2px;
+    }
 }

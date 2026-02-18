@@ -257,3 +257,121 @@
     border-right: none;
   }
 }
+
+@media (max-width: 768px) {
+  .exploreContainer {
+    padding: 1rem 1.5rem;
+  }
+
+  .tabsHeader {
+    padding: 10px 12px;
+    margin-top: 10px;
+  }
+
+  .tabButton {
+    padding: 6px 16px;
+    font-size: 13px;
+  }
+
+  .createPostBox {
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .postActions {
+    padding-left: 36px;
+    gap: 6px;
+  }
+
+  .actionBtn {
+    padding: 6px;
+    font-size: 14px;
+  }
+
+  .postBtn {
+    padding: 6px 20px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 640px) {
+  .homepage {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .feedColumn {
+    height: auto;
+  }
+
+  .tabsHeader {
+    padding: 8px 10px;
+    margin-top: 0;
+    gap: 6px;
+  }
+
+  .tabButton {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .createPostBox {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .inputBox {
+    padding: 6px 10px;
+    gap: 10px;
+  }
+
+  .avatarWrapper,
+  .avatar,
+  .avatarPlaceholder {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .postInput {
+    font-size: 13px;
+  }
+
+  .postActions {
+    padding-left: 0;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .actionBtn {
+    padding: 6px;
+    font-size: 14px;
+  }
+
+  .postBtn {
+    padding: 8px 16px;
+    font-size: 13px;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabButton {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .createPostBox {
+    padding: 8px 10px;
+  }
+
+  .postActions {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .postBtn {
+    width: 100%;
+    margin-top: 4px;
+  }
+}

@@ -807,3 +807,101 @@
     caret-color: #fff;
   }
 }
+
+/* Responsive Design for Login Page */
+@media (max-width: 1024px) {
+    .loginForm {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 1.5rem 3rem;
+    }
+
+    .logoImage {
+        width: 180px;
+    }
+
+    .title {
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .card {
+        padding: 1.5rem 2rem;
+    }
+
+    .loginFormCard {
+        max-width: 100%;
+        padding: 15px 0;
+    }
+
+    .logoImage {
+        width: 160px;
+    }
+
+    .title {
+        font-size: 28px;
+        margin-bottom: 8px;
+    }
+
+    .titleSubheading {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 640px) {
+    .loginForm {
+        overflow-y: auto;
+    }
+
+    .card {
+        padding: 1rem 1.5rem;
+        min-height: 100vh;
+    }
+
+    .logoImage {
+        width: 140px;
+    }
+
+    .title {
+        font-size: 24px;
+    }
+
+    .loginFormCard {
+        padding: 10px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        padding: 1rem 1rem;
+    }
+
+    .logoImage {
+        width: 120px;
+    }
+
+    .title {
+        font-size: 22px;
+    }
+
+    .titleSubheading {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 375px) {
+    .logoImage {
+        width: 110px;
+    }
+
+    .title {
+        font-size: 20px;
+    }
+
+    .card {
+        padding: 0.75rem 0.75rem;
+    }
+}

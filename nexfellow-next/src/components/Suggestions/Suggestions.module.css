@@ -464,3 +464,95 @@
     box-shadow: 0 4px 12px color-mix(in oklab, var(--color-primary) 32%, transparent);
   }
 }
+
+/* Additional responsive breakpoints for tablets and mobile */
+@media (max-width: 1024px) {
+  .suggestions {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+
+  .imgContainer {
+    gap: 16px;
+  }
+
+  .image {
+    height: 140px;
+  }
+
+  .suggestion {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .suggestions {
+    padding: 0 0.75rem;
+    margin-top: 10px;
+  }
+
+  .searchContainer {
+    padding: 10px 0;
+  }
+
+  .avatarImg,
+  .avatarPlaceholder {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .statusDot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .image {
+    height: 120px;
+  }
+
+  .suggestion {
+    padding: 14px;
+    gap: 4px;
+  }
+
+  .suggestionTitle {
+    font-size: 15px;
+  }
+
+  .communityCard {
+    padding: 8px;
+  }
+}
+
+@media (max-width: 640px) {
+  .suggestions {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .searchContainer {
+    padding: 8px 0;
+    gap: 8px;
+  }
+
+  .avatarImg,
+  .avatarPlaceholder {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .image {
+    height: 100px;
+  }
+
+  .suggestion {
+    padding: 12px;
+  }
+
+  .suggestionTitle {
+    font-size: 14px;
+  }
+}
