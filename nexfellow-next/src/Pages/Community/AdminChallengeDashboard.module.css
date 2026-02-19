@@ -81,19 +81,21 @@
 
 .headerStatusBadge {
   padding: 3px 10px;
-  border-radius: 4px;
-  font-size: 10px;
+  border-radius: 9999px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 11.4px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0;
   display: inline-flex;
   align-items: center;
+  line-height: 15px;
 }
 
 .statusBadgeUnpublished {
-  background: #fff7e6;
-  color: #d48806;
-  border: 1px solid #ffd591;
+  background: #FEF9C3;
+  color: #854D0E;
+  border: 1px solid #FEF08A;
 }
 
 .statusBadgeOngoing {
@@ -129,42 +131,69 @@
 
 .managementButtons {
   display: flex;
-  gap: 8px;
+  gap: 0;
   flex-wrap: wrap;
   align-items: center;
 }
 
-.managementButtons :global(.ant-btn) {
-  border-radius: 6px;
-  font-size: 13px;
-  height: 34px;
-  display: flex;
+.actionBtn {
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 0 14px;
+  justify-content: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  font-weight: 600;
+  line-height: 19px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
 }
 
-.managementButtons :global(.ant-btn-default) {
-  border-color: #d9d9d9;
-  color: #555;
-  background: #fff;
+.actionBtnEdit {
+  background: #F0FDF4;
+  border-color: #BBF7D0;
+  color: #15803D;
+  margin-right: 8px;
 }
 
-.managementButtons :global(.ant-btn-default:hover) {
-  border-color: #24b2b4;
-  color: #24b2b4;
+.actionBtnEdit:hover {
+  background: #DCFCE7;
 }
 
-.managementButtons :global(.ant-btn-primary) {
-  background: #24b2b4;
-  border-color: #24b2b4;
-  color: #fff;
+.actionBtnStatus {
+  background: #EFF6FF;
+  border-color: #BFDBFE;
+  color: #1D4ED8;
+  margin-right: 8px;
 }
 
-.managementButtons :global(.ant-btn-dangerous) {
-  color: #ff4d4f;
-  border-color: #ff4d4f;
-  background: #fff;
+.actionBtnStatus:hover {
+  background: #DBEAFE;
+}
+
+.actionBtnDelete {
+  background: #EF4444;
+  border-color: #EF4444;
+  color: #F8FAFC;
+  margin-right: 8px;
+}
+
+.actionBtnDelete:hover {
+  background: #DC2626;
+}
+
+.actionBtnExport {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+  color: #020817;
+}
+
+.actionBtnExport:hover {
+  background: #F8FAFC;
 }
 
 /* Stats Row */
@@ -216,21 +245,28 @@
   transition: all 0.2s;
 }
 
+.tabs :global(.ant-tabs-tab) {
+  font-family: 'Segoe UI', sans-serif !important;
+  font-size: 13.3px !important;
+  font-weight: 600 !important;
+  color: #020817 !important;
+}
+
 .tabs :global(.ant-tabs-tab:hover) {
-  color: #24b2b4;
+  color: #19AE9F !important;
 }
 
 .tabs :global(.ant-tabs-tab-active) {
-  color: #24b2b4 !important;
+  color: #19AE9F !important;
 }
 
 .tabs :global(.ant-tabs-tab-active .ant-tabs-tab-btn) {
-  color: #24b2b4 !important;
+  color: #19AE9F !important;
   font-weight: 600;
 }
 
 .tabs :global(.ant-tabs-ink-bar) {
-  background: #24b2b4;
+  background: #24B2B4;
   height: 2px;
 }
 
@@ -713,84 +749,139 @@
 /* Challenge Overview Styles */
 .challengeOverviewCard {
   background: #fff;
-  border-radius: 12px;
-  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  border: 1px solid rgba(50, 164, 164, 0.2);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
   margin-bottom: 20px;
+  overflow: hidden;
 }
 
 .challengeOverviewCard :global(.ant-card-head) {
-  border-bottom: 1px solid #f0f0f0;
-  padding: 18px 24px;
+  border-bottom: none;
+  padding: 0;
+  min-height: 0;
 }
 
 .challengeOverviewCard :global(.ant-card-head-title) {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1a1a1a;
+  padding: 0;
 }
 
 .challengeOverviewCard :global(.ant-card-body) {
-  padding: 20px 24px 24px;
+  padding: 23px;
+}
+
+.overviewCardHeader {
+  background: linear-gradient(90deg, #EBF9F9 0%, #C4EDED 100%);
+  padding: 23px;
+  border-radius: 8px 8px 0 0;
+}
+
+.overviewCardHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 27px;
+  color: #32A4A4;
+  letter-spacing: -0.48px;
+}
+
+.overviewCardHeaderSubtitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 13.3px;
+  line-height: 19px;
+  color: rgba(50, 164, 164, 0.7);
+  margin-top: 6px;
 }
 
 .cardSubtitle {
-  font-size: 12px;
-  color: #888;
-  margin-top: 2px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  color: rgba(50, 164, 164, 0.7);
+  margin-top: 6px;
   font-weight: 400;
 }
 
 .sectionTitle {
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 15.25px;
   font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #f0f0f0;
+  color: #020817;
+  margin-bottom: 15px;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.sectionTitleIcon {
+  color: #32A4A4;
+  flex-shrink: 0;
 }
 
 .basicInfoGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px 32px;
+  gap: 0 32px;
 }
 
 .infoItem {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #E2E8F0;
 }
 
 .infoLabel {
-  font-size: 13px;
-  color: #888;
-  font-weight: 400;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  color: #64748B;
+  font-weight: 600;
 }
 
 .infoValue {
-  font-size: 14px;
-  color: #1a1a1a;
-  font-weight: 500;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  color: #020817;
+  font-weight: 400;
+}
+
+.infoValueBold {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  color: #020817;
+  font-weight: 700;
 }
 
 .categoryTag {
-  display: inline-block;
-  background: #e6f7ff;
-  color: #1890ff;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  background: #32A4A4;
+  color: #FFFFFF;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 11.4px;
+  font-weight: 600;
+  line-height: 15px;
 }
 
 .difficultyTag {
-  display: inline-block;
-  background: #fff7e6;
-  color: #fa8c16;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  background: #FBBD23;
+  color: #020817;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 11.4px;
+  font-weight: 600;
+  line-height: 15px;
 }
 
 /* Timeline & Configuration Section */
@@ -801,61 +892,122 @@
 .timelineGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 11px;
 }
 
 .timelineItem {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: #f8f9fa;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
   border-radius: 8px;
-  border: 1px solid #e8e8e8;
+  border: 1px solid transparent;
+}
+
+.timelineItemGreen {
+  background: rgba(22, 162, 73, 0.1);
+  border-color: rgba(22, 162, 73, 0.2);
+}
+
+.timelineItemRed {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.timelineItemTeal {
+  background: rgba(50, 164, 164, 0.1);
+  border-color: rgba(50, 164, 164, 0.2);
+}
+
+.timelineItemBlue {
+  background: rgba(36, 99, 235, 0.1);
+  border-color: rgba(36, 99, 235, 0.2);
+}
+
+.timelineItemHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.timelineLabelGreen {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  font-weight: 600;
+  color: #16A249;
+}
+
+.timelineLabelRed {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  font-weight: 600;
+  color: #EF4444;
+}
+
+.timelineLabelTeal {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  font-weight: 600;
+  color: #32A4A4;
+}
+
+.timelineLabelBlue {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  font-weight: 600;
+  color: #2463EB;
+}
+
+.timelineValueText {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  font-weight: 700;
+  color: #020817;
+  line-height: 19px;
 }
 
 .timelineIconGreen {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #e6f7e9;
+  background: rgba(22, 162, 73, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #52c41a;
+  color: #16A249;
 }
 
 .timelineIconRed {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #ffecec;
+  background: rgba(239, 68, 68, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ff4d4f;
+  color: #EF4444;
 }
 
 .timelineIconBlue {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #e6f4ff;
+  background: rgba(36, 99, 235, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1890ff;
+  color: #2463EB;
 }
 
 .timelineIconGold {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #fffbe6;
+  background: rgba(50, 164, 164, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #faad14;
+  color: #32A4A4;
 }
 
 .timelineContent {
@@ -865,8 +1017,10 @@
 }
 
 .timelineLabel {
-  font-size: 12px;
-  color: #888;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  font-weight: 600;
+  color: #64748B;
 }
 
 .timelineValue {
@@ -878,44 +1032,73 @@
 /* Challenge Status Card */
 .statusCard {
   background: #fff;
-  border-radius: 12px;
-  border: 1px solid #e8e8e8;
-  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(50, 164, 164, 0.2);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+  margin-bottom: 23px;
+  overflow: hidden;
 }
 
 .statusCard :global(.ant-card-head) {
-  border-bottom: 1px solid #f0f0f0;
-  padding: 18px 24px;
+  border-bottom: none;
+  padding: 0;
+  min-height: 0;
 }
 
 .statusCard :global(.ant-card-head-title) {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1a1a1a;
+  padding: 0;
 }
 
 .statusCard :global(.ant-card-body) {
-  padding: 16px 24px 20px;
+  padding: 0;
+}
+
+.statusCardHeader {
+  background: linear-gradient(90deg, #EBF9F9 0%, #C4EDED 100%);
+  padding: 23px;
+  border-radius: 8px 8px 0 0;
+}
+
+.statusCardHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 17.15px;
+  line-height: 27px;
+  letter-spacing: -0.43px;
+  color: #32A4A4;
+}
+
+.statusCardBody {
+  padding: 23px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .statusHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
 }
 
 .statusLabel {
-  font-size: 14px;
-  color: #666;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  font-weight: 600;
+  color: #64748B;
 }
 
 .statusBadge {
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 11.4px;
   font-weight: 600;
   text-transform: uppercase;
+  line-height: 15px;
 }
 
 .statusBadgeUnpublished {
@@ -943,72 +1126,116 @@
 }
 
 .statusInfoBox {
-  background: #fffbe6;
-  border: 1px solid #ffe58f;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
+  background: rgba(251, 189, 35, 0.1);
+  border: none;
+  border-left: 4px solid #FBBD23;
+  border-radius: 0 8px 8px 0;
+  padding: 15px 15px 15px 19px;
 }
 
 .statusInfoTitle {
-  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
   font-weight: 600;
-  color: #d48806;
+  color: #B27F00;
   margin-bottom: 8px;
 }
 
 .statusInfoText {
-  font-size: 13px;
-  color: #8c6e00;
-  line-height: 1.5;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  color: #64748B;
+  line-height: 19px;
 }
 
 .progressSection {
   display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.progressColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .progressSection .progressLabel {
-  font-size: 13px;
-  color: #666;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 11.4px;
+  font-weight: 600;
+  color: #64748B;
   white-space: nowrap;
 }
 
 .progressSection :global(.ant-progress) {
-  flex: 1;
   margin: 0;
 }
 
 .progressValue {
-  font-size: 12px;
-  color: #888;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 11.4px;
+  color: #64748B;
   white-space: nowrap;
+}
+
+.timeLeftValue {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  font-weight: 700;
+  color: #020817;
 }
 
 /* Recent Activity Card */
 .activityCard {
   background: #fff;
-  border-radius: 12px;
-  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  border: 1px solid rgba(50, 164, 164, 0.2);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
 .activityCard :global(.ant-card-head) {
-  border-bottom: 1px solid #f0f0f0;
-  padding: 18px 24px;
+  border-bottom: none;
+  padding: 0;
+  min-height: 0;
 }
 
 .activityCard :global(.ant-card-head-title) {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1a1a1a;
+  padding: 0;
 }
 
 .activityCard :global(.ant-card-body) {
-  padding: 16px 24px 20px;
+  padding: 0;
+}
+
+.activityCardHeader {
+  background: #F6F8F8;
+  padding: 23px;
+  border-radius: 8px 8px 0 0;
+}
+
+.activityCardHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 17.15px;
+  line-height: 27px;
+  letter-spacing: -0.43px;
+  color: #32A4A4;
+}
+
+.activityCardBody {
+  padding: 23px;
 }
 
 .activityList {
@@ -1040,23 +1267,23 @@
 }
 
 .activityIconSubmit {
-  background: #e6f4ff;
-  color: #1890ff;
+  background: rgba(50, 164, 164, 0.1);
+  color: #32A4A4;
 }
 
 .activityIconApprove {
-  background: #f6ffed;
-  color: #52c41a;
+  background: rgba(22, 162, 73, 0.1);
+  color: #16A249;
 }
 
 .activityIconJoin {
-  background: #f9f0ff;
-  color: #722ed1;
+  background: rgba(50, 164, 164, 0.1);
+  color: #32A4A4;
 }
 
 .activityIconMilestone {
-  background: #fff7e6;
-  color: #fa8c16;
+  background: rgba(251, 189, 35, 0.1);
+  color: #B27F00;
 }
 
 .activityContent {
@@ -1065,44 +1292,75 @@
 }
 
 .activityText {
-  font-size: 13px;
-  color: #1a1a1a;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  font-weight: 600;
+  color: #020817;
   margin-bottom: 2px;
 }
 
 .activityTime {
-  font-size: 12px;
-  color: #888;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 11.4px;
+  color: #64748B;
 }
 
 /* Challenge Configuration Card - Full Width Bottom */
 .configCard {
   background: #fff;
-  border-radius: 12px;
-  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  border: 1px solid rgba(50, 164, 164, 0.2);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
   margin-top: 24px;
+  overflow: hidden;
 }
 
 .configCard :global(.ant-card-head) {
-  border-bottom: 1px solid #f0f0f0;
-  padding: 18px 24px;
+  border-bottom: none;
+  padding: 0;
+  min-height: 0;
 }
 
 .configCard :global(.ant-card-head-title) {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1a1a1a;
+  padding: 0;
+}
+
+.configCardHeader {
+  background: linear-gradient(90deg, #EBF9F9 0%, #C4EDED 100%);
+  padding: 23px;
+  border-radius: 8px 8px 0 0;
+}
+
+.configCardHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 27px;
+  letter-spacing: -0.48px;
+  color: #32A4A4;
+}
+
+.configCardHeaderSubtitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  color: rgba(50, 164, 164, 0.7);
+  margin-top: 6px;
+  font-weight: 400;
 }
 
 .configSubtitle {
-  font-size: 12px;
-  color: #888;
-  margin-top: 2px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  color: rgba(50, 164, 164, 0.7);
+  margin-top: 6px;
   font-weight: 400;
 }
 
 .configCard :global(.ant-card-body) {
-  padding: 20px 24px;
+  padding: 23px;
 }
 
 .configGrid {
@@ -1118,61 +1376,85 @@
 }
 
 .configColumnTitle {
-  font-size: 13px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 15.25px;
   font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #f0f0f0;
+  color: #020817;
+  margin-bottom: 15px;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .configItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid #f5f5f5;
+  padding: 12px;
+  background: #F6F8F8;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  margin-bottom: 11px;
 }
 
 .configItem:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .configItemLabel {
-  font-size: 13px;
-  color: #555;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.3px;
+  font-weight: 600;
+  color: #020817;
 }
 
 .configItemValue {
+  font-family: 'Segoe UI', sans-serif;
   font-size: 11px;
   font-weight: 500;
 }
 
 .configEnabled {
-  color: #389e0d;
-  background: #f6ffed;
-  padding: 2px 10px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 500;
+  color: #FFFFFF;
+  background: #19AE9F;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 11.4px;
+  font-weight: 600;
+  line-height: 15px;
 }
 
 .configDisabled {
-  color: #cf1322;
-  background: #fff1f0;
-  padding: 2px 10px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 500;
+  color: #F8FAFC;
+  background: #EF4444;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 11.4px;
+  font-weight: 600;
+  line-height: 15px;
 }
 
 .configPublic {
-  color: #096dd9;
-  background: #e6f7ff;
-  padding: 2px 10px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 500;
+  color: #FFFFFF;
+  background: #32A4A4;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 11.4px;
+  font-weight: 600;
+  line-height: 15px;
+}
+
+.configRequired {
+  color: #FFFFFF;
+  background: #32A4A4;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 11.4px;
+  font-weight: 600;
+  line-height: 15px;
 }
 
 .challengeDetails {
@@ -1543,5 +1825,103 @@
   .activityItem:hover {
     /* increase shadow opacity slightly for dark */
     box-shadow: 0 6px 20px color-mix(in oklab, var(--color-foreground) 18%, transparent);
+  }
+
+  /* Custom overview cards for dark mode */
+  .challengeOverviewCard,
+  .statusCard,
+  .activityCard,
+  .configCard {
+    background: var(--color-card);
+    border-color: var(--color-border);
+  }
+
+  .overviewCardHeader,
+  .statusCardHeader,
+  .configCardHeader {
+    background: linear-gradient(90deg,
+        color-mix(in oklab, var(--color-primary) 10%, var(--color-card)) 0%,
+        color-mix(in oklab, var(--color-primary) 20%, var(--color-card)) 100%);
+  }
+
+  .activityCardHeader {
+    background: var(--color-secondary);
+  }
+
+  .overviewCardHeaderTitle,
+  .overviewCardHeaderSubtitle,
+  .statusCardHeaderTitle,
+  .activityCardHeaderTitle,
+  .configCardHeaderTitle,
+  .configCardHeaderSubtitle {
+    color: var(--color-primary);
+  }
+
+  .overviewCardHeaderSubtitle,
+  .configCardHeaderSubtitle {
+    opacity: 0.7;
+  }
+
+  .sectionTitle,
+  .configColumnTitle,
+  .infoValueBold,
+  .infoValue,
+  .timelineValueText,
+  .timeLeftValue,
+  .activityText,
+  .configItemLabel {
+    color: var(--color-foreground);
+  }
+
+  .infoLabel,
+  .statusLabel,
+  .progressLabel,
+  .progressValue,
+  .activityTime {
+    color: var(--color-muted-foreground);
+  }
+
+  .timelineItemGreen,
+  .timelineItemRed,
+  .timelineItemTeal,
+  .timelineItemBlue {
+    border-color: var(--color-border);
+  }
+
+  .statusInfoBox {
+    background: color-mix(in oklab, var(--color-primary) 8%, var(--color-card));
+    border-left-color: var(--color-primary);
+  }
+
+  .statusInfoTitle {
+    color: var(--color-primary);
+  }
+
+  .statusInfoText {
+    color: var(--color-muted-foreground);
+  }
+
+  .configItem {
+    background: var(--color-secondary);
+    border-color: var(--color-border);
+  }
+
+  /* Action buttons dark mode */
+  .actionBtnEdit {
+    background: color-mix(in oklab, #15803D 10%, var(--color-card));
+    border-color: var(--color-border);
+    color: #4ADE80;
+  }
+
+  .actionBtnStatus {
+    background: color-mix(in oklab, #1D4ED8 10%, var(--color-card));
+    border-color: var(--color-border);
+    color: #60A5FA;
+  }
+
+  .actionBtnExport {
+    background: var(--color-card);
+    border-color: var(--color-border);
+    color: var(--color-foreground);
   }
 }

@@ -1027,12 +1027,12 @@ const AdminChallengeDashboard = () => {
                 {challenge?.status && (
                   <span
                     className={`${styles.headerStatusBadge} ${challenge.status === "ongoing"
-                        ? styles.statusBadgeOngoing
-                        : challenge.status === "upcoming"
-                          ? styles.statusBadgeUpcoming
-                          : challenge.status === "completed"
-                            ? styles.statusBadgeCompleted
-                            : styles.statusBadgeUnpublished
+                      ? styles.statusBadgeOngoing
+                      : challenge.status === "upcoming"
+                        ? styles.statusBadgeUpcoming
+                        : challenge.status === "completed"
+                          ? styles.statusBadgeCompleted
+                          : styles.statusBadgeUnpublished
                       }`}
                   >
                     {challenge.status.toUpperCase()}
@@ -1044,29 +1044,18 @@ const AdminChallengeDashboard = () => {
           </div>
 
           <div className={styles.managementButtons}>
-            <Space wrap>
-              <Button onClick={handleEditChallenge} icon={<FileOutlined />}>
-                Edit Challenge
-              </Button>
-              <Button
-                type="primary"
-                onClick={handleStatusChange}
-                icon={<CheckCircleOutlined />}
-                style={{ background: "#24b2b4", borderColor: "#24b2b4" }}
-              >
-                Change Status
-              </Button>
-              <Button
-                danger
-                onClick={handleDeleteChallenge}
-                icon={<CloseCircleOutlined />}
-              >
-                Delete
-              </Button>
-              <Button onClick={handleExportData} icon={<ExportOutlined />}>
-                Export
-              </Button>
-            </Space>
+            <button className={`${styles.actionBtn} ${styles.actionBtnEdit}`} onClick={handleEditChallenge}>
+              <FileOutlined style={{ fontSize: 14 }} /> Edit Challenge
+            </button>
+            <button className={`${styles.actionBtn} ${styles.actionBtnStatus}`} onClick={handleStatusChange}>
+              <CheckCircleOutlined style={{ fontSize: 14 }} /> Change Status
+            </button>
+            <button className={`${styles.actionBtn} ${styles.actionBtnDelete}`} onClick={handleDeleteChallenge}>
+              <CloseCircleOutlined style={{ fontSize: 14 }} /> Delete
+            </button>
+            <button className={`${styles.actionBtn} ${styles.actionBtnExport}`} onClick={handleExportData}>
+              <ExportOutlined style={{ fontSize: 14 }} /> Export
+            </button>
           </div>
         </div>
       </div>
@@ -1252,10 +1241,10 @@ const AdminChallengeDashboard = () => {
                       style={{
                         fontSize: "16px",
                         fontWeight: 600,
-                        color: "#52C41A",
+                        color: "#32A4A4",
                         marginLeft: "4px",
                         fontFamily:
-                          "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                          "'Segoe UI', sans-serif",
                       }}
                     >
                       %
@@ -1264,8 +1253,8 @@ const AdminChallengeDashboard = () => {
                 </div>
                 <Progress
                   percent={dynamicCompletionRate}
-                  strokeColor="#52C41A"
-                  railColor="#E8E8E8"
+                  strokeColor="#32A4A4"
+                  railColor="#F6F8F8"
                   style={{ flexGrow: 1 }}
                   showInfo={false}
                 />
@@ -1594,10 +1583,10 @@ const AdminChallengeDashboard = () => {
                       style={{
                         fontSize: "16px",
                         fontWeight: 600,
-                        color: "#F5222D",
+                        color: "#32A4A4",
                         marginLeft: "4px",
                         fontFamily:
-                          "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                          "'Segoe UI', sans-serif",
                       }}
                     >
                       %
@@ -1606,8 +1595,8 @@ const AdminChallengeDashboard = () => {
                 </div>
                 <Progress
                   percent={dailyEngagement}
-                  strokeColor="#F5222D"
-                  railColor="#F5F5F5"
+                  strokeColor="#32A4A4"
+                  railColor="#F6F8F8"
                   style={{ flexGrow: 1 }}
                   showInfo={false}
                 />
@@ -1630,172 +1619,198 @@ const AdminChallengeDashboard = () => {
                 <Row gutter={[24, 24]}>
                   {/* Left Column - Challenge Overview */}
                   <Col xs={24} lg={16}>
-                    <Card
-                      className={styles.challengeOverviewCard}
-                      title={
-                        <div>
-                          <span>Challenge Overview</span>
-                          <div className={styles.cardSubtitle}>
-                            Comprehensive details about your challenge configuration
-                          </div>
+                    <div className={styles.challengeOverviewCard}>
+                      <div className={styles.overviewCardHeader}>
+                        <div className={styles.overviewCardHeaderTitle}>
+                          <FileOutlined style={{ fontSize: 18 }} /> Challenge Overview
                         </div>
-                      }
-                    >
-                      {/* Basic Information Section */}
-                      <div className={styles.sectionTitle}>Basic Information</div>
-                      <div className={styles.basicInfoGrid}>
-                        <div className={styles.infoItem}>
-                          <span className={styles.infoLabel}>Title:</span>
-                          <span className={styles.infoValue}>
-                            {challenge?.title || "—"}
-                          </span>
-                        </div>
-                        <div className={styles.infoItem}>
-                          <span className={styles.infoLabel}>Duration:</span>
-                          <span className={styles.infoValue}>
-                            {challenge?.actualDuration || challenge?.duration || 30} days
-                          </span>
-                        </div>
-                        <div className={styles.infoItem}>
-                          <span className={styles.infoLabel}>Category:</span>
-                          <span className={styles.categoryTag}>
-                            {challenge?.category || challenge?.categoryName || "General"}
-                          </span>
-                        </div>
-                        <div className={styles.infoItem}>
-                          <span className={styles.infoLabel}>Community:</span>
-                          <span className={styles.infoValue}>
-                            {challenge?.community?.name || "Unknown"}
-                          </span>
-                        </div>
-                        <div className={styles.infoItem}>
-                          <span className={styles.infoLabel}>Difficulty:</span>
-                          <span className={styles.difficultyTag}>
-                            {challenge?.difficulty || "Intermediate"}
-                          </span>
-                        </div>
-                        <div className={styles.infoItem}>
-                          <span className={styles.infoLabel}>Created:</span>
-                          <span className={styles.infoValue}>
-                            {challenge?.createdAt
-                              ? moment(challenge.createdAt).format("YYYY-MM-DD HH:mm")
-                              : "Unknown"}
-                          </span>
-                        </div>
-                        <div className={styles.infoItem}>
-                          <span className={styles.infoLabel}>Est. Time:</span>
-                          <span className={styles.infoValue}>
-                            {challenge?.estimatedTime || "2-3 hours daily"}
-                          </span>
+                        <div className={styles.overviewCardHeaderSubtitle}>
+                          Comprehensive details about your challenge configuration
                         </div>
                       </div>
+                      <div style={{ padding: 23 }}>
+                        {/* Basic Information Section */}
+                        <div className={styles.sectionTitle}>
+                          <span className={styles.sectionTitleIcon}><FileOutlined /></span>
+                          Basic Information
+                        </div>
+                        <div className={styles.basicInfoGrid}>
+                          <div className={styles.infoItem}>
+                            <span className={styles.infoLabel}>Title:</span>
+                            <span className={styles.infoValueBold}>
+                              {challenge?.title || "—"}
+                            </span>
+                          </div>
+                          <div className={styles.infoItem}>
+                            <span className={styles.infoLabel}>Duration:</span>
+                            <span className={styles.infoValue}>
+                              {challenge?.actualDuration || challenge?.duration || 30} days
+                            </span>
+                          </div>
+                          <div className={styles.infoItem}>
+                            <span className={styles.infoLabel}>Category:</span>
+                            <span className={styles.categoryTag}>
+                              {challenge?.category || challenge?.categoryName || "General"}
+                            </span>
+                          </div>
+                          <div className={styles.infoItem}>
+                            <span className={styles.infoLabel}>Community:</span>
+                            <span className={styles.infoValue}>
+                              {challenge?.community?.name || "Unknown"}
+                            </span>
+                          </div>
+                          <div className={styles.infoItem}>
+                            <span className={styles.infoLabel}>Difficulty:</span>
+                            <span className={styles.difficultyTag}>
+                              {challenge?.difficulty || "Intermediate"}
+                            </span>
+                          </div>
+                          <div className={styles.infoItem}>
+                            <span className={styles.infoLabel}>Created:</span>
+                            <span className={styles.infoValue}>
+                              {challenge?.createdAt
+                                ? moment(challenge.createdAt).format("YYYY-MM-DD HH:mm")
+                                : "Unknown"}
+                            </span>
+                          </div>
+                          <div className={styles.infoItem}>
+                            <span className={styles.infoLabel}>Est. Time:</span>
+                            <span className={styles.infoValue}>
+                              {challenge?.estimatedTime || "2-3 hours daily"}
+                            </span>
+                          </div>
+                        </div>
 
-                      {/* Timeline & Configuration Section */}
-                      <div className={styles.timelineSection}>
-                        <div className={styles.sectionTitle}>Timeline & Configuration</div>
-                        <div className={styles.timelineGrid}>
-                          <div className={styles.timelineItem}>
-                            <div className={styles.timelineIconGreen}>
-                              <CheckCircleOutlined />
-                            </div>
-                            <div className={styles.timelineContent}>
-                              <span className={styles.timelineLabel}>Start Date</span>
-                              <span className={styles.timelineValue}>
+                        {/* Timeline & Configuration Section */}
+                        <div className={styles.timelineSection}>
+                          <div className={styles.sectionTitle}>
+                            <span className={styles.sectionTitleIcon}><CheckCircleOutlined /></span>
+                            Timeline &amp; Configuration
+                          </div>
+                          <div className={styles.timelineGrid}>
+                            <div className={`${styles.timelineItem} ${styles.timelineItemGreen}`}>
+                              <div className={styles.timelineItemHeader}>
+                                <div className={styles.timelineIconGreen}>
+                                  <CheckCircleOutlined />
+                                </div>
+                                <span className={styles.timelineLabelGreen}>Start Date</span>
+                              </div>
+                              <span className={styles.timelineValueText}>
                                 {challenge?.startDate
                                   ? moment(challenge.startDate).format("YYYY-MM-DD HH:mm")
                                   : "Not set"}
                               </span>
                             </div>
-                          </div>
-                          <div className={styles.timelineItem}>
-                            <div className={styles.timelineIconBlue}>
-                              <FileOutlined />
-                            </div>
-                            <div className={styles.timelineContent}>
-                              <span className={styles.timelineLabel}>Daily Tasks</span>
-                              <span className={styles.timelineValue}>
-                                {challenge?.dailyTasks?.length || 0} tasks configured
-                              </span>
-                            </div>
-                          </div>
-                          <div className={styles.timelineItem}>
-                            <div className={styles.timelineIconRed}>
-                              <CloseCircleOutlined />
-                            </div>
-                            <div className={styles.timelineContent}>
-                              <span className={styles.timelineLabel}>End Date</span>
-                              <span className={styles.timelineValue}>
+                            <div className={`${styles.timelineItem} ${styles.timelineItemRed}`}>
+                              <div className={styles.timelineItemHeader}>
+                                <div className={styles.timelineIconRed}>
+                                  <CloseCircleOutlined />
+                                </div>
+                                <span className={styles.timelineLabelRed}>End Date</span>
+                              </div>
+                              <span className={styles.timelineValueText}>
                                 {challenge?.endDate
                                   ? moment(challenge.endDate).format("YYYY-MM-DD HH:mm")
                                   : "Not set"}
                               </span>
                             </div>
-                          </div>
-                          <div className={styles.timelineItem}>
-                            <div className={styles.timelineIconGold}>
-                              <TrophyOutlined />
+                            <div className={`${styles.timelineItem} ${styles.timelineItemTeal}`}>
+                              <div className={styles.timelineItemHeader}>
+                                <div className={styles.timelineIconGold}>
+                                  <FileOutlined />
+                                </div>
+                                <span className={styles.timelineLabelTeal}>Daily Tasks</span>
+                              </div>
+                              <span className={styles.timelineValueText}>
+                                {challenge?.dailyTasks?.length || 0} tasks configured
+                              </span>
                             </div>
-                            <div className={styles.timelineContent}>
-                              <span className={styles.timelineLabel}>Rewards</span>
-                              <span className={styles.timelineValue}>
+                            <div className={`${styles.timelineItem} ${styles.timelineItemBlue}`}>
+                              <div className={styles.timelineItemHeader}>
+                                <div className={styles.timelineIconBlue}>
+                                  <TrophyOutlined />
+                                </div>
+                                <span className={styles.timelineLabelBlue}>Rewards</span>
+                              </div>
+                              <span className={styles.timelineValueText}>
                                 {challenge?.checkpointRewards?.length || 0} rewards configured
                               </span>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </Card>
+                    </div>
                   </Col>
 
                   {/* Right Column - Challenge Status & Recent Activity */}
                   <Col xs={24} lg={8}>
-                    <Card className={styles.statusCard} title="Challenge Status">
-                      <div className={styles.statusHeader}>
-                        <span className={styles.statusLabel}>Current Status:</span>
-                        <span
-                          className={`${styles.statusBadge} ${challenge?.status === "ongoing"
+                    <div className={styles.statusCard}>
+                      <div className={styles.statusCardHeader}>
+                        <div className={styles.statusCardHeaderTitle}>
+                          <CheckCircleOutlined style={{ fontSize: 16 }} /> Challenge Status
+                        </div>
+                      </div>
+                      <div className={styles.statusCardBody}>
+                        <div className={styles.statusHeader}>
+                          <span className={styles.statusLabel}>Current Status:</span>
+                          <span
+                            className={`${styles.statusBadge} ${challenge?.status === "ongoing"
                               ? styles.statusBadgeOngoing
                               : challenge?.status === "upcoming"
                                 ? styles.statusBadgeUpcoming
                                 : challenge?.status === "completed"
                                   ? styles.statusBadgeCompleted
                                   : styles.statusBadgeUnpublished
-                            }`}
-                        >
-                          {challenge?.status?.toUpperCase() || "UNPUBLISHED"}
-                        </span>
-                      </div>
+                              }`}
+                          >
+                            {challenge?.status?.toUpperCase() || "UNPUBLISHED"}
+                          </span>
+                        </div>
 
-                      <div className={styles.statusInfoBox}>
-                        <div className={styles.statusInfoTitle}>Status Information</div>
-                        <div className={styles.statusInfoText}>
-                          {challenge?.status === "unpublished" &&
-                            "Challenge is not yet published and visible to participants. Use the 'Change Status' button to make it active."}
-                          {challenge?.status === "upcoming" &&
-                            "Challenge is published but has not started yet."}
-                          {challenge?.status === "ongoing" &&
-                            "Challenge is currently active and accepting submissions."}
-                          {challenge?.status === "completed" &&
-                            "Challenge has ended and no more submissions are accepted."}
-                          {!challenge?.status &&
-                            "Challenge is not yet published and visible to participants. Use the 'Change Status' button to make it active."}
+                        <div className={styles.statusInfoBox}>
+                          <div className={styles.statusInfoTitle}>
+                            <CheckCircleOutlined style={{ fontSize: 14 }} />
+                            Status Information
+                          </div>
+                          <div className={styles.statusInfoText}>
+                            {challenge?.status === "unpublished" &&
+                              "Challenge is not yet published and visible to participants. Use the 'Change Status' button to make it active."}
+                            {challenge?.status === "upcoming" &&
+                              "Challenge is published but has not started yet."}
+                            {challenge?.status === "ongoing" &&
+                              "Challenge is currently active and accepting submissions."}
+                            {challenge?.status === "completed" &&
+                              "Challenge has ended and no more submissions are accepted."}
+                            {!challenge?.status &&
+                              "Challenge is not yet published and visible to participants. Use the 'Change Status' button to make it active."}
+                          </div>
+                        </div>
+
+                        <div className={styles.progressSection}>
+                          <div className={styles.progressColumn}>
+                            <span className={styles.progressLabel}>Progress</span>
+                            <Progress
+                              percent={timelineProgress ?? 0}
+                              showInfo={false}
+                              strokeColor="#32A4A4"
+                              railColor="#F6F8F8"
+                            />
+                          </div>
+                          <div>
+                            <span className={styles.progressLabel}>Time Left</span>
+                            <div className={styles.timeLeftValue}>{timeLeft ?? "—"}</div>
+                          </div>
                         </div>
                       </div>
+                    </div>
 
-                      <div className={styles.progressSection}>
-                        <span className={styles.progressLabel}>Progress</span>
-                        <Progress
-                          percent={timelineProgress ?? 0}
-                          showInfo={false}
-                          strokeColor="#24b2b4"
-                          railColor="#e8e8e8"
-                        />
-                        <span className={styles.progressValue}>Time Left: {timeLeft ?? "—"}</span>
+                    <div className={styles.activityCard}>
+                      <div className={styles.activityCardHeader}>
+                        <div className={styles.activityCardHeaderTitle}>
+                          <FileOutlined style={{ fontSize: 16 }} /> Recent Activity
+                        </div>
                       </div>
-                    </Card>
-
-                    <Card className={styles.activityCard} title="Recent Activity">
-                      <div className={styles.activityList}>
+                      <div className={styles.activityCardBody}>
                         {(() => {
                           const items = [];
                           const latestSubs = [...(submissions || [])]
@@ -1841,12 +1856,12 @@ const AdminChallengeDashboard = () => {
                             <div key={it.key} className={styles.activityItem}>
                               <div
                                 className={`${styles.activityIcon} ${it.type === "submit"
-                                    ? styles.activityIconSubmit
-                                    : it.type === "approve"
-                                      ? styles.activityIconApprove
-                                      : it.type === "join"
-                                        ? styles.activityIconJoin
-                                        : styles.activityIconMilestone
+                                  ? styles.activityIconSubmit
+                                  : it.type === "approve"
+                                    ? styles.activityIconApprove
+                                    : it.type === "join"
+                                      ? styles.activityIconJoin
+                                      : styles.activityIconMilestone
                                   }`}
                               >
                                 {it.type === "submit" && <FileOutlined style={{ fontSize: 14 }} />}
@@ -1862,106 +1877,106 @@ const AdminChallengeDashboard = () => {
                           ));
                         })()}
                       </div>
-                    </Card>
+                    </div>
                   </Col>
                 </Row>
 
                 {/* Challenge Configuration Card - Full Width at Bottom */}
-                <Card
-                  className={styles.configCard}
-                  title={
-                    <div>
-                      <span>Challenge Configuration</span>
-                      <div className={styles.configSubtitle}>
-                        Current settings and permissions for your challenge
-                      </div>
+                <div className={styles.configCard}>
+                  <div className={styles.configCardHeader}>
+                    <div className={styles.configCardHeaderTitle}>
+                      <CheckCircleOutlined style={{ fontSize: 18 }} /> Challenge Configuration
                     </div>
-                  }
-                >
-                  <div className={styles.configGrid}>
-                    <div className={styles.configColumn}>
-                      <div className={styles.configColumnTitle}>Submission Settings</div>
-                      <div className={styles.configItem}>
-                        <span className={styles.configItemLabel}>Allow Late Submissions</span>
-                        <span
-                          className={
-                            challenge?.settings?.allowLateSubmissions
-                              ? styles.configEnabled
-                              : styles.configDisabled
-                          }
-                        >
-                          {challenge?.settings?.allowLateSubmissions ? "Enabled" : "Disabled"}
-                        </span>
-                      </div>
-                      <div className={styles.configItem}>
-                        <span className={styles.configItemLabel}>Auto-approve Submissions</span>
-                        <span
-                          className={
-                            challenge?.settings?.autoApproveSubmissions
-                              ? styles.configEnabled
-                              : styles.configDisabled
-                          }
-                        >
-                          {challenge?.settings?.autoApproveSubmissions ? "Enabled" : "Disabled"}
-                        </span>
-                      </div>
+                    <div className={styles.configCardHeaderSubtitle}>
+                      Current settings and permissions for your challenge
                     </div>
-                    <div className={styles.configColumn}>
-                      <div className={styles.configColumnTitle}>Community Features</div>
-                      <div className={styles.configItem}>
-                        <span className={styles.configItemLabel}>Public Leaderboard</span>
-                        <span
-                          className={
-                            challenge?.settings?.publicLeaderboard
-                              ? styles.configPublic
-                              : styles.configDisabled
-                          }
-                        >
-                          {challenge?.settings?.publicLeaderboard ? "Public" : "Private"}
-                        </span>
+                  </div>
+                  <div style={{ padding: 23 }}>
+                    <div className={styles.configGrid}>
+                      <div className={styles.configColumn}>
+                        <div className={styles.configColumnTitle}>Submission Settings</div>
+                        <div className={styles.configItem}>
+                          <span className={styles.configItemLabel}>Allow Late Submissions</span>
+                          <span
+                            className={
+                              challenge?.settings?.allowLateSubmissions
+                                ? styles.configEnabled
+                                : styles.configDisabled
+                            }
+                          >
+                            {challenge?.settings?.allowLateSubmissions ? "Enabled" : "Disabled"}
+                          </span>
+                        </div>
+                        <div className={styles.configItem}>
+                          <span className={styles.configItemLabel}>Auto-approve Submissions</span>
+                          <span
+                            className={
+                              challenge?.settings?.autoApproveSubmissions
+                                ? styles.configEnabled
+                                : styles.configDisabled
+                            }
+                          >
+                            {challenge?.settings?.autoApproveSubmissions ? "Enabled" : "Disabled"}
+                          </span>
+                        </div>
                       </div>
-                      <div className={styles.configItem}>
-                        <span className={styles.configItemLabel}>Peer Reviews</span>
-                        <span
-                          className={
-                            challenge?.settings?.peerReviews
-                              ? styles.configEnabled
-                              : styles.configDisabled
-                          }
-                        >
-                          {challenge?.settings?.peerReviews ? "Enabled" : "Disabled"}
-                        </span>
+                      <div className={styles.configColumn}>
+                        <div className={styles.configColumnTitle}>Community Features</div>
+                        <div className={styles.configItem}>
+                          <span className={styles.configItemLabel}>Public Leaderboard</span>
+                          <span
+                            className={
+                              challenge?.settings?.publicLeaderboard
+                                ? styles.configPublic
+                                : styles.configDisabled
+                            }
+                          >
+                            {challenge?.settings?.publicLeaderboard ? "Public" : "Private"}
+                          </span>
+                        </div>
+                        <div className={styles.configItem}>
+                          <span className={styles.configItemLabel}>Peer Reviews</span>
+                          <span
+                            className={
+                              challenge?.settings?.peerReviews
+                                ? styles.configEnabled
+                                : styles.configDisabled
+                            }
+                          >
+                            {challenge?.settings?.peerReviews ? "Enabled" : "Disabled"}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    <div className={styles.configColumn}>
-                      <div className={styles.configColumnTitle}>Rewards & Permissions</div>
-                      <div className={styles.configItem}>
-                        <span className={styles.configItemLabel}>Approval for Rewards</span>
-                        <span
-                          className={
-                            challenge?.settings?.requireApprovalForRewards
-                              ? styles.configEnabled
-                              : styles.configDisabled
-                          }
-                        >
-                          {challenge?.settings?.requireApprovalForRewards ? "Required" : "Not Required"}
-                        </span>
-                      </div>
-                      <div className={styles.configItem}>
-                        <span className={styles.configItemLabel}>Discussions</span>
-                        <span
-                          className={
-                            challenge?.settings?.discussionsEnabled
-                              ? styles.configEnabled
-                              : styles.configDisabled
-                          }
-                        >
-                          {challenge?.settings?.discussionsEnabled ? "Enabled" : "Disabled"}
-                        </span>
+                      <div className={styles.configColumn}>
+                        <div className={styles.configColumnTitle}>Rewards & Permissions</div>
+                        <div className={styles.configItem}>
+                          <span className={styles.configItemLabel}>Approval for Rewards</span>
+                          <span
+                            className={
+                              challenge?.settings?.requireApprovalForRewards
+                                ? styles.configRequired
+                                : styles.configDisabled
+                            }
+                          >
+                            {challenge?.settings?.requireApprovalForRewards ? "Required" : "Not Required"}
+                          </span>
+                        </div>
+                        <div className={styles.configItem}>
+                          <span className={styles.configItemLabel}>Discussions</span>
+                          <span
+                            className={
+                              challenge?.settings?.discussionsEnabled
+                                ? styles.configEnabled
+                                : styles.configDisabled
+                            }
+                          >
+                            {challenge?.settings?.discussionsEnabled ? "Enabled" : "Disabled"}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </Card>
+                </div>
               </div>
             ),
           },
