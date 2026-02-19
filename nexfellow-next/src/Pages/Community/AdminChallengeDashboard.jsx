@@ -321,7 +321,27 @@ const AdminChallengeDashboard = () => {
       });
 
       if (response.data?.challenge) {
-        setChallenge(response.data.challenge);
+        const challengeData = response.data.challenge;
+        setChallenge(challengeData);
+
+        // Set participants from challenge data (already enriched by backend)
+        const participantsData = challengeData.participants || [];
+        setParticipants(participantsData);
+
+        // Update stats with participants data
+        setStats((prev) => ({
+          ...prev,
+          totalParticipants: participantsData.length,
+          completedCount: participantsData.filter((p) => p.progress >= 100).length,
+          completionRate:
+            participantsData.length > 0
+              ? Math.round(
+                (participantsData.filter((p) => p.progress >= 100).length /
+                  participantsData.length) *
+                100
+              )
+              : 0,
+        }));
       } else {
         throw new Error("Invalid response format");
       }
@@ -333,24 +353,48 @@ const AdminChallengeDashboard = () => {
     }
   }, [id, handleApiError]);
 
-  // Fetch participants
+  // Fetch participants - uses challenge data which already includes enriched participants
   const fetchParticipants = useCallback(async () => {
-    try {
+    // If challenge already has participants, use that data
+    if (challenge?.participants) {
       setParticipantsLoading(true);
-
-      const response = await api.get(`/challenge/${id}/participants`, {
-        withCredentials: true,
-      });
-
-      const participantsData = response.data?.participants || [];
+      const participantsData = challenge.participants || [];
       setParticipants(participantsData);
 
       // Update stats
       setStats((prev) => ({
         ...prev,
         totalParticipants: participantsData.length,
-        completedCount: participantsData.filter((p) => p.progress >= 100)
-          .length,
+        completedCount: participantsData.filter((p) => p.progress >= 100).length,
+        completionRate:
+          participantsData.length > 0
+            ? Math.round(
+              (participantsData.filter((p) => p.progress >= 100).length /
+                participantsData.length) *
+              100
+            )
+            : 0,
+      }));
+      setParticipantsLoading(false);
+      return;
+    }
+
+    // Fallback: refetch challenge to get participants
+    try {
+      setParticipantsLoading(true);
+
+      const response = await api.get(`/challenge/${id}/admin`, {
+        withCredentials: true,
+      });
+
+      const participantsData = response.data?.challenge?.participants || [];
+      setParticipants(participantsData);
+
+      // Update stats
+      setStats((prev) => ({
+        ...prev,
+        totalParticipants: participantsData.length,
+        completedCount: participantsData.filter((p) => p.progress >= 100).length,
         completionRate:
           participantsData.length > 0
             ? Math.round(
@@ -366,7 +410,7 @@ const AdminChallengeDashboard = () => {
     } finally {
       setParticipantsLoading(false);
     }
-  }, [id, handleApiError]);
+  }, [id, challenge, handleApiError]);
 
   // Fetch submissions
   const fetchSubmissions = useCallback(async () => {
