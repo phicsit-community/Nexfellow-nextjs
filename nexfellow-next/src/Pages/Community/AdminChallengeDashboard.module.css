@@ -22,13 +22,15 @@
 .backLink {
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: #666;
-  font-size: 13px;
+  gap: 7.62px;
+  color: #4B5563;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.34px;
+  font-weight: 600;
+  line-height: 19px;
   text-decoration: none;
-  padding: 6px 12px;
-  border: 1px solid #e8e8e8;
-  border-radius: 6px;
+  padding: 7.17px 11.44px 8.08px;
+  border-radius: 5.72px;
   background: #fff;
   cursor: pointer;
   transition: all 0.2s;
@@ -45,9 +47,10 @@
 
 .headerTitleRow {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 16px;
+  padding-bottom: 0;
 }
 
 .headerTitleLeft {
@@ -63,20 +66,25 @@
 }
 
 .headerTitleWrap h1 {
-  font-size: 22px;
-  font-weight: 600;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 22.88px;
+  line-height: 30px;
   margin: 0;
-  color: #1a1a1a;
+  color: #111827;
   display: flex;
   align-items: center;
-  gap: 12px;
-  line-height: 1.3;
+  gap: 19px;
 }
 
 .headerTitleWrap p {
-  color: #888;
-  font-size: 14px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 13.34px;
+  line-height: 19px;
+  color: #4B5563;
   margin: 0;
+  padding-left: 15.25px;
 }
 
 .headerStatusBadge {
@@ -134,6 +142,7 @@
   gap: 0;
   flex-wrap: wrap;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .actionBtn {
@@ -157,7 +166,7 @@
   background: #F0FDF4;
   border-color: #BBF7D0;
   color: #15803D;
-  margin-right: 8px;
+  margin-right: 7.62px;
 }
 
 .actionBtnEdit:hover {
@@ -168,7 +177,6 @@
   background: #EFF6FF;
   border-color: #BFDBFE;
   color: #1D4ED8;
-  margin-right: 8px;
 }
 
 .actionBtnStatus:hover {
@@ -179,7 +187,7 @@
   background: #EF4444;
   border-color: #EF4444;
   color: #F8FAFC;
-  margin-right: 8px;
+  margin-left: 7.62px;
 }
 
 .actionBtnDelete:hover {
@@ -190,6 +198,7 @@
   background: #FFFFFF;
   border-color: #E2E8F0;
   color: #020817;
+  margin-left: 7.62px;
 }
 
 .actionBtnExport:hover {
@@ -1571,6 +1580,995 @@
   }
 }
 
+/* ====================== */
+/* SUBMISSIONS TAB STYLES */
+/* ====================== */
+
+.submissionsManagementCard {
+  background: #FFFFFF;
+  border: 0.95px solid #E2E8F0;
+  box-shadow: 0px 0.95px 1.9px rgba(0, 0, 0, 0.05);
+  border-radius: 7.62px;
+  padding: 23.6px;
+  margin-bottom: 20px;
+}
+
+.submissionsManagementHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.submissionsManagementTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.submissionsManagementTitle h2 {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 22.87px;
+  line-height: 30px;
+  color: #020817;
+  letter-spacing: -0.57px;
+  margin: 0;
+}
+
+.submissionsManagementTitle svg {
+  width: 22px;
+  height: 22px;
+  color: #020817;
+}
+
+.exportAllBtn {
+  display: flex;
+  align-items: center;
+  gap: 7.6px;
+  padding: 7.6px 15.25px;
+  background: #FFFFFF;
+  border: 0.95px solid #E2E8F0;
+  border-radius: 5.72px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 13.34px;
+  color: #020817;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.exportAllBtn:hover {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+}
+
+.exportAllBtn svg {
+  width: 15.25px;
+  height: 15.25px;
+}
+
+/* Filter row styles */
+.submissionsFilterRow {
+  display: flex;
+  align-items: center;
+  gap: 9.53px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.searchInputWrapper {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+.searchInputWrapper svg {
+  position: absolute;
+  left: 11.4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15.25px;
+  height: 15.25px;
+  color: #64748B;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 7.6px 11.4px 7.6px 34px;
+  background: #FFFFFF;
+  border: 0.95px solid #E2E8F0;
+  border-radius: 5.72px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 13.34px;
+  color: #020817;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.searchInput::placeholder {
+  color: #64748B;
+}
+
+.searchInput:focus {
+  border-color: #14B8A6;
+}
+
+.filterSelect {
+  min-width: 140px;
+}
+
+.filterSelect :global(.ant-select-selector) {
+  border: 0.95px solid #E2E8F0 !important;
+  border-radius: 5.72px !important;
+  height: 36px !important;
+  font-family: 'Segoe UI', sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 13.34px !important;
+  color: #020817 !important;
+  box-shadow: none !important;
+}
+
+.filterSelect :global(.ant-select-selection-item) {
+  line-height: 34px !important;
+}
+
+.filterSelect :global(.ant-select-arrow) {
+  color: #020817;
+}
+
+.applyBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7.6px 15.25px;
+  background: #14B8A6;
+  opacity: 0.5;
+  border-radius: 5.72px;
+  border: none;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 13.34px;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.applyBtn:hover {
+  opacity: 0.7;
+}
+
+.applyBtn.applyBtnActive {
+  opacity: 1;
+}
+
+/* Submission Details Card */
+.submissionDetailsCard {
+  background: #FFFFFF;
+  border: 0.95px solid #E2E8F0;
+  box-shadow: 0px 0.95px 1.9px rgba(0, 0, 0, 0.05);
+  border-radius: 7.62px;
+  overflow: hidden;
+}
+
+.submissionDetailsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 19px 23.6px;
+  border-bottom: 0.95px solid #E2E8F0;
+}
+
+.submissionDetailsTitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 22.87px;
+  line-height: 30px;
+  color: #020817;
+  letter-spacing: -0.57px;
+  margin: 0;
+}
+
+.submissionDetailsSubtitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 13.34px;
+  color: #64748B;
+  margin: 0;
+}
+
+/* Submissions Table Overrides */
+.submissionsTableWrapper :global(.ant-table) {
+  border-radius: 0 0 7.62px 7.62px;
+}
+
+.submissionsTableWrapper :global(.ant-table-thead > tr > th) {
+  background: #F9FAFB !important;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 13.34px;
+  color: #64748B !important;
+  border-bottom: 0.95px solid #E2E8F0;
+  padding: 11.4px 15.25px;
+  text-transform: capitalize;
+}
+
+.submissionsTableWrapper :global(.ant-table-tbody > tr > td) {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13.34px;
+  padding: 11.4px 15.25px;
+  border-bottom: 0.95px solid #E2E8F0;
+  color: #020817;
+  vertical-align: middle;
+}
+
+.submissionsTableWrapper :global(.ant-table-tbody > tr:hover > td) {
+  background: #F8FAFC !important;
+}
+
+.submissionsTableWrapper :global(.ant-table-title) {
+  display: none;
+}
+
+.submissionsTableWrapper :global(.ant-checkbox-wrapper .ant-checkbox-inner) {
+  border-radius: 3px;
+  border-color: #E2E8F0;
+}
+
+/* Participant Cell */
+.participantCell {
+  display: flex;
+  align-items: center;
+  gap: 9.53px;
+}
+
+.participantAvatar {
+  width: 30.5px;
+  height: 30.5px;
+  border-radius: 9999px;
+  background: #E5E7EB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.participantAvatar span {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 11.44px;
+  color: #020817;
+}
+
+.participantInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.participantName {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 13.34px;
+  color: #020817;
+  line-height: 1.3;
+}
+
+.participantUsername {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 11.44px;
+  color: #6B7280;
+  line-height: 1.3;
+}
+
+/* Day Pill */
+.dayPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3.8px 11.4px;
+  border: 0.95px solid #E2E8F0;
+  border-radius: 9999px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 11.44px;
+  color: #020817;
+  white-space: nowrap;
+}
+
+/* Type Cell */
+.typeCell {
+  display: flex;
+  align-items: center;
+  gap: 5.7px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 13.34px;
+  color: #020817;
+}
+
+.typeCell svg {
+  width: 15.25px;
+  height: 15.25px;
+  color: #64748B;
+}
+
+/* Language Pill */
+.languagePill {
+  display: inline-flex;
+  align-items: center;
+  padding: 1.9px 9.53px;
+  border-radius: 9999px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 11.44px;
+  line-height: 1.5;
+}
+
+.languagePillBlue {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+.languagePillGreen {
+  background: #DCFCE7;
+  color: #166534;
+}
+
+.languagePillPurple {
+  background: #F3E8FF;
+  color: #6B21A8;
+}
+
+/* Difficulty Pill */
+.difficultyPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 1.9px 9.53px;
+  border-radius: 9999px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 11.44px;
+  line-height: 1.5;
+}
+
+.difficultyEasy {
+  background: #DCFCE7;
+  color: #166534;
+}
+
+.difficultyMedium {
+  background: #FEF9C3;
+  color: #854D0E;
+}
+
+.difficultyHard {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+/* Submitted Date Cell */
+.submittedDateCell {
+  display: flex;
+  align-items: center;
+  gap: 5.7px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 13.34px;
+  color: #020817;
+}
+
+.submittedDateCell svg {
+  width: 15.25px;
+  height: 15.25px;
+  color: #64748B;
+}
+
+/* Status Pill */
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5.7px;
+  padding: 1.9px 9.53px;
+  border-radius: 9999px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 11.44px;
+  line-height: 1.5;
+}
+
+.statusPending {
+  background: #FEF9C3;
+  border: 0.95px solid #FEF08A;
+  color: #854D0E;
+}
+
+.statusApproved {
+  background: #DCFCE7;
+  border: 0.95px solid #BBF7D0;
+  color: #166534;
+}
+
+.statusRejected {
+  background: #FEE2E2;
+  border: 0.95px solid #FECACA;
+  color: #991B1B;
+}
+
+.statusNeedsRevision {
+  background: #DBEAFE;
+  border: 0.95px solid #BFDBFE;
+  color: #1E40AF;
+}
+
+/* Score Cell */
+.scoreApproved {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 13.34px;
+  color: #16A34A;
+}
+
+.scoreRejected {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 13.34px;
+  color: #DC2626;
+}
+
+.scorePending {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 13.34px;
+  color: #9CA3AF;
+}
+
+/* Submission Action Buttons */
+.actionButtons {
+  display: flex;
+  align-items: center;
+  gap: 3.8px;
+}
+
+.submissionActionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30.5px;
+  height: 30.5px;
+  border-radius: 5.72px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.submissionActionBtn:hover {
+  background: #F1F5F9;
+}
+
+.submissionActionBtnView {
+  color: #020817;
+}
+
+.submissionActionBtnApprove {
+  color: #16A34A;
+}
+
+.submissionActionBtnReject {
+  color: #DC2626;
+}
+
+.submissionActionBtn svg {
+  width: 15.25px;
+  height: 15.25px;
+}
+
+/* Submissions tab mobile adjustments */
+@media (max-width: 768px) {
+  .submissionsManagementCard {
+    padding: 16px;
+    border-radius: 6px;
+  }
+
+  .submissionsManagementHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .submissionsFilterRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchInputWrapper {
+    min-width: unset;
+  }
+
+  .filterSelect {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .submissionDetailsHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 16px;
+  }
+}
+
+/* ============================================= */
+/* Edit Challenge Modal Styles                   */
+/* ============================================= */
+
+.editModalOverlay :global(.ant-modal-content) {
+  padding: 0 !important;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0px 4px 6px -4px rgba(0, 0, 0, 0.1);
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.editModalOverlay :global(.ant-modal-wrap) {
+  overflow: hidden !important;
+}
+
+.editModalOverlay :global(.ant-modal-header) {
+  display: none;
+}
+
+.editModalOverlay :global(.ant-modal-close) {
+  display: none;
+}
+
+.editModalOverlay :global(.ant-modal-body) {
+  padding: 0 !important;
+}
+
+.editModalHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px 16px;
+  background: #32A4A4;
+  border-radius: 8px 8px 0 0;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.editModalHeaderTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.editModalHeaderTitle svg {
+  width: 20px;
+  height: 20px;
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.editModalHeaderTitle span {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 18px;
+  letter-spacing: -0.45px;
+  color: #FFFFFF;
+}
+
+.editModalHeaderSubtitle {
+  margin-top: 6px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.editModalCloseBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 16px;
+  height: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: opacity 0.2s;
+}
+
+.editModalCloseBtn:hover {
+  opacity: 1;
+}
+
+.editModalCloseBtn svg {
+  width: 16px;
+  height: 16px;
+  color: #FFFFFF;
+}
+
+.editModalBody {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 16px;
+  gap: 12px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.editModalSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editModalSectionHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+.editModalSectionHeader svg {
+  width: 16px;
+  height: 16px;
+  color: #32A4A4;
+  flex-shrink: 0;
+}
+
+.editModalSectionTitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 22px;
+  color: #020817;
+}
+
+.editModalDivider {
+  width: 100%;
+  height: 1px;
+  background: #E2E8F0;
+  margin: 0;
+  border: none;
+}
+
+/* Field rows */
+.editModalRow {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  width: 100%;
+}
+
+.editModalCol2 {
+  flex: 1;
+  min-width: 0;
+}
+
+.editModalCol3 {
+  flex: 1;
+  min-width: 0;
+}
+
+.editModalColFull {
+  width: 100%;
+}
+
+/* Labels */
+.editModalLabel {
+  display: flex;
+  align-items: center;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 18px;
+  color: #020817;
+  margin-bottom: 4px;
+}
+
+/* Inputs / Selects / Textareas */
+.editModalInput,
+.editModalSelect :global(.ant-select-selector),
+.editModalTextarea textarea {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 6px !important;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #020817;
+}
+
+.editModalInput {
+  height: 32px;
+  padding: 6px 10px;
+}
+
+.editModalSelect {
+  width: 100%;
+}
+
+.editModalSelect :global(.ant-select-selector) {
+  height: 32px !important;
+  padding: 0 10px !important;
+  display: flex;
+  align-items: center;
+}
+
+.editModalTextarea textarea {
+  min-height: 50px;
+  padding: 6px 10px;
+  resize: vertical;
+}
+
+.editModalDatePicker {
+  width: 100%;
+  height: 32px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+}
+
+.editModalDatePicker input {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #020817;
+}
+
+/* Challenge Settings section */
+.editModalSettingsRow {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  width: 100%;
+}
+
+.editModalSettingsCol {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editModalSettingsSubtitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #020817;
+}
+
+.editModalSettingCard {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  min-height: auto;
+}
+
+.editModalSettingInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.editModalSettingLabel {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #020817;
+}
+
+.editModalSettingDesc {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #64748B;
+}
+
+/* Full-width setting card for "Require Approval" */
+.editModalSettingCardFull {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  width: 100%;
+}
+
+.editModalSettingCardFullLabel {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+.editModalSettingCardFullLabel svg {
+  width: 14px;
+  height: 14px;
+  color: #020817;
+}
+
+.editModalSettingCardFullInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Switches */
+.editModalOverlay :global(.ant-switch) {
+  min-width: 44px;
+  height: 24px;
+  background: #E2E8F0;
+}
+
+.editModalOverlay :global(.ant-switch-checked) {
+  background: #32A4A4 !important;
+}
+
+.editModalOverlay :global(.ant-switch-handle) {
+  width: 20px;
+  height: 20px;
+  top: 2px;
+}
+
+.editModalOverlay :global(.ant-switch-handle::before) {
+  border-radius: 9999px;
+  box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0px 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer */
+.editModalFooterWrapper {
+  flex-shrink: 0;
+  background: inherit;
+}
+
+.editModalFooter {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px 16px;
+  padding-top: 0;
+  gap: 8px;
+}
+
+.editModalFooterDivider {
+  width: 100%;
+  height: 1px;
+  background: #E2E8F0;
+  border: none;
+  margin: 0 0 10px 0;
+  padding: 0;
+}
+
+.editModalCancelBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 14px;
+  height: 34px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #020817;
+  transition: all 0.2s;
+}
+
+.editModalCancelBtn:hover {
+  border-color: #CBD5E1;
+  background: #F8FAFC;
+}
+
+.editModalSaveBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 14px;
+  height: 34px;
+  min-width: 110px;
+  background: #32A4A4;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #FFFFFF;
+  transition: all 0.2s;
+}
+
+.editModalSaveBtn:hover {
+  background: #2a8f8f;
+}
+
+.editModalSaveBtn:disabled {
+  background: #94D3D3;
+  cursor: not-allowed;
+}
+
+/* Form Item overrides inside edit modal */
+.editModalOverlay :global(.ant-form-item) {
+  margin-bottom: 0;
+}
+
+.editModalOverlay :global(.ant-form-item-label) {
+  padding-bottom: 4px;
+}
+
+.editModalOverlay :global(.ant-form-item-label > label) {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 18px;
+  color: #020817;
+}
+
+/* Edit Modal responsive */
+@media (max-width: 768px) {
+  .editModalRow {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .editModalSettingsRow {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .editModalBody {
+    padding: 16px;
+    gap: 24px;
+  }
+
+  .editModalHeader {
+    padding: 16px;
+  }
+
+  .editModalFooter {
+    padding: 16px;
+    padding-top: 0;
+  }
+}
+
+
 :global(.dark) {
 
   /* Container and common surfaces */
@@ -1923,5 +2921,200 @@
     background: var(--color-card);
     border-color: var(--color-border);
     color: var(--color-foreground);
+  }
+
+  /* Submissions tab dark mode */
+  .submissionsManagementCard,
+  .submissionDetailsCard {
+    background: var(--color-card);
+    border-color: var(--color-border);
+  }
+
+  .submissionsManagementTitle h2,
+  .submissionDetailsTitle {
+    color: var(--color-foreground);
+  }
+
+  .submissionsManagementTitle svg {
+    color: var(--color-foreground);
+  }
+
+  .exportAllBtn {
+    background: var(--color-card);
+    border-color: var(--color-border);
+    color: var(--color-foreground);
+  }
+
+  .exportAllBtn:hover {
+    background: var(--color-secondary);
+  }
+
+  .searchInput {
+    background: var(--color-card);
+    border-color: var(--color-border);
+    color: var(--color-foreground);
+  }
+
+  .searchInput::placeholder {
+    color: var(--color-muted-foreground);
+  }
+
+  .filterSelect :global(.ant-select-selector) {
+    background: var(--color-card) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-foreground) !important;
+  }
+
+  .submissionDetailsHeader {
+    border-bottom-color: var(--color-border);
+  }
+
+  .submissionDetailsSubtitle {
+    color: var(--color-muted-foreground);
+  }
+
+  .submissionsTableWrapper :global(.ant-table) {
+    background: var(--color-card);
+  }
+
+  .submissionsTableWrapper :global(.ant-table-thead > tr > th) {
+    background: var(--color-secondary) !important;
+    color: var(--color-muted-foreground) !important;
+    border-bottom-color: var(--color-border);
+  }
+
+  .submissionsTableWrapper :global(.ant-table-tbody > tr > td) {
+    border-bottom-color: var(--color-border);
+    color: var(--color-foreground);
+  }
+
+  .submissionsTableWrapper :global(.ant-table-tbody > tr:hover > td) {
+    background: var(--color-secondary) !important;
+  }
+
+  .participantAvatar {
+    background: var(--color-secondary);
+  }
+
+  .participantAvatar span {
+    color: var(--color-foreground);
+  }
+
+  .participantName {
+    color: var(--color-foreground);
+  }
+
+  .participantUsername {
+    color: var(--color-muted-foreground);
+  }
+
+  .dayPill {
+    border-color: var(--color-border);
+    color: var(--color-foreground);
+  }
+
+  .typeCell {
+    color: var(--color-foreground);
+  }
+
+  .typeCell svg {
+    color: var(--color-muted-foreground);
+  }
+
+  .submittedDateCell {
+    color: var(--color-foreground);
+  }
+
+  .submittedDateCell svg {
+    color: var(--color-muted-foreground);
+  }
+
+  .submissionActionBtn:hover {
+    background: var(--color-secondary);
+  }
+
+  .submissionActionBtnView {
+    color: var(--color-foreground);
+  }
+
+  /* Edit Modal dark mode */
+  .editModalOverlay :global(.ant-modal-content) {
+    background: var(--color-card);
+  }
+
+  .editModalHeader {
+    background: #2a8f8f;
+  }
+
+  .editModalBody {
+    background: var(--color-card);
+  }
+
+  .editModalSectionTitle {
+    color: var(--color-foreground);
+  }
+
+  .editModalDivider,
+  .editModalFooterDivider {
+    background: var(--color-border);
+  }
+
+  .editModalOverlay :global(.ant-form-item-label > label) {
+    color: var(--color-foreground);
+  }
+
+  .editModalInput,
+  .editModalSelect :global(.ant-select-selector),
+  .editModalTextarea textarea {
+    background: var(--color-background) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-foreground) !important;
+  }
+
+  .editModalDatePicker {
+    background: var(--color-background);
+    border-color: var(--color-border);
+  }
+
+  .editModalDatePicker input {
+    color: var(--color-foreground);
+  }
+
+  .editModalSettingCard,
+  .editModalSettingCardFull {
+    background: var(--color-background);
+    border-color: var(--color-border);
+  }
+
+  .editModalSettingLabel,
+  .editModalSettingsSubtitle {
+    color: var(--color-foreground);
+  }
+
+  .editModalSettingDesc {
+    color: var(--color-muted-foreground);
+  }
+
+  .editModalSettingCardFullLabel svg {
+    color: var(--color-foreground);
+  }
+
+  .editModalCancelBtn {
+    background: var(--color-background);
+    border-color: var(--color-border);
+    color: var(--color-foreground);
+  }
+
+  .editModalCancelBtn:hover {
+    background: var(--color-secondary);
+    border-color: var(--color-border);
+  }
+
+  .editModalCloseBtn svg {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .editModalOverlay :global(.ant-switch) {
+    background: var(--color-border);
   }
 }

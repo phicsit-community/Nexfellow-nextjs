@@ -13,7 +13,7 @@ import {
   Input,
   Select,
   Spin,
-  message,
+  App,
   Card,
   Statistic,
   Row,
@@ -44,6 +44,20 @@ import {
   Clock,
   AlertCircle,
   BarChart3,
+  Search,
+  Download,
+  Calendar,
+  Eye,
+  Check,
+  X,
+  Filter,
+  FileCode,
+  ChevronDown,
+  SquarePen,
+  Globe,
+  CalendarDays,
+  Settings,
+  Shield,
 } from "lucide-react";
 import moment from "moment";
 
@@ -61,6 +75,7 @@ const AdminChallengeDashboard = () => {
   const params = useParams();
   const id = params?.id;
   const router = useRouter();
+  const { message } = App.useApp();
 
   // Core state
   const [activeTab, setActiveTab] = useState("overview");
@@ -105,6 +120,26 @@ const AdminChallengeDashboard = () => {
 
   // Table selection state
   const [selectedSubmissions, setSelectedSubmissions] = useState([]);
+  const [submissionSearch, setSubmissionSearch] = useState("");
+  const [submissionStatusFilter, setSubmissionStatusFilter] = useState("all");
+  const [submissionBulkAction, setSubmissionBulkAction] = useState("");
+
+  // Filtered submissions
+  const filteredSubmissions = useMemo(() => {
+    let filtered = submissions || [];
+    if (submissionSearch) {
+      const search = submissionSearch.toLowerCase();
+      filtered = filtered.filter(
+        (s) =>
+          (s.user?.name || "").toLowerCase().includes(search) ||
+          (s.user?.username || "").toLowerCase().includes(search)
+      );
+    }
+    if (submissionStatusFilter && submissionStatusFilter !== "all") {
+      filtered = filtered.filter((s) => s.status === submissionStatusFilter);
+    }
+    return filtered;
+  }, [submissions, submissionSearch, submissionStatusFilter]);
 
   // Derived KPIs for Overview
   const activeToday = useMemo(() => {
@@ -624,11 +659,18 @@ const AdminChallengeDashboard = () => {
     setEditChallengeModalVisible(true);
     editForm.setFieldsValue({
       title: challenge?.title,
+      category: challenge?.category || challenge?.categoryName,
       description: challenge?.description,
+      difficulty: challenge?.difficulty || "Intermediate",
+      duration: challenge?.actualDuration || challenge?.duration,
+      dailyTimeCommitment: challenge?.dailyTimeCommitment || challenge?.settings?.dailyTimeCommitment,
       startDate: challenge?.startDate ? moment(challenge.startDate) : null,
       endDate: challenge?.endDate ? moment(challenge.endDate) : null,
+      maxParticipants: challenge?.maxParticipants,
       allowLateSubmissions: challenge?.settings?.allowLateSubmissions,
       autoApproveSubmissions: challenge?.settings?.autoApproveSubmissions,
+      publicLeaderboard: challenge?.settings?.publicLeaderboard,
+      enableDiscussions: challenge?.settings?.discussionsEnabled,
       requireApprovalForRewards: challenge?.settings?.requireApprovalForRewards,
     });
   };
@@ -639,12 +681,19 @@ const AdminChallengeDashboard = () => {
 
       const updateData = {
         title: values.title,
+        category: values.category,
         description: values.description,
+        difficulty: values.difficulty,
+        duration: values.duration,
+        dailyTimeCommitment: values.dailyTimeCommitment,
         startDate: values.startDate?.toISOString(),
         endDate: values.endDate?.toISOString(),
+        maxParticipants: values.maxParticipants,
         settings: {
           allowLateSubmissions: values.allowLateSubmissions,
           autoApproveSubmissions: values.autoApproveSubmissions,
+          publicLeaderboard: values.publicLeaderboard,
+          discussionsEnabled: values.enableDiscussions,
           requireApprovalForRewards: values.requireApprovalForRewards,
         },
       };
@@ -746,113 +795,165 @@ const AdminChallengeDashboard = () => {
   // Table column definitions
   const submissionsColumns = [
     {
-      title: "User",
+      title: "Participant",
       dataIndex: ["user", "name"],
-      key: "user",
-      render: (text, record) =>
-        record.user?.name || record.user?.username || "Unknown User",
-      width: 150,
-    },
-    {
-      title: "Day",
-      dataIndex: "day",
-      key: "day",
-      render: (day) => {
-        const dailyTask = challenge?.dailyTasks?.find(
-          (task) => task.day === day
-        );
+      key: "participant",
+      render: (text, record) => {
+        const name = record.user?.name || record.user?.username || "Unknown User";
+        const username = record.user?.username || "";
+        const initials = name
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2);
         return (
-          <div>
-            <div>Day {day}</div>
-            {dailyTask && (
-              <div style={{ fontSize: "12px", color: "#666" }}>
-                {dailyTask.title}
-              </div>
-            )}
+          <div className={styles.participantCell}>
+            <div className={styles.participantAvatar}>
+              <span>{initials}</span>
+            </div>
+            <div className={styles.participantInfo}>
+              <span className={styles.participantName}>{name}</span>
+              {username && (
+                <span className={styles.participantUsername}>@{username}</span>
+              )}
+            </div>
           </div>
         );
       },
+      width: 180,
+    },
+    {
+      title: "Challenge Day",
+      dataIndex: "day",
+      key: "day",
+      render: (day) => <span className={styles.dayPill}>Day {day}</span>,
       width: 120,
     },
     {
       title: "Type",
       dataIndex: "submissionType",
       key: "submissionType",
-      render: (type) => <Tag color="blue">{type || "text"}</Tag>,
+      render: (type) => (
+        <div className={styles.typeCell}>
+          <FileCode size={15} />
+          <span>{type || "Text"}</span>
+        </div>
+      ),
+      width: 100,
+    },
+    {
+      title: "Language",
+      key: "language",
+      render: (_, record) => {
+        const lang = record.language || record.programmingLanguage || "N/A";
+        return (
+          <span className={`${styles.languagePill} ${styles.languagePillBlue}`}>
+            {lang}
+          </span>
+        );
+      },
+      width: 110,
+    },
+    {
+      title: "Difficulty",
+      key: "difficulty",
+      render: (_, record) => {
+        const diff = record.difficulty || challenge?.dailyTasks?.find((t) => t.day === record.day)?.difficulty || "Medium";
+        const diffLower = diff.toLowerCase();
+        const diffClass =
+          diffLower === "easy"
+            ? styles.difficultyEasy
+            : diffLower === "hard"
+              ? styles.difficultyHard
+              : styles.difficultyMedium;
+        return (
+          <span className={`${styles.difficultyPill} ${diffClass}`}>
+            {diff}
+          </span>
+        );
+      },
       width: 100,
     },
     {
       title: "Submitted",
       dataIndex: "submittedAt",
       key: "submittedAt",
-      render: (date) => moment(date).format("MMM DD, HH:mm"),
+      render: (date) => (
+        <div className={styles.submittedDateCell}>
+          <Calendar size={15} />
+          <span>{moment(date).format("MMM DD, YYYY")}</span>
+        </div>
+      ),
       sorter: (a, b) => new Date(a.submittedAt) - new Date(b.submittedAt),
-      width: 120,
+      width: 140,
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
       render: (status) => {
-        const statusConfig = {
-          pending: { color: "orange", icon: <QuestionCircleOutlined /> },
-          approved: { color: "green", icon: <CheckCircleOutlined /> },
-          rejected: { color: "red", icon: <CloseCircleOutlined /> },
-          needs_revision: { color: "yellow", icon: <FileOutlined /> },
+        const statusMap = {
+          pending: { label: "Pending", className: styles.statusPending, icon: <Clock size={12} /> },
+          approved: { label: "Approved", className: styles.statusApproved, icon: <Check size={12} /> },
+          rejected: { label: "Rejected", className: styles.statusRejected, icon: <X size={12} /> },
+          needs_revision: { label: "Revision", className: styles.statusNeedsRevision, icon: <AlertCircle size={12} /> },
         };
-
-        const config = statusConfig[status] || statusConfig.pending;
-
+        const config = statusMap[status] || statusMap.pending;
         return (
-          <Tag color={config.color} icon={config.icon}>
-            {status?.replace("_", " ").toUpperCase()}
-          </Tag>
+          <span className={`${styles.statusPill} ${config.className}`}>
+            {config.icon}
+            {config.label}
+          </span>
         );
       },
-      filters: [
-        { text: "Pending", value: "pending" },
-        { text: "Approved", value: "approved" },
-        { text: "Rejected", value: "rejected" },
-        { text: "Needs Revision", value: "needs_revision" },
-      ],
-      onFilter: (value, record) => record.status === value,
-      width: 130,
+      width: 120,
     },
     {
-      title: "Content",
-      dataIndex: "content",
-      key: "content",
-      render: (content) => (
-        <div
-          style={{
-            maxWidth: 200,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {content
-            ? content.substring(0, 50) + (content.length > 50 ? "..." : "")
-            : "No content"}
-        </div>
-      ),
-      width: 200,
+      title: "Score",
+      key: "score",
+      render: (_, record) => {
+        if (record.status === "approved") {
+          return <span className={styles.scoreApproved}>{record.score || 100}</span>;
+        }
+        if (record.status === "rejected") {
+          return <span className={styles.scoreRejected}>{record.score || 0}</span>;
+        }
+        return <span className={styles.scorePending}>-</span>;
+      },
+      width: 70,
     },
     {
       title: "Actions",
       key: "actions",
       fixed: "right",
-      width: 100,
+      width: 110,
       render: (_, record) => (
-        <Space>
-          <Button
-            type="primary"
-            size="small"
+        <div className={styles.actionButtons}>
+          <button
+            className={`${styles.submissionActionBtn} ${styles.submissionActionBtnView}`}
+            onClick={() => handleReviewSubmission(record)}
+            title="View"
+          >
+            <Eye size={15} />
+          </button>
+          <button
+            className={`${styles.submissionActionBtn} ${styles.submissionActionBtnApprove}`}
             onClick={() => handleReviewSubmission(record)}
             disabled={record.status !== "pending"}
+            title="Approve"
           >
-            Review
-          </Button>
-        </Space>
+            <Check size={15} />
+          </button>
+          <button
+            className={`${styles.submissionActionBtn} ${styles.submissionActionBtnReject}`}
+            onClick={() => handleReviewSubmission(record)}
+            disabled={record.status !== "pending"}
+            title="Reject"
+          >
+            <X size={15} />
+          </button>
+        </div>
       ),
     },
   ];
@@ -1188,11 +1289,13 @@ const AdminChallengeDashboard = () => {
                   padding: 0,
                   height: "100%",
                 }}
-                bodyStyle={{
-                  padding: "16px",
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%",
+                styles={{
+                  body: {
+                    padding: "16px",
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                  },
                 }}
               >
                 <div
@@ -1985,61 +2088,106 @@ const AdminChallengeDashboard = () => {
             label: "Submissions",
             children: (
               <div className={styles.tabContent}>
-                <div className={styles.filterRow}>
-                  <Button icon={<FileOutlined />} onClick={handleExportData}>
-                    Export Data
-                  </Button>
-                </div>
-                <Table
-                  columns={submissionsColumns}
-                  dataSource={submissions}
-                  rowKey="_id"
-                  loading={submissionsLoading}
-                  pagination={{
-                    pageSize: 10,
-                    showSizeChanger: true,
-                    showQuickJumper: true,
-                    showTotal: (total, range) =>
-                      `${range[0]}-${range[1]} of ${total} submissions`,
-                  }}
-                  scroll={{ x: "max-content" }}
-                  responsive={true}
-                  size={window.innerWidth <= 768 ? "small" : "default"}
-                  rowSelection={{
-                    type: "checkbox",
-                    onChange: (selectedRowKeys) => {
-                      setSelectedSubmissions(selectedRowKeys);
-                    },
-                    getCheckboxProps: (record) => ({
-                      disabled: record.status !== "pending",
-                    }),
-                  }}
-                  title={() => (
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span>
-                        Submissions Management ({submissions.length} total)
-                      </span>
-                      <Space>
-                        <Button
-                          type="primary"
-                          size="small"
-                          onClick={handleBulkApprove}
-                        >
-                          Bulk Approve
-                        </Button>
-                        <Button danger size="small" onClick={handleBulkReject}>
-                          Bulk Reject
-                        </Button>
-                      </Space>
+                {/* Submissions Management Header */}
+                <div className={styles.submissionsManagementCard}>
+                  <div className={styles.submissionsManagementHeader}>
+                    <div className={styles.submissionsManagementTitle}>
+                      <FileText size={22} />
+                      <h2>Submissions Management</h2>
                     </div>
-                  )}
-                />
+                    <button
+                      className={styles.exportAllBtn}
+                      onClick={handleExportData}
+                    >
+                      <Download size={15} />
+                      Export All Data
+                    </button>
+                  </div>
+                </div>
+
+                {/* Filter Row */}
+                <div className={styles.submissionsFilterRow}>
+                  <div className={styles.searchInputWrapper}>
+                    <Search size={15} />
+                    <input
+                      type="text"
+                      className={styles.searchInput}
+                      placeholder="Search submissions..."
+                      value={submissionSearch}
+                      onChange={(e) => setSubmissionSearch(e.target.value)}
+                    />
+                  </div>
+                  <Select
+                    className={styles.filterSelect}
+                    value={submissionStatusFilter}
+                    onChange={(val) => setSubmissionStatusFilter(val)}
+                    suffixIcon={<ChevronDown size={14} />}
+                  >
+                    <Option value="all">All Status</Option>
+                    <Option value="pending">Pending</Option>
+                    <Option value="approved">Approved</Option>
+                    <Option value="rejected">Rejected</Option>
+                    <Option value="needs_revision">Needs Revision</Option>
+                  </Select>
+                  <Select
+                    className={styles.filterSelect}
+                    value={submissionBulkAction}
+                    onChange={(val) => setSubmissionBulkAction(val)}
+                    placeholder="Bulk Actions"
+                    suffixIcon={<ChevronDown size={14} />}
+                  >
+                    <Option value="">Bulk Actions</Option>
+                    <Option value="approve">Approve Selected</Option>
+                    <Option value="reject">Reject Selected</Option>
+                  </Select>
+                  <button
+                    className={`${styles.applyBtn} ${selectedSubmissions.length > 0 ? styles.applyBtnActive : ""}`}
+                    onClick={() => {
+                      if (submissionBulkAction === "approve") handleBulkApprove();
+                      if (submissionBulkAction === "reject") handleBulkReject();
+                    }}
+                    disabled={selectedSubmissions.length === 0}
+                  >
+                    Apply ({selectedSubmissions.length})
+                  </button>
+                </div>
+
+                {/* Submission Details Table */}
+                <div className={styles.submissionDetailsCard}>
+                  <div className={styles.submissionDetailsHeader}>
+                    <div>
+                      <h2 className={styles.submissionDetailsTitle}>Submission Details</h2>
+                      <p className={styles.submissionDetailsSubtitle}>
+                        {filteredSubmissions.length} of {submissions.length} submissions
+                      </p>
+                    </div>
+                  </div>
+                  <div className={styles.submissionsTableWrapper}>
+                    <Table
+                      columns={submissionsColumns}
+                      dataSource={filteredSubmissions}
+                      rowKey="_id"
+                      loading={submissionsLoading}
+                      pagination={{
+                        pageSize: 10,
+                        showSizeChanger: true,
+                        showQuickJumper: true,
+                        showTotal: (total, range) =>
+                          `${range[0]}-${range[1]} of ${total} submissions`,
+                      }}
+                      scroll={{ x: "max-content" }}
+                      responsive={true}
+                      size={window.innerWidth <= 768 ? "small" : "default"}
+                      rowSelection={{
+                        type: "checkbox",
+                        selectedRowKeys: selectedSubmissions,
+                        onChange: (selectedRowKeys) => {
+                          setSelectedSubmissions(selectedRowKeys);
+                        },
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             ),
           },
@@ -2224,6 +2372,7 @@ const AdminChallengeDashboard = () => {
         onCancel={() => setReviewModalVisible(false)}
         footer={null}
         width={700}
+        forceRender
       >
         {currentSubmission && (
           <div>
@@ -2333,9 +2482,10 @@ const AdminChallengeDashboard = () => {
       {/* Reward Assignment Modal */}
       <Modal
         title="Assign Reward"
-        visible={rewardModalVisible}
+        open={rewardModalVisible}
         onCancel={() => setRewardModalVisible(false)}
         footer={null}
+        forceRender
       >
         {selectedParticipant && (
           <Form
@@ -2471,98 +2621,261 @@ const AdminChallengeDashboard = () => {
 
       {/* Edit Challenge Modal */}
       <Modal
-        title="Edit Challenge"
-        visible={editChallengeModalVisible}
+        open={editChallengeModalVisible}
         onCancel={() => setEditChallengeModalVisible(false)}
         footer={null}
-        width={800}
+        width={880}
+        forceRender
+        closable={false}
+        centered
+        className={styles.editModalOverlay}
       >
         <Form form={editForm} onFinish={submitChallengeEdit} layout="vertical">
-          <Form.Item
-            name="title"
-            label="Challenge Title"
-            rules={[
-              { required: true, message: "Please enter challenge title" },
-            ]}
-          >
-            <Input placeholder="Enter challenge title" />
-          </Form.Item>
+          {/* Teal Header */}
+          <div className={styles.editModalHeader}>
+            <div className={styles.editModalHeaderTitle}>
+              <SquarePen />
+              <span>Edit Challenge Details</span>
+            </div>
+            <div className={styles.editModalHeaderSubtitle}>
+              Customize your challenge settings and configuration. All changes will be saved automatically.
+            </div>
+            <button
+              type="button"
+              className={styles.editModalCloseBtn}
+              onClick={() => setEditChallengeModalVisible(false)}
+            >
+              <X />
+            </button>
+          </div>
 
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[{ required: true, message: "Please enter description" }]}
-          >
-            <TextArea rows={4} placeholder="Enter challenge description" />
-          </Form.Item>
+          {/* Body */}
+          <div className={styles.editModalBody}>
+            {/* Section 1: Basic Information */}
+            <div className={styles.editModalSection}>
+              <div className={styles.editModalSectionHeader}>
+                <Globe />
+                <span className={styles.editModalSectionTitle}>Basic Information</span>
+              </div>
 
-          <Form.Item
-            name="startDate"
-            label="Start Date"
-            rules={[{ required: true, message: "Please select start date" }]}
-          >
-            <DatePicker
-              style={{ width: "100%" }}
-              showTime
-              placeholder="Select start date"
-            />
-          </Form.Item>
+              <div className={styles.editModalRow}>
+                <div className={styles.editModalCol2}>
+                  <Form.Item
+                    name="title"
+                    label="Challenge Title *"
+                    rules={[{ required: true, message: "Please enter challenge title" }]}
+                  >
+                    <Input className={styles.editModalInput} placeholder="Enter challenge title" />
+                  </Form.Item>
+                </div>
+                <div className={styles.editModalCol2}>
+                  <Form.Item name="category" label="Category">
+                    <Select
+                      className={styles.editModalSelect}
+                      placeholder="Select category"
+                    >
+                      <Option value="Data Structures & Algorithms">Data Structures & Algorithms</Option>
+                      <Option value="Web Development">Web Development</Option>
+                      <Option value="Mobile Development">Mobile Development</Option>
+                      <Option value="Machine Learning">Machine Learning</Option>
+                      <Option value="System Design">System Design</Option>
+                      <Option value="DevOps">DevOps</Option>
+                      <Option value="General">General</Option>
+                    </Select>
+                  </Form.Item>
+                </div>
+              </div>
 
-          <Form.Item
-            name="endDate"
-            label="End Date"
-            rules={[{ required: true, message: "Please select end date" }]}
-          >
-            <DatePicker
-              style={{ width: "100%" }}
-              showTime
-              placeholder="Select end date"
-            />
-          </Form.Item>
+              <div className={styles.editModalColFull}>
+                <Form.Item
+                  name="description"
+                  label="Description *"
+                  rules={[{ required: true, message: "Please enter description" }]}
+                >
+                  <TextArea
+                    className={styles.editModalTextarea}
+                    rows={3}
+                    placeholder="Enter challenge description"
+                  />
+                </Form.Item>
+              </div>
 
-          <Form.Item
-            name="allowLateSubmissions"
-            label="Allow Late Submissions"
-            valuePropName="checked"
-          >
-            <Switch />
-          </Form.Item>
+              <div className={styles.editModalRow}>
+                <div className={styles.editModalCol3}>
+                  <Form.Item name="difficulty" label="Difficulty Level">
+                    <Select className={styles.editModalSelect} placeholder="Select difficulty">
+                      <Option value="Beginner">Beginner</Option>
+                      <Option value="Intermediate">Intermediate</Option>
+                      <Option value="Advanced">Advanced</Option>
+                      <Option value="Expert">Expert</Option>
+                    </Select>
+                  </Form.Item>
+                </div>
+                <div className={styles.editModalCol3}>
+                  <Form.Item name="duration" label="Duration">
+                    <Input className={styles.editModalInput} placeholder="e.g. 30 days" />
+                  </Form.Item>
+                </div>
+                <div className={styles.editModalCol3}>
+                  <Form.Item name="dailyTimeCommitment" label="Daily Time Commitment">
+                    <Input className={styles.editModalInput} placeholder="e.g. 2-3 hours daily" />
+                  </Form.Item>
+                </div>
+              </div>
+            </div>
 
-          <Form.Item
-            name="autoApproveSubmissions"
-            label="Auto Approve Submissions"
-            valuePropName="checked"
-          >
-            <Switch />
-          </Form.Item>
+            <hr className={styles.editModalDivider} />
 
-          <Form.Item
-            name="requireApprovalForRewards"
-            label="Require Approval for Rewards"
-            valuePropName="checked"
-          >
-            <Switch />
-          </Form.Item>
+            {/* Section 2: Schedule & Participation */}
+            <div className={styles.editModalSection}>
+              <div className={styles.editModalSectionHeader}>
+                <CalendarDays />
+                <span className={styles.editModalSectionTitle}>Schedule & Participation</span>
+              </div>
 
-          <Form.Item>
-            <Space>
-              <Button type="primary" htmlType="submit">
-                Save Changes
-              </Button>
-              <Button onClick={() => setEditChallengeModalVisible(false)}>
+              <div className={styles.editModalRow}>
+                <div className={styles.editModalCol2}>
+                  <Form.Item
+                    name="startDate"
+                    label="Start Date & Time *"
+                    rules={[{ required: true, message: "Please select start date" }]}
+                  >
+                    <DatePicker
+                      className={styles.editModalDatePicker}
+                      showTime
+                      format="MM/DD/YYYY hh:mm A"
+                      placeholder="Select start date & time"
+                    />
+                  </Form.Item>
+                </div>
+                <div className={styles.editModalCol2}>
+                  <Form.Item
+                    name="endDate"
+                    label="End Date & Time *"
+                    rules={[{ required: true, message: "Please select end date" }]}
+                  >
+                    <DatePicker
+                      className={styles.editModalDatePicker}
+                      showTime
+                      format="MM/DD/YYYY hh:mm A"
+                      placeholder="Select end date & time"
+                    />
+                  </Form.Item>
+                </div>
+              </div>
+
+              <div className={styles.editModalColFull}>
+                <Form.Item name="maxParticipants" label="Maximum Participants">
+                  <Input
+                    className={styles.editModalInput}
+                    type="number"
+                    placeholder="e.g. 1000"
+                  />
+                </Form.Item>
+              </div>
+            </div>
+
+            <hr className={styles.editModalDivider} />
+
+            {/* Section 3: Challenge Settings */}
+            <div className={styles.editModalSection}>
+              <div className={styles.editModalSectionHeader}>
+                <Settings />
+                <span className={styles.editModalSectionTitle}>Challenge Settings</span>
+              </div>
+
+              <div className={styles.editModalSettingsRow}>
+                {/* Left column: Submission Settings */}
+                <div className={styles.editModalSettingsCol}>
+                  <div className={styles.editModalSettingsSubtitle}>Submission Settings</div>
+                  <div className={styles.editModalSettingCard}>
+                    <div className={styles.editModalSettingInfo}>
+                      <span className={styles.editModalSettingLabel}>Allow Late Submissions</span>
+                      <span className={styles.editModalSettingDesc}>Participants can submit after deadline</span>
+                    </div>
+                    <Form.Item name="allowLateSubmissions" valuePropName="checked" noStyle>
+                      <Switch />
+                    </Form.Item>
+                  </div>
+                  <div className={styles.editModalSettingCard}>
+                    <div className={styles.editModalSettingInfo}>
+                      <span className={styles.editModalSettingLabel}>Auto Approve Submissions</span>
+                      <span className={styles.editModalSettingDesc}>Automatically approve all submissions</span>
+                    </div>
+                    <Form.Item name="autoApproveSubmissions" valuePropName="checked" noStyle>
+                      <Switch />
+                    </Form.Item>
+                  </div>
+                </div>
+
+                {/* Right column: Community Features */}
+                <div className={styles.editModalSettingsCol}>
+                  <div className={styles.editModalSettingsSubtitle}>Community Features</div>
+                  <div className={styles.editModalSettingCard}>
+                    <div className={styles.editModalSettingInfo}>
+                      <span className={styles.editModalSettingLabel}>Public Leaderboard</span>
+                      <span className={styles.editModalSettingDesc}>Show participant rankings publicly</span>
+                    </div>
+                    <Form.Item name="publicLeaderboard" valuePropName="checked" noStyle>
+                      <Switch />
+                    </Form.Item>
+                  </div>
+                  <div className={styles.editModalSettingCard}>
+                    <div className={styles.editModalSettingInfo}>
+                      <span className={styles.editModalSettingLabel}>Enable Discussions</span>
+                      <span className={styles.editModalSettingDesc}>Allow participant discussions</span>
+                    </div>
+                    <Form.Item name="enableDiscussions" valuePropName="checked" noStyle>
+                      <Switch />
+                    </Form.Item>
+                  </div>
+                </div>
+              </div>
+
+              {/* Full-width: Require Approval for Rewards */}
+              <div className={styles.editModalSettingCardFull}>
+                <div className={styles.editModalSettingCardFullInfo}>
+                  <div className={styles.editModalSettingCardFullLabel}>
+                    <Shield />
+                    <span className={styles.editModalSettingLabel}>Require Approval for Rewards</span>
+                  </div>
+                  <span className={styles.editModalSettingDesc}>
+                    Manual approval required before distributing rewards to participants
+                  </span>
+                </div>
+                <Form.Item name="requireApprovalForRewards" valuePropName="checked" noStyle>
+                  <Switch />
+                </Form.Item>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className={styles.editModalFooterWrapper}>
+            <hr className={styles.editModalFooterDivider} />
+            <div className={styles.editModalFooter}>
+              <button
+                type="button"
+                className={styles.editModalCancelBtn}
+                onClick={() => setEditChallengeModalVisible(false)}
+              >
                 Cancel
-              </Button>
-            </Space>
-          </Form.Item>
+              </button>
+              <button type="submit" className={styles.editModalSaveBtn}>
+                Save Changes
+              </button>
+            </div>
+          </div>
         </Form>
       </Modal>
 
       {/* Status Change Modal */}
       <Modal
         title="Change Challenge Status"
-        visible={statusModalVisible}
+        open={statusModalVisible}
         onCancel={() => setStatusModalVisible(false)}
         footer={null}
+        forceRender
       >
         <Form form={statusForm} layout="vertical" onFinish={submitStatusChange}>
           <Form.Item
