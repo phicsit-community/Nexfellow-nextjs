@@ -2110,7 +2110,7 @@
   overflow: hidden;
   box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1),
     0px 4px 6px -4px rgba(0, 0, 0, 0.1);
-  max-height: 60vh;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
 }
@@ -2135,7 +2135,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 10px 16px;
+  padding: 24px;
   background: #32A4A4;
   border-radius: 8px 8px 0 0;
   position: relative;
@@ -2176,7 +2176,7 @@
 
 .editModalCloseBtn {
   position: absolute;
-  top: 16px;
+  top: 16.76px;
   right: 16px;
   width: 16px;
   height: 16px;
@@ -2205,8 +2205,8 @@
 .editModalBody {
   display: flex;
   flex-direction: column;
-  padding: 10px 16px;
-  gap: 12px;
+  padding: 32px 24px 24px 24px;
+  gap: 32px;
   flex: 1;
   overflow-y: auto;
   min-height: 0;
@@ -2215,19 +2215,19 @@
 .editModalSection {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
 }
 
 .editModalSectionHeader {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .editModalSectionHeader svg {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   color: #32A4A4;
   flex-shrink: 0;
 }
@@ -2235,8 +2235,8 @@
 .editModalSectionTitle {
   font-family: 'Segoe UI', sans-serif;
   font-weight: 600;
-  font-size: 15px;
-  line-height: 22px;
+  font-size: 18px;
+  line-height: 28px;
   color: #020817;
 }
 
@@ -2252,7 +2252,7 @@
 .editModalRow {
   display: flex;
   flex-direction: row;
-  gap: 12px;
+  gap: 16px;
   width: 100%;
 }
 
@@ -2276,10 +2276,10 @@
   align-items: center;
   font-family: 'Segoe UI', sans-serif;
   font-weight: 600;
-  font-size: 13px;
-  line-height: 18px;
+  font-size: 14px;
+  line-height: 20px;
   color: #020817;
-  margin-bottom: 4px;
+  margin-bottom: 9.43px;
 }
 
 /* Inputs / Selects / Textareas */
@@ -2297,8 +2297,8 @@
 }
 
 .editModalInput {
-  height: 32px;
-  padding: 6px 10px;
+  height: 40px !important;
+  padding: 10.48px 12.76px !important;
 }
 
 .editModalSelect {
@@ -2306,21 +2306,21 @@
 }
 
 .editModalSelect :global(.ant-select-selector) {
-  height: 32px !important;
-  padding: 0 10px !important;
+  height: 40px !important;
+  padding: 0 12.76px !important;
   display: flex;
   align-items: center;
 }
 
 .editModalTextarea textarea {
-  min-height: 50px;
-  padding: 6px 10px;
+  min-height: 80px;
+  padding: 8.76px 12.76px !important;
   resize: vertical;
 }
 
 .editModalDatePicker {
   width: 100%;
-  height: 32px;
+  height: 40px !important;
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
   border-radius: 6px;
@@ -2337,7 +2337,7 @@
 .editModalSettingsRow {
   display: flex;
   flex-direction: row;
-  gap: 12px;
+  gap: 24px;
   width: 100%;
 }
 
@@ -2346,15 +2346,16 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
 }
 
 .editModalSettingsSubtitle {
   font-family: 'Segoe UI', sans-serif;
   font-weight: 600;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 16px;
+  line-height: 24px;
   color: #020817;
+  margin-bottom: 0px;
 }
 
 .editModalSettingCard {
@@ -2363,11 +2364,11 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 10px;
+  padding: 16.76px;
+  height: 77.52px;
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
-  border-radius: 6px;
-  min-height: auto;
+  border-radius: 8px;
 }
 
 .editModalSettingInfo {
@@ -2399,10 +2400,11 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 10px;
+  padding: 17.36px 16.76px 16.76px;
+  height: 74.12px;
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
-  border-radius: 6px;
+  border-radius: 8px;
   width: 100%;
 }
 
@@ -2414,8 +2416,8 @@
 }
 
 .editModalSettingCardFullLabel svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   color: #020817;
 }
 
@@ -2452,33 +2454,30 @@
 .editModalFooterWrapper {
   flex-shrink: 0;
   background: inherit;
+  padding-top: 24.76px;
+  border-top: 0.76px solid #E2E8F0;
 }
 
 .editModalFooter {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  align-items: center;
-  padding: 10px 16px;
-  padding-top: 0;
+  align-items: flex-start;
+  padding: 0;
   gap: 8px;
 }
 
 .editModalFooterDivider {
-  width: 100%;
-  height: 1px;
-  background: #E2E8F0;
-  border: none;
-  margin: 0 0 10px 0;
-  padding: 0;
+  display: none;
 }
 
 .editModalCancelBtn {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 6px 14px;
-  height: 34px;
+  padding: 9.52px 16.76px 10.48px;
+  width: 75.52px;
+  height: 40px;
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
   border-radius: 6px;
@@ -2500,9 +2499,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 6px 14px;
-  height: 34px;
-  min-width: 110px;
+  padding: 9.52px 16px 10.48px;
+  width: 120px;
+  height: 40px;
   background: #32A4A4;
   border: none;
   border-radius: 6px;
@@ -2530,15 +2529,16 @@
 }
 
 .editModalOverlay :global(.ant-form-item-label) {
-  padding-bottom: 4px;
+  padding-bottom: 9.43px;
 }
 
 .editModalOverlay :global(.ant-form-item-label > label) {
   font-family: 'Segoe UI', sans-serif;
   font-weight: 600;
-  font-size: 13px;
-  line-height: 18px;
+  font-size: 14px;
+  line-height: 20px;
   color: #020817;
+  height: auto !important;
 }
 
 /* Edit Modal responsive */
@@ -3117,4 +3117,1017 @@
   .editModalOverlay :global(.ant-switch) {
     background: var(--color-border);
   }
+}
+
+/* ============================================
+   ANALYTICS TAB - FIGMA DESIGN STYLES
+   ============================================ */
+
+/* Analytics Header */
+.analyticsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22.87px;
+}
+
+.analyticsHeaderLeft h2 {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 22.87px;
+  line-height: 30px;
+  letter-spacing: -0.57px;
+  color: #020817;
+  margin: 0 0 4px 0;
+}
+
+.analyticsHeaderLeft p {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 15.25px;
+  line-height: 23px;
+  color: #64748B;
+  margin: 0;
+}
+
+.analyticsHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 7.62px;
+}
+
+.analyticsActionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7.62px;
+  padding: 7.17px 12.16px 8.08px;
+  background: #FFFFFF;
+  border: 0.95px solid #E2E8F0;
+  border-radius: 5.72px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 13.34px;
+  line-height: 19px;
+  color: #020817;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.analyticsActionBtn:hover {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+}
+
+.analyticsActionBtn svg {
+  width: 15.25px;
+  height: 15.25px;
+  flex-shrink: 0;
+}
+
+/* Gradient Stat Cards Row */
+.gradientStatsRow {
+  display: flex;
+  gap: 15.25px;
+  margin-bottom: 22.87px;
+}
+
+.gradientStatCard {
+  flex: 1;
+  padding: 22.87px;
+  border-radius: 7.62px;
+  box-shadow: 0px 9.53px 14.29px -2.86px rgba(0, 0, 0, 0.1),
+    0px 3.81px 5.72px -3.81px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 129.6px;
+  box-sizing: border-box;
+}
+
+.gradientStatCardBlue {
+  background: linear-gradient(135deg, #FFFFFF 0%, #EFF6FF 100%);
+}
+
+.gradientStatCardGreen {
+  background: linear-gradient(135deg, #FFFFFF 0%, #F0FDF4 100%);
+}
+
+.gradientStatCardPurple {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAF5FF 100%);
+}
+
+.gradientStatCardOrange {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFF7ED 100%);
+}
+
+.gradientStatInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 7.62px;
+}
+
+.gradientStatLabel {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 13.34px;
+  line-height: 19px;
+  color: #4B5563;
+}
+
+.gradientStatValue {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 22.87px;
+  line-height: 30px;
+  color: #111827;
+}
+
+.gradientStatBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3.81px;
+  padding: 1.91px 9.53px;
+  border-radius: 9999px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 11.44px;
+  line-height: 15px;
+  width: fit-content;
+}
+
+.gradientStatBadgeBlue {
+  background: #DBEAFE;
+  color: #1D4ED8;
+}
+
+.gradientStatBadgeGreen {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+.gradientStatBadgePurple {
+  background: #F3E8FF;
+  color: #7E22CE;
+}
+
+.gradientStatBadgeOrange {
+  background: #FFEDD5;
+  color: #C2410C;
+}
+
+.gradientStatIcon {
+  width: 45.74px;
+  height: 45.74px;
+  border-radius: 11.44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.gradientStatIconBlue {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+}
+
+.gradientStatIconGreen {
+  background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+}
+
+.gradientStatIconPurple {
+  background: linear-gradient(135deg, #A855F7 0%, #9333EA 100%);
+}
+
+.gradientStatIconOrange {
+  background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+}
+
+.gradientStatIcon svg {
+  width: 22.87px;
+  height: 22.87px;
+  color: #FFFFFF;
+}
+
+/* Simple Stat Cards Row */
+.simpleStatsRow {
+  display: flex;
+  gap: 15.25px;
+  margin-bottom: 22.87px;
+}
+
+.simpleStatCard {
+  flex: 1;
+  background: #FFFFFF;
+  border: 0.95px solid #E2E8F0;
+  box-shadow: 0px 0.95px 1.91px rgba(0, 0, 0, 0.05);
+  border-radius: 7.62px;
+  overflow: hidden;
+}
+
+.simpleStatCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22.87px 22.87px 7.62px;
+}
+
+.simpleStatCardTitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 13.34px;
+  line-height: 19px;
+  letter-spacing: -0.33px;
+  color: #020817;
+}
+
+.simpleStatCardHeader svg {
+  width: 15.25px;
+  height: 15.25px;
+  color: #64748B;
+}
+
+.simpleStatCardBody {
+  padding: 0 22.87px 22.87px;
+}
+
+.simpleStatMainValue {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 22.87px;
+  line-height: 30px;
+  margin: 0 0 2px 0;
+}
+
+.simpleStatMainValueGreen {
+  color: #16A34A;
+}
+
+.simpleStatMainValueBlue {
+  color: #2563EB;
+}
+
+.simpleStatMainValueRed {
+  color: #DC2626;
+}
+
+.simpleStatMainValuePurple {
+  color: #9333EA;
+}
+
+.simpleStatSubtext {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 11.44px;
+  line-height: 15px;
+  color: #64748B;
+  margin: 0;
+}
+
+/* Charts Row (side-by-side) */
+.chartsRow {
+  display: flex;
+  gap: 22.87px;
+  margin-bottom: 22.87px;
+}
+
+.chartCard {
+  flex: 1;
+  background: linear-gradient(135deg, #FFFFFF 0%, rgba(249, 250, 251, 0.5) 100%), #FFFFFF;
+  box-shadow: 0px 9.53px 14.29px -2.86px rgba(0, 0, 0, 0.1),
+    0px 3.81px 5.72px -3.81px rgba(0, 0, 0, 0.1);
+  border-radius: 7.62px;
+  padding: 22.87px;
+  display: flex;
+  flex-direction: column;
+  gap: 15.25px;
+}
+
+.chartCardTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 30.49px;
+  position: relative;
+}
+
+.chartCardTitleIcon {
+  width: 30.49px;
+  height: 30.49px;
+  background: linear-gradient(135deg, #28C7C9 0%, #19AE9F 100%);
+  border-radius: 7.62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chartCardTitleIcon svg {
+  width: 15.25px;
+  height: 15.25px;
+  color: #FFFFFF;
+}
+
+.chartCardTitleText {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 17.15px;
+  line-height: 27px;
+  letter-spacing: -0.43px;
+  color: #020817;
+}
+
+/* Full-width chart cards (bordered) */
+.chartCardFull {
+  background: #FFFFFF;
+  border: 0.95px solid #E2E8F0;
+  box-shadow: 0px 0.95px 1.91px rgba(0, 0, 0, 0.05);
+  border-radius: 7.62px;
+  margin-bottom: 22.87px;
+  overflow: hidden;
+}
+
+.chartCardFullHeader {
+  padding: 22.87px;
+}
+
+.chartCardFullTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5.72px;
+}
+
+.chartCardFullTitle svg {
+  width: 19.06px;
+  height: 19.06px;
+  color: #19AE9F;
+  flex-shrink: 0;
+}
+
+.chartCardFullTitleText {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 22.87px;
+  line-height: 23px;
+  letter-spacing: -0.57px;
+  color: #020817;
+}
+
+.chartCardFullSubtitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 13.34px;
+  line-height: 19px;
+  color: #64748B;
+  margin: 0;
+  padding-top: 5.72px;
+}
+
+.chartCardFullBody {
+  padding: 0 22.87px 23.59px;
+}
+
+/* Checkpoint Completion Funnel */
+.funnelContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 22.87px;
+  padding: 0 22.87px 23.59px;
+}
+
+.funnelStep {
+  position: relative;
+  min-height: 83.86px;
+}
+
+.funnelStepHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 11px;
+}
+
+.funnelStepLeft {
+  display: flex;
+  align-items: center;
+  gap: 11.44px;
+}
+
+.funnelStepNumber {
+  width: 30.49px;
+  height: 30.49px;
+  border: 0.95px solid #E2E8F0;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 11.44px;
+  line-height: 15px;
+  color: #020817;
+  flex-shrink: 0;
+}
+
+.funnelStepName {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 15.25px;
+  line-height: 23px;
+  color: #020817;
+}
+
+.funnelStepRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.funnelStepPercent {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 13.34px;
+  line-height: 19px;
+  color: #19AE9F;
+}
+
+.funnelStepCount {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 11.44px;
+  line-height: 15px;
+  color: #64748B;
+}
+
+.funnelProgressBar {
+  width: 100%;
+  height: 11.44px;
+  background: #F3F7F7;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.funnelProgressFill {
+  height: 100%;
+  background: #19AE9F;
+  border-radius: 9999px;
+  transition: width 0.6s ease;
+}
+
+.funnelDropoff {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 11.44px;
+  line-height: 15px;
+  color: #64748B;
+  padding-left: 41.93px;
+}
+
+/* Reward Distribution Card (bordered variant) */
+.chartCardBordered {
+  flex: 1;
+  background: #FFFFFF;
+  border: 0.95px solid #E2E8F0;
+  box-shadow: 0px 0.95px 1.91px rgba(0, 0, 0, 0.05);
+  border-radius: 7.62px;
+  overflow: hidden;
+}
+
+.chartCardBorderedHeader {
+  padding: 22.87px;
+}
+
+.chartCardBorderedTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5.72px;
+}
+
+.chartCardBorderedTitle svg {
+  width: 19.06px;
+  height: 19.06px;
+  flex-shrink: 0;
+}
+
+.rewardIcon {
+  color: #F59E0B;
+}
+
+.chartCardBorderedTitleText {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 22.87px;
+  line-height: 23px;
+  letter-spacing: -0.57px;
+  color: #020817;
+}
+
+.chartCardBorderedSubtitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 13.34px;
+  line-height: 19px;
+  color: #64748B;
+  margin: 0;
+  padding-top: 5.72px;
+}
+
+.chartCardBorderedBody {
+  padding: 0 22.87px 22.87px;
+}
+
+/* Responsive overrides for analytics */
+@media (max-width: 1024px) {
+  .gradientStatsRow {
+    flex-wrap: wrap;
+  }
+
+  .gradientStatCard {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 0;
+  }
+
+  .simpleStatsRow {
+    flex-wrap: wrap;
+  }
+
+  .simpleStatCard {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .analyticsHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .analyticsHeaderActions {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .analyticsActionBtn {
+    flex: 1;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .gradientStatsRow {
+    flex-direction: column;
+  }
+
+  .gradientStatCard {
+    flex: 1 1 100%;
+  }
+
+  .simpleStatsRow {
+    flex-direction: column;
+  }
+
+  .simpleStatCard {
+    flex: 1 1 100%;
+  }
+
+  .chartsRow {
+    flex-direction: column;
+  }
+
+  .chartCard {
+    flex: 1 1 100%;
+  }
+
+  .chartCardBordered {
+    flex: 1 1 100%;
+  }
+
+  .funnelDropoff {
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .gradientStatCard {
+    padding: 16px;
+    min-height: auto;
+  }
+
+  .gradientStatValue {
+    font-size: 20px;
+  }
+
+  .gradientStatIcon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .simpleStatMainValue {
+    font-size: 20px;
+  }
+
+  .chartCardTitleText {
+    font-size: 15px;
+  }
+
+  .chartCardFullTitleText {
+    font-size: 18px;
+  }
+
+  .funnelStepName {
+    font-size: 13px;
+  }
+}
+
+/* ============================================= */
+/* Delete Challenge Modal Styles                 */
+/* ============================================= */
+
+.deleteModalOverlay :global(.ant-modal-content),
+.deleteModalOverlay:global(.ant-modal-wrap) :global(.ant-modal-content) {
+  padding: 0 !important;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0px 4px 6px -4px rgba(0, 0, 0, 0.1);
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+}
+
+.deleteModalOverlay :global(.ant-modal-body),
+.deleteModalOverlay:global(.ant-modal-wrap) :global(.ant-modal-body) {
+  padding: 0 !important;
+}
+
+.deleteModalContainer {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24.76px;
+  gap: 16px;
+  position: relative;
+  width: 100%;
+}
+
+.deleteModalCloseBtn {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  right: 16.76px;
+  top: 16.76px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: opacity 0.2s;
+  z-index: 3;
+}
+
+.deleteModalCloseBtn:hover {
+  opacity: 1;
+}
+
+.deleteModalCloseBtn svg {
+  width: 16px;
+  height: 16px;
+  color: #020817;
+}
+
+.deleteModalHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 8px;
+}
+
+.deleteModalIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deleteModalTitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 18px;
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.45px;
+  color: #020817;
+  margin: 0;
+}
+
+.deleteModalDesc {
+  font-family: 'Segoe UI', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  color: #64748B;
+  margin: 0;
+  width: 100%;
+}
+
+.deleteModalWarningBox {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16.76px;
+  gap: 4px;
+  width: 100%;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+}
+
+.deleteModalWarningTitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  color: #991B1B;
+}
+
+.deleteModalWarningText {
+  font-family: 'Segoe UI', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  color: #DC2626;
+}
+
+.deleteModalFooter {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 0;
+  gap: 8px;
+  width: 100%;
+}
+
+.deleteModalCancelBtn {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 9.52px 16.76px 10.48px;
+  height: 40px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  font-family: 'Segoe UI', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #020817;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.deleteModalCancelBtn:hover {
+  background: #F8FAFC;
+}
+
+.deleteModalDeleteBtn {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 9.52px 16px 10.48px;
+  height: 40px;
+  background: #EF4444;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Segoe UI', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #F8FAFC;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.deleteModalDeleteBtn:hover {
+  background: #DC2626;
+}
+
+/* ============================================= */
+/* Status Change Modal Styles                    */
+/* ============================================= */
+
+.statusModalOverlay :global(.ant-modal-content),
+.statusModalOverlay:global(.ant-modal-wrap) :global(.ant-modal-content) {
+  padding: 0 !important;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0px 4px 6px -4px rgba(0, 0, 0, 0.1);
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+}
+
+.statusModalOverlay :global(.ant-modal-body),
+.statusModalOverlay:global(.ant-modal-wrap) :global(.ant-modal-body) {
+  padding: 0 !important;
+}
+
+.statusModalContainer {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24.76px;
+  gap: 16px;
+  position: relative;
+  width: 100%;
+}
+
+.statusModalCloseBtn {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  right: 16.76px;
+  top: 16.76px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: opacity 0.2s;
+  z-index: 3;
+}
+
+.statusModalCloseBtn:hover {
+  opacity: 1;
+}
+
+.statusModalCloseBtn svg {
+  width: 16px;
+  height: 16px;
+  color: #020817;
+}
+
+.statusModalHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  width: 100%;
+}
+
+.statusModalTitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 18px;
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.45px;
+  color: #020817;
+  margin: 0;
+}
+
+.statusModalDesc {
+  font-family: 'Segoe UI', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  color: #64748B;
+  margin: 0;
+  margin-top: -10px;
+  width: 100%;
+}
+
+.statusModalBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px 0;
+  width: 100%;
+}
+
+.statusModalFormItem {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.statusModalLabel {
+  font-family: 'Segoe UI', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 14px;
+  display: flex;
+  align-items: center;
+  color: #020817;
+}
+
+.statusModalSelect {
+  width: 100%;
+}
+
+.statusModalSelect :global(.ant-select-selector) {
+  height: 40px !important;
+  padding: 0 12.76px !important;
+  display: flex;
+  align-items: center;
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 6px !important;
+}
+
+.statusModalFooter {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 0;
+  gap: 8px;
+  width: 100%;
+}
+
+.statusModalCancelBtn {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 9.52px 16.76px 10.48px;
+  height: 40px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  font-family: 'Segoe UI', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #020817;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.statusModalCancelBtn:hover {
+  background: #F8FAFC;
+}
+
+.statusModalUpdateBtn {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 9.52px 16px 10.48px;
+  height: 40px;
+  background: #14DBDB;
+  opacity: 0.5;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Segoe UI', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.statusModalUpdateBtn:hover {
+  opacity: 0.8;
 }
