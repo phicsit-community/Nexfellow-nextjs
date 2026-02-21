@@ -9,7 +9,7 @@ const getBaseURL = () => {
     // In browser, check if we're on the production domain
     if (typeof window !== "undefined") {
         const hostname = window.location.hostname;
-        if (hostname.includes("vercel.app") || hostname.includes("nexfellow.com")) {
+        if (hostname.includes("vercel.app") || hostname.includes("nexfellow.com") || hostname.includes("onrender.com")) {
             return "https://nexfellow-nextjs.onrender.com";
         }
     }
