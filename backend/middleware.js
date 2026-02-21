@@ -12,8 +12,16 @@ const tokenUtils = require("./utils/token");
 const isAuthenticated = async (req, res, next) => {
   try {
     // Check for access token in cookies
-    const accessToken = req.cookies.accessToken;
+    let accessToken = req.cookies.accessToken;
     const refreshToken = req.cookies.refreshToken;
+
+    // Fallback: Check Authorization header (for cross-domain deployments where cookies are blocked)
+    if (!accessToken && req.headers.authorization) {
+      const authHeader = req.headers.authorization;
+      if (authHeader.startsWith('Bearer ')) {
+        accessToken = authHeader.substring(7);
+      }
+    }
 
     if (!accessToken && !refreshToken) {
       return res.status(401).json({ message: "Unauthorized. Please log in." });
@@ -116,13 +124,24 @@ const isAuthenticated = async (req, res, next) => {
 const isClient = async (req, res, next) => {
   try {
     // Check for access token in cookies
-    const accessToken = req.cookies.accessToken;
+    let accessToken = req.cookies.accessToken;
     const refreshToken = req.cookies.refreshToken;
 
-    console.log(`[middleware:isClient] Cookies received - accessToken: ${accessToken ? 'present' : 'missing'}, refreshToken: ${refreshToken ? 'present' : 'missing'}, userjwt: ${req.signedCookies.userjwt ? 'present' : 'missing'}`);
+    // Fallback: Check Authorization header (for cross-domain deployments where cookies are blocked)
+    let tokenFromHeader = null;
+    if (!accessToken && req.headers.authorization) {
+      const authHeader = req.headers.authorization;
+      if (authHeader.startsWith('Bearer ')) {
+        tokenFromHeader = authHeader.substring(7);
+        accessToken = tokenFromHeader;
+        console.log(`[middleware:isClient] Using token from Authorization header`);
+      }
+    }
+
+    console.log(`[middleware:isClient] Cookies received - accessToken: ${accessToken ? 'present' : 'missing'}, refreshToken: ${refreshToken ? 'present' : 'missing'}, userjwt: ${req.signedCookies.userjwt ? 'present' : 'missing'}, authHeader: ${tokenFromHeader ? 'present' : 'missing'}`);
 
     if (!accessToken && !refreshToken && !req.signedCookies.userjwt) {
-      console.log(`[middleware:isClient] No auth cookies found`);
+      console.log(`[middleware:isClient] No auth cookies or header found`);
       return res.status(401).json("Not Logged In");
     }
 
@@ -396,9 +415,17 @@ const isAdmin = async (req, res, next) => {
 
 const setUserIfLoggedIn = async (req, res, next) => {
   try {
-    const accessToken = req.cookies.accessToken;
+    let accessToken = req.cookies.accessToken;
     const refreshToken = req.cookies.refreshToken;
     const userjwt = req.signedCookies.userjwt;
+
+    // Fallback: Check Authorization header
+    if (!accessToken && req.headers.authorization) {
+      const authHeader = req.headers.authorization;
+      if (authHeader.startsWith('Bearer ')) {
+        accessToken = authHeader.substring(7);
+      }
+    }
 
     if (accessToken) {
       const decoded = tokenUtils.verifyAccessToken(accessToken);

@@ -42,6 +42,11 @@ export default function AuthCallback() {
                         })
                     );
 
+                    // Store access token in localStorage for Authorization header fallback
+                    if (response.data.token) {
+                        localStorage.setItem("accessToken", response.data.token);
+                    }
+
                     // Set flags in sessionStorage to indicate successful OAuth login
                     sessionStorage.setItem("oauth_login_success", "true");
                     sessionStorage.setItem("oauth_login_time", Date.now().toString());
@@ -51,18 +56,18 @@ export default function AuthCallback() {
                     let verified = false;
                     for (let i = 0; i < 10; i++) {
                         await new Promise(resolve => setTimeout(resolve, 100));
-                        
+
                         const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
                         const userStr = localStorage.getItem("user");
                         const hasUser = userStr && userStr !== "null" && userStr !== "undefined";
-                        
+
                         if (isLoggedIn && hasUser) {
                             console.log("OAuth callback: localStorage verified after", (i + 1) * 100, "ms");
                             verified = true;
                             break;
                         }
                     }
-                    
+
                     if (!verified) {
                         // Force set localStorage directly as fallback
                         console.log("OAuth callback: Force setting localStorage");

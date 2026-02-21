@@ -44,10 +44,17 @@ const processQueue = (error, token = null) => {
     failedQueue = [];
 };
 
-// Request interceptor for adding auth headers if needed
+// Request interceptor for adding auth headers
 api.interceptors.request.use(
     (config) => {
-        // You can add auth token here if needed
+        // Attach access token from localStorage as Authorization header
+        // This is the fallback for cross-domain deployments where cookies are blocked
+        if (typeof window !== "undefined") {
+            const token = localStorage.getItem("accessToken");
+            if (token && !config.headers.Authorization) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+        }
         return config;
     },
     (error) => {

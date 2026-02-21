@@ -74,20 +74,10 @@ const Login = () => {
           }
         }
       } catch (error) {
-        // Auth failed - clear any stale cookies/localStorage
-        console.log("Not authenticated, clearing stale data");
-
-        // Clear stale auth data
-        if (typeof window !== "undefined") {
-          localStorage.removeItem("isLoggedIn");
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
-          localStorage.removeItem("expiresIn");
-
-          // Clear stale cookies by setting them to expire
-          document.cookie = "isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        }
+        // Auth check failed - this is EXPECTED on cross-domain deployments
+        // where cookies are blocked. Do NOT clear localStorage here as it
+        // causes a Login → Feed → Login redirect loop.
+        console.log("Not authenticated via server cookies (expected on cross-domain)");
       }
     };
 
@@ -139,12 +129,18 @@ const Login = () => {
         return;
       }
 
-      const { payload, expiresIn, redirect } = response.data;
+      const { payload, expiresIn, redirect, token } = response.data;
 
       dispatch(login({ user: payload, expiresIn }));
       if (payload.themePreference) {
         setTheme(payload.themePreference);
       }
+
+      // Store token in localStorage for Authorization header fallback
+      if (token) {
+        localStorage.setItem("accessToken", token);
+      }
+
       toast.success("Login successful", {
         position: "bottom-right",
         richColors: true,
@@ -183,9 +179,14 @@ const Login = () => {
     try {
       const response = await api.post("/user/otp/verify", { email, otp });
 
-      const { payload, expiresIn, redirect, expiresAt } = response.data;
+      const { payload, expiresIn, redirect, expiresAt, token } = response.data;
 
       dispatch(login({ user: payload, expiresIn }));
+
+      // Store token in localStorage for Authorization header fallback
+      if (token) {
+        localStorage.setItem("accessToken", token);
+      }
 
       toast.success("Login successful", {
         position: "bottom-right",

@@ -134,6 +134,7 @@ module.exports.login = async (req, res) => {
 
   return res.status(200).json({
     payload,
+    token: accessToken,
     redirect: redirectUrl,
     expiresIn: expiresAt.toISOString(),
     tokenExpiry: {
@@ -224,6 +225,7 @@ module.exports.verifyOtp = async (req, res) => {
     message: "OTP verified successfully",
     otpVerified: true,
     payload,
+    token: accessToken,
     redirect: redirectUrl,
     expiresIn: expiresAt.toISOString(),
     tokenExpiry: {
