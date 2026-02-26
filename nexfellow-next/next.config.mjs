@@ -16,8 +16,8 @@ const nextConfig = {
 
   // Experimental features for optimization
   experimental: {
-    // Enable CSS optimization
-    optimizeCss: true,
+    // CSS optimization disabled - causes native binding issues on Linux deployments
+    // optimizeCss: true,
     // Enable optimized package imports
     optimizePackageImports: ['@radix-ui/react-icons', 'lucide-react', 'react-icons'],
   },
