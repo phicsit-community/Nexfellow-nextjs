@@ -27,7 +27,7 @@ const getSiteUrl = () => {
   }
   // Auto-detect production
   if (process.env.RENDER || process.env.NODE_ENV === "production") {
-    return "https://nexfellow-nextjs.vercel.app";
+    return "https://nexfellow-nextjs-1.onrender.com";
   }
   return process.env.SITE_URL || "http://localhost:3000";
 };
