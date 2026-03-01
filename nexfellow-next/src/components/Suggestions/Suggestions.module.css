@@ -11,7 +11,7 @@
   gap: 1rem;
   z-index: 0;
   margin-bottom: 1.5rem;
-  margin-top: 20px;
+  margin-top: 0px;
   padding: 0 0.5rem;
 
   /* margin-left: 50px;  */
@@ -33,11 +33,16 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  padding: 12px 0;
+  padding: 8px 0;
   background-color: var(--color-background, #fff);
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.searchContainer > button {
+  flex: 1;
+  min-width: 0;
 }
 
 :global(.dark) .searchContainer {

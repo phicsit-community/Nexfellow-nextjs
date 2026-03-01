@@ -121,7 +121,7 @@ function Sidebar() {
 
       {!isMobile && (
         <div className={style.accountManagement}>
-          <p className={style.am}>ACCOUNT MANAGEMENT</p>
+          <p className={style.am} style={{ fontFamily: "'Poppins', sans-serif" }}>ACCOUNT MANAGEMENT</p>
 
           <Link
             className={style.amLink}

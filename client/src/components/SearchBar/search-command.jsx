@@ -139,7 +139,7 @@ export default function SearchCommand() {
       <CommandDialog
         open={open}
         onOpenChange={setOpen}
-        className="w-full max-w-2xl z-[9999] "
+        className="w-full max-w-2xl z-9999 "
         style={{
           padding: "2rem",
         }}
@@ -488,7 +488,7 @@ export function SearchCommandMobile() {
       <CommandDialog
         open={open}
         onOpenChange={setOpen}
-        className="w-full max-w-2xl z-[9999] "
+        className="w-full max-w-2xl z-9999 "
         style={{
           padding: "2rem",
         }}

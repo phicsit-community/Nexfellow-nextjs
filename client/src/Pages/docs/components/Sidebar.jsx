@@ -174,7 +174,7 @@ export default function Sidebar({
       `}</style>
 
       {/* Header */}
-      <div className="flex-shrink-0 flex items-center justify-between p-4 border-b border-white/10">
+      <div className="shrink-0 flex items-center justify-between p-4 border-b border-white/10">
         <div className="flex items-center justify-center w-full">
           <img
             src={collapsed || isMobile ? logoIcon : logo}
@@ -204,7 +204,7 @@ export default function Sidebar({
       </div>
 
       {/* Footer */}
-      <div className="flex-shrink-0 p-4 border-t border-white/10 flex items-center justify-between">
+      <div className="shrink-0 p-4 border-t border-white/10 flex items-center justify-between">
         {!collapsed && <p className="text-xs text-white/70">@nexfellow2025</p>}
         <button
           onClick={toggleTheme}

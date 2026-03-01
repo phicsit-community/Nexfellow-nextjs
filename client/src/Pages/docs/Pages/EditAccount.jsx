@@ -143,13 +143,13 @@ export default function EditAccount() {
 
         <div className="relative mt-8" ref={timelineRef}>
           <div
-            className={`absolute top-0 bottom-0 left-[1.5rem] w-0.5 ${
+            className={`absolute top-0 bottom-0 left-6 w-0.5 ${
               darkMode ? "bg-gray-800" : "bg-[#D1EBEE]"
             }`}
           />
 
           <div
-            className="absolute top-0 left-[1.5rem] w-0.5 transition-all duration-500"
+            className="absolute top-0 left-6 w-0.5 transition-all duration-500"
             style={{
               height: "calc(var(--progress-height, 0%) - 24px)",
               backgroundColor: cyan,

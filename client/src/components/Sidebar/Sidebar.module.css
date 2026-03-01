@@ -110,12 +110,13 @@
 }
 
 .am {
-  width: 200px;
-  font-size: 12px;
+  font-family: "Poppins", sans-serif !important;
+  font-style: normal;
   font-weight: 700;
+  font-size: 10px;
+  line-height: 15px;
+  color: #000000;
   pointer-events: none !important;
-  font-family: "Poppins";
-  color: var(--color-muted-foreground);
 }
 
 :global(.dark) .am {

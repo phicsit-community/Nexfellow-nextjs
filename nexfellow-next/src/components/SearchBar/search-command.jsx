@@ -128,7 +128,7 @@ export default function SearchCommand() {
           padding: "0.5rem 1rem",
         }}
         onClick={() => setOpen(true)}
-        className="sm:flex hidden items-center w-fit md:w-full max-w-sm gap-2 text-sm text-muted-foreground rounded-full border shadow-sm bg-background hover:bg-accent/50 transition-all duration-200 cursor-pointer"
+        className="sm:flex hidden items-center w-full gap-2 text-sm text-muted-foreground rounded-full border shadow-sm bg-background hover:bg-accent/50 transition-all duration-200 cursor-pointer"
       >
         <span className="sr-only">Open search</span>
         <Search className="h-4 w-4 text-muted-foreground" />
