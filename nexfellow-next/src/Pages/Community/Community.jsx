@@ -73,7 +73,7 @@ const Community = () => {
   }
 
   return (
-    <div>
+    <div style={{ padding: "0.5rem 1rem 0" }}>
       {isUserJoined ? (
         <JoinedCommunity communityData={userCommunities} />
       ) : (

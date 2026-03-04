@@ -42,6 +42,7 @@ import {
   SettingOutlined,
   LoadingOutlined,
   DownloadOutlined,
+  LockOutlined,
 } from "@ant-design/icons";
 import { formatDistanceToNow } from "date-fns";
 
@@ -468,28 +469,30 @@ const Checkpoints = ({ challenge, userProgress, fetchUserProgress }) => {
 
   return (
     <div className={styles.checkpointsDiv}>
-      <div>
-        {/* <img src={checkpoint} alt="Checkpoint" /> */}
-        <p
-          className="font-semibold"
-          style={{ marginBottom: "0.5rem", fontSize: "1.25rem" }}
-        >
+      <div style={{ marginBottom: "25px" }}>
+        <h2 style={{
+          margin: "0 0 4px",
+          fontFamily: "Segoe UI, sans-serif",
+          fontWeight: 600,
+          fontSize: "20.6px",
+          lineHeight: "29px",
+          color: "#111827",
+        }}>
           Daily Tasks Progress ({dailyTasks.length} days)
-        </p>
-        <p className="text-sm text-muted-foreground">
+        </h2>
+        <p style={{
+          margin: 0,
+          fontFamily: "Segoe UI, sans-serif",
+          fontWeight: 400,
+          fontSize: "16.5px",
+          lineHeight: "25px",
+          color: "#4B5563",
+        }}>
           Track your daily progress through the challenge
         </p>
       </div>
 
-      {userProgress && (
-        <div className={styles.progressIndicator}>
-          <Progress percent={userProgress?.progress || 0} status="active" />
-          <p className=" text-nowrap">
-            Day {userProgress?.currentDay || 1} of {challenge.duration} (
-            {userProgress?.progress || 0}% complete)
-          </p>
-        </div>
-      )}
+      {/* Progress indicator hidden per Figma design */}
 
       <div className={styles.checkpointsList}>
         {dailyTasks.length > 0 ? (
@@ -517,9 +520,13 @@ const Checkpoints = ({ challenge, userProgress, fetchUserProgress }) => {
                   key={task.day}
                   dot={
                     isCompleted ? (
-                      <CheckCircleOutlined className={styles.completedIcon} />
+                      <CheckCircleOutlined style={{ color: "#FFFFFF", fontSize: "16px" }} />
                     ) : isMissed ? (
-                      <CloseCircleOutlined className={styles.missedIcon} />
+                      <CloseCircleOutlined style={{ color: "#FFFFFF", fontSize: "16px" }} />
+                    ) : isCurrentDay ? (
+                      <CheckCircleOutlined style={{ color: "#FFFFFF", fontSize: "16px" }} />
+                    ) : isLocked ? (
+                      <LockOutlined style={{ fontSize: "16px" }} />
                     ) : undefined
                   }
                   color={
@@ -530,42 +537,60 @@ const Checkpoints = ({ challenge, userProgress, fetchUserProgress }) => {
                         : isLocked
                           ? "gray"
                           : isCurrentDay
-                            ? "blue"
+                            ? "green"
                             : "gray"
                   }
-                  label={`Day ${task.day}`}
                 >
-                  <div className={styles.checkpointItem}>
+                  <div
+                    className={styles.checkpointItem}
+                    style={
+                      isCurrentDay && !isCompleted && !isMissed
+                        ? {
+                            border: "1px solid #14B8A6",
+                            boxShadow: "0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1)",
+                          }
+                        : {}
+                    }
+                  >
                     <div className={styles.checkpointHeader}>
-                      <h3>{task.title}</h3>
-                      {isCompleted && <Tag color="success">Completed</Tag>}
-                      {isMissed && <Tag color="error">Missed</Tag>}
-                      {isCurrentDay && !isCompleted && !isMissed && (
-                        <Tag color="processing">Current</Tag>
+                      <div>
+                        <h3 style={{ margin: 0, fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "18.5px", lineHeight: "29px", letterSpacing: "-0.46px", color: "#020817" }}>
+                          Day {task.day}
+                        </h3>
+                        <p style={{ margin: 0, fontFamily: "Segoe UI, sans-serif", fontWeight: 400, fontSize: "14px", lineHeight: "21px", color: "#64748B" }}>
+                          {task.title}
+                        </p>
+                      </div>
+                      {isCompleted && (
+                        <span style={{ background: "#14B8A6", color: "#F8FAFC", padding: "3px 11px", borderRadius: "9999px", fontSize: "12px", fontWeight: 600, fontFamily: "Segoe UI, sans-serif" }}>
+                          Completed
+                        </span>
                       )}
-                      {isLocked && <Tag color="default">Locked</Tag>}
+                      {isMissed && (
+                        <span style={{ background: "#EF4444", color: "#FFFFFF", padding: "3px 11px", borderRadius: "9999px", fontSize: "12px", fontWeight: 600, fontFamily: "Segoe UI, sans-serif" }}>
+                          Missed
+                        </span>
+                      )}
+                      {isCurrentDay && !isCompleted && !isMissed && (
+                        <span style={{ background: "#14B8A6", color: "#F8FAFC", padding: "3px 11px", borderRadius: "9999px", fontSize: "12px", fontWeight: 600, fontFamily: "Segoe UI, sans-serif" }}>
+                          Current
+                        </span>
+                      )}
+                      {isLocked && (
+                        <span style={{ background: "#E5E7EB", color: "#6B7280", padding: "3px 11px", borderRadius: "9999px", fontSize: "12px", fontWeight: 600, fontFamily: "Segoe UI, sans-serif" }}>
+                          Locked
+                        </span>
+                      )}
                     </div>
-                    <p>{task.description}</p>
-
-                    {/* Show submission form if user can submit */}
-                    {canSubmit && (
-                      <CheckpointSubmissionForm
-                        dailyTask={task}
-                        challengeId={challenge._id}
-                        day={dayNumber}
-                        submissions={submissions}
-                        onSubmit={() => {
-                          fetchUserProgress();
-                          fetchSubmissions();
-                        }}
-                      />
-                    )}
+                    <p style={{ margin: 0, fontFamily: "Segoe UI, sans-serif", fontWeight: 400, fontSize: "16.5px", lineHeight: "25px", color: "#374151" }}>
+                      {task.description}
+                    </p>
 
                     {/* Show missed day message */}
                     {isMissed && (
                       <div className={styles.missedDay}>
                         <p>
-                          ❌ This day was missed - you can no longer submit for
+                          This day was missed - you can no longer submit for
                           this day
                         </p>
                       </div>
@@ -586,9 +611,8 @@ const Checkpoints = ({ challenge, userProgress, fetchUserProgress }) => {
 
             {/* Challenge completion milestone */}
             <CustomTimelineItem
-              dot={<TrophyOutlined />}
+              dot={<TrophyOutlined style={{ color: "#FFFFFF", fontSize: "16px" }} />}
               color="gold"
-              label="Finish"
             >
               <div className={styles.challengeCompletion}>
                 <h3>Challenge Completion</h3>
@@ -653,41 +677,74 @@ const Checkpoints = ({ challenge, userProgress, fetchUserProgress }) => {
       {/* Show checkpoint rewards preview */}
       {challenge.checkpointRewards &&
         challenge.checkpointRewards.length > 0 && (
-          <div className={styles.rewardsSection}>
-            <div className={styles.rewardsSectionHeader}>
-              <h3 className="flex items-center gap-2">
-                <Trophy className="inline text-orange-400" />
-                Upcoming Checkpoint Rewards
-              </h3>
-              <div className={styles.rewardsCount}>
-                {challenge.checkpointRewards.length} Rewards Available
+          <div style={{ marginTop: "25px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Trophy size={21} style={{ color: "#F59E0B" }} />
+                <h3 style={{ margin: 0, fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "18.5px", lineHeight: "29px", color: "#111827" }}>
+                  Upcoming Checkpoint Rewards
+                </h3>
               </div>
+              <span style={{
+                border: "1px solid #99F6E4",
+                borderRadius: "9999px",
+                padding: "3px 11px",
+                fontSize: "12px",
+                fontWeight: 600,
+                color: "#0D9488",
+                fontFamily: "Segoe UI, sans-serif",
+              }}>
+                {challenge.checkpointRewards.length} Rewards Available
+              </span>
             </div>
-            <div className={styles.rewardsGrid}>
+            <div style={{ display: "flex", gap: "25px", justifyContent: "center" }}>
               {challenge.checkpointRewards.map((reward, index) => (
-                <div key={index} className={styles.rewardCard}>
-                  <div className={styles.rewardIcon}>
-                    {reward.rewardType === "badge" && "🏅"}
-                    {reward.rewardType === "certificate" && "📜"}
-                    {reward.rewardType === "points" && "⭐"}
-                    {reward.rewardType === "custom" && "🎁"}
-                    {!reward.rewardType && "🎯"}
-                  </div>
-                  <div className={styles.rewardContent}>
-                    <div className={styles.rewardDay}>
+                <div key={index} style={{
+                  flex: 1,
+                  background: "#FFFFFF",
+                  border: "1px solid #E2E8F0",
+                  borderRadius: "8px",
+                  boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.05)",
+                  overflow: "hidden",
+                }}>
+                  <div style={{ padding: "25px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div style={{
+                      width: "66px",
+                      height: "66px",
+                      borderRadius: "50%",
+                      background: "#FEF3C7",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: "16px",
+                    }}>
+                      <Trophy size={33} style={{ color: "#D97706" }} />
+                    </div>
+                    <h3 style={{ margin: "0 0 6px", fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "18.5px", lineHeight: "29px", letterSpacing: "-0.46px", color: "#020817", textAlign: "center" }}>
                       Day {reward.checkpointDay}
-                    </div>
-                    <div className={styles.rewardValue}>
+                    </h3>
+                    <p style={{ margin: 0, fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", lineHeight: "21px", color: "#111827", textAlign: "center" }}>
                       {reward.rewardValue}
-                    </div>
-                    <div className={styles.rewardDescription}>
-                      {reward.rewardDescription}
-                    </div>
+                    </p>
                   </div>
-                  <div className={styles.rewardBadge}>
-                    <span className={styles.rewardType}>
-                      {reward.rewardType || "Reward"}
-                    </span>
+                  <div style={{ padding: "0 25px 25px", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+                    <p style={{ margin: 0, fontFamily: "Segoe UI, sans-serif", fontWeight: 400, fontSize: "16.5px", lineHeight: "25px", color: "#4B5563", textAlign: "center" }}>
+                      {reward.rewardDescription}
+                    </p>
+                    <button style={{
+                      background: "#FFFFFF",
+                      border: "1px solid #99F6E4",
+                      borderRadius: "6px",
+                      padding: "8px 13px",
+                      cursor: "pointer",
+                      fontFamily: "Segoe UI, sans-serif",
+                      fontWeight: 600,
+                      fontSize: "14px",
+                      lineHeight: "21px",
+                      color: "#0D9488",
+                    }}>
+                      {reward.rewardType === "certificate" ? "Certificate" : reward.rewardType === "badge" ? "Badge" : reward.rewardType || "Reward"}
+                    </button>
                   </div>
                 </div>
               ))}
@@ -2246,7 +2303,7 @@ const SingleChallenge = () => {
           type="article"
         />
       )}
-      <div style={{ marginBottom: "20px" }}>
+      <div style={{ marginBottom: "16px" }}>
         <div
           className="border rounded-lg hover:bg-accent text-sm w-fit"
           style={{ padding: "3px 10px" }}
@@ -2271,46 +2328,37 @@ const SingleChallenge = () => {
             {challenge?.status && (
               <span
                 className={styles.challengeStatus}
-                style={{
-                  backgroundColor:
-                    challenge.status === "ongoing"
-                      ? "rgba(82, 196, 26, 0.1)"
-                      : challenge.status === "draft"
-                        ? "rgba(250, 173, 20, 0.1)"
-                        : challenge.status === "completed"
-                          ? "rgba(24, 144, 255, 0.1)"
-                          : "rgba(245, 34, 45, 0.1)",
-                  color:
-                    challenge.status === "ongoing"
-                      ? "#52c41a"
-                      : challenge.status === "draft"
-                        ? "#faad14"
-                        : challenge.status === "completed"
-                          ? "#1890ff"
-                          : "#f5222d",
-                  border:
-                    challenge.status === "ongoing"
-                      ? "1px solid #52c41a"
-                      : challenge.status === "draft"
-                        ? "1px solid #faad14"
-                        : challenge.status === "completed"
-                          ? "1px solid #1890ff"
-                          : "1px solid #f5222d",
-                }}
               >
-                {challenge.status.toUpperCase()}
+                {challenge.status === "ongoing" ? "Published" : challenge.status.charAt(0).toUpperCase() + challenge.status.slice(1)}
               </span>
             )}
           </div>
           <div className={styles.settingsAndPublishDiv}>
             {/* Admin dashboard link for challenge creators */}
             {canAdmin && (
-              <Button
-                type="text"
-                icon={<SettingOutlined />}
+              <button
                 onClick={() => router.push(`/admin/challenge/${id}`)}
                 title="Admin Dashboard"
-              />
+                style={{
+                  background: "#FFFFFF",
+                  border: "1px solid #E2E8F0",
+                  borderRadius: "6px",
+                  padding: "8px 13px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  height: "40px",
+                }}
+              >
+                <SettingOutlined style={{ fontSize: "16px", color: "#020817" }} />
+                <span style={{
+                  fontFamily: "Segoe UI, sans-serif",
+                  fontWeight: 600,
+                  fontSize: "14px",
+                  color: "#020817",
+                }}>Settings</span>
+              </button>
             )}
 
             {challenge?.status === "ongoing" && !userProgress && (
@@ -2324,7 +2372,25 @@ const SingleChallenge = () => {
             )}
 
             {challenge?.status === "unpublished" && isCreator && (
-              <button onClick={handlePublishChallenge}>Publish</button>
+              <button
+                onClick={handlePublishChallenge}
+                style={{
+                  background: "#14B8A6",
+                  color: "#FFFFFF",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "10px 16px",
+                  cursor: "pointer",
+                  fontFamily: "Segoe UI, sans-serif",
+                  fontWeight: 600,
+                  fontSize: "14px",
+                  lineHeight: "21px",
+                  height: "40px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >Publish</button>
             )}
           </div>
         </div>
@@ -2365,11 +2431,17 @@ const SingleChallenge = () => {
         <LoadingState />
       ) : (
         <Tabs defaultValue="activity">
-          <TabsList>
-            <TabsTrigger value="summary">Summary</TabsTrigger>
-            <TabsTrigger value="checkpoints">Checkpoints</TabsTrigger>
-            <TabsTrigger value="participants">Participants</TabsTrigger>
-            <TabsTrigger value="activity">Activity</TabsTrigger>
+          <TabsList style={{
+            background: "#F1F5F9",
+            borderRadius: "6px",
+            padding: "4px",
+            height: "41px",
+            maxWidth: "462px",
+          }}>
+            <TabsTrigger value="summary" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "4px", padding: "6px 25px" }}>Summary</TabsTrigger>
+            <TabsTrigger value="checkpoints" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "4px", padding: "6px 17px" }}>Checkpoints</TabsTrigger>
+            <TabsTrigger value="participants" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "4px", padding: "6px 18px" }}>Participants</TabsTrigger>
+            <TabsTrigger value="activity" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "4px", padding: "6px 32px" }}>Activity</TabsTrigger>
           </TabsList>
 
           <TabsContent value="summary">

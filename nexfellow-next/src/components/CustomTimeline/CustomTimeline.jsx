@@ -51,12 +51,9 @@ export const CustomTimelineItem = ({
 
   return (
     <div className={styles.customTimelineItem}>
-      <div className={styles.customTimelineLeft}>
-        {label && <div className={styles.customTimelineLabel}>{label}</div>}
-      </div>
       <div className={styles.customTimelineDotLine}>
         <div
-          className={`${styles.customTimelineDot} ${dot ? "" : dotColorClass}`}
+          className={`${styles.customTimelineDot} ${dotColorClass}`}
         >
           {dot}
         </div>

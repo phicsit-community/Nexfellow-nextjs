@@ -2,107 +2,130 @@
 .container {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: "Segoe UI", "Inter", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
   min-height: 100vh;
-  padding: 60px 60px 20px;
+  padding: 25px 33px;
   position: relative;
 }
 
 .backButton {
-  margin-top: 14px;
+  margin-top: 0;
 }
 
 .backButton button {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: var(--color-card);
+  gap: 8px;
+  background: transparent;
   border: 1px solid var(--color-border);
-  color: var(--color-muted-foreground);
-  font-size: 16px;
+  color: #4B5563;
+  font-size: 14px;
   cursor: pointer;
-  margin-bottom: 24px;
-  font-weight: 500;
-  padding: 8px 16px;
-  border-radius: 12px;
+  margin-bottom: 0;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 6px;
   transition: all 0.2s ease;
+  font-family: "Segoe UI", sans-serif;
 }
 
 .backButton button:hover {
-  background: color-mix(in oklab, var(--color-card) 92%, var(--color-secondary) 8%);
+  background: var(--color-secondary);
   border-color: var(--color-input);
   color: var(--color-foreground);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px color-mix(in oklab, var(--color-foreground) 10%, transparent);
 }
 
 .challengNameDiv {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 0;
+  padding: 0 16px;
 }
 
 .challengeTitle {
-  font-size: 32px;
+  font-size: 31px;
   font-weight: 700;
-  letter-spacing: -0.5px;
-  background: linear-gradient(135deg, var(--color-foreground), var(--color-muted-foreground));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  letter-spacing: 0;
+  color: #111827;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
+  font-family: "Segoe UI", sans-serif;
+  line-height: 37px;
 }
 
 .challengeStatus {
-  font-size: small;
-  padding: 4px 8px;
-  border-radius: 4px;
-  margin-left: 10px;
-  background: var(--color-secondary);
-  color: var(--color-foreground);
+  font-size: 12px;
+  padding: 3px 11px;
+  border-radius: 9999px;
+  margin-left: 12px;
+  background: rgba(40, 199, 201, 0.18);
+  color: #08AAA2;
+  border: 1px solid rgba(40, 199, 201, 0.43);
+  font-weight: 600;
+  font-family: "Segoe UI", sans-serif;
+  line-height: 16px;
+  text-transform: capitalize;
+  display: inline-flex;
+  align-items: center;
 }
 
 .settingsAndPublishDiv {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  align-items: flex-start;
+  gap: 12px;
 }
 
-.settingsAndPublishDiv button,
-.joinButton {
-  background: linear-gradient(135deg, var(--color-primary), color-mix(in oklab, var(--color-primary) 85%, var(--color-accent) 15%));
-  color: var(--color-primary-foreground);
-  border: none;
-  padding: 12px 24px;
-  border-radius: 12px;
+.settingsAndPublishDiv button {
+  background: #FFFFFF;
+  color: #020817;
+  border: 1px solid #E2E8F0;
+  padding: 10px 13px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 16px color-mix(in oklab, var(--color-primary) 28%, transparent);
+  transition: all 0.2s ease;
+  font-family: "Segoe UI", sans-serif;
+  line-height: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: none;
   position: relative;
   overflow: hidden;
+  height: 40px;
 }
 
-.settingsAndPublishDiv button:before,
-.joinButton:before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  left: -100%;
-  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-card) 20%, transparent), transparent);
-  transition: left 0.5s;
+.settingsAndPublishDiv button:hover {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
 }
 
-.settingsAndPublishDiv button:hover:before,
-.joinButton:hover:before {
-  left: 100%;
+.joinButton {
+  background: #14B8A6 !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  padding: 10px 16px !important;
+  border-radius: 6px !important;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  font-family: "Segoe UI", sans-serif;
+  line-height: 21px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
 }
 
-.settingsAndPublishDiv button:hover,
 .joinButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px color-mix(in oklab, var(--color-primary) 36%, transparent);
+  background: #0D9488 !important;
 }
 
 .activeDiv {
@@ -759,24 +782,15 @@
 }
 
 .progressIndicator {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: var(--color-secondary);
-  padding: 1rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
+  display: none !important;
 }
 
 .progressIndicator p {
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--color-foreground);
-  margin: 0;
+  display: none;
 }
 
 .checkpointsList {
-  margin-top: 1.5rem;
+  margin-top: 0;
 }
 
 .completedIcon {
@@ -790,39 +804,75 @@
 }
 
 .checkpointItem {
-  background: var(--color-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-  transition: all 0.3s ease;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 25px 26px;
+  margin-bottom: 0;
+  transition: all 0.2s ease;
   color: var(--color-foreground);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .checkpointItem:hover {
-  border-color: var(--color-primary);
-  box-shadow: 0 4px 12px color-mix(in oklab, var(--color-foreground) 10%, transparent);
+  border-color: #CBD5E1;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .checkpointHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 12px;
+}
+
+.checkpointHeader h3 {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 600;
+  font-size: 18.5px;
+  line-height: 29px;
+  letter-spacing: -0.46px;
+  color: #020817;
+  margin: 0;
+}
+
+.checkpointHeader .ant-tag {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  border-radius: 9999px;
+  padding: 3px 11px;
+  border: none;
 }
 
 .lockedDay,
 .missedDay {
-  border: 2px dashed var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 1rem;
-  text-align: center;
-  font-style: italic;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  text-align: left;
+  font-style: normal;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent !important;
+  box-shadow: none !important;
+  margin-top: 12px;
 }
 
 .lockedDay {
-  background: var(--color-secondary);
-  color: var(--color-muted-foreground);
+  color: #6B7280;
+}
+
+.lockedDay p,
+.missedDay p {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 21px;
+  margin: 0;
+  color: #6B7280;
 }
 
 .missedDay {
@@ -840,12 +890,31 @@
 }
 
 .challengeCompletion {
-  background: color-mix(in oklab, var(--color-primary) 10%, transparent);
-  border: 2px solid var(--color-primary);
-  border-radius: var(--radius-lg);
-  padding: 2rem;
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  border-radius: 8px;
+  padding: 25px 26px;
   text-align: center;
-  color: var(--color-primary);
+  color: #065F46;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.challengeCompletion h3 {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 600;
+  font-size: 18.5px;
+  line-height: 29px;
+  color: #065F46;
+  margin: 0 0 8px;
+}
+
+.challengeCompletion p {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 400;
+  font-size: 16.5px;
+  line-height: 25px;
+  color: #047857;
+  margin: 0;
 }
 
 /* Participants / leaderboard */
@@ -1402,40 +1471,62 @@
     background: var(--color-card);
     border: 1px solid var(--color-border);
     color: var(--color-muted-foreground);
-    box-shadow: 0 2px 10px color-mix(in oklab, var(--color-foreground) 16%, transparent);
   }
 
   .backButton button:hover {
     background: color-mix(in oklab, var(--color-card) 92%, var(--color-secondary) 8%);
     border-color: var(--color-input);
     color: var(--color-foreground);
-    box-shadow: 0 4px 16px color-mix(in oklab, var(--color-foreground) 22%, transparent);
   }
 
   /* Header/title row */
   .challengeTitle {
-    background: linear-gradient(135deg, var(--color-foreground) 0%, var(--color-muted-foreground) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .challengeStatus {
-    background: var(--color-secondary);
     color: var(--color-foreground);
   }
 
-  /* Primary actions */
-  .settingsAndPublishDiv button,
-  .joinButton {
-    background: linear-gradient(135deg, var(--color-primary) 0%, color-mix(in oklab, var(--color-primary) 85%, var(--color-accent) 15%) 100%);
-    color: var(--color-primary-foreground);
-    box-shadow: 0 6px 22px color-mix(in oklab, var(--color-primary) 35%, transparent);
+  .challengeStatus {
+    background: color-mix(in oklab, var(--color-primary) 18%, transparent);
+    color: var(--color-primary);
+    border-color: color-mix(in oklab, var(--color-primary) 43%, transparent);
   }
 
-  .settingsAndPublishDiv button:hover,
+  /* Primary actions */
+  .settingsAndPublishDiv button {
+    background: var(--color-card);
+    color: var(--color-foreground);
+    border: 1px solid var(--color-border);
+    box-shadow: none;
+  }
+
+  .joinButton {
+    background: var(--color-primary) !important;
+    color: var(--color-primary-foreground) !important;
+    box-shadow: none;
+  }
+
+  .settingsAndPublishDiv button:hover {
+    background: color-mix(in oklab, var(--color-card) 90%, var(--color-secondary) 10%);
+  }
+
   .joinButton:hover {
-    box-shadow: 0 10px 28px color-mix(in oklab, var(--color-primary) 45%, transparent);
+    opacity: 0.9;
+  }
+
+  /* Checkpoint items */
+  .checkpointItem {
+    background: var(--color-card);
+    border-color: var(--color-border);
+    color: var(--color-foreground);
+  }
+
+  .challengeCompletion {
+    background: color-mix(in oklab, var(--color-primary) 10%, transparent);
+    border-color: color-mix(in oklab, var(--color-primary) 40%, transparent);
+  }
+
+  .challengeCompletion h3,
+  .challengeCompletion p {
+    color: var(--color-primary);
   }
 
   /* Tabs strip */
@@ -1576,17 +1667,16 @@
 
   /* Progress indicator + chips */
   .progressIndicator {
-    background: var(--color-secondary);
-    border: 1px solid var(--color-border);
+    display: none !important;
   }
 
   .progressIndicator p {
-    color: var(--color-foreground);
+    display: none;
   }
 
   /* Timeline states */
   .lockedDay {
-    background: var(--color-secondary);
+    background: transparent !important;
     color: var(--color-muted-foreground);
   }
 
