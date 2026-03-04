@@ -52,25 +52,28 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0px;
+  gap: 12px;
   flex-grow: 1;
 }
 
 .menuItems li {
   box-sizing: border-box;
-  min-width: 160px;
-  margin: 5px 5px 5px 0px;
-  padding: 10px 10px 10px 15px;
+  width: 156px;
+  height: 42px;
+  margin: 0;
+  padding: 0 0 0 14px;
   display: flex;
   align-items: center;
-  justify-content: left;
+  justify-content: flex-start;
   cursor: pointer;
+  font-family: 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 500;
-  border-radius: 0 5px 5px 0;
+  line-height: 19px;
+  border-radius: 4px;
   background: none;
   transition: all 0.3s cubic-bezier(0.32, 0, 0.67, 0);
-  color: var(--color-sidebar-foreground);
+  color: #000000;
 }
 
 .menuItems li span {
@@ -78,9 +81,9 @@
 }
 
 .menuItems li:hover {
-  background-color: var(--color-sidebar-accent);
-  border-left: 5px solid var(--color-sidebar-left);
-  color: var(--color-sidebar-primary);
+  background: rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #000000;
+  color: #000000;
 }
 
 :global(.dark) .menuItems li,
@@ -89,15 +92,15 @@
 }
 
 :global(.dark) .menuItems li:hover {
-  background-color: var(--color-sidebar-accent);
-  border-left: 5px solid var(--color-sidebar-left);
+  background: rgba(255, 255, 255, 0.1);
+  border-left: 4px solid #ffffff;
   color: var(--color-sidebar-primary);
 }
 
 .icon {
   margin-right: 10px;
   font-size: 18px;
-  color: var(--color-sidebar-primary);
+  color: #000000;
 }
 
 :global(.dark) .icon {
@@ -241,14 +244,16 @@
 
 /* setTab = selected menu state */
 .setTab {
-  background-color: var(--color-sidebar-accent);
-  border-left: 5px solid var(--color-sidebar-left);
-  color: var(--color-sidebar-primary);
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 4px solid #000000;
+  border-radius: 4px;
+  color: #000000;
 }
 
 :global(.dark) .setTab {
-  background-color: var(--color-sidebar-accent);
-  border-left: 5px solid var(--color-sidebar-left);
+  background: rgba(255, 255, 255, 0.15);
+  border-left: 4px solid #ffffff;
+  border-radius: 4px;
   color: var(--color-sidebar-primary);
 }
 

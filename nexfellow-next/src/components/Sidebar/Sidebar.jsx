@@ -161,7 +161,7 @@ function Sidebar() {
                   style={{ width: 24, height: 24 }}
                 />
               </div>
-              {!isMobile && <span style={{ marginLeft: "5px" }}>{item.label}</span>}
+              {!isMobile && <span style={{ marginLeft: "10px" }}>{item.label}</span>}
             </li>
           </Link>
         ))}

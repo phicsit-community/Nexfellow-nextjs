@@ -4,8 +4,10 @@ import { useRouter } from "next/navigation";
 import styles from "./FeedPage.module.css";
 import Suggestions from "../../components/Suggestions/Suggestions";
 import TrendingFeed from "./TrendingFeed";
-import { MdPhotoLibrary, MdInsertLink, MdOutlineDescription } from "react-icons/md";
-import { BiPoll } from "react-icons/bi";
+import photoIcon from "../../assets/Icons-Feed/photo.png";
+import pollIcon from "../../assets/Icons-Feed/poll.png";
+import linkIcon from "../../assets/Icons-Feed/link.png";
+import documentIcon from "../../assets/Icons-Feed/document.png";
 import fireIcon from "../../assets/Icons/fire.png";
 import trendingIcon from "../../assets/Icons/trending.png";
 import followingIcon from "../../assets/Icons/following.png";
@@ -102,16 +104,16 @@ const FeedPage = () => {
             </div>
             <div className={styles.postActions}>
               <button className={styles.actionBtn} onClick={handleCreatePostClick} title="Add Photo">
-                <MdPhotoLibrary />
+                <img src={photoIcon.src || photoIcon} alt="Photo" className={styles.actionIcon} />
               </button>
-              <button className={`${styles.actionBtn} ${styles.disabledBtn}`} disabled title="Polls coming soon">
-                <BiPoll />
+              <button className={styles.actionBtn} onClick={handleCreatePostClick} title="Polls">
+                <img src={pollIcon.src || pollIcon} alt="Poll" className={styles.actionIcon} />
               </button>
-              <button className={`${styles.actionBtn} ${styles.disabledBtn}`} disabled title="Links coming soon">
-                <MdInsertLink />
+              <button className={styles.actionBtn} onClick={handleCreatePostClick} title="Links">
+                <img src={linkIcon.src || linkIcon} alt="Link" className={styles.actionIcon} />
               </button>
-              <button className={`${styles.actionBtn} ${styles.disabledBtn}`} disabled title="Documents coming soon">
-                <MdOutlineDescription />
+              <button className={styles.actionBtn} onClick={handleCreatePostClick} title="Documents">
+                <img src={documentIcon.src || documentIcon} alt="Document" className={styles.actionIcon} />
               </button>
               <button className={styles.postBtn} onClick={handleCreatePostClick}>Post</button>
             </div>

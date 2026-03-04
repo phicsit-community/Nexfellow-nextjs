@@ -3,18 +3,25 @@
   grid-template-columns: 800fr 420fr;
   align-items: start;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background-color: var(--color-background, #fff);
-  overflow: hidden;
 }
 
 /* Feed Column Wrapper */
 .feedColumn {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100vh;
   border-right: 1px solid #E6E6E6;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  position: sticky;
+  top: 0;
+}
+
+.feedColumn::-webkit-scrollbar {
+  display: none;
 }
 
 /* Create Post Box */
@@ -107,6 +114,12 @@
 .actionBtn:hover {
   background-color: #f3f4f6;
   color: #24B2B4;
+}
+
+.actionIcon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 .disabledBtn {
