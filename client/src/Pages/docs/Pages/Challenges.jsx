@@ -164,7 +164,7 @@ export default function ChallengesPage() {
                 }`}
             >
               <div
-                className={`w-10 h-10 rounded-md flex flex-col w-full items-center justify-center ${darkMode ? "bg-[#006C69]" : "bg-[#006C69]"
+                className={`h-10 rounded-md flex flex-col w-full items-center justify-center ${darkMode ? "bg-[#006C69]" : "bg-[#006C69]"
                   }`}
               >
                 {card.icon}

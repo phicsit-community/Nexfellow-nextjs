@@ -1,6 +1,6 @@
 .homepage {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 800fr 420fr;
   align-items: start;
   width: 100%;
   height: 100vh;
@@ -13,9 +13,8 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  border-right: 1px solid var(--color-border, #eee);
+  border-right: 1px solid #E6E6E6;
   overflow: hidden;
-  /* Contains scroll */
 }
 
 /* Create Post Box */
@@ -23,8 +22,8 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--color-border, #eee);
+  padding: 24px 40px;
+  border-bottom: 1px solid #E6E6E6;
   background-color: var(--color-card, #fff);
   cursor: pointer;
 }
@@ -34,34 +33,34 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid var(--color-border, #e6e6e6);
-  border-radius: 50px;
-  background-color: var(--color-background, #f9fafb);
+  padding: 12px 16px;
+  border: none;
+  border-radius: 10px;
+  background-color: #F9FAFB;
 }
 
 .avatarWrapper {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
 }
 
 .avatar {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
 }
 
 .avatarPlaceholder {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background-color: #14b8a6;
+  background-color: #24B2B4;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: #fff;
   text-transform: uppercase;
@@ -71,40 +70,43 @@
   flex: 1;
   border: none;
   outline: none;
+  font-family: 'Arial', sans-serif;
   font-size: 14px;
   background: transparent;
-  color: var(--color-text, #6b7280);
+  color: var(--color-text, #0a0a0a);
   cursor: pointer;
 }
 
 .postInput::placeholder {
-  color: #9ca3af;
+  color: rgba(10, 10, 10, 0.5);
 }
 
 .postActions {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding-left: 48px;
+  padding-left: 52px;
 }
 
 .actionBtn {
   background: none;
   border: none;
+  width: 36px;
+  height: 36px;
   padding: 8px;
   cursor: pointer;
-  color: #6b7280;
-  font-size: 16px;
+  color: #4A5565;
+  font-size: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: 10px;
   transition: all 0.2s ease;
 }
 
 .actionBtn:hover {
   background-color: #f3f4f6;
-  color: #14b8a6;
+  color: #24B2B4;
 }
 
 .disabledBtn {
@@ -114,66 +116,112 @@
 
 .disabledBtn:hover {
   background-color: transparent;
-  color: #6b7280;
+  color: #4A5565;
 }
 
 .postBtn {
   margin-left: auto;
-  background-color: #14b8a6;
+  background-color: #24B2B4;
   color: #fff;
   border: none;
-  padding: 8px 24px;
-  border-radius: 6px;
+  padding: 7.5px 20px;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .postBtn:hover {
-  background-color: #0d9488;
+  background-color: #1da0a2;
 }
 
 /* Tabs Header */
 .tabsHeader {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  margin-top: 0px;
-  border-bottom: 1px solid var(--color-border, #eee);
+  justify-content: center;
+  padding: 18px 20px;
+  border-bottom: 1.15px solid #E6E6E6;
   background-color: var(--color-card, #fff);
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
+.announcementBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  padding: 3.2px;
+  border-radius: 19.2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  position: absolute;
+  right: 24px;
+}
+
+.announcementBtn:hover {
+  background-color: #f0f0f0;
+}
+
+.tabsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #EEEEEE;
+  border-radius: 58px;
+  padding: 5px;
+  height: 44px;
+}
+
 .tabButton {
   background: none;
   border: none;
-  padding: 8px 20px;
+  padding: 7px 13px;
+  font-family: 'Arial', sans-serif;
   font-size: 14px;
-  font-weight: 500;
-  color: #6b7280;
+  font-weight: 400;
+  line-height: 20px;
+  color: #4A5565;
   cursor: pointer;
-  border-radius: 20px;
+  border-radius: 9999px;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+}
+
+.tabIcon {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0);
 }
 
 .tabButton:hover {
-  background-color: #f3f4f6;
+  background-color: #e0e0e0;
 }
 
 /* Active State - Pill style */
 .activeTab {
-  background-color: #14b8a6;
-  color: #fff;
-  font-weight: 600;
+  background-color: #24B2B4;
+  color: #FFFFFF;
+  font-weight: 400;
+}
+
+.activeTab .tabIcon {
+  filter: brightness(0) invert(1);
 }
 
 .activeTab:hover {
-  background-color: #0d9488;
+  background-color: #1da0a2;
 }
 
 /* Suggestions Container */
@@ -181,8 +229,7 @@
   display: block;
   height: 100%;
   overflow-y: auto;
-  border-left: 1px solid var(--color-border, transparent);
-  padding: 0.25rem 1rem;
+  padding: 12px 36px 0;
 }
 
 /* Dark Mode */
@@ -199,17 +246,28 @@
   border-bottom-color: #333;
 }
 
+:global(.dark) .tabsContainer {
+  background-color: #1a1a1a;
+}
+
+:global(.dark) .announcementBtn:hover {
+  background-color: #222;
+}
+
+:global(.dark) .announcementBtn img {
+  filter: invert(1);
+}
+
 :global(.dark) .tabButton {
   color: #9ca3af;
-  /* Gray-400 */
 }
 
 :global(.dark) .tabButton:hover {
-  background-color: #111;
+  background-color: #222;
 }
 
 :global(.dark) .activeTab {
-  background-color: #14b8a6;
+  background-color: #24B2B4;
   color: #fff;
 }
 
@@ -220,7 +278,6 @@
 
 :global(.dark) .inputBox {
   background-color: #111;
-  border-color: #333;
 }
 
 :global(.dark) .postInput {
@@ -237,7 +294,7 @@
 
 :global(.dark) .actionBtn:hover {
   background-color: #1f1f1f;
-  color: #14b8a6;
+  color: #24B2B4;
 }
 
 :global(.dark) .suggestionsContainer {
@@ -264,8 +321,7 @@
   }
 
   .tabsHeader {
-    padding: 10px 12px;
-    margin-top: 10px;
+    padding: 12px 12px;
   }
 
   .tabButton {
@@ -306,8 +362,6 @@
 
   .tabsHeader {
     padding: 8px 10px;
-    margin-top: 0;
-    gap: 6px;
   }
 
   .tabButton {

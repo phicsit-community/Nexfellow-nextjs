@@ -125,17 +125,20 @@ export default function SearchCommand() {
     <>
       <button
         style={{
-          padding: "0.5rem 1rem",
+          padding: "8px 20px",
+          height: "40px",
+          borderRadius: "10px",
+          border: "1px solid #E6E6E6",
         }}
         onClick={() => setOpen(true)}
-        className="sm:flex hidden items-center w-full gap-2 text-sm text-muted-foreground rounded-full border shadow-sm bg-background hover:bg-accent/50 transition-all duration-200 cursor-pointer"
+        className="sm:flex hidden items-center w-full gap-2 text-[16px] bg-background hover:bg-accent/50 transition-all duration-200 cursor-pointer"
       >
         <span className="sr-only">Open search</span>
-        <Search className="h-4 w-4 text-muted-foreground" />
-        <span className="flex-1 text-left text-muted-foreground ">Search</span>
+        <Search className="h-4 w-4" style={{ color: "#6A6A6A" }} />
+        <span className="flex-1 text-left" style={{ color: "#6A6A6A", fontFamily: "'Inter', sans-serif", fontSize: "16px" }}>Search</span>
         <kbd
-          className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-          style={{ padding: "0.375rem 0.5rem" }}
+          className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 font-mono text-[10px] font-medium"
+          style={{ padding: "0.375rem 0.5rem", backgroundColor: "#F5F5F5", borderRadius: "4px", color: "#6A6A6A" }}
         >
           <span className="text-xs">⌘</span>K
         </kbd>

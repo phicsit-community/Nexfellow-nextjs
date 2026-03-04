@@ -35,7 +35,7 @@ function Header() {
         className={styles.whatsNewIcon}
       >
         <PlayOnce
-          icon={announcementAnimated}
+          icon={announcementAnimated.src || announcementAnimated}
           play={hoveredIndex === 1}
           size={25}
           style={{ width: 25, height: 25 }}
