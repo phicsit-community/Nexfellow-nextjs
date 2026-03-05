@@ -56,6 +56,10 @@ import edit from "./assets/edit2.svg";
 import trophy from "./assets/trophyImage.svg";
 import calender from "./assets/calender.svg";
 import participants from "./assets/participants.svg";
+import tickIcon from "./assets/Tick.png";
+import lockIcon from "./assets/Lock.png";
+import tropyIcon from "./assets/Tropy.png";
+import badgeIcon from "./assets/badge3.png";
 
 // styles
 import styles from "./SingleChallenge.module.css";
@@ -468,7 +472,7 @@ const Checkpoints = ({ challenge, userProgress, fetchUserProgress }) => {
   const completedDays = userProgress?.completedDays || [];
 
   return (
-    <div className={styles.checkpointsDiv}>
+    <div className={styles.checkpointsDiv} style={{ marginTop: "24px" }}>
       <div style={{ marginBottom: "25px" }}>
         <h2 style={{
           margin: "0 0 4px",
@@ -520,13 +524,13 @@ const Checkpoints = ({ challenge, userProgress, fetchUserProgress }) => {
                   key={task.day}
                   dot={
                     isCompleted ? (
-                      <CheckCircleOutlined style={{ color: "#FFFFFF", fontSize: "16px" }} />
+                      <img src={tickIcon?.src || tickIcon} alt="✓" style={{ width: "16px", height: "16px" }} />
                     ) : isMissed ? (
                       <CloseCircleOutlined style={{ color: "#FFFFFF", fontSize: "16px" }} />
                     ) : isCurrentDay ? (
-                      <CheckCircleOutlined style={{ color: "#FFFFFF", fontSize: "16px" }} />
+                      <img src={tickIcon?.src || tickIcon} alt="✓" style={{ width: "16px", height: "16px" }} />
                     ) : isLocked ? (
-                      <LockOutlined style={{ fontSize: "16px" }} />
+                      <img src={lockIcon?.src || lockIcon} alt="🔒" style={{ width: "16px", height: "16px" }} />
                     ) : undefined
                   }
                   color={
@@ -599,8 +603,9 @@ const Checkpoints = ({ challenge, userProgress, fetchUserProgress }) => {
                     {/* Show locked state message */}
                     {isLocked && (
                       <div className={styles.lockedDay}>
+                        <img src={lockIcon?.src || lockIcon} alt="🔒" style={{ width: "16px", height: "16px" }} />
                         <p>
-                          🔒 This task will unlock when it becomes available
+                          This task will unlock when it becomes available
                         </p>
                       </div>
                     )}
@@ -611,7 +616,7 @@ const Checkpoints = ({ challenge, userProgress, fetchUserProgress }) => {
 
             {/* Challenge completion milestone */}
             <CustomTimelineItem
-              dot={<TrophyOutlined style={{ color: "#FFFFFF", fontSize: "16px" }} />}
+              dot={<img src={tropyIcon?.src || tropyIcon} alt="🏆" style={{ width: "16px", height: "16px" }} />}
               color="gold"
             >
               <div className={styles.challengeCompletion}>
@@ -680,7 +685,7 @@ const Checkpoints = ({ challenge, userProgress, fetchUserProgress }) => {
           <div style={{ marginTop: "25px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <Trophy size={21} style={{ color: "#F59E0B" }} />
+                <img src={badgeIcon?.src || badgeIcon} alt="🏅" style={{ width: "21px", height: "21px" }} />
                 <h3 style={{ margin: 0, fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "18.5px", lineHeight: "29px", color: "#111827" }}>
                   Upcoming Checkpoint Rewards
                 </h3>
@@ -718,7 +723,11 @@ const Checkpoints = ({ challenge, userProgress, fetchUserProgress }) => {
                       justifyContent: "center",
                       marginBottom: "16px",
                     }}>
-                      <Trophy size={33} style={{ color: "#D97706" }} />
+                      {reward.rewardType === "certificate" ? (
+                        <Trophy size={33} strokeWidth={2} style={{ color: "#D97706" }} />
+                      ) : (
+                        <img src={badgeIcon?.src || badgeIcon} alt="🏅" style={{ width: "33px", height: "33px" }} />
+                      )}
                     </div>
                     <h3 style={{ margin: "0 0 6px", fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "18.5px", lineHeight: "29px", letterSpacing: "-0.46px", color: "#020817", textAlign: "center" }}>
                       Day {reward.checkpointDay}
@@ -834,7 +843,7 @@ const Participants = ({ challenge }) => {
 
   if (!totalParticipants && !challenge?.participants?.length) {
     return (
-      <div className={styles.participantsDiv}>
+      <div className={styles.participantsDiv} style={{ marginTop: "24px" }}>
         <img src={participants?.src || participants} alt="Participants" />
         <div className={styles.participantsDivContent1}>
           No participants yet
@@ -1029,7 +1038,7 @@ const Participants = ({ challenge }) => {
   ];
 
   return (
-    <div className={styles.participantsContainer}>
+    <div className={styles.participantsContainer} style={{ marginTop: "24px" }}>
       <div className={styles.participantsHeader}>
         <div>
           <h2>Challenge Participants</h2>
@@ -1321,7 +1330,7 @@ const ActivityFeed = ({ challenge, isCreator, currentUserId }) => {
   if (loading) return <LoadingState />;
 
   return (
-    <div className={styles.activityFeed}>
+    <div className={styles.activityFeed} style={{ marginTop: "24px" }}>
       <div className={styles.activityHeader}>
         <div className={styles.activityTitle}>
           <h2>{isCreator ? "All Challenge Activity" : "Your Activity"}</h2>
@@ -1743,7 +1752,7 @@ const Summary = ({ challenge, onPublish, userProgress }) => {
   };
 
   return (
-    <div className={styles.summaryDiv}>
+    <div className={styles.summaryDiv} style={{ marginTop: "24px" }}>
       {challenge.status === "draft" && (
         <div className={styles.summaryDivInfo}>
           <img src={info?.src || info} alt="Info" />
@@ -2303,18 +2312,25 @@ const SingleChallenge = () => {
           type="article"
         />
       )}
-      <div style={{ marginBottom: "16px" }}>
-        <div
-          className="border rounded-lg hover:bg-accent text-sm w-fit"
-          style={{ padding: "3px 10px" }}
+      <div style={{ marginTop: "0px" }}>
+        <button
+          onClick={() => router.back()}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            padding: "8px 12px",
+            borderRadius: "6px",
+          }}
         >
-          <BackButton
-            onClick={() => router.back()}
-            showText={true}
-            smallText={true}
-            style={{ marginBottom: "0px" }}
-          />
-        </div>
+          <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10.625 4.25L6.375 8.5L10.625 12.75" stroke="#4B5563" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", color: "#4B5563" }}>Back</span>
+        </button>
       </div>
 
       {loading ? (
@@ -2361,17 +2377,7 @@ const SingleChallenge = () => {
               </button>
             )}
 
-            {challenge?.status === "ongoing" && !userProgress && (
-              <button
-                onClick={handleJoinChallenge}
-                className={styles.joinButton}
-                disabled={joiningChallenge}
-              >
-                {joiningChallenge ? "Joining..." : "Join Challenge"}
-              </button>
-            )}
-
-            {challenge?.status === "unpublished" && isCreator && (
+            {canAdmin && (
               <button
                 onClick={handlePublishChallenge}
                 style={{
@@ -2386,11 +2392,22 @@ const SingleChallenge = () => {
                   fontSize: "14px",
                   lineHeight: "21px",
                   height: "40px",
+                  width: "110px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >Publish</button>
+            )}
+
+            {!canAdmin && challenge?.status === "ongoing" && !userProgress && (
+              <button
+                onClick={handleJoinChallenge}
+                className={styles.joinButton}
+                disabled={joiningChallenge}
+              >
+                {joiningChallenge ? "Joining..." : "Join Challenge"}
+              </button>
             )}
           </div>
         </div>
@@ -2430,7 +2447,7 @@ const SingleChallenge = () => {
       {loading ? (
         <LoadingState />
       ) : (
-        <Tabs defaultValue="activity">
+        <Tabs defaultValue="summary" style={{ width: "100%", marginTop: "10px" }}>
           <TabsList style={{
             background: "#F1F5F9",
             borderRadius: "6px",
