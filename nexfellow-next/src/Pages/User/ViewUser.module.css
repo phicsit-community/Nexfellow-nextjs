@@ -116,7 +116,8 @@
 }
 
 .bannerImage {
-  width: 680px;
+  width: 100%;
+  max-width: 680px;
   height: 180px;
   border-radius: 8px;
   position: relative;
@@ -430,7 +431,8 @@
   }
 
   .bannerImage {
-    width: 680px;
+    width: 100%;
+    max-width: 680px;
     height: 180px;
     border-radius: 8px;
     position: relative;
@@ -543,6 +545,43 @@
   }
 }
 
+@media (max-width: 640px) {
+  .mainContentContainer {
+    max-width: 100%;
+    border-right: none;
+    padding: 0;
+  }
+
+  .bannerSection {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .mainContent {
+    padding: 0 8px;
+  }
+
+  .communityDetails {
+    width: 95%;
+    bottom: 0;
+  }
+
+  .communityName {
+    font-size: 20px;
+    line-height: 24px;
+  }
+
+  .actionButtons {
+    width: 100%;
+  }
+
+  .profileImageWrapper {
+    left: 15px;
+    width: 70px;
+    height: 70px;
+  }
+}
+
 @media (max-width: 425px) {
 
   .mainContentContainer {
@@ -576,7 +615,7 @@
 
 @media (max-width: 320px) {
   .bannerImage {
-    width: 390px;
+    width: 100%;
     height: 110px;
     /* height: 100%; */
     object-fit: fill;

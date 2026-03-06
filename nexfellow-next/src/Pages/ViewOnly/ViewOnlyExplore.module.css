@@ -608,7 +608,7 @@
 
 @media (max-width: 320px) {
   .bannerImage {
-    width: 390px;
+    width: 100%;
     height: 110px;
     /* height: 100%; */
     object-fit: fill;

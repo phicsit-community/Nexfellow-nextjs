@@ -87,7 +87,7 @@ const ModeratorsViewSkeleton = () => {
                 display: "flex",
                 justifyContent: "space-evenly",
                 width: "100%",
-                borderBottom: "1px solid oklch(0.40 0 0)",
+                borderBottom: "1px solid var(--skeleton-base)",
               }}
             >
               <Skeleton

@@ -91,10 +91,7 @@ const SideBar = () => {
                         <NavLinks isActive={isActive} />
                     </div>
                     <div className={styles.sidebarLower}>
-                        <div onClick={handleLogout}>
-                            <FiLogOut className={styles.sideIcon} />
-                            <p>Logout</p>
-                        </div>
+                        {/* Logout button removed */}
                     </div>
                 </div>
             </div>
@@ -156,10 +153,7 @@ const SideBar = () => {
                         </div>
 
                         <div className={styles.sidebarLower}>
-                            <div onClick={handleLogout}>
-                                <FiLogOut className={styles.sideIcon} />
-                                <p>Logout</p>
-                            </div>
+                            {/* Logout button removed */}
                         </div>
                     </div>
                 </div>
@@ -184,10 +178,7 @@ const SideBar = () => {
                     <NavLinks isActive={isActive} />
                 </div>
                 <div className={styles.sidebarLower}>
-                    <div onClick={handleLogout}>
-                        <FiLogOut className={styles.sideIcon} />
-                        <p>Logout</p>
-                    </div>
+                    {/* Logout button removed */}
                 </div>
             </div>
         </div>

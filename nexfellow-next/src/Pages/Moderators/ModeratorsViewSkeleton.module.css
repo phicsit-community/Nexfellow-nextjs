@@ -119,7 +119,8 @@
 }
 
 .bannerImage {
-    width: 680px;
+    width: 100%;
+    max-width: 680px;
     height: 180px;
     border-radius: 8px;
     position: relative;
