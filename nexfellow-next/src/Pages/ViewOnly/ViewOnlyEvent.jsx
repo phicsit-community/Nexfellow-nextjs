@@ -215,9 +215,12 @@ const ViewOnlyEvent = () => {
                   <div className={styles.imageCard}>
                     <div className={styles.freeTag}>Free</div>
                     <img
-                      src={event.imageUrl}
+                      src={event.imageUrl || "https://via.placeholder.com/400x400?text=Event"}
                       alt="Event Banner"
                       className={styles.eventImage}
+                      onError={(e) => {
+                        e.target.src = "https://via.placeholder.com/400x400?text=Event";
+                      }}
                     />
                   </div>
 
@@ -241,6 +244,12 @@ const ViewOnlyEvent = () => {
                         <label>Sec</label>
                       </div>
                     </div>
+                    <button
+                      className={styles.loginJoinButton}
+                      onClick={handleLoginPrompt}
+                    >
+                      Login to Join
+                    </button>
                   </div>
                 </div>
               </div>

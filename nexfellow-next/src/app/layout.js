@@ -46,7 +46,7 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: themeScript }}
         />
       </head>
-      <body className={poppins.className}>
+      <body id="root" className={poppins.className}>
         <Providers>
           {children}
         </Providers>
