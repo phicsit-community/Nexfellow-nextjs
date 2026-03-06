@@ -33,7 +33,7 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  padding: 6px 0;
+  padding: 8px 0;
   background-color: var(--color-background, #fff);
   display: flex;
   align-items: center;
@@ -324,19 +324,20 @@
 .skeletonCard {
   width: 100%;
   display: flex;
+  justify-content: space-between;
   padding: 10px;
   border-radius: 8px;
 }
 
 .skeletonLeft {
-  width: 70%;
+  flex: 1;
   display: flex;
   gap: 10px;
   align-items: center;
 }
 
 .skeletonRight {
-  width: 50%;
+  flex-shrink: 0;
   display: flex;
   justify-content: flex-end;
   align-items: center;

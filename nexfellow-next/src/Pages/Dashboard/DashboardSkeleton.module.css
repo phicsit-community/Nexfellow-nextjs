@@ -485,6 +485,7 @@
     padding: 20px;
     background-color: var(--card, #fff);
     color: var(--card-foreground, #000);
+    overflow: hidden;
 }
 
 /* Title placeholder */
@@ -506,12 +507,15 @@
     display: flex;
     align-items: center;
     margin-bottom: 15px;
+    overflow: hidden;
+    width: 100%;
 }
 
 /* Round avatar circle */
 .skeletonCircle {
     width: 36px;
     height: 36px;
+    min-width: 36px;
     border-radius: 50%;
     background: linear-gradient(90deg,
             var(--skeleton-base, #f0f0f0) 0%,
@@ -519,6 +523,7 @@
             var(--skeleton-base, #f0f0f0) 40%,
             var(--skeleton-base, #f0f0f0) 100%);
     animation: shimmer 3s infinite linear;
+    flex-shrink: 0;
 }
 
 /* Text container with two lines */
@@ -545,7 +550,8 @@
 
 /* Long text line */
 .skeletonTextLong {
-    width: 100%;
+    width: 80%;
+    max-width: 100%;
     height: 20px;
     border-radius: 4px;
     background: linear-gradient(90deg,
@@ -559,6 +565,7 @@
 /* Rectangular button */
 .skeletonButton {
     width: 60px;
+    min-width: 60px;
     height: 28px;
     border-radius: 6px;
     background: linear-gradient(90deg,
@@ -567,6 +574,7 @@
             var(--skeleton-base, #f0f0f0) 40%,
             var(--skeleton-base, #f0f0f0) 100%);
     animation: shimmer 3s infinite linear;
+    flex-shrink: 0;
 }
 
 @media screen and (max-width: 768px) {
@@ -738,6 +746,7 @@
         border-radius: 8px;
         padding: 20px;
         background-color: var(--card);
+        overflow: hidden;
     }
 
     /* Title placeholder */
@@ -755,15 +764,19 @@
         display: flex;
         align-items: center;
         margin-bottom: 15px;
+        overflow: hidden;
+        width: 100%;
     }
 
     /* Round avatar circle */
     .skeletonCircle {
         width: 36px;
         height: 36px;
+        min-width: 36px;
         border-radius: 50%;
         background: linear-gradient(90deg, #222 0px, #292929 40px, #3a3a3a 100px);
         animation: shimmer 3s infinite linear;
+        flex-shrink: 0;
     }
 
     /* Text container with two lines */
@@ -786,7 +799,8 @@
 
     /* Long text line */
     .skeletonTextLong {
-        width: 100%;
+        width: 80%;
+        max-width: 100%;
         height: 20px;
         border-radius: 4px;
         background: linear-gradient(90deg, #222 0px, #292929 40px, #3a3a3a 100px);
@@ -796,11 +810,13 @@
     /* Rectangular button */
     .skeletonButton {
         width: 60px;
+        min-width: 60px;
         height: 28px;
         border-radius: 6px;
         background: var(--skeleton-base, #2a2a2a);
         position: relative;
         overflow: hidden;
+        flex-shrink: 0;
     }
 
     .skeleton::after {

@@ -238,8 +238,14 @@
   padding: 5px 10px;
   display: flex;
   align-items: center;
-  max-width: 160px;
+  max-width: 200px;
   gap: 10px;
+}
+
+.badge img {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
 }
 
 .title {

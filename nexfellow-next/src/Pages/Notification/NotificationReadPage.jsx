@@ -116,7 +116,7 @@ const NotificationReadPage = () => {
         <div className={styles.header}>
           <div className={styles.headerBottom}>
             <span className={styles.badge}>
-              <img src={userImg} alt="Notification type icon" />
+              <img src={userImg?.src || userImg} alt="Notification type icon" />
               {notification.type === "broadcast"
                 ? "Broadcast message"
                 : notification.type === "system"
