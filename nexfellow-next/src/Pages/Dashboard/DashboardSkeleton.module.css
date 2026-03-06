@@ -465,17 +465,15 @@
 .skeletonPost::after {
     content: "";
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    inset: 0;
     transform: translateX(-100%);
     background-image: linear-gradient(90deg,
-            rgba(255, 255, 255, 0) 0,
-            rgba(255, 255, 255, 0.2) 20%,
-            rgba(255, 255, 255, 0.5) 60%,
-            rgba(255, 255, 255, 0));
-    animation: shimmer 3s infinite;
+            rgba(255, 255, 255, 0) 0%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 20%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.4)) 50%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 80%,
+            rgba(255, 255, 255, 0) 100%);
+    animation: shimmer 1.8s ease-in-out infinite;
 }
 
 .sidebarBlock {
@@ -494,13 +492,24 @@
     width: 60%;
     height: 24px;
     border-radius: 6px;
-    background: linear-gradient(90deg,
-            var(--skeleton-base, #f0f0f0) 0%,
-            var(--skeleton-highlight, #e0e0e0) 20%,
-            var(--skeleton-base, #f0f0f0) 40%,
-            var(--skeleton-base, #f0f0f0) 100%);
+    background: var(--skeleton-base, #e8e8e8);
     margin-bottom: 20px;
-    animation: shimmer 3s infinite linear;
+    position: relative;
+    overflow: hidden;
+}
+
+.skeletonBlockTitle::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 20%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.4)) 50%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 80%,
+            rgba(255, 255, 255, 0) 100%);
+    animation: shimmer 1.8s ease-in-out infinite;
 }
 
 /* Each sidebar item container */
@@ -518,13 +527,24 @@
     height: 36px;
     min-width: 36px;
     border-radius: 50%;
-    background: linear-gradient(90deg,
-            var(--skeleton-base, #f0f0f0) 0%,
-            var(--skeleton-highlight, #e0e0e0) 20%,
-            var(--skeleton-base, #f0f0f0) 40%,
-            var(--skeleton-base, #f0f0f0) 100%);
-    animation: shimmer 3s infinite linear;
+    background: var(--skeleton-base, #e8e8e8);
+    position: relative;
+    overflow: hidden;
     flex-shrink: 0;
+}
+
+.skeletonCircle::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 20%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.4)) 50%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 80%,
+            rgba(255, 255, 255, 0) 100%);
+    animation: shimmer 1.8s ease-in-out infinite;
 }
 
 /* Text container with two lines */
@@ -541,12 +561,23 @@
     width: 40%;
     height: 16px;
     border-radius: 4px;
-    background: linear-gradient(90deg,
-            var(--skeleton-base, #f0f0f0) 0%,
-            var(--skeleton-highlight, #e0e0e0) 20%,
-            var(--skeleton-base, #f0f0f0) 40%,
-            var(--skeleton-base, #f0f0f0) 100%);
-    animation: shimmer 3s infinite linear;
+    background: var(--skeleton-base, #e8e8e8);
+    position: relative;
+    overflow: hidden;
+}
+
+.skeletonTextShort::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 20%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.4)) 50%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 80%,
+            rgba(255, 255, 255, 0) 100%);
+    animation: shimmer 1.8s ease-in-out infinite;
 }
 
 /* Long text line */
@@ -555,12 +586,23 @@
     max-width: 100%;
     height: 20px;
     border-radius: 4px;
-    background: linear-gradient(90deg,
-            var(--skeleton-base, #f0f0f0) 0%,
-            var(--skeleton-highlight, #e0e0e0) 20%,
-            var(--skeleton-base, #f0f0f0) 40%,
-            var(--skeleton-base, #f0f0f0) 100%);
-    animation: shimmer 3s infinite linear;
+    background: var(--skeleton-base, #e8e8e8);
+    position: relative;
+    overflow: hidden;
+}
+
+.skeletonTextLong::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 20%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.4)) 50%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 80%,
+            rgba(255, 255, 255, 0) 100%);
+    animation: shimmer 1.8s ease-in-out infinite;
 }
 
 /* Rectangular button */
@@ -569,13 +611,24 @@
     min-width: 60px;
     height: 28px;
     border-radius: 6px;
-    background: linear-gradient(90deg,
-            var(--skeleton-base, #f0f0f0) 0%,
-            var(--skeleton-highlight, #e0e0e0) 20%,
-            var(--skeleton-base, #f0f0f0) 40%,
-            var(--skeleton-base, #f0f0f0) 100%);
-    animation: shimmer 3s infinite linear;
+    background: var(--skeleton-base, #e8e8e8);
+    position: relative;
+    overflow: hidden;
     flex-shrink: 0;
+}
+
+.skeletonButton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 20%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.4)) 50%,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 80%,
+            rgba(255, 255, 255, 0) 100%);
+    animation: shimmer 1.8s ease-in-out infinite;
 }
 
 @media screen and (max-width: 768px) {
@@ -695,7 +748,7 @@
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     }
 
-    /* Use darker grey placeholders for skeletons */
+    /* Use darker grey placeholders for skeletons - same technique as light mode */
     .skeleton,
     .skeletonBanner,
     .skeletonButton,
@@ -708,15 +761,7 @@
     .skeletonImageItem,
     .skeletonImage,
     .skeletonAction {
-        background: #222;
-        background-image: linear-gradient(90deg,
-                #222 0px,
-                #2e2e2e 40px,
-                #3a3a3a 100px,
-                #222 180px);
-        background-repeat: no-repeat;
-        background-size: 800px 100%;
-        animation: shimmer 3s infinite linear;
+        background: var(--skeleton-base, #2a2a2a);
     }
 
     /* BackIcon and MoreButton adjustments for dark */
@@ -755,9 +800,10 @@
         width: 60%;
         height: 24px;
         border-radius: 6px;
-        background: linear-gradient(90deg, #222 0px, #292929 40px, #3a3a3a 100px);
+        background: var(--skeleton-base, #2a2a2a);
         margin-bottom: 20px;
-        animation: shimmer 3s infinite linear;
+        position: relative;
+        overflow: hidden;
     }
 
     /* Each sidebar item container */
@@ -775,8 +821,7 @@
         height: 36px;
         min-width: 36px;
         border-radius: 50%;
-        background: linear-gradient(90deg, #222 0px, #292929 40px, #3a3a3a 100px);
-        animation: shimmer 3s infinite linear;
+        background: var(--skeleton-base, #2a2a2a);
         flex-shrink: 0;
     }
 
@@ -794,8 +839,7 @@
         width: 40%;
         height: 16px;
         border-radius: 4px;
-        background: linear-gradient(90deg, #222 0px, #292929 40px, #3a3a3a 100px);
-        animation: shimmer 3s infinite linear;
+        background: var(--skeleton-base, #2a2a2a);
     }
 
     /* Long text line */
@@ -804,8 +848,7 @@
         max-width: 100%;
         height: 20px;
         border-radius: 4px;
-        background: linear-gradient(90deg, #222 0px, #292929 40px, #3a3a3a 100px);
-        animation: shimmer 3s infinite linear;
+        background: var(--skeleton-base, #2a2a2a);
     }
 
     /* Rectangular button */
@@ -818,15 +861,6 @@
         position: relative;
         overflow: hidden;
         flex-shrink: 0;
-    }
-
-    .skeleton::after {
-        background-image: linear-gradient(90deg,
-                rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 0.05) 20%,
-                rgba(255, 255, 255, 0.1) 50%,
-                rgba(255, 255, 255, 0.05) 80%,
-                rgba(255, 255, 255, 0) 100%);
     }
 
 }
