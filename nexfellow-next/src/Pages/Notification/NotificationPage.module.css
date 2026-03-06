@@ -422,6 +422,43 @@
   }
 }
 
+@media (max-width: 640px) {
+  .notificationContainer {
+    padding: 20px 4px 4px 4px;
+  }
+
+  .notificationPage {
+    padding: 12px 4px;
+  }
+
+  .pageHeader {
+    padding: 0 8px;
+  }
+
+  .tabContainer {
+    gap: 6px;
+  }
+
+  .notificationItem {
+    padding: 10px 8px;
+  }
+
+  .profilePic {
+    width: 36px;
+    height: 36px;
+  }
+
+  .notificationContentDescription {
+    max-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .notificationContentDescription {
+    max-width: 80px;
+  }
+}
+
 :global(.dark) {
 
   /* Container backgrounds and borders */

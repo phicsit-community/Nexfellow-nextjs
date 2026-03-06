@@ -619,6 +619,7 @@
 
 @media (max-width: 768px) {
   .communityGrid {
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -644,8 +645,19 @@
 }
 
 @media (max-width: 640px) {
+  .communityGrid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   .communityCardContainer {
-    max-width: 60vw;
+    max-width: 90vw;
+    width: 100%;
+  }
+
+  .exploreContainer {
+    padding: 20px 10px 0 10px;
   }
 }
 

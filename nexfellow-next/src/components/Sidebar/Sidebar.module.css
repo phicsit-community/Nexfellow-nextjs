@@ -364,6 +364,10 @@
     border-top: 1px solid var(--color-sidebar-border);
   }
 
+  .logoContainer {
+    display: none;
+  }
+
   .menuItems {
     margin: 0;
     padding: 0;

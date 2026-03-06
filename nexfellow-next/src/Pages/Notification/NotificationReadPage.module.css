@@ -328,7 +328,8 @@
 
 @media screen and (max-width: 1024px) {
   .container {
-    margin-right: 10%;
+    margin-right: auto;
+    margin-left: auto;
     width: 60vw;
   }
 }
@@ -350,9 +351,11 @@
   }
 
   .container {
-    width: 50vw;
+    width: 80vw;
     max-height: 90vh;
     border-radius: 10px;
+    margin-right: auto;
+    margin-left: auto;
   }
 
   .header {
@@ -409,15 +412,31 @@
 
 @media screen and (max-width: 640px) {
   .container {
-    width: 60vw;
-    margin-right: 25%;
+    width: 90vw;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .header {
+    padding: 14px;
+    padding-bottom: 6px;
+  }
+
+  .title {
+    font-size: 18px;
+    line-height: 24px;
+    margin-top: 10px;
+  }
+
+  .body {
+    padding: 14px 12px;
+    font-size: 13px;
   }
 }
 
 @media screen and (max-width: 480px) {
   .container {
-    width: 90vw;
-    margin-right: 5%;
+    width: 95vw;
   }
 }
 
