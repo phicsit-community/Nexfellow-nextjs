@@ -119,7 +119,8 @@ api.interceptors.response.use(
                         window.location.pathname === "/signup" ||
                         window.location.pathname === "/forgotpassword" ||
                         window.location.pathname === "/auth/callback" ||
-                        window.location.pathname.startsWith("/auth/");
+                        window.location.pathname.startsWith("/auth/") ||
+                        window.location.pathname.startsWith("/community/");
 
                     // Check if we just completed OAuth login (within last 30 seconds - increased from 5)
                     const oauthLoginTime = sessionStorage.getItem("oauth_login_time");

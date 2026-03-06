@@ -6,7 +6,7 @@ const PRIVATE_ROUTES = [
     "/dashboard",
     "/explore",
     "/communities",
-    "/community",
+    // "/community" - removed to allow public community preview
     "/leaderboard",
     "/inbox",
     "/notifications",
