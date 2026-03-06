@@ -79,10 +79,13 @@ function PageHeader() {
 
     const fetchUnreadCount = async () => {
       try {
-        const res = await api.get("/notifications/unread-count");
+        const res = await api.get("/notifications/unread-count", {
+          suppressErrorLog: true,
+        });
         setUnreadCount(res.data?.count || 0);
       } catch (err) {
-        // Silently fail
+        // Silently fail and keep badge at 0 for transient backend issues.
+        setUnreadCount(0);
       }
     };
     fetchUnreadCount();

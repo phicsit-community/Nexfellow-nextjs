@@ -95,23 +95,17 @@ export default function AuthCallback() {
         exchangeCode();
     }, [searchParams, dispatch]);
 
+    // Only show UI if there's an error; otherwise keep the page invisible
+    // so the OAuth redirect feels seamless.
+    if (!error) return null;
+
     return (
         <div className={styles.container}>
             <div className={styles.card}>
-                {isProcessing ? (
-                    <>
-                        <div className={styles.spinner}></div>
-                        <h2 className={styles.title}>Completing sign in...</h2>
-                        <p className={styles.subtitle}>Please wait while we authenticate you</p>
-                    </>
-                ) : error ? (
-                    <>
-                        <div className={styles.errorIcon}>✕</div>
-                        <h2 className={styles.title}>Authentication Failed</h2>
-                        <p className={styles.error}>{error}</p>
-                        <p className={styles.subtitle}>Redirecting to login...</p>
-                    </>
-                ) : null}
+                <div className={styles.errorIcon}>✕</div>
+                <h2 className={styles.title}>Authentication Failed</h2>
+                <p className={styles.error}>{error}</p>
+                <p className={styles.subtitle}>Redirecting to login...</p>
             </div>
         </div>
     );

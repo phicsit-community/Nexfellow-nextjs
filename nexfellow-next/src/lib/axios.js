@@ -145,11 +145,19 @@ api.interceptors.response.use(
             }
         }
 
-        // Handle other errors
-        if (error.response?.status === 403) {
-            console.log("Forbidden request");
-        } else if (error.response?.status === 500) {
-            console.error("Server error");
+        // Handle other errors. Some background requests opt out of global logging
+        // because they already fail gracefully in the calling component.
+        const suppressErrorLog = Boolean(
+            originalRequest?.suppressErrorLog ||
+            originalRequest?.meta?.suppressErrorLog
+        );
+
+        if (!suppressErrorLog) {
+            if (error.response?.status === 403) {
+                console.log("Forbidden request");
+            } else if (error.response?.status === 500) {
+                console.warn(`Server error on ${originalRequest?.url || "unknown endpoint"}`);
+            }
         }
 
         return Promise.reject(error);
