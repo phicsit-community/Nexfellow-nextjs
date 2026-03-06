@@ -189,12 +189,13 @@ const ContestDetails = () => {
   const pathname = usePathname();
   const [quizData, setQuizData] = useState({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const params = useParams();
   const id = params?.id;
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
   const registeredQuizzes =
-    typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user"))?.registeredQuizzes || [] : [];
+    typeof window !== "undefined" ? (() => { try { return JSON.parse(localStorage.getItem("user"))?.registeredQuizzes || []; } catch { return []; } })() : [];
   const isRegistered = registeredQuizzes.includes(id);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -210,7 +211,6 @@ const ContestDetails = () => {
   const [loadingRewards, setLoadingRewards] = useState(true);
   const searchParams = useSearchParams();
   const communityId = searchParams?.get('communityId');
-  console.log("Community ID:", communityId);
   const isCommunityQuiz = pathname?.startsWith("/community/contests/");
 
   const handleNavClick = (section) => {
@@ -228,24 +228,16 @@ const ContestDetails = () => {
   useEffect(() => {
     const fetchQuizData = async () => {
       setLoading(true);
-      console.log(
-        "Fetching quiz data for ID:",
-        id,
-        "isCommunityQuiz:",
-        isCommunityQuiz
-      );
+      setError(null);
       try {
         // Use the correct endpoint based on route
         const endpoint = isCommunityQuiz
           ? `/community/quizzes/${id}`
           : `/quiz/getQuiz/${id}`;
-        console.log("Fetching from endpoint:", endpoint);
         const response = await api.get(endpoint);
-        console.log("Quiz response:", response);
 
         if (response.status === 200 && response.data.quiz) {
           setQuizData(response.data.quiz);
-          console.log("Quiz Data in details:", response.data.quiz);
           setRewardsIds(response.data.quiz.rewards || []);
           if (response.data.response) {
             setContestGiven(true);
@@ -253,17 +245,20 @@ const ContestDetails = () => {
             setContestMessage(response.data.message);
           }
         } else {
+          setError("Quiz data not found");
           toast.error("Quiz data not found");
         }
-      } catch (error) {
+      } catch (err) {
+        setError("Failed to fetch quiz data");
         toast.error("Failed to fetch quiz data");
       } finally {
-        // Optional: delay for skeleton effect
-        setTimeout(() => setLoading(false), 800);
+        setLoading(false);
       }
     };
 
-    fetchQuizData();
+    if (id) {
+      fetchQuizData();
+    }
   }, [id, isCommunityQuiz]);
 
   const getRewardDetails = async () => {
@@ -287,7 +282,7 @@ const ContestDetails = () => {
     } catch (error) {
       toast.error("Failed to fetch reward data");
     } finally {
-      setTimeout(() => setLoadingRewards(false), 700);
+      setLoadingRewards(false);
     }
   };
 
@@ -310,10 +305,9 @@ const ContestDetails = () => {
         setLeaderboardData(sortedData || []);
       }
     } catch (error) {
-      // toast.error("Failed to fetch leaderboard data");
       console.error("Leaderboard error:", error);
     } finally {
-      setTimeout(() => setLoadingLeaderboard(false), 900);
+      setLoadingLeaderboard(false);
     }
   };
 
@@ -396,6 +390,22 @@ const ContestDetails = () => {
         <div className={styles.ContestDetailsContainer}>
           {loading ? (
             <CommoncdSkeleton />
+          ) : error ? (
+            <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+              <p style={{ fontSize: '16px', color: '#666', marginBottom: '12px' }}>{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                style={{
+                  padding: '8px 20px',
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  cursor: 'pointer',
+                  background: 'transparent',
+                }}
+              >
+                Retry
+              </button>
+            </div>
           ) : (
             <Commoncd
               data={quizData}

@@ -357,13 +357,11 @@ const Community = () => {
               </div>
 
               <div className={styles.communityDetails}>
-                <div className={styles.profileImageContainer}>
-                  <ProfileImagePreview
-                    src={community.owner?.picture || ProfileImage}
-                    alt="Profile"
-                    className={styles.profileImage}
-                  />
-                </div>
+                <ProfileImagePreview
+                  src={community.owner?.picture || ProfileImage}
+                  alt="Profile"
+                  className={styles.profileImage}
+                />
 
                 <div className={styles.communityHeader}>
                   <div className={styles.communityNameContainer}>

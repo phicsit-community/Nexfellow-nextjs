@@ -484,6 +484,7 @@
   width: 25%;
   /* height: 32px; */
   border-radius: 3px;
+  object-fit: cover;
 }
 
 .contestImage {

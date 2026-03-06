@@ -175,49 +175,63 @@
   /* 6px = 0.375rem */
 }
 
-.skeletonCard {
-  border-radius: 16px;
-  overflow: hidden;
-}
-
-:global(.dark) .communityCardBlackSkeleton {
-  background-color: rgba(26, 26, 26, 1);
-}
-
-/* Enhanced Shimmer Effect - smooth and easy on eyes */
-.shimmer {
-  position: relative;
-  overflow: hidden;
-}
-
-.shimmer::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background: linear-gradient(90deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.3) 50%,
-      rgba(255, 255, 255, 0) 100%);
-  animation: shimmerAnimation 1.8s ease-in-out infinite;
-}
-
-:global(.dark) .shimmer::after {
-  background: linear-gradient(90deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.1) 50%,
-      rgba(255, 255, 255, 0) 100%);
-}
-
+/* ======== Skeleton core styles (Dashboard-style) ======== */
 @keyframes shimmerAnimation {
   100% {
     transform: translateX(100%);
   }
 }
 
-/* Skeleton elements specific styling */
-.communityCardContainer .react-loading-skeleton {
-  background-color: #f0f0f0;
+.skeleton {
+  background: var(--skeleton-base, #e8e8e8);
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 20%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.4)) 50%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.15)) 80%,
+      rgba(255, 255, 255, 0) 100%);
+  animation: shimmerAnimation 1.8s ease-in-out infinite;
+}
+
+.skeletonBanner {
+  width: 100%;
+  height: 7.375rem;
+  border-radius: 8px;
+}
+
+.skeletonProfileImage {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.25rem;
+  position: absolute;
+  left: 0.9375rem;
+  bottom: -9.375%;
+}
+
+.skeletonTextLarge {
+  width: 100%;
+  height: 1.75rem;
+  border-radius: 4px;
+}
+
+.skeletonTag {
+  width: 3.75rem;
+  height: 1.125rem;
+  border-radius: 999px;
+}
+
+.skeletonTextSmall {
+  height: 1.125rem;
   border-radius: 4px;
 }
 
@@ -420,6 +434,7 @@
 :global(.dark) .categoryButton {
   background-color: var(--color-card);
   border-color: rgba(38, 38, 38, 1);
+  color: white;
 }
 
 :global(.dark) .noCommunities {

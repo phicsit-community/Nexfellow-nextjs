@@ -3,8 +3,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import api from "../../lib/axios";
 import Link from "next/link";
-import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+
 import { debounce } from "lodash";
 import countryCodeMap from "../../components/Constants/Country";
 import { toast } from "sonner";
@@ -430,55 +429,24 @@ const Explore = () => {
   );
 };
 
-// Skeleton loading component for ExploreCard
+// Skeleton loading component for ExploreCard (Dashboard-style)
 const ExploreCardSkeleton = () => {
   return (
-    <div className={`${styles.communityCardContainer} ${styles.shimmer}`}>
+    <div className={styles.communityCardContainer}>
       <div className={styles.communityCard}>
         <div className={styles.communityImageContainer}>
-          <Skeleton
-            height={118}
-            className={`${styles.communityImage} ${styles.shimmer} ${styles.communityCardBlackSkeleton}`}
-            borderRadius={8}
-          />
-          <Skeleton
-            height={40}
-            width={40}
-            className={`${styles.profileImage} ${styles.shimmer} ${styles.communityCardBlackSkeleton}`}
-            style={{
-              position: "absolute",
-              left: "15px",
-              bottom: "6%",
-              borderRadius: "10px",
-            }}
-          />
+          <div className={`${styles.skeleton} ${styles.skeletonBanner}`} />
+          <div className={`${styles.skeleton} ${styles.skeletonProfileImage}`} />
         </div>
 
-        <div>
-          <Skeleton
-            height={28}
-            className={`${styles.shimmer} ${styles.communityCardBlackSkeleton}`}
-          />
-          {/* <Skeleton count={2} height={14} className={`${styles.shimmer}`} /> */}
+        <div style={{ paddingTop: "1.25rem" }}>
+          <div className={`${styles.skeleton} ${styles.skeletonTextLarge}`} />
         </div>
       </div>
       <div className={styles.communityFooter}>
-        <Skeleton
-          height={18}
-          width={60}
-          className={`${styles.shimmer} ${styles.communityCardBlackSkeleton}`}
-          borderRadius={999}
-        />
-        <Skeleton
-          height={18}
-          width={80}
-          className={`${styles.shimmer} ${styles.communityCardBlackSkeleton}`}
-        />
-        <Skeleton
-          height={18}
-          width={90}
-          className={`${styles.shimmer} ${styles.communityCardBlackSkeleton}`}
-        />
+        <div className={`${styles.skeleton} ${styles.skeletonTag}`} />
+        <div className={`${styles.skeleton} ${styles.skeletonTextSmall}`} style={{ width: "5rem" }} />
+        <div className={`${styles.skeleton} ${styles.skeletonTextSmall}`} style={{ width: "5.625rem" }} />
       </div>
     </div>
   );
@@ -634,7 +602,7 @@ export const ExploreCard = ({
                 loading="lazy"
               />
             ) : (
-              <Skeleton height={100} />
+              <div className={`${styles.skeleton} ${styles.skeletonBanner}`} />
             )}
             {profilePic ? (
               <img
@@ -644,7 +612,7 @@ export const ExploreCard = ({
                 loading="lazy"
               />
             ) : (
-              <Skeleton circle height={50} width={50} />
+              <div className={`${styles.skeleton} ${styles.skeletonProfileImage}`} />
             )}
           </div>
 

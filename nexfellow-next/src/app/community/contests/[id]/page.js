@@ -1,13 +1,13 @@
 "use client";
 
 import { useSelector } from "react-redux";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import ContestDetails from "@/Pages/Contests/ContestDetails";
 import ContestPreview from "@/Pages/ViewOnly/ViewOnlyContestDetails";
 import PrivateLayout from "@/layouts/PrivateLayout";
 import ViewOnlyHeader from "@/Pages/ViewOnly/ViewOnlyHeader";
 
-export default function ContestPage() {
+function ContestPageContent() {
     const { isAuthenticated, user } = useSelector((state) => state.auth);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -85,5 +85,23 @@ export default function ContestPage() {
         <PrivateLayout>
             <ContestDetails />
         </PrivateLayout>
+    );
+}
+
+export default function ContestPage() {
+    return (
+        <Suspense fallback={
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                background: '#000'
+            }}>
+                <div style={{ color: '#fff' }}>Loading...</div>
+            </div>
+        }>
+            <ContestPageContent />
+        </Suspense>
     );
 }

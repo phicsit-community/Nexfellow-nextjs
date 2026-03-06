@@ -5,6 +5,7 @@ import api from "../../lib/axios";
 import { useRouter } from "next/navigation";
 import styles from "./Community.module.css";
 import Event from "../../components/Contest/assets/image.png";
+import DefaultImage from "../../Pages/Event/assets/default-event-image.png";
 import SuggestionCard from "../Suggestions/SuggestionCard";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -335,9 +336,13 @@ const UserCommunitySidebar = ({ communityId }) => {
                 href={`/challenge/${challenge.slug || challenge._id}`}
               >
                 <img
-                  src={challenge.coverImage || challenge.image}
+                  src={challenge.coverImage || challenge.image || (DefaultImage?.src || DefaultImage)}
                   alt={challenge.title || challenge.name}
                   className={styles.challengeImage}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = DefaultImage?.src || DefaultImage;
+                  }}
                 />
                 <div>
                   <p className={styles.challengeName}>{challenge.title || challenge.name}</p>
@@ -373,9 +378,13 @@ const UserCommunitySidebar = ({ communityId }) => {
                   href={`/community/contests/${contest.slug || contest.id}`}
                 >
                   <img
-                    src={contest.image}
+                    src={contest.image || (DefaultImage?.src || DefaultImage)}
                     alt={contest.name}
                     className={styles.contestImage}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = DefaultImage?.src || DefaultImage;
+                    }}
                   />
                   <div>
                     <p className={styles.contestName}>{contest.name}</p>

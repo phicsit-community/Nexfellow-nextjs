@@ -9,8 +9,10 @@ Leaderboard.module.css .leaderboard {
 }
 
 .mainContainer {
-  width: 70vw;
-  margin: 3% 7%;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 5%;
+  box-sizing: border-box;
 }
 
 .mainContainer p {
@@ -35,8 +37,8 @@ Leaderboard.module.css .leaderboard {
 }
 
 .searchBar .search {
-  width: 60%;
-  max-width: 100%;
+  flex: 1;
+  min-width: 0;
   height: 42px;
   border-radius: 8px;
   padding-left: 15px;
@@ -127,7 +129,9 @@ Leaderboard.module.css .leaderboard {
   display: flex;
   justify-content: space-evenly;
   margin-top: 100px;
-  /* position: relative; */
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .topThreeMobile {
@@ -140,12 +144,14 @@ Leaderboard.module.css .leaderboard {
 }
 
 .scrollableTableContainer {
-  overflow-x: auto;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 .scrollableTableContainer table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .scrollableTableContainer th {
@@ -154,8 +160,8 @@ Leaderboard.module.css .leaderboard {
 }
 
 .usernameTh {
-  padding: 0% 10%;
   text-align: left;
+  padding-left: 10px;
 }
 
 .scrollableTableContainer td {
@@ -416,10 +422,11 @@ Leaderboard.module.css .leaderboard {
 .userCellBox {
   display: flex;
   align-items: center;
-  max-width: 50%;
   justify-content: flex-start;
   gap: 8px;
   width: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .userAvatar {
@@ -515,13 +522,15 @@ Leaderboard.module.css .leaderboard {
 .floatingPanel {
   position: absolute;
   top: 110%;
-  left: 25%;
+  left: 50%;
+  transform: translateX(-50%);
   background: #fff;
   border: 1px solid #ffadad;
   border-radius: 14px;
   box-shadow: 0 8px 24px rgba(255, 77, 77, 0.25);
   padding: 16px 24px;
   width: 480px;
+  max-width: 90vw;
   z-index: 10;
   font-size: 13px;
   color: #333;
@@ -707,12 +716,13 @@ Leaderboard.module.css .leaderboard {
   }
 
   .mainContainer {
-    width: 60vw;
+    width: 100%;
+    padding: 0 3%;
   }
 
   .searchBar .search {
-    width: 50%;
-    max-width: 100%;
+    flex: 1;
+    min-width: 0;
     height: 42px;
     border-radius: 8px;
     padding-left: 15px;
@@ -886,7 +896,8 @@ Leaderboard.module.css .leaderboard {
 
 @media (max-width: 640px) {
   .mainContainer {
-    width: 86vw;
+    width: 100%;
+    padding: 0 2%;
   }
 
   .wavyFlag {
