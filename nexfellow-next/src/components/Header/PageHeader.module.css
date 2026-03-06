@@ -112,7 +112,7 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-:global(.dark) .notificationIcon > div {
+:global(.dark) .notificationIcon>div {
   filter: invert(1) brightness(1.1);
   transition: filter 0.3s ease;
 }
@@ -198,12 +198,10 @@
   position: absolute;
   inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    var(--skeleton-shimmer, rgba(255, 255, 255, 0.3)) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      var(--skeleton-shimmer, rgba(255, 255, 255, 0.3)) 50%,
+      rgba(255, 255, 255, 0) 100%);
   animation: shimmer 1.8s ease-in-out infinite;
 }
 
@@ -231,11 +229,30 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
+:global(.dark) .initials {
+  color: var(--color-foreground);
+  background: var(--color-muted);
+}
+
+:global(.dark) .avatar {
+  background-color: var(--color-muted);
+  color: var(--color-foreground);
+}
+
+:global(.dark) .userEmail {
+  color: var(--color-muted-foreground);
+}
+
+:global(.dark) .sectionLabel {
+  color: var(--color-muted-foreground);
+}
+
 @keyframes dropdownFade {
   from {
     opacity: 0;
     transform: translateY(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

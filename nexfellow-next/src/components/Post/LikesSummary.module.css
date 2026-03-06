@@ -45,3 +45,7 @@
 :global(.dark) .text {
   color: var(--color-foreground);
 }
+
+:global(.dark) .profileImageWrapper {
+  border-color: var(--color-background);
+}

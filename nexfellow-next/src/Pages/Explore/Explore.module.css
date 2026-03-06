@@ -422,6 +422,23 @@
   border-color: rgba(38, 38, 38, 1);
 }
 
+:global(.dark) .noCommunities {
+  background: var(--color-muted);
+  color: var(--color-foreground);
+}
+
+:global(.dark) .noCommunities h3 {
+  color: var(--color-foreground);
+}
+
+:global(.dark) .noCommunities p {
+  color: var(--color-muted-foreground);
+}
+
+:global(.dark) .filters select {
+  color: var(--color-muted-foreground);
+}
+
 .categoryButton.selected {
   background-color: var(--color-primary);
   color: white;

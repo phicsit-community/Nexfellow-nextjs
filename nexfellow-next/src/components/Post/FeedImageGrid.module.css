@@ -111,3 +111,11 @@
     align-items: center;
     justify-content: center;
 }
+
+:global(.dark) .grid {
+    background: var(--color-muted);
+}
+
+:global(.dark) .image {
+    background: var(--color-muted);
+}

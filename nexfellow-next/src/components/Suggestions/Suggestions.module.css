@@ -40,7 +40,7 @@
   gap: 12px;
 }
 
-.searchContainer > button {
+.searchContainer>button {
   flex: 1;
   min-width: 0;
 }
@@ -126,6 +126,10 @@
 :global(.dark) .suggestion {
   background-color: var(--color-card);
   border-color: var(--color-border);
+}
+
+:global(.dark) .suggestionTitle {
+  color: var(--color-foreground);
 }
 
 .suggestionTitle {

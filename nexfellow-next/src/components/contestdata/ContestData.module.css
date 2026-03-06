@@ -273,3 +273,45 @@
     /* 8px = 0.5rem, 28px = 1.75rem */
   }
 }
+
+/* Dark mode */
+:global(.dark) {
+  .contestdatabox {
+    background-color: var(--color-card);
+    border-color: var(--color-border);
+    box-shadow: 0.25rem 0.25rem 0.25rem rgba(0, 0, 0, 0.2);
+  }
+
+  .contestdatabox:hover {
+    box-shadow: 0rem 0rem 1.25rem rgba(0, 0, 0, 0.3);
+  }
+
+  .contestdatacontent h3 {
+    color: var(--color-foreground);
+  }
+
+  .description {
+    color: var(--color-muted-foreground);
+  }
+
+  .childTime p {
+    color: var(--color-foreground);
+  }
+
+  .childTime h3 {
+    color: var(--color-muted-foreground);
+  }
+
+  .contestavatarWrapper {
+    border-color: var(--color-background);
+  }
+
+  .moreCount {
+    background-color: var(--color-muted);
+    color: var(--color-foreground);
+  }
+
+  .contestdatabutton button {
+    color: #f1f1f1;
+  }
+}

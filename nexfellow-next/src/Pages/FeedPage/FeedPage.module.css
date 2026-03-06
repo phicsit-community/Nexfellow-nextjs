@@ -275,6 +275,10 @@
   color: #9ca3af;
 }
 
+:global(.dark) .tabButton .tabIcon {
+  filter: brightness(0) invert(1) opacity(0.6);
+}
+
 :global(.dark) .tabButton:hover {
   background-color: #222;
 }

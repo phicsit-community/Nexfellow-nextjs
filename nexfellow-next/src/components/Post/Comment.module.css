@@ -137,6 +137,12 @@
   margin-right: 8px;
 }
 
+:global(.dark) .cancelButton {
+  background-color: var(--color-muted);
+  color: var(--color-foreground);
+  border-color: var(--color-border);
+}
+
 /* Comment Container */
 .commentContainer {
   display: flex;
@@ -227,6 +233,10 @@
   background-color: rgba(0, 0, 0, 0.1);
 }
 
+:global(.dark) .threeDot:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 .commentText {
   margin-top: 4px;
   font-size: 14px;
@@ -260,6 +270,14 @@
 
 .actions button:hover {
   color: #333;
+}
+
+:global(.dark) .actions button {
+  color: var(--color-muted-foreground);
+}
+
+:global(.dark) .actions button:hover {
+  color: var(--color-foreground);
 }
 
 .heartIcon {

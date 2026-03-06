@@ -1148,8 +1148,43 @@
     background: transparent;
   }
 
+  .blockedContent {
+    background-color: var(--color-card);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  }
+
+  .blockedContent h2 {
+    color: var(--color-foreground);
+  }
+
+  .blockedContent p {
+    color: var(--color-muted-foreground);
+  }
+
+  .pfpContainerSkeleton {
+    border-color: var(--color-background);
+    background-color: #2a2a2a;
+  }
+
+  .communityUsername {
+    color: var(--color-muted-foreground);
+  }
+
+  .communityDescription {
+    color: var(--color-muted-foreground);
+  }
+
+  .cardImageSkeleton {
+    background-color: #2a2a2a;
+  }
+
   /* Responsive adjustments */
   @media (max-width: 768px) {
+
+    .sidebarMobileOverlay {
+      background-color: var(--color-card);
+      box-shadow: -3px 0 15px rgba(0, 0, 0, 0.4);
+    }
 
     .bannerSection,
     .bannerImgContainer,
