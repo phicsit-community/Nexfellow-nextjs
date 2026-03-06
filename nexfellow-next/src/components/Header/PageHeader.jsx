@@ -20,6 +20,8 @@ import AnimatedNotification from "./animated/notification.json";
 import NotificationModal from "../Notification/NotificationModal";
 import ThemeToggleButton from "../ThemeToggle/ThemeToggleButton";
 import ModeratedDropdown from "./ModeratedDropdown";
+import nexfellowLogo from "@/assets/NexFellowLogo.svg";
+import nexfellowLogoDark from "@/assets/NexFellowLogoDark.svg";
 
 import styles from "./PageHeader.module.css";
 
@@ -133,6 +135,20 @@ function PageHeader() {
 
   return (
     <div className={styles.pageHeader}>
+      {/* Mobile logo */}
+      <Link href="/feed" className={styles.mobileLogo}>
+        <img
+          src={nexfellowLogo.src || nexfellowLogo}
+          alt="NexFellow"
+          className={styles.mobileLogoLight}
+        />
+        <img
+          src={nexfellowLogoDark.src || nexfellowLogoDark}
+          alt="NexFellow"
+          className={styles.mobileLogoDark}
+        />
+      </Link>
+
       {/* Search bar */}
       <div className={styles.searchWrapper}>
         <SearchCommand />
