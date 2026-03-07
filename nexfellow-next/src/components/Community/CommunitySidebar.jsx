@@ -40,7 +40,7 @@ const UserCommunitySidebar = ({ communityId }) => {
             return {
               name: val.title || "Untitled Event",
               date: formattedDate,
-              image: val.imageUrl || Event,
+              image: val.imageUrl || Event?.src || Event,
               id: val._id || val.id,
               slug: val.slug || val.id,
             };
@@ -120,7 +120,7 @@ const UserCommunitySidebar = ({ communityId }) => {
               dateStyle: "long",
               timeStyle: "short",
             }),
-            image: val.imageUrl || Event,
+            image: val.imageUrl || Event?.src || Event,
             id: val._id || val.id,
             slug: val.slug || val.id,
             duration: formatContestDuration(val),

@@ -350,7 +350,7 @@ const Community = () => {
             <div className={styles.bannerSection}>
               <div className={styles.bannerImgContainer}>
                 <img
-                  src={community.owner?.banner || CommunityBanner}
+                  src={community.owner?.banner || CommunityBanner?.src || CommunityBanner}
                   alt="Community Banner"
                   className={styles.bannerImage}
                 />
@@ -358,7 +358,7 @@ const Community = () => {
 
               <div className={styles.communityDetails}>
                 <ProfileImagePreview
-                  src={community.owner?.picture || ProfileImage}
+                  src={community.owner?.picture || ProfileImage?.src || ProfileImage}
                   alt="Profile"
                   className={styles.profileImage}
                 />
@@ -377,20 +377,20 @@ const Community = () => {
                       community.owner?.createdCommunity ? (
                       community.owner?.communityBadge ? (
                         <img
-                          src={communityBadge}
+                          src={communityBadge?.src || communityBadge}
                           alt="Community Badge"
                           className={styles.badge}
                         />
                       ) : community.owner?.verificationBadge ? (
                         <img
-                          src={verificationBadge}
+                          src={verificationBadge?.src || verificationBadge}
                           alt="Verification Badge"
                           className={styles.badge}
                         />
                       ) : null
                     ) : community.owner?.verificationBadge ? (
                       <img
-                        src={verificationBadge}
+                        src={verificationBadge?.src || verificationBadge}
                         alt="Verification Badge"
                         className={styles.badge}
                       />
@@ -419,7 +419,7 @@ const Community = () => {
                             style={{ zIndex: 3 - index }}
                           >
                             <img
-                              src={profile?.picture || ProfileImage}
+                              src={profile?.picture || ProfileImage?.src || ProfileImage}
                               alt={profile?.name || "Member"}
                               className={styles.memberImage}
                             />
