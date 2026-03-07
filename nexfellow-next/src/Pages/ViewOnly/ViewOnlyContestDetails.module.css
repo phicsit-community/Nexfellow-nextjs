@@ -17,10 +17,10 @@
 /* Card Outer */
 .cardOuter {
   background: #000;
-  border-radius: 11px;
+  border-radius: 10px;
   box-shadow: 0px 3px 28px rgba(0, 0, 0, 0.2);
-  padding: 17px 13px;
-  width: 377px;
+  padding: 15px 12px;
+  width: 339px;
   max-width: 95%;
   display: flex;
   justify-content: center;
@@ -32,18 +32,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
   background: #000;
 }
 
 .banner {
   width: 100%;
-  max-width: 335px;
+  max-width: 302px;
   height: auto;
   aspect-ratio: 500/353;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 9px;
   background: #fff;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.08);
 }
@@ -63,7 +63,7 @@
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  margin-top: 12px;
+  margin-top: 11px;
   margin-bottom: 3px;
 }
 
@@ -75,7 +75,7 @@
 }
 
 .quizTitle {
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
   color: #00DBD1;
   margin-top: 4px;
@@ -88,9 +88,9 @@
   background: linear-gradient(91.01deg, #FFFFFF 4.71%, #FFDD6E 45.68%, #FFFFFF 97.77%);
   color: #000;
   border-radius: 22px;
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 600;
-  padding: 5px 13px;
+  padding: 5px 12px;
   margin-left: 10px;
   gap: 5px;
 }
@@ -100,17 +100,17 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 9px;
-  margin: 12px 0 8px;
+  gap: 8px;
+  margin: 11px 0 8px;
 }
 
 .infoItem {
   display: flex;
   align-items: center;
-  font-size: 15px;
+  font-size: 14px;
   color: #fff;
   font-weight: 600;
-  gap: 7px;
+  gap: 6px;
 }
 
 .infoItem b {
@@ -121,18 +121,18 @@
 /* Participants */
 .participants {
   position: relative;
-  margin: 7px 0 12px;
+  margin: 6px 0 11px;
   display: flex;
   align-items: flex-start;
-  min-height: 24px;
+  min-height: 22px;
   justify-content: flex-start;
   width: 100%;
-  gap: 47px;
+  gap: 42px;
 }
 
 .avatar {
-  width: 17px;
-  height: 17px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   border: 1px solid #fff;
   object-fit: cover;
@@ -143,15 +143,15 @@
 }
 
 .avatar:nth-child(2) {
-  left: 12px;
+  left: 11px;
 }
 
 .avatar:nth-child(3) {
-  left: 25px;
+  left: 22px;
 }
 
 .participantCount {
-  font-size: 11px;
+  font-size: 10px;
   color: #fff;
   font-weight: 500;
 }
@@ -160,14 +160,14 @@
 .joinBtn {
   background: #24B2B5;
   border: none;
-  padding: 9px 0;
-  font-size: 13px;
+  padding: 8px 0;
+  font-size: 12px;
   border-radius: 4px;
   color: #ffffff;
   font-weight: 700;
   cursor: pointer;
   width: 100%;
-  margin-top: 7px;
+  margin-top: 6px;
   margin-bottom: 3px;
   transition: background 0.2s;
 }
@@ -180,7 +180,7 @@
 /* Bottom Text */
 .bottomText {
   margin-top: 5px;
-  font-size: 11px;
+  font-size: 10px;
   color: #08AAA2;
   text-align: center;
   width: 100%;
