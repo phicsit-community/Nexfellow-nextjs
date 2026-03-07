@@ -23,9 +23,9 @@
 .logoContainer {
   padding: 22px 20px 28px;
   margin-top: 0px;
-  margin-left: 20px;
   display: flex;
   align-items: center;
+  justify-content: center;
   margin-bottom: 0;
 }
 
@@ -34,7 +34,7 @@
 }
 
 .logo {
-  height: 32px;
+  height: 42px;
   width: auto;
   cursor: pointer;
   transition: opacity 0.2s ease;

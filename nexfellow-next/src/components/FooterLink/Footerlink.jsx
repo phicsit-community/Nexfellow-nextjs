@@ -13,14 +13,14 @@ const Footerlink = () => {
         <Link href={"/privacy"}>
           <li className={styles.listItem}>Privacy Policy</li>
         </Link>
-        <Link href={"/blog"}>
-          <li className={styles.listItem}>Blog</li>
-        </Link>
         <Link
           href={"https://docs.nexfellow.com/overview"}
           rel="noopener noreferrer"
           target="_blank">
-          <li className={styles.listItem}>Docs</li>
+          <li className={styles.listItem}>NexFellow Guide</li>
+        </Link>
+        <Link href={"/blog"}>
+          <li className={styles.listItem}>Blog</li>
         </Link>
         <Link
           href={"mailto:community@nexfellow.com"}

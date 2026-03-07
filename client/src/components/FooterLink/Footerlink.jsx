@@ -10,14 +10,14 @@ const Footerlink = () => {
         <Link to={"/privacy"}>
           <li className={styles.listItem}>Privacy Policy</li>
         </Link>
-        <Link to={"/blog"}>
-          <li className={styles.listItem}>Blog</li>
-        </Link>
         <Link
           to={"https://docs.nexfellow.com/overview"}
           rel="noopener noreferrer"
           target="_blank">
-          <li className={styles.listItem}>Docs</li>
+          <li className={styles.listItem}>NexFellow Guide</li>
+        </Link>
+        <Link to={"/blog"}>
+          <li className={styles.listItem}>Blog</li>
         </Link>
         <Link
           to={"mailto:community@nexfellow.com"}
