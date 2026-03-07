@@ -119,12 +119,12 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
-    "@tailwindcss/oxide-win32-x64-msvc": "^4.2.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.1"
   },
   "optionalDependencies": {
     "@tailwindcss/oxide-linux-x64-gnu": "4.1.18",
+    "@tailwindcss/oxide-win32-x64-msvc": "^4.2.1",
     "lightningcss-linux-x64-gnu": "1.30.2"
   },
   "overrides": {
