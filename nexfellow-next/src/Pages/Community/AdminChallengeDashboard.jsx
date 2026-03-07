@@ -2454,10 +2454,13 @@ const AdminChallengeDashboard = () => {
               </div>
 
               <div className={styles.editModalColFull}>
-                <Form.Item name="maxParticipants" label="Maximum Participants">
+                <Form.Item name="maxParticipants" label="Maximum Participants"
+                  rules={[{ validator: (_, value) => value && Number(value) < 0 ? Promise.reject('Participants cannot be negative') : Promise.resolve() }]}
+                >
                   <Input
                     className={styles.editModalInput}
                     type="number"
+                    min={0}
                     placeholder="e.g. 1000"
                   />
                 </Form.Item>
