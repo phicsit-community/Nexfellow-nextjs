@@ -1,35 +1,36 @@
 .container {
   flex: 1;
   width: 100%;
+  height: 100%;
   background: url("./assets/bg2.svg") center center no-repeat;
   background-size: cover;
+  background-attachment: fixed;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   font-family: "Inter", sans-serif;
-  padding: 2vh 2vw;
-  overflow: auto;
-  min-height: 0;
+  padding: 20px 2vw;
+  overflow: hidden;
 }
 
 .layoutContainer {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1350px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 32px;
 }
 
 .previewBanner {
   background: #363636;
-  padding: 16px 24px;
-  border-radius: 12px;
+  padding: 17px;
+  border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: #cbd5e1;
-  font-size: 14px;
+  font-size: 15px;
   border: 1px solid #334155;
   position: relative;
 }
@@ -61,74 +62,91 @@
   background: #0d9488;
 }
 
+.mainContentContainer {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.mainContent {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
 .cardContainer {
   display: flex;
   flex-direction: row;
-  gap: 32px;
-  flex-wrap: wrap;
-  padding: 20px;
-  max-width: 1200px;
+  gap: 31px;
+  flex-wrap: nowrap;
+  padding: 0;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: center;
+  transform: scale(0.67);
+  transform-origin: top center;
 }
 
 .leftPanel {
-  flex: 1;
-  max-width: 35%;
+  width: 500px;
+  min-width: 420px;
+  max-width: 500px;
+  height: 90vh;
   background: #000;
   border-radius: 13px;
-  padding: 20px;
+  padding: 17px;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
-  height: auto;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .rightPanel {
-  flex: 2;
-  max-width: 60%;
+  flex: 1;
+  max-width: 750px;
   background: #000;
   border-radius: 13px;
   padding: 25px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 0;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
-  height: auto;
+  min-width: 0;
 }
 
 .eventCard {
-  flex: 1;
-  min-width: 320px;
-  /* background: #111827; */
-  border-radius: 16px;
+  width: 100%;
+  border-radius: 13px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  /* padding: 0px 16px; */
   position: relative;
-  /* box-shadow: 0 0 0 1px #1f2937; */
+  flex: 1;
+  min-height: 0;
 }
 
 .backShare {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .rightButtons {
   display: flex;
-  gap: 8px;
+  gap: 5px;
 }
 
 .shareButton {
-  background: transparent;
-  color: #cbd5e1;
-  padding: 6px 12px;
-  border-radius: 25px;
-  border: 1px solid #fff;
-  font-size: 14px;
+  background: #000;
+  color: #D1D1D6;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid #E5E7EB;
+  font-size: 15px;
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -141,19 +159,18 @@
 
 .imageCard {
   position: relative;
-  border-radius: 12px;
-  /* overflow: hidden; */
+  border-radius: 13px;
   width: 100%;
-  height: 100%;
-  /* margin-bottom: 16px; */
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .eventImage {
-  width: 350px;
-  height: auto;
-  aspect-ratio: 1/1;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 13px;
   display: block;
 }
 
@@ -161,23 +178,25 @@
   position: absolute;
   top: 12px;
   left: 12px;
-  background-color: #10b981;
-  color: #fff;
-  padding: 4px 10px;
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 6px;
+  background: linear-gradient(90deg, #22C55E 0%, #059669 100%);
+  color: #000;
+  padding: 4px 13px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 999px;
+  text-transform: uppercase;
   z-index: 10;
 }
 
 .timerContainer {
   text-align: center;
-  margin-top: 16px;
+  margin-top: auto;
+  padding-top: 12px;
   width: 100%;
 }
 
 .timerContainer p {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   color: #CACACA;
   font-weight: 600;
   font-size: 17px;
@@ -186,13 +205,13 @@
 .timerGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .timerBox {
   background: #121212;
-  padding: 12px;
+  padding: 10px 8px;
   border-radius: 8px;
   text-align: center;
 }
@@ -229,12 +248,6 @@
 }
 
 .eventDetails {
-  flex: 1.2;
-  min-width: 360px;
-  /* background: #111827; */
-  border-radius: 16px;
-  /* padding: 24px; */
-  /* box-shadow: 0 0 0 1px #1f2937; */
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -246,12 +259,12 @@
   color: #fff;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  margin-top: 10px;
 }
 
 .label {
-  font-size: 12px;
-  text-transform: uppercase;
-  color: #94a3b8;
+  font-size: 19px;
+  color: #F9FAFB;
   font-weight: 600;
   margin-bottom: 6px;
 }
@@ -261,7 +274,7 @@
   flex-direction: row;
   justify-content: space-between;
   background: #121212;
-  padding: 15px 20px;
+  padding: 17px 26px;
   border-radius: 8px;
 }
 
@@ -269,7 +282,7 @@
 .dateTimeInfo {
   display: flex;
   flex-direction: row;
-  gap: 12px;
+  gap: 10px;
 }
 
 .hostData {
@@ -285,42 +298,49 @@
 }
 
 .hostInfoPic {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
 }
 
 .hostDataLabel {
-  font-size: 14px;
-  color: #cbd5e1;
-  font-weight: 600;
+  font-size: 15px;
+  color: #D1D1D6;
+  font-weight: 400;
 }
 
 .dateTimeDataLabel {
-  font-size: 14px;
-  color: #cbd5e1;
-  font-weight: 600;
+  font-size: 15px;
+  color: #D1D1D6;
+  font-weight: 400;
 }
 
 .hostDataName {
-  font-size: 14px;
-  color: #fff;
-  font-weight: 500;
+  font-size: 16px;
+  color: #CACACA;
+  font-weight: 600;
   margin: 0;
   word-break: break-word;
   max-width: 100%;
 }
 
 .dateTimeDataValue {
-  font-size: 14px;
-  color: #fff;
-  font-weight: 500;
+  font-size: 16px;
+  color: #CACACA;
+  font-weight: 600;
   word-break: break-word;
   max-width: 100%;
 }
 
 .descriptionBox {
   margin-top: 8px;
+  position: relative;
+}
+
+.descriptionWrapper {
+  position: relative;
+  max-height: 117px;
+  overflow: hidden;
 }
 
 .description {
@@ -330,13 +350,42 @@
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  margin: 0;
+}
+
+.descriptionGradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 67px;
+  background: linear-gradient(0deg, #000000 0%, rgba(36, 36, 36, 0) 100%);
+  pointer-events: none;
+}
+
+.readMore {
+  background: none;
+  border: none;
+  color: #08AAA2;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 4px;
+}
+
+.featuresHeading {
+  font-size: 19px;
+  font-weight: 600;
+  color: #fff;
+  margin-top: 10px;
+  margin-bottom: 2px;
 }
 
 .features {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 12px;
 }
 
 .featureButton {
@@ -376,13 +425,13 @@
 
 .blurredAttendees {
   text-align: center;
-  margin-top: 0px;
+  margin-top: 4px;
   color: #D1D1D6;
   font-size: 15px;
 }
 
 .authCTA {
-  margin-top: 0px;
+  margin-top: 10px;
   text-align: center;
   background: linear-gradient(90deg, #00C7BE 0%, #00A9AB 100%);
   padding: 23px;
@@ -437,54 +486,39 @@
 
 /* Responsive Layout Adjustments */
 @media (max-width: 1000px) {
-  .layoutContainer,
-  .cardContainer {
-    max-width: 100%;
-    padding: 0 8px;
-  }
-
-  .leftPanel,
-  .rightPanel {
-    max-width: 100%;
+  .leftPanel {
+    min-width: 200px;
   }
 }
 
 @media (max-width: 700px) {
+  .container {
+    padding: 8px;
+    overflow-y: auto;
+    height: auto;
+  }
+
   .cardContainer {
     flex-direction: column;
-    gap: 24px;
-    padding: 12px;
-    align-items: center;
-  }
-  .container {
-    padding: 2vh 2vw;
-    min-height: 100vh;
+    gap: 16px;
   }
 
-  .leftPanel,
-  .rightPanel {
-    max-width: 100%;
-    width: 100%;
-    height: auto;
-    min-height: unset;
-  }
   .leftPanel {
-    box-shadow: 0 2px 8px rgba(31, 41, 55, 0.08);
-    height: auto;
+    width: 100%;
+    min-width: unset;
+    max-width: 100%;
   }
 
   .rightPanel {
-    box-shadow: 0 2px 8px rgba(31, 41, 55, 0.08);
-  }
-
-  .eventImage {
     width: 100%;
-    height: auto;
-    aspect-ratio: 1/1;
-    min-width: unset;
+    overflow-y: visible;
   }
 
-  .eventCard,
+  .eventCard {
+    min-width: unset;
+    width: 100%;
+  }
+
   .eventDetails {
     min-width: unset;
     width: 100%;
@@ -493,94 +527,74 @@
 
 @media (max-width: 600px) {
   .container {
-    padding: 2vh 2vw;
-    min-height: 100vh;
-  }
-
-  .layoutContainer {
-    gap: 20px;
+    padding: 5px;
   }
 
   .cardContainer {
     gap: 0;
-    padding: 6px;
   }
 
   .leftPanel,
   .rightPanel {
-    padding: 12px;
-    border-radius: 10px;
+    padding: 8px;
+    border-radius: 7px;
   }
 
   .leftPanel {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
   }
+
   .rightPanel {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
 
-  .eventImage {
-    /* height: 200px; */
-    border-radius: 8px;
+  .eventTitle {
+    font-size: 12px;
   }
 
-  .eventTitle {
-    font-size: 18px;
-  }
   .eventInfo {
     flex-direction: column;
-    gap: 10px;
-    padding: 10px 12px;
+    gap: 7px;
+    padding: 7px 8px;
   }
 
   .hostInfo,
   .dateTimeInfo {
-    gap: 8px;
+    gap: 5px;
     width: 100%;
   }
 
-  .hostData,
-  .dateTimeData {
-    max-width: 70%;
-  }
-
   .timerContainer p {
-    font-size: 14px;
+    font-size: 9px;
   }
 
   .timerBox span {
-    font-size: 16px;
+    font-size: 11px;
   }
 
   .description {
-    font-size: 13px;
+    font-size: 9px;
   }
 
   .featureButton {
-    font-size: 13px;
-    padding: 10px 12px;
+    font-size: 9px;
+    padding: 7px 8px;
   }
 
   .authCTA {
-    padding: 12px;
-    border-radius: 6px;
+    padding: 8px;
+    border-radius: 4px;
   }
 
   .authCTA h3 {
-    font-size: 15px;
+    font-size: 10px;
   }
 
   .authButtons button {
-    font-size: 13px;
-    padding: 7px 14px;
-    border-radius: 6px;
+    font-size: 9px;
+    padding: 5px 9px;
+    border-radius: 4px;
   }
-}
-
-.leftPanel,
-.rightPanel,
-.cardContainer {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

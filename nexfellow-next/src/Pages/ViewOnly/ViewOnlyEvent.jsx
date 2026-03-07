@@ -23,6 +23,7 @@ const ViewOnlyEvent = () => {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showFullDescription, setShowFullDescription] = useState(false);
   const [countdown, setCountdown] = useState({
     days: "00",
     hours: "00",
@@ -302,9 +303,23 @@ const ViewOnlyEvent = () => {
 
                   <div className={styles.descriptionBox}>
                     <span className={styles.label}>About this event</span>
-                    <p className={styles.description}>{event.description}</p>
+                    <div className={styles.descriptionWrapper} style={showFullDescription ? { maxHeight: 'none' } : undefined}>
+                      <p className={styles.description}>{event.description}</p>
+                      {!showFullDescription && (
+                        <div className={styles.descriptionGradient} />
+                      )}
+                    </div>
+                    {!showFullDescription && (
+                      <button
+                        className={styles.readMore}
+                        onClick={() => setShowFullDescription(true)}
+                      >
+                        Read more
+                      </button>
+                    )}
                   </div>
 
+                  <h3 className={styles.featuresHeading}>Event Features</h3>
                   <div className={styles.features}>
                     <button
                       className={styles.featureButton}

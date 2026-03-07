@@ -74,7 +74,7 @@ export default function EventPage() {
                 padding: 0
             }}>
                 <ViewOnlyHeader />
-                <div style={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+                <div style={{ flex: 1, overflow: 'hidden', minHeight: 0, background: '#000' }}>
                     <ViewOnlyEvent />
                 </div>
             </div>
