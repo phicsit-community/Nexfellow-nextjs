@@ -2361,11 +2361,17 @@ const SingleChallenge = () => {
         <LoadingState />
       ) : (
         <Tabs defaultValue="activity">
-          <TabsList>
-            <TabsTrigger value="summary">Summary</TabsTrigger>
-            <TabsTrigger value="checkpoints">Checkpoints</TabsTrigger>
-            <TabsTrigger value="participants">Participants</TabsTrigger>
-            <TabsTrigger value="activity">Activity</TabsTrigger>
+          <TabsList style={{
+            background: "#F1F5F9",
+            borderRadius: "8px",
+            padding: "4px",
+            height: "41px",
+            maxWidth: "462px",
+          }}>
+            <TabsTrigger value="summary" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "6px", padding: "6px 25px" }}>Summary</TabsTrigger>
+            <TabsTrigger value="checkpoints" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "6px", padding: "6px 17px" }}>Checkpoints</TabsTrigger>
+            <TabsTrigger value="participants" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "6px", padding: "6px 18px" }}>Participants</TabsTrigger>
+            <TabsTrigger value="activity" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "6px", padding: "6px 32px" }}>Activity</TabsTrigger>
           </TabsList>
 
           <TabsContent value="summary">

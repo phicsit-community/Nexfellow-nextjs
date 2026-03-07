@@ -2450,15 +2450,17 @@ const SingleChallenge = () => {
         <Tabs defaultValue="summary" style={{ width: "100%", marginTop: "10px" }}>
           <TabsList style={{
             background: "#F1F5F9",
-            borderRadius: "6px",
+            borderRadius: "8px",
             padding: "4px",
             height: "41px",
             maxWidth: "462px",
+            overflow: "hidden",
+            gap: "4px",
           }}>
-            <TabsTrigger value="summary" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "4px", padding: "6px 25px" }}>Summary</TabsTrigger>
-            <TabsTrigger value="checkpoints" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "4px", padding: "6px 17px" }}>Checkpoints</TabsTrigger>
-            <TabsTrigger value="participants" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "4px", padding: "6px 18px" }}>Participants</TabsTrigger>
-            <TabsTrigger value="activity" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "4px", padding: "6px 32px" }}>Activity</TabsTrigger>
+            <TabsTrigger value="summary" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "6px", padding: "6px 16px", flex: "0 1 auto" }}>Summary</TabsTrigger>
+            <TabsTrigger value="checkpoints" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "6px", padding: "6px 16px", flex: "0 1 auto" }}>Checkpoints</TabsTrigger>
+            <TabsTrigger value="participants" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "6px", padding: "6px 16px", flex: "0 1 auto" }}>Participants</TabsTrigger>
+            <TabsTrigger value="activity" style={{ fontFamily: "Segoe UI, sans-serif", fontWeight: 600, fontSize: "14px", borderRadius: "6px", padding: "6px 16px", flex: "0 1 auto" }}>Activity</TabsTrigger>
           </TabsList>
 
           <TabsContent value="summary">

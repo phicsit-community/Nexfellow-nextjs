@@ -62,7 +62,7 @@
 .headerTitleWrap {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .headerTitleWrap h1 {
@@ -84,7 +84,7 @@
   line-height: 19px;
   color: #4B5563;
   margin: 0;
-  padding-left: 15.25px;
+  padding-left: 0;
 }
 
 .headerStatusBadge {
@@ -2429,8 +2429,8 @@
 
 /* Switches */
 .editModalOverlay :global(.ant-switch) {
-  min-width: 44px;
-  height: 24px;
+  min-width: 48px;
+  height: 26px;
   background: #E2E8F0;
 }
 
@@ -2441,7 +2441,12 @@
 .editModalOverlay :global(.ant-switch-handle) {
   width: 20px;
   height: 20px;
-  top: 2px;
+  top: 3px;
+  inset-inline-start: 3px;
+}
+
+.editModalOverlay :global(.ant-switch-checked .ant-switch-handle) {
+  inset-inline-start: calc(100% - 23px);
 }
 
 .editModalOverlay :global(.ant-switch-handle::before) {
