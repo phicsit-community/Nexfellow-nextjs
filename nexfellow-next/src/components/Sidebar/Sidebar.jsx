@@ -191,6 +191,27 @@ function Sidebar() {
               <span>Profile</span>
             </div>
           </Link>
+
+          <Link
+            className={style.amLink}
+            href="/settings"
+            onClick={() => setActiveTab("/settings")}
+          >
+            <div
+              className={style.amItems}
+              onMouseEnter={() => setHoveredIndex(8)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              <div className={style.iconContainer}>
+                <PlayOnce
+                  icon={AnimatedSettings}
+                  play={hoveredIndex === 8}
+                  style={{ width: 20, height: 20 }}
+                />
+              </div>
+              <span>Settings</span>
+            </div>
+          </Link>
         </div>
       )}
     </div>
