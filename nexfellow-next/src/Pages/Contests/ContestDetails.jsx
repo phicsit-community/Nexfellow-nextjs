@@ -182,6 +182,19 @@ const RewardsSkeleton = () => (
   </div>
 );
 
+const MiniNavSkeleton = () => (
+  <div className={styles["mini-nav"]}>
+    <div className={styles["mini-nav-items"]}>
+      {["Contest Details", "Results", "Rewards"].map((_, index) => (
+        <div
+          key={index}
+          className={`${styles.shimmer} ${styles.skeletonTab}`}
+        />
+      ))}
+    </div>
+  </div>
+);
+
 const ContestDetails = () => {
   const [activeSection, setActiveSection] = useState("details");
   const [contestGiven, setContestGiven] = useState(false);
@@ -417,31 +430,35 @@ const ContestDetails = () => {
           )}
         </div>
       </div>
-      <div className={styles["mini-nav"]}>
-        <div className={styles["mini-nav-items"]}>
-          <div
-            className={`${styles["mini-nav-item"]} ${activeSection === "details" ? styles["active"] : ""
-              }`}
-            onClick={() => handleNavClick("details")}
-          >
-            Contest Details
-          </div>
-          <div
-            className={`${styles["mini-nav-item"]} ${activeSection === "leaderboard" ? styles["active"] : ""
-              }`}
-            onClick={() => handleNavClick("leaderboard")}
-          >
-            Results
-          </div>
-          <div
-            className={`${styles["mini-nav-item"]} ${activeSection === "rewards" ? styles["active"] : ""
-              }`}
-            onClick={() => handleNavClick("rewards")}
-          >
-            Rewards
+      {loading ? (
+        <MiniNavSkeleton />
+      ) : (
+        <div className={styles["mini-nav"]}>
+          <div className={styles["mini-nav-items"]}>
+            <div
+              className={`${styles["mini-nav-item"]} ${activeSection === "details" ? styles["active"] : ""
+                }`}
+              onClick={() => handleNavClick("details")}
+            >
+              Contest Details
+            </div>
+            <div
+              className={`${styles["mini-nav-item"]} ${activeSection === "leaderboard" ? styles["active"] : ""
+                }`}
+              onClick={() => handleNavClick("leaderboard")}
+            >
+              Results
+            </div>
+            <div
+              className={`${styles["mini-nav-item"]} ${activeSection === "rewards" ? styles["active"] : ""
+                }`}
+              onClick={() => handleNavClick("rewards")}
+            >
+              Rewards
+            </div>
           </div>
         </div>
-      </div>
+      )}
       <div>
         {activeSection === "details" &&
           (loading ? (

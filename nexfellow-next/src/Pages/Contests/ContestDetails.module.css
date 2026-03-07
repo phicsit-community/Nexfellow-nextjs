@@ -36,6 +36,13 @@
   background-color: #08aaa2;
 }
 
+.skeletonTab {
+  width: 120px;
+  height: 24px;
+  border-radius: 4px;
+  margin: 10px 20px;
+}
+
 .contestdetails-header {
   display: flex;
   justify-content: center;

@@ -124,13 +124,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 2px 25px;
-    min-width: 146px;
-    height: 50px;
+    padding: 2px 17px;
+    min-width: 98px;
+    height: 33px;
     border: 1px solid #00C7BE;
-    border-radius: 6px;
+    border-radius: 4px;
     color: #FFFFFF;
-    font-size: 20px;
+    font-size: 13px;
     font-weight: 600;
     text-decoration: none;
     transition: all 0.3s ease;
