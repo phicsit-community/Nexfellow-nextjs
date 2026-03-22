@@ -70,7 +70,7 @@ app.use(
   compression({
     filter: (req, res) => {
       if (req.headers['upgrade'] === 'websocket') {
-        return false; // don’t compress WS
+        return false; // don't compress WS
       }
       return compression.filter(req, res);
     },
@@ -225,6 +225,11 @@ app.use("/direct-messages", directMessageRoutes);
 
 const reportRoutes = require("./routes/reportRoutes");
 app.use("/report", reportRoutes);
+
+// ✅ Health check route for UptimeRobot
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", message: "Server is running!" });
+});
 
 const shortenedUrlRoutes = require("./routes/shortenedUrlRoutes");
 app.use("/", shortenedUrlRoutes);
