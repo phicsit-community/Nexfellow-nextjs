@@ -126,7 +126,9 @@ module.exports.login = async (req, res) => {
     followedCommunities: user.followedCommunities,
     themePreference: user.themePreference,
     owner: user?.createdCommunity,
-    verified: user.verified
+    verified: user.verified,
+    verificationBadge: user.verificationBadge,
+    isCommunityAccount: user.isCommunityAccount
   };
 
   const redirectUrl = req.signedCookies.redirectUrl || "/feed";
@@ -216,6 +218,8 @@ module.exports.verifyOtp = async (req, res) => {
     registeredQuizzes: user.registeredQuizzes,
     followedCommunities: user.followedCommunities,
     verified: user.verified,
+    verificationBadge: user.verificationBadge,
+    isCommunityAccount: user.isCommunityAccount,
   };
 
   const redirectUrl = req.signedCookies.redirectUrl || "/feed";

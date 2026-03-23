@@ -124,6 +124,8 @@ module.exports.exchangeOAuthCode = async (req, res) => {
       banner: user.banner,
       profile: user.profile,
       verified: user.verified,
+      verificationBadge: user.verificationBadge,
+      isCommunityAccount: user.isCommunityAccount,
     };
   }
 
@@ -496,6 +498,8 @@ exports.getUserDetails = async (req, res) => {
       profile: user.profile,
       registeredQuizzes: user.registeredQuizzes,
       verified: user.verified,
+      verificationBadge: user.verificationBadge,
+      isCommunityAccount: user.isCommunityAccount,
     };
 
     // Calculate token expiration times

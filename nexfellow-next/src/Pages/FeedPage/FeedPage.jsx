@@ -81,7 +81,7 @@ const FeedPage = () => {
         </div>
 
         {/* Create Post Box - Only show for verified users */}
-        {user?.verified && (
+        {(user?.verificationBadge || user?.isCommunityAccount) && (
           <div className={styles.createPostBox}>
             <div className={styles.inputRow} onClick={handleCreatePostClick}>
               <div className={styles.avatarWrapper}>
