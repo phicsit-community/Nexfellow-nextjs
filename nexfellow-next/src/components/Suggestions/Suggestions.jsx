@@ -42,7 +42,7 @@ const CommunityCard = ({ community }) => (
   </div>
 );
 
-const Suggestions = () => {
+const Suggestions = ({ hideSearch = false }) => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const user = useSelector((state) => state.auth.user);
   const [expandedMembers, setExpandedMembers] = useState(false);
@@ -133,10 +133,12 @@ const Suggestions = () => {
   return (
     <div className={styles.suggestions}>
       {/* Search Bar and Profile Dropdown at Top */}
-      <div className={styles.searchContainer}>
-        <SearchCommand />
-        <ProfileDropdown />
-      </div>
+      {!hideSearch && (
+        <div className={styles.searchContainer}>
+          <SearchCommand />
+          <ProfileDropdown />
+        </div>
+      )}
 
       {/* Single Advertisement Banner */}
       <div className={styles.imgContainer}>

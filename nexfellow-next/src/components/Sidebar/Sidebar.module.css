@@ -169,7 +169,7 @@
 }
 
 .amItems {
-  border-radius: 0 5px 5px 0;
+  border-radius: 4px;
   color: var(--color-sidebar-foreground);
   display: flex;
   align-items: center;

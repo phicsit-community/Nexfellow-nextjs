@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import styles from "./FeedPage.module.css";
 import Suggestions from "../../components/Suggestions/Suggestions";
+import SearchCommand from "../../components/SearchBar/search-command";
+import ProfileDropdown from "../../components/ProfileDropdown/ProfileDropdown";
 import TrendingFeed from "./TrendingFeed";
 import photoIcon from "../../assets/Icons-Feed/photo.png";
 import pollIcon from "../../assets/Icons-Feed/poll.png";
@@ -81,7 +83,7 @@ const FeedPage = () => {
         {/* Create Post Box - Only show for verified users */}
         {user?.verified && (
           <div className={styles.createPostBox}>
-            <div className={styles.inputBox} onClick={handleCreatePostClick}>
+            <div className={styles.inputRow} onClick={handleCreatePostClick}>
               <div className={styles.avatarWrapper}>
                 {user?.picture ? (
                   <img
@@ -95,12 +97,14 @@ const FeedPage = () => {
                   </div>
                 )}
               </div>
-              <input
-                type="text"
-                placeholder="What are you working on?"
-                className={styles.postInput}
-                readOnly
-              />
+              <div className={styles.inputBox}>
+                <input
+                  type="text"
+                  placeholder="What are you working on?"
+                  className={styles.postInput}
+                  readOnly
+                />
+              </div>
             </div>
             <div className={styles.postActions}>
               <button className={styles.actionBtn} onClick={handleCreatePostClick} title="Add Photo">
@@ -122,8 +126,14 @@ const FeedPage = () => {
 
         <TrendingFeed type={activeTab} />
       </div>
-      <div className={styles.suggestionsContainer}>
-        <Suggestions />
+      <div className={styles.suggestionsColumn}>
+        <div className={styles.searchHeader}>
+          <SearchCommand />
+          <ProfileDropdown />
+        </div>
+        <div className={styles.suggestionsContainer}>
+          <Suggestions hideSearch />
+        </div>
       </div>
     </div>
   );
