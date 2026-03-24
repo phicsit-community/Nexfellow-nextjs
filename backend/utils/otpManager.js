@@ -8,12 +8,10 @@ const OTP_EXPIRY_MINUTES = 5;
 const REGISTRATION_OTP_PREFIX = "registration_otp:";
 
 const otpManager = {
-  // 🔐 Generate a secure 6-digit OTP
   generateOTP: () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
   },
 
-  // 🧂 Hash OTP with a random salt
   hashOTP: (otp) => {
     const salt = crypto.randomBytes(16).toString("hex");
     const hash = crypto
@@ -23,7 +21,6 @@ const otpManager = {
     return { hash, salt };
   },
 
-  // ✅ Verify OTP
   verifyOTP: (inputOTP, storedHash, storedSalt) => {
     const inputHash = crypto
       .createHash("sha256")
@@ -32,7 +29,6 @@ const otpManager = {
     return inputHash === storedHash;
   },
 
-  // 💾 Store hashed OTP in the user model
   storeOTPForUser: async (userId, otp) => {
     const { hash, salt } = otpManager.hashOTP(otp);
     const expiry = Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000;
@@ -47,15 +43,14 @@ const otpManager = {
     return { otp, expiry };
   },
 
-  // ⏱️ Check if expired
   isOTPExpired: (expiryTime) => {
     return Date.now() > expiryTime;
   },
 
-  // Registration OTP storage in Redis
   storeOTPForRegistration: async (email, otp, userData) => {
     const { hash, salt } = otpManager.hashOTP(otp);
     const expiry = Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000;
+
     await redis.set(
       REGISTRATION_OTP_PREFIX + email,
       JSON.stringify({
@@ -67,12 +62,20 @@ const otpManager = {
       "PX",
       OTP_EXPIRY_MINUTES * 60 * 1000
     );
+
     return { otp, expiry };
   },
 
   getRegistrationOTPData: async (email) => {
     const data = await redis.get(REGISTRATION_OTP_PREFIX + email);
-    return data ? JSON.parse(data) : null;
+    if (!data) return null;
+
+    try {
+      return typeof data === "string" ? JSON.parse(data) : data;
+    } catch (e) {
+      console.error("[OTP] Failed to parse registration OTP data:", e);
+      return null;
+    }
   },
 
   deleteRegistrationOTP: async (email) => {
@@ -104,7 +107,6 @@ const otpManager = {
       },
     });
 
-    // Choose content based on type
     let intro, instructions, subject;
     if (type === "login") {
       subject = "NexFellow | OTP for Login Verification";
@@ -145,7 +147,7 @@ Please do not share this OTP with anyone for security reasons.`,
     };
 
     try {
-      let info = await transporter.sendMail(message);
+      const info = await transporter.sendMail(message);
       console.log(`[OTP EMAIL] Sent to ${email}. MessageId: ${info.messageId}`);
     } catch (err) {
       console.error(`[OTP EMAIL] Failed to send to ${email}:`, err);
