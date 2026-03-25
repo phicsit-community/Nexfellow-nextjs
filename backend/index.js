@@ -152,9 +152,6 @@ const previewRoutes = require("./routes/previewRoutes");
 // Preview routes should be available without authentication
 app.use("/preview", previewRoutes);
 
-const shareRoutes = require("./routes/share");
-app.use("/", shareRoutes);
-
 const authRoutes = require("./routes/authRoutes");
 app.use("/auth", authRoutes);
 
@@ -187,6 +184,9 @@ app.use("/completedTasks", completedTasks);
 
 const community = require("./routes/communityRoutes");
 app.use("/community", community);
+
+const shareRoutes = require("./routes/share");
+app.use("/", shareRoutes);
 
 const notification = require("./routes/notificationRoutes");
 app.use("/notifications", notification);
@@ -222,7 +222,7 @@ const searchRoutes = require("./routes/searchRoutes");
 app.use("/search", searchRoutes);
 
 const communityQuizRoutes = require("./routes/communityQuizRoutes");
-app.use("/community", communityQuizRoutes);
+app.use("/community-quiz", communityQuizRoutes);
 
 const discussionRoutes = require("./routes/discussionsRoutes");
 app.use("/discussions", discussionRoutes);

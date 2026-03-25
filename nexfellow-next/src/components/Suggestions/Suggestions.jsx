@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import api from "../../lib/axios";
 import styles from "./Suggestions.module.css";
 import Footerlink from "../FooterLink/Footerlink";
@@ -28,19 +29,53 @@ const SkeletonCard = () => (
 );
 
 // Community Card component
-const CommunityCard = ({ community }) => (
-  <div className={styles.communityCard}>
-    <div className={styles.communityInfo}>
-      <span className={styles.communityName}>{community.name}</span>
-      <span className={styles.communityFollowers}>
-        {community.followersCount?.toLocaleString() || 0} Followers
-      </span>
+const CommunityCard = ({ community }) => {
+  const [following, setFollowing] = useState(false);
+  const [loadingFollow, setLoadingFollow] = useState(false);
+  const router = useRouter();
+
+  const handleFollow = async (e) => {
+    e.stopPropagation();
+    setLoadingFollow(true);
+    try {
+      const action = following ? "unfollow" : "follow";
+      await api.post(`/community/${community._id}/membership`, { action });
+      setFollowing(!following);
+    } catch (err) {
+      console.error("Error toggling follow:", err);
+    } finally {
+      setLoadingFollow(false);
+    }
+  };
+
+  const handleNavigate = () => {
+    router.push(`/explore/${community.owner?.username}`);
+  };
+
+  return (
+    <div
+      className={styles.communityCard}
+      onClick={handleNavigate}
+      style={{ cursor: "pointer" }}
+    >
+      <div className={styles.communityInfo}>
+        <span className={styles.communityName}>{community.owner?.name}</span>
+        <span className={styles.communityFollowers}>
+          {community.followerCount?.toLocaleString() || 0} Followers
+        </span>
+      </div>
+      <Button
+        className={styles.followBtn}
+        size="sm"
+        onClick={handleFollow}
+        disabled={loadingFollow}
+        variant={following ? "outline" : "default"}
+      >
+        {loadingFollow ? "..." : following ? "Unfollow" : "Follow"}
+      </Button>
     </div>
-    <Button className={styles.followBtn} size="sm">
-      Follow
-    </Button>
-  </div>
-);
+  );
+};
 
 const Suggestions = ({ hideSearch = false }) => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -85,8 +120,8 @@ const Suggestions = ({ hideSearch = false }) => {
   useEffect(() => {
     const fetchCommunities = async () => {
       try {
-        const response = await api.get("/explore/all-communities");
-        setCommunities(response.data?.communities || response.data || []);
+        const response = await api.get("/community/popular");
+        setCommunities(response.data?.communities || []);
         setLoadingCommunities(false);
       } catch (error) {
         console.error("Failed to load popular communities:", error);
@@ -128,7 +163,8 @@ const Suggestions = ({ hideSearch = false }) => {
   }, [isLoggedIn]);
 
   const toggleShowMoreMembers = () => setExpandedMembers(!expandedMembers);
-  const toggleShowMoreCommunities = () => setExpandedCommunities(!expandedCommunities);
+  const toggleShowMoreCommunities = () =>
+    setExpandedCommunities(!expandedCommunities);
 
   return (
     <div className={styles.suggestions}>
@@ -147,7 +183,7 @@ const Suggestions = ({ hideSearch = false }) => {
           src={
             topAds.length > 0
               ? topAds[topIndex]?.imageUrl
-              : (fallbackTop.src || fallbackTop)
+              : fallbackTop.src || fallbackTop
           }
           alt="Advertisement"
         />
