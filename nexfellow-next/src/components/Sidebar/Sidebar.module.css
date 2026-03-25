@@ -52,7 +52,7 @@
 .menuItems li {
   box-sizing: border-box;
   width: 156px;
-  height: 42px;
+  height: 40px;
   margin: 0;
   padding: 0 0 0 14px;
   display: flex;
@@ -60,9 +60,9 @@
   justify-content: flex-start;
   cursor: pointer;
   font-family: "Inter", sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
-  line-height: 19px;
+  line-height: 18px;
   border-radius: 4px;
   background: none;
   transition: all 0.3s cubic-bezier(0.32, 0, 0.67, 0);
@@ -92,7 +92,7 @@
 
 .icon {
   margin-right: 10px;
-  font-size: 18px;
+  font-size: 17px;
   color: #000000;
 }
 
@@ -145,7 +145,7 @@
 }
 
 .am span {
-  font-size: 18px;
+  font-size: 17px;
 }
 
 .amLink {
@@ -163,10 +163,10 @@
   color: var(--color-sidebar-foreground);
   display: flex;
   align-items: center;
-  padding: 10px 10px 10px 15px;
+  padding: 9px 10px 9px 15px;
   cursor: pointer;
   box-sizing: border-box;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
 }
 
