@@ -109,7 +109,7 @@
 .tabButtons {
   display: flex;
   flex-direction: row;
-  height: 100%;
+  height: 40px;
   gap: 10px;
 }
 
@@ -121,7 +121,7 @@
   color: #666;
   cursor: pointer;
   padding: 7px 22px;
-  height: 100%;
+  height: 40px;
   border-radius: 8px;
   transition: background 0.18s cubic-bezier(0.4, 0, 0.2, 1),
     color 0.18s cubic-bezier(0.4, 0, 0.2, 1);

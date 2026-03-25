@@ -345,8 +345,8 @@ const NotificationPage = () => {
         </header>
 
         <div className={styles.tabContainer}>
-          <div className="search-container w-full mb-4 flex-1">
-            <div className="relative w-full rounded-lg border focus-within:ring-2 focus-within:ring-[#24b2b4] transition-all">
+          <div className="search-container w-full flex-1">
+            <div className="relative w-full rounded-lg border focus-within:ring-2 focus-within:ring-[#24b2b4] transition-all h-[40px]">
               <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -366,7 +366,7 @@ const NotificationPage = () => {
               <input
                 type="text"
                 placeholder="Search notifications..."
-                className="w-[-webkit-fill-available] rounded-lg pl-10 pr-4 focus:outline-none bg-white dark:bg-gray-800"
+                className="w-[-webkit-fill-available] rounded-lg pl-10 pr-4 focus:outline-none bg-white dark:bg-gray-800 h-full"
                 style={{ padding: "8px 12px", marginLeft: "24px" }}
                 onChange={(e) => {
                   const searchTerm = e.target.value.toLowerCase();

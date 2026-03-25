@@ -430,7 +430,7 @@
   }
 
   .suggestionCardUsername {
-    font-size: 16px;
+    font-size: 14px;
     width: max-content;
   }
 
@@ -439,10 +439,7 @@
     height: 30px;
   }
 
-  .suggestionCardBtn {
-    /* width: 65%; */
-    /* font-size: 10px; */
-  }
+
 }
 
 :global(.dark) {

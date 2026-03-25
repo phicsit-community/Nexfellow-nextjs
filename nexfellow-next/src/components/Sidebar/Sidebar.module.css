@@ -29,9 +29,7 @@
   margin-bottom: 0;
 }
 
-:global(.dark) .logoContainer {
-  /* dark mode styles if needed */
-}
+
 
 .logo {
   height: 38px;
@@ -102,9 +100,6 @@
   color: var(--color-card-foreground);
 }
 
-.iconContainer {
-  /* (optional) change in dark mode if needed */
-}
 
 :global(.dark) .iconContainer {
   filter: invert(1);

@@ -442,7 +442,10 @@ module.exports.forgotPassword = async (req, res) => {
     transporter
       .sendMail(message)
       .then(() => res.status(201).json("email sent"))
-      .catch((err) => res.status(400).json(err));
+      .catch((err) => {
+        console.error("Error sending forgot password email:", err);
+        res.status(400).json(err);
+      });
   } else {
     res.status(400).json("email not registered");
   }

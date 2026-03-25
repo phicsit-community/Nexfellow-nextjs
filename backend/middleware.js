@@ -154,13 +154,17 @@ const isClient = async (req, res, next) => {
         const user = await User.findById(decoded.id);
 
         if (!user) {
+          console.log(`[middleware:isClient] Access token valid but user not found (ID: ${decoded.id})`);
           return res.status(401).json("User not found");
         }
 
         // Attach user to request object
+        console.log(`[middleware:isClient] Access token verified successfully for user ID: ${decoded.id}`);
         req.userId = user.id;
         req.user = user;
         return next();
+      } else {
+        console.log(`[middleware:isClient] Access token verification failed (it might be invalid or expired)`);
       }
     }
 
