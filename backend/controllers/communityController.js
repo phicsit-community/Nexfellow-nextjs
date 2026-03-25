@@ -1073,3 +1073,46 @@ module.exports.unpinPost = async (req, res) => {
       .json({ message: "Error unpinning post: " + error.message });
   }
 };
+
+// Get top 10 popular communities sorted by follower count (descending)
+module.exports.getPopularCommunities = async (req, res) => {
+  try {
+    const communities = await Community.aggregate([
+      { $match: { isDeleted: false } },
+      {
+        $addFields: {
+          followerCount: { $size: "$members" }
+        }
+      },
+      { $sort: { followerCount: -1 } },
+      { $limit: 10 },
+      {
+        $lookup: {
+          from: "users",
+          localField: "owner",
+          foreignField: "_id",
+          as: "owner"
+        }
+      },
+      { $unwind: "$owner" },
+      {
+        $project: {
+          followerCount: 1,
+          description: 1,
+          category: 1,
+          accountType: 1,
+          isApproved: 1,
+          "owner._id": 1,
+          "owner.name": 1,
+          "owner.username": 1,
+          "owner.picture": 1,
+        }
+      }
+    ]);
+
+    return res.status(200).json({ communities });
+  } catch (error) {
+    console.error("Error fetching popular communities:", error);
+    return res.status(500).json({ message: "Error fetching popular communities: " + error.message });
+  }
+};

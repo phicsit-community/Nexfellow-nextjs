@@ -23,7 +23,6 @@ const upload = multer({ storage: storage });
  * @route   POST /create
  * @desc    Create a new community
  * @access  Private (Only logged-in users - Community Creator)
- * @body    { name: String, profile: String }
  */
 router
   .route("/create")
@@ -43,7 +42,52 @@ router
   .get(isClient, catchAsync(communityController.getAllCommunities));
 
 /**
- * @route   GET /:communityId
+ * @route   GET /popular
+ * @desc    Get top 10 communities with the most followers
+ * @access  Private (Only logged-in users - Client)
+ */
+router
+  .route("/popular")
+  .get(catchAsync(communityController.getPopularCommunities));
+
+/**
+ * @route   GET /search
+ * @desc    Search for communities by name
+ * @access  Private (Only logged-in users - Client)
+ */
+router
+  .route("/search")
+  .get(isClient, catchAsync(communityController.searchCommunities));
+
+/**
+ * @route   GET /moderator/communities
+ * @desc    Get all communities where the user is a moderator, admin, or owner
+ * @access  Private (Only logged-in users)
+ */
+router
+  .route("/moderator/communities")
+  .get(isClient, catchAsync(communityController.getMyModeratedCommunities));
+
+/**
+ * @route   GET /user/:userId
+ * @desc    Get all communities associated with a specific user
+ * @access  Private (Only logged-in users - Client)
+ */
+router
+  .route("/user/:userId")
+  .get(isClient, catchAsync(communityController.getUserCommunities));
+
+/**
+ * @route   GET /followers/:communityId
+ * @desc    Get followers of a community
+ * @access  Private (Only logged-in users - Client)
+ */
+router
+  .route("/followers/:communityId")
+  .get(isClient, catchAsync(communityController.getCommunityFollowers));
+
+/**
+ * @route   GET /id/:communityId
  * @desc    Get community details by ID
  * @access  Private (Only logged-in users - Client)
  */
@@ -52,31 +96,18 @@ router
   .get(isClient, catchAsync(communityController.getCommunityById));
 
 /**
- * @route   GET /:username
- * @desc    Get community details by ID
+ * @route   GET /username/:username
+ * @desc    Get community details by username
  * @access  Public (Anyone)
- * @param   {String} username - The username of the community to retrieve
  */
 router
   .route("/username/:username")
   .get(catchAsync(communityController.getCommunityByUsername))
-
-  /**
-   * @route   PUT /:communityId
-   * @desc    Update community information by ID
-   * @access  Private (Only logged-in users - Community Creator)
-   */
   .put(
     isClient,
     isCommunityCreator,
     catchAsync(communityController.updateCommunity)
   )
-
-  /**
-   * @route   DELETE /:communityId
-   * @desc    Soft delete a community by marking it as deleted
-   * @access  Private (Only Community Creators)
-   */
   .delete(
     isClient,
     isCommunityCreator,
@@ -106,24 +137,6 @@ router
   );
 
 /**
- * @route   GET /search
- * @desc    Search for communities by name
- * @access  Private (Only logged-in users - Client)
- */
-router
-  .route("/search")
-  .get(isClient, catchAsync(communityController.searchCommunities));
-
-/**
- * @route   GET /user/:userId
- * @desc    Get all communities associated with a specific user
- * @access  Private (Only logged-in users - Client)
- */
-router
-  .route("/user/:userId")
-  .get(isClient, catchAsync(communityController.getUserCommunities));
-
-/**
  * @route   PATCH /:id/appraisals
  * @desc    Toggle the requesting user in the community appraisals list
  * @access  Private (Only logged-in users - Client)
@@ -144,11 +157,6 @@ router
     isCommunityCreator,
     catchAsync(communityController.editTopMembers)
   )
-  /**
-   * @route   GET /:id/top-members
-   * @desc    Retrieve the top members list for a community
-   * @access  Public
-   */
   .get(catchAsync(communityController.getTopMembers));
 
 /**
@@ -162,9 +170,8 @@ router
 
 /**
  * @route   POST /:communityId/get-users-roles
- * @desc    Get users' roles in the community (for frontend)
+ * @desc    Get users' roles in the community
  * @access  Private (Only logged-in users - Client)
- * @body    { userIds: [String] }
  */
 router
   .route("/:communityId/get-users-roles")
@@ -174,7 +181,6 @@ router
  * @route   PATCH /:communityId/role
  * @desc    Change a user's role (member/moderator/admin)
  * @access  Private (Only logged-in users - Community Creator)
- * @body    { userId: String, role: String }
  */
 router
   .route("/:communityId/role")
@@ -188,7 +194,6 @@ router
  * @route   POST /:communityId/transfer-ownership
  * @desc    Transfer community ownership to another user
  * @access  Private (Only current owner)
- * @body    { fromUserId: String, toUserId: String }
  */
 router
   .route("/:communityId/transfer-ownership")
@@ -199,32 +204,6 @@ router
   );
 
 /**
- * @route   GET /moderator/communities
- * @desc    Get all communities where the user is a moderator, admin, or owner
- * @access  Private (Only logged-in users)
- */
-router
-  .route("/moderator/communities")
-  .get(isClient, catchAsync(communityController.getMyModeratedCommunities));
-
-router
-  .route("/followers/:communityId")
-  .get(isClient, catchAsync(communityController.getCommunityFollowers));
-
-router.put(
-  "/:communityId/link",
-  isClient,
-  isCommunityCreator,
-  communityController.addOrUpdateLink
-);
-router.delete(
-  "/:communityId/link",
-  isClient,
-  isCommunityCreator,
-  communityController.deleteLink
-);
-
-/**
  * @route   GET /:communityId/follow-status
  * @desc    Check if a user is following a specific community
  * @access  Private (Only logged-in users - Client)
@@ -233,6 +212,10 @@ router
   .route("/:communityId/follow-status")
   .get(isClient, catchAsync(communityController.checkFollowStatus));
 
+/**
+ * @route   GET /:communityId/featured-members
+ * @access  Private (Only logged-in users - Client)
+ */
 router
   .route("/:communityId/featured-members")
   .get(isClient, catchAsync(communityController.getFeaturedMembers));
@@ -254,5 +237,29 @@ router
 router
   .route("/:communityId/pin-post")
   .delete(isClient, catchAsync(communityController.unpinPost));
+
+/**
+ * @route   PUT /:communityId/link
+ * @desc    Add or update community link
+ * @access  Private (Only community creators)
+ */
+router.put(
+  "/:communityId/link",
+  isClient,
+  isCommunityCreator,
+  communityController.addOrUpdateLink
+);
+
+/**
+ * @route   DELETE /:communityId/link
+ * @desc    Delete community link
+ * @access  Private (Only community creators)
+ */
+router.delete(
+  "/:communityId/link",
+  isClient,
+  isCommunityCreator,
+  communityController.deleteLink
+);
 
 module.exports = router;

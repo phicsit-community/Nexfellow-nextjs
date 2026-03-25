@@ -111,7 +111,7 @@ const UserCommunitySidebar = ({ communityId }) => {
   useEffect(() => {
     const fetchContests = async () => {
       try {
-        const res = await api.get(`/community/${communityId}/quizzes`);
+        const res = await api.get(`/community-quiz/${communityId}/quizzes`);
         console.log(res.data);
         const contestsData = res.data.quizzes.map((val) => {
           return {
