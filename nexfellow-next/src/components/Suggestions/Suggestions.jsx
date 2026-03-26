@@ -29,19 +29,30 @@ const SkeletonCard = () => (
 );
 
 // Community Card component
-const CommunityCard = ({ community }) => {
-  const [following, setFollowing] = useState(false);
-  const [loadingFollow, setLoadingFollow] = useState(false);
+const CommunityCard = ({ community, isFollowing: initialFollowing = false }) => {
   const router = useRouter();
+  const [following, setFollowing] = useState(initialFollowing);
+  const [loadingFollow, setLoadingFollow] = useState(false);
 
   const handleFollow = async (e) => {
     e.stopPropagation();
     setLoadingFollow(true);
+    const nextFollowing = !following;
+    // Optimistic update
+    setFollowing(nextFollowing);
     try {
-      const action = following ? "unfollow" : "follow";
+      const action = nextFollowing ? "follow" : "unfollow";
       await api.post(`/community/${community._id}/membership`, { action });
-      setFollowing(!following);
     } catch (err) {
+      // Revert optimistic update on failure
+      setFollowing(!nextFollowing);
+      const status = err?.response?.status;
+      const msg = err?.response?.data?.message || "";
+      if (status === 400) {
+        // If backend disagrees, sync to what backend says
+        if (msg.includes("already a member")) setFollowing(true);
+        else if (msg.includes("not a member")) setFollowing(false);
+      }
       console.error("Error toggling follow:", err);
     } finally {
       setLoadingFollow(false);
@@ -64,15 +75,17 @@ const CommunityCard = ({ community }) => {
           {community.followerCount?.toLocaleString() || 0} Followers
         </span>
       </div>
-      <Button
-        className={styles.followBtn}
-        size="sm"
+      <div
+        className={
+          following
+            ? styles.unfollowSuggestionCardBtn
+            : styles.suggestionCardBtn
+        }
         onClick={handleFollow}
-        disabled={loadingFollow}
-        variant={following ? "outline" : "default"}
+        style={{ pointerEvents: loadingFollow ? "none" : "auto", opacity: loadingFollow ? 0.7 : 1 }}
       >
         {loadingFollow ? "..." : following ? "Unfollow" : "Follow"}
-      </Button>
+      </div>
     </div>
   );
 };
@@ -120,7 +133,16 @@ const Suggestions = ({ hideSearch = false }) => {
   useEffect(() => {
     const fetchCommunities = async () => {
       try {
-        const response = await api.get("/community/popular");
+        // Pass userId so the backend can compute isFollowing per community
+        const userData =
+          typeof window !== "undefined"
+            ? JSON.parse(localStorage.getItem("user") || "null")
+            : null;
+        const userId = userData?.id || userData?._id || "";
+        const url = userId
+          ? `/community/popular?userId=${userId}`
+          : "/community/popular";
+        const response = await api.get(url);
         setCommunities(response.data?.communities || []);
         setLoadingCommunities(false);
       } catch (error) {
@@ -205,7 +227,11 @@ const Suggestions = ({ hideSearch = false }) => {
           communities
             .slice(0, expandedCommunities ? communities.length : 3)
             .map((community) => (
-              <CommunityCard key={community._id} community={community} />
+              <CommunityCard
+                key={community._id}
+                community={community}
+                isFollowing={community.isFollowing || false}
+              />
             ))
         )}
 

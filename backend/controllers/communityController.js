@@ -289,7 +289,10 @@ module.exports.toggleCommunityMembership = async (req, res) => {
 
     let message;
     if (action === "follow") {
-      const isMember = community.members.includes(userId);
+      // Use String() comparison to handle ObjectId vs string mismatch
+      const isMember = community.members.some(
+        (id) => String(id) === String(userId)
+      );
       if (!isMember) {
         community.members.push(userId);
         await community.save();
@@ -315,7 +318,10 @@ module.exports.toggleCommunityMembership = async (req, res) => {
           .json({ message: "User is already a member of this community." });
       }
     } else if (action === "unfollow") {
-      const index = community.members.indexOf(userId);
+      // Use String() comparison to handle ObjectId vs string mismatch
+      const index = community.members.findIndex(
+        (id) => String(id) === String(userId)
+      );
       if (index !== -1) {
         community.members.splice(index, 1);
         await community.save();
@@ -325,7 +331,9 @@ module.exports.toggleCommunityMembership = async (req, res) => {
           return res.status(404).json({ message: "User not found." });
         }
 
-        const followedIndex = user.followedCommunities.indexOf(communityId);
+        const followedIndex = user.followedCommunities.findIndex(
+          (id) => String(id) === String(communityId)
+        );
         if (followedIndex !== -1) {
           user.followedCommunities.splice(followedIndex, 1);
           await user.save();
@@ -1077,6 +1085,8 @@ module.exports.unpinPost = async (req, res) => {
 // Get top 10 popular communities sorted by follower count (descending)
 module.exports.getPopularCommunities = async (req, res) => {
   try {
+    const { userId } = req.query;
+
     const communities = await Community.aggregate([
       { $match: { isDeleted: false } },
       {
@@ -1102,6 +1112,7 @@ module.exports.getPopularCommunities = async (req, res) => {
           category: 1,
           accountType: 1,
           isApproved: 1,
+          members: 1,
           "owner._id": 1,
           "owner.name": 1,
           "owner.username": 1,
@@ -1110,7 +1121,18 @@ module.exports.getPopularCommunities = async (req, res) => {
       }
     ]);
 
-    return res.status(200).json({ communities });
+    // If a userId was provided, annotate each community with isFollowing
+    let result = communities;
+    if (userId) {
+      result = communities.map((community) => ({
+        ...community,
+        isFollowing: community.members.some(
+          (memberId) => String(memberId) === String(userId)
+        ),
+      }));
+    }
+
+    return res.status(200).json({ communities: result });
   } catch (error) {
     console.error("Error fetching popular communities:", error);
     return res.status(500).json({ message: "Error fetching popular communities: " + error.message });
