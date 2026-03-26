@@ -165,7 +165,7 @@ const TrendingFeed = ({ type = "trending" }) => {
                 }
 
             } catch (err) {
-                // Silently ignore errors
+                console.error("[TrendingFeed] Failed to fetch posts:", err?.response?.status, err?.response?.data || err?.message);
             } finally {
                 setLoadingPosts(false);
                 if (isRefresh) {

@@ -346,13 +346,16 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
     }
   };
 
+  // Guard: don't render posts with missing author (deleted accounts)
+  if (!post?.author) return null;
+
   return (
     <div data-post-id={post._id} className={styles.post} ref={postRef}>
       <div className={styles.postHeader}>
         <div className={styles.left}>
           <div className={styles.imgContainer}>
             <img
-              src={post.author.picture || "/src/assets/default-profile.jpg"}
+              src={post.author?.picture || "/src/assets/default-profile.jpg"}
               alt="profile"
               className={styles.profilePic}
               loading="lazy"
@@ -371,7 +374,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
                     profilePic: post.author.picture,
                     followers: followerCount,
                     following: followingCount,
-                    bio: post.community.description
+                    bio: post.community?.description
                       ? post.community.description.length > 60
                         ? `${post.community.description.slice(0, 60)}...`
                         : post.community.description
@@ -494,7 +497,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
               const parts = (post.content || "").split(/\b(https?:\/\/\S+)/g);
 
               let displayContent = post.content;
-              if (post.content.length > 140 && isReadMore) {
+              if ((post.content || "").length > 140 && isReadMore) {
                 let charCount = 0;
                 const truncatedParts = [];
 
@@ -541,7 +544,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
                   )
                 );
             })()}
-            {post.content.length > 140 && (
+            {(post.content || "").length > 140 && (
               <span
                 onClick={(e) => {
                   e.stopPropagation();
@@ -600,7 +603,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
             <div className={styles.chatIcon}>
               <MessageCircle className={styles.icon} color="#64748B" />
             </div>
-            <div className={` dark:text-white ${styles.info}`}>{post.comments.length}</div>
+            <div className={` dark:text-white ${styles.info}`}>{post.comments?.length ?? 0}</div>
           </div>
 
           {/* <div className={styles.iconContainer}>

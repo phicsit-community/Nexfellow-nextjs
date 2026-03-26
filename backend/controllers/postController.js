@@ -840,12 +840,10 @@ module.exports.getTrendingPosts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    const posts = await Post.aggregate([
+                                                                                              const posts = await Post.aggregate([
       {
         $match: {
           isDeleted: false,
-          createdAt: { $gte: sevenDaysAgo },
         },
       },
       {
@@ -876,7 +874,7 @@ module.exports.getTrendingPosts = async (req, res) => {
           as: "author",
         },
       },
-      { $unwind: "$author" },
+      { $unwind: { path: "$author", preserveNullAndEmptyArrays: false } },
       {
         $lookup: {
           from: "attachments",
@@ -893,7 +891,7 @@ module.exports.getTrendingPosts = async (req, res) => {
           as: "community",
         },
       },
-      { $unwind: "$community" },
+      { $unwind: { path: "$community", preserveNullAndEmptyArrays: false } },
       {
         $project: {
           "author.password": 0,
@@ -906,8 +904,14 @@ module.exports.getTrendingPosts = async (req, res) => {
 
     const total = await Post.countDocuments({
       isDeleted: false,
-      createdAt: { $gte: sevenDaysAgo },
     });
+
+    console.log(`[getTrendingPosts] Found ${posts.length} posts. Total count: ${total}`);
+    // If empty, let's log the count WITHOUT unwinds to see what got dropped
+    if (posts.length === 0) {
+      const rawCount = await Post.countDocuments({ isDeleted: false });
+      console.log(`[getTrendingPosts] Raw count of recent posts: ${rawCount}`);
+    }
 
     res.status(200).json({ posts, total });
   } catch (error) {
