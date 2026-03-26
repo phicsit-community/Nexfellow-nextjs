@@ -338,31 +338,43 @@ module.exports.getPostById = async (req, res) => {
 module.exports.getPostsByFollowedCommunities = async (req, res) => {
   try {
     const userId = req.userId;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).select(
+      "followedCommunities following"
+    );
     if (!user) {
       throw new ExpressError("User not found", 404);
     }
 
-    const communityIds = user.followedCommunities;
-    console.log("Followed Community IDs:", communityIds);
+    const followedCommunityIds = user.followedCommunities || [];
+    const followedUserIds = user.following || [];
 
-    if (!communityIds.length) {
-      return res.status(200).json([]);
+    if (!followedCommunityIds.length && !followedUserIds.length) {
+      return res.status(200).json({ posts: [], total: 0 });
     }
 
-    const posts = await Post.find({
-      community: { $in: communityIds },
+    const query = {
       isDeleted: false,
-    })
-      .populate("author")
+      $or: [
+        { community: { $in: followedCommunityIds } },
+        { author: { $in: followedUserIds } },
+      ],
+    };
+
+    const posts = await Post.find(query)
+      .populate("author", "-password -refreshToken -googleAccessToken -googleRefreshToken")
       .populate("attachments")
       .populate("community")
-      .sort({ createdAt: -1, _id: -1 });
+      .sort({ createdAt: -1, _id: -1 })
+      .skip(skip)
+      .limit(limit);
 
-    console.log(posts);
+    const total = await Post.countDocuments(query);
 
-    res.status(200).json(posts);
+    res.status(200).json({ posts, total });
   } catch (error) {
     res.status(500).json({ message: "Error fetching posts: " + error.message });
   }
@@ -819,5 +831,88 @@ module.exports.getDynamicFeedPosts = async (req, res) => {
   } catch (error) {
     console.error("Error fetching dynamic feed posts:", error);
     res.status(500).json({ message: "Error fetching feed posts: " + error.message });
+  }
+};
+
+module.exports.getTrendingPosts = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const posts = await Post.aggregate([
+      {
+        $match: {
+          isDeleted: false,
+          createdAt: { $gte: sevenDaysAgo },
+        },
+      },
+      {
+        $addFields: {
+          commentCount: { $size: "$comments" },
+        },
+      },
+      {
+        $addFields: {
+          trendingScore: {
+            $add: [
+              { $multiply: ["$likeCount", 3] },
+              { $multiply: ["$commentCount", 4] },
+              { $multiply: ["$shares", 2] },
+              { $multiply: ["$views", 0.5] },
+            ],
+          },
+        },
+      },
+      { $sort: { trendingScore: -1, createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: "users",
+          localField: "author",
+          foreignField: "_id",
+          as: "author",
+        },
+      },
+      { $unwind: "$author" },
+      {
+        $lookup: {
+          from: "attachments",
+          localField: "attachments",
+          foreignField: "_id",
+          as: "attachments",
+        },
+      },
+      {
+        $lookup: {
+          from: "communities",
+          localField: "community",
+          foreignField: "_id",
+          as: "community",
+        },
+      },
+      { $unwind: "$community" },
+      {
+        $project: {
+          "author.password": 0,
+          "author.refreshToken": 0,
+          "author.googleAccessToken": 0,
+          "author.googleRefreshToken": 0,
+        },
+      },
+    ]);
+
+    const total = await Post.countDocuments({
+      isDeleted: false,
+      createdAt: { $gte: sevenDaysAgo },
+    });
+
+    res.status(200).json({ posts, total });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching trending posts: " + error.message });
   }
 };
