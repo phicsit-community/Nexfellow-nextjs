@@ -15,8 +15,8 @@ import BlockUserModal from "../../components/BlockUserModal/BlockUserModal";
 import HidePostModal from "../../components/Modals/HidePostModal";
 import { toast } from "sonner";
 import { saveFeedCache, getFeedCache, clearFeedCache } from "../../utils/feedCache";
-
 import { getSocket } from "../../utils/socket";
+
 const socket = getSocket();
 const PAGE_SIZE = 10;
 const PULL_THRESHOLD = 50;
@@ -58,6 +58,7 @@ const TrendingFeed = ({ type = "trending" }) => {
     const pathname = usePathname();
     const router = useRouter();
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
     const [isPostsRendered, setIsPostsRendered] = useState(false);
     const [posts, setPosts] = useState([]);
     const [hasMore, setHasMore] = useState(true);
@@ -77,16 +78,13 @@ const TrendingFeed = ({ type = "trending" }) => {
     const [blockedUsers, setBlockedUsers] = useState([]);
     const [hiddenPosts, setHiddenPosts] = useState([]);
 
-    // Pull-to-refresh state
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [pullDistance, setPullDistance] = useState(0);
     const [cursor, setCursor] = useState(null);
     const [page, setPage] = useState(1);
-    const hasRestoredRef = useRef(false);
 
     const draggingRef = useRef(false);
     const startYRef = useRef(0);
-
     const feedContainerRef = useRef(null);
 
     const springBack = (target = 0) => {
@@ -108,13 +106,83 @@ const TrendingFeed = ({ type = "trending" }) => {
         requestAnimationFrame(step);
     };
 
-    // Fetch muted, blocked, hidden posts/users
+    // 1. fetchPosts defined FIRST
+    const fetchPosts = useCallback(
+        async (isRefresh = false, append = false) => {
+            if (loadingPosts && !isRefresh && posts.length > 0) return;
+            if (!hasMore && !isRefresh) return;
+
+            setLoadingPosts(true);
+            if (isRefresh) setIsRefreshing(true);
+
+            try {
+                let res;
+
+                if (type === "following") {
+                    res = await api.get("/post/followed-communities/posts", {
+                        params: { limit: PAGE_SIZE, page: isRefresh ? 1 : page },
+                    });
+                    const data = res.data.posts || [];
+                    if (isRefresh) {
+                        setPosts(data);
+                        setPage(2);
+                    } else {
+                        setPosts(prev => [...prev, ...data.filter(x => !prev.some(y => y._id === x._id))]);
+                        setPage(p => p + 1);
+                    }
+                    if (data.length < PAGE_SIZE) setHasMore(false);
+
+                } else if (type === "newest") {
+                    const p = isRefresh ? 1 : page;
+                    res = await api.get("/post", {
+                        params: { limit: PAGE_SIZE, page: p },
+                    });
+                    const data = res.data.posts || [];
+                    if (isRefresh) {
+                        setPosts(data);
+                        setPage(2);
+                    } else {
+                        setPosts(prev => [...prev, ...data.filter(x => !prev.some(y => y._id === x._id))]);
+                        setPage(p + 1);
+                    }
+                    if (data.length < PAGE_SIZE) setHasMore(false);
+
+                } else {
+                    // Trending
+                    const p = isRefresh ? 1 : page;
+                    res = await api.get("/post/trending/posts", {
+                        params: { limit: PAGE_SIZE, page: p },
+                    });
+                    const data = res.data.posts || [];
+                    if (isRefresh) {
+                        setPosts(data);
+                        setPage(2);
+                    } else {
+                        setPosts(prev => [...prev, ...data.filter(x => !prev.some(y => y._id === x._id))]);
+                        setPage(p + 1);
+                    }
+                    if (data.length < PAGE_SIZE) setHasMore(false);
+                }
+
+            } catch (err) {
+                // Silently ignore errors
+            } finally {
+                setLoadingPosts(false);
+                if (isRefresh) {
+                    setIsRefreshing(false);
+                    springBack();
+                }
+            }
+        },
+        [loadingPosts, cursor, hasMore, page, type]
+    );
+
+    // 2. Fetch muted, blocked, hidden
     useEffect(() => {
         if (!isLoggedIn) {
             setLoadingUserData(false);
             return;
         }
-
         const fetchData = async () => {
             setLoadingUserData(true);
             try {
@@ -133,106 +201,31 @@ const TrendingFeed = ({ type = "trending" }) => {
         fetchData();
     }, [isLoggedIn]);
 
-    // Reset when type changes
+    // 3. Reset state when type changes
     useEffect(() => {
         setPosts([]);
         setCursor(null);
         setPage(1);
         setHasMore(true);
         setLoadingPosts(true);
-        fetchPosts(true);
     }, [type]);
 
-    // Fetch dynamic posts!
-    const fetchPosts = useCallback(
-        async (isRefresh = false, append = false) => {
-            if (loadingPosts && !isRefresh && posts.length > 0) return;
-            if (!hasMore && !isRefresh) return;
+    // 4. Trigger fetch when loadingPosts becomes true
+    useEffect(() => {
+        if (loadingPosts) {
+            fetchPosts(true);
+        }
+    }, [type, loadingPosts]);
 
-            setLoadingPosts(true);
-            if (isRefresh) setIsRefreshing(true);
-
-            try {
-                let res;
-                let newCursor = null;
-                let newPage = page;
-
-                if (type === "following") {
-                    res = await api.get("/post/followed-communities/posts");
-                    const data = Array.isArray(res.data) ? res.data : (res.data.posts || []);
-                    if (isRefresh) {
-                        setPosts(data);
-                    } else {
-                        setPosts(data);
-                    }
-                    setHasMore(false);
-                } else if (type === "newest") {
-                    const p = isRefresh ? 1 : page;
-                    res = await api.get("/post", {
-                        params: {
-                            limit: PAGE_SIZE,
-                            page: p,
-                        },
-                    });
-                    const data = res.data.posts || [];
-                    if (isRefresh) {
-                        setPosts(data);
-                        setPage(2);
-                    } else {
-                        setPosts(prev => [...prev, ...data.filter(x => !prev.some(y => y._id === x._id))]);
-                        setPage(p + 1);
-                    }
-                    if (data.length < PAGE_SIZE) setHasMore(false);
-                } else {
-                    // Trending (Default)
-                    res = await api.get("/post/dynamic/feed", {
-                        params: {
-                            limit: PAGE_SIZE,
-                            cursor: isRefresh ? null : cursor,
-                        },
-                        timeout: 10000,
-                    });
-
-                    const data = res.data.posts || [];
-                    newCursor = res.data.nextCursor;
-
-                    if (isRefresh) {
-                        setPosts(data);
-                        setCursor(newCursor);
-                    } else {
-                        setPosts((prev) => [
-                            ...prev,
-                            ...data.filter((p) => !prev.some((q) => q._id === p._id)),
-                        ]);
-                        setCursor(newCursor);
-                    }
-                    setHasMore(!!newCursor);
-                }
-            } catch (err) {
-                // Silently ignore errors
-            } finally {
-                setLoadingPosts(false);
-                if (isRefresh) {
-                    setIsRefreshing(false);
-                    springBack();
-                }
-            }
-        },
-        [loadingPosts, cursor, hasMore, page, type]
-    );
-
-    // Initial load
+    // 5. Initial load with cache
     useEffect(() => {
         const { posts: cachedPosts } = getFeedCache();
-
         if (cachedPosts && cachedPosts.length > 0) {
             setPosts(cachedPosts);
             setLoadingPosts(false);
             setLoadingUserData(false);
             setHasMore(true);
             setIsPostsRendered(false);
-        } else {
-            fetchPosts(true, false);
         }
     }, []);
 
@@ -262,20 +255,15 @@ const TrendingFeed = ({ type = "trending" }) => {
         }
     }, [isPostsRendered]);
 
-
     // Infinite scroll
     const handleFeedScroll = (e) => {
         const { scrollTop, scrollHeight, clientHeight } = e.target;
-        if (
-            scrollHeight - scrollTop <= clientHeight + 50 &&
-            hasMore &&
-            !loadingPosts
-        ) {
+        if (scrollHeight - scrollTop <= clientHeight + 50 && hasMore && !loadingPosts) {
             fetchPosts(false, true);
         }
     };
 
-    // Pull-to-refresh events
+    // Pull-to-refresh
     const startPull = (y) => {
         if (feedContainerRef.current.scrollTop === 0 && !isRefreshing) {
             draggingRef.current = true;
@@ -303,7 +291,7 @@ const TrendingFeed = ({ type = "trending" }) => {
     const handleMouseMove = (e) => movePull(e.clientY);
     const handleMouseUp = () => endPull();
 
-    // POST FILTERING
+    // Post visibility filter
     const isPostVisible = useCallback(
         (p) =>
             p.author &&
@@ -313,25 +301,21 @@ const TrendingFeed = ({ type = "trending" }) => {
         [mutedUsers, blockedUsers, hiddenPosts]
     );
 
+    // Socket - new post
     useEffect(() => {
         if (!socket) return;
         const handler = (post) => {
             setPosts((prev) => {
-                if (
-                    prev.some((p) => p._id === post._id) ||
-                    !isPostVisible(post)
-                )
-                    return prev;
+                if (prev.some((p) => p._id === post._id) || !isPostVisible(post)) return prev;
                 return [post, ...prev];
             });
             toast.success("New post arrived!");
         };
-
         socket.on("newPost", handler);
         return () => socket.off("newPost", handler);
     }, [isPostVisible]);
 
-    // Post actions
+    // Hide post
     const handleHidePost = async () => {
         if (!selectedPost) return;
         try {
@@ -357,36 +341,25 @@ const TrendingFeed = ({ type = "trending" }) => {
         {
             label: "Mute",
             icon: <IoVolumeMuteOutline />,
-            action: (post) => {
-                setSelectedUser(post.author);
-                setMuteModalOpen(true);
-            },
+            action: (post) => { setSelectedUser(post.author); setMuteModalOpen(true); },
         },
         {
             label: "Hide",
             icon: <IoEyeOffOutline />,
-            action: (post) => {
-                setSelectedPost(post);
-                setHidePostModalOpen(true);
-            },
+            action: (post) => { setSelectedPost(post); setHidePostModalOpen(true); },
         },
         {
             label: "Block",
             icon: <IoBanOutline />,
-            action: (post) => {
-                setSelectedUser(post.author);
-                setBlockModalOpen(true);
-            },
+            action: (post) => { setSelectedUser(post.author); setBlockModalOpen(true); },
         },
         {
             label: "Report",
             icon: <AiOutlineExclamationCircle />,
-            action: (post) => {
-                setSelectedPost(post);
-                setReportModalOpen(true);
-            },
+            action: (post) => { setSelectedPost(post); setReportModalOpen(true); },
         },
     ];
+
     return (
         <>
             {loadingUserData ? (
@@ -407,29 +380,22 @@ const TrendingFeed = ({ type = "trending" }) => {
                     onMouseMove={handleMouseMove}
                     onMouseUp={handleMouseUp}
                     style={{
-                        transform: draggingRef.current
-                            ? `translateY(${pullDistance}px)`
-                            : "translateY(0px)",
+                        transform: draggingRef.current ? `translateY(${pullDistance}px)` : "translateY(0px)",
                         transition: draggingRef.current ? "none" : "transform 0.2s ease",
                     }}
                 >
-                    {/* Pull-to-refresh indicator */}
                     {!isRefreshing && pullDistance > 10 && (
                         <div className={styles.refreshIndicator}>
-                            {pullDistance > PULL_THRESHOLD
-                                ? "↻ Release to refresh"
-                                : "↓ Pull to refresh"}
+                            {pullDistance > PULL_THRESHOLD ? "↻ Release to refresh" : "↓ Pull to refresh"}
                         </div>
                     )}
 
-                    {/* Pull-to-refresh loader */}
                     {isRefreshing && (
                         <div className={styles.refreshSpinner}>
                             <ThreeDots height="40" width="40" color="#24b2b4" ariaLabel="refreshing" />
                         </div>
                     )}
 
-                    {/* Posts list */}
                     {filteredPosts.length > 0 &&
                         filteredPosts.map((post) => (
                             <Post
@@ -444,30 +410,14 @@ const TrendingFeed = ({ type = "trending" }) => {
                             />
                         ))}
 
-                    {/* Infinite scroll loader */}
                     {!loadingUserData && !isRefreshing && loadingPosts && (
-                        <div
-                            style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                minHeight: 120,
-                            }}
-                        >
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: 120 }}>
                             <TailSpin visible={true} height="40" width="40" color="#24b2b4" />
                         </div>
                     )}
 
-                    {/* No posts fallback */}
                     {filteredPosts.length === 0 && !loadingUserData && !isRefreshing && !loadingPosts && (
-                        <div
-                            style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                minHeight: 120,
-                            }}
-                        >
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: 120 }}>
                             <p>No posts available</p>
                         </div>
                     )}
@@ -495,8 +445,7 @@ const TrendingFeed = ({ type = "trending" }) => {
                     onClose={(wasBlocked) => {
                         setBlockModalOpen(false);
                         if (wasBlocked) {
-                            api
-                                .get("/user/blocked-users")
+                            api.get("/user/blocked-users")
                                 .then((res) => setBlockedUsers(res.data.blockedUsers || []))
                                 .catch((err) => console.error("Error fetching blocked users:", err));
                         }

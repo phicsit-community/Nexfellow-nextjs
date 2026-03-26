@@ -21,43 +21,25 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 3 * 1024 * 1024 }, // 3 MB
 });
+
 const router = express.Router();
 
 /**
  * @route   POST /post
  * @desc    Create a new post with attachments
  * @access  Private (Only Community Creators)
- * @body    {
- *            title: String (required, minLength: 1, maxLength: 100),
- *            content: String (required, minLength: 1),
- *            community: ObjectId (required),
- *            private: Boolean (optional)
- *          }
- * @files   Array of files (under the key 'files') - Attachments for the post
- * @response { message: String, post: Object }
- * @response 401 - Unauthorized if user is not a community creator
  */
 router.route("/").post(
   isClient,
   isCommunityCreator,
-  upload.array("files", 4), // Limit to 4 files
+  upload.array("files", 4),
   catchAsync(postController.createPost)
 );
 
 /**
- * @route   PUT /post/:postId
+ * @route   PUT /post/update/:postId
  * @desc    Update a specific post by ID
  * @access  Private (Only Community Creators)
- * @param   { postId: ObjectId } - ID of the post
- * @body    {
- *            title: String (optional),
- *            content: String (optional),
- *            private: Boolean (optional)
- *          }
- * @files   Array of files (optional) - New attachments
- * @response { message: String, post: Object }
- * @response 404 - Not Found if post does not exist
- * @response 403 - Forbidden if user is not a community creator
  */
 router
   .route("/update/:postId")
@@ -70,64 +52,51 @@ router
 
 /**
  * @route   GET /post
- * @desc    Get all posts
- * @access  Public (No authentication required)
- * @response { posts: Array } - Array of post objects
+ * @desc    Get all posts (Newest)
+ * @access  Private
  */
 router.route("/").get(isClient, catchAsync(postController.getAllPosts));
 
 /**
- * @route   GET /post/:postId
- * @desc    Get a specific post by ID
- * @access  Public
- * @param   { postId: ObjectId } - ID of the post
- * @response { post: Object }
- * @response 404 - Not Found if post does not exist
+ * @route   GET /post/trending/posts
+ * @desc    Get trending posts
+ * @access  Private
  */
 router
-  .route("/:postId")
-  .get(isClient, catchAsync(postController.getPostById))
-
-  /**
-   * @route   DELETE /post/:postId
-   * @desc    Delete a specific post by ID
-   * @access  Private (Only Community Creators)
-   * @param   { postId: ObjectId } - ID of the post
-   * @response { message: String }
-   * @response 404 - Not Found if post does not exist
-   * @response 403 - Forbidden if user is not a community creator
-   */
-  .delete(isClient, isCommunityCreator, catchAsync(postController.deletePost));
-
-/**
- * @route   GET /post/community/:communityId
- * @desc    Get all posts in a specific community
- * @access  Public
- * @param   { communityId: ObjectId } - ID of the community
- * @response { posts: Array } - Array of post objects
- */
-router
-  .route("/community/:communityId")
-  .get(catchAsync(postController.getPostsByCommunity));
+  .route("/trending/posts")
+  .get(isClient, catchAsync(postController.getTrendingPosts));
 
 /**
  * @route   GET /post/followed-communities/posts
- * @desc    Get posts from communities followed by the user
- * @access  Private (Authenticated Users)
- * @response { posts: Array } - Array of post objects
- * @response 401 - Unauthorized if user is not authenticated
+ * @desc    Get posts from followed communities + followed users
+ * @access  Private
  */
 router
   .route("/followed-communities/posts")
   .get(isClient, catchAsync(postController.getPostsByFollowedCommunities));
 
 /**
- * @route   PATCH /post/:postId/pin
+ * @route   GET /post/dynamic/feed
+ * @desc    Get dynamic feed posts
+ * @access  Private
+ */
+router
+  .route("/dynamic/feed")
+  .get(isClient, catchAsync(postController.getDynamicFeedPosts));
+
+/**
+ * @route   GET /post/community/:communityId
+ * @desc    Get all posts in a specific community
+ * @access  Public
+ */
+router
+  .route("/community/:communityId")
+  .get(catchAsync(postController.getPostsByCommunity));
+
+/**
+ * @route   PATCH /post/pin/:postId
  * @desc    Toggle pin status of a post
  * @access  Private (Only Community Creators & Moderators)
- * @param   { postId: ObjectId } - ID of the post
- * @response { message: String, post: Object }
- * @response 403 - Forbidden if user is not a community creator or moderator
  */
 router
   .route("/pin/:postId")
@@ -137,28 +106,44 @@ router
     catchAsync(postController.togglePinPost)
   );
 
+/**
+ * @route   PATCH /post/increment-shares/:postId
+ * @desc    Increment share count of a post
+ * @access  Private
+ */
 router
   .route("/increment-shares/:postId")
   .patch(isClient, catchAsync(postController.incrementPostShares));
 
+/**
+ * @route   PATCH /post/increment-views/:postId
+ * @desc    Increment view count of a post
+ * @access  Private
+ */
 router
   .route("/increment-views/:postId")
   .patch(isClient, catchAsync(postController.incrementPostViews));
 
 /**
  * @route   POST /post/track-link-click/:postId
- * @desc    Track when a link within a post is clicked
- * @access  Private (Authenticated Users)
- * @param   { postId: ObjectId } - ID of the post
- * @body    { url: String } - The URL that was clicked
- * @response { message: String, clickCount: Number }
+ * @desc    Track link clicks in a post
+ * @access  Private
  */
 router
   .route("/track-link-click/:postId")
   .post(isClient, catchAsync(postController.trackLinkClick));
 
+/**
+ * @route   GET /post/:postId
+ * @desc    Get a specific post by ID
+ * @route   DELETE /post/:postId
+ * @desc    Delete a specific post by ID
+ * @access  Private
+ * ⚠️ Keep this LAST — wildcard route
+ */
 router
-  .route("/dynamic/feed")
-  .get(isClient, catchAsync(postController.getDynamicFeedPosts));
+  .route("/:postId")
+  .get(isClient, catchAsync(postController.getPostById))
+  .delete(isClient, isCommunityCreator, catchAsync(postController.deletePost));
 
 module.exports = router;

@@ -29,8 +29,15 @@ const SkeletonCard = () => (
 );
 
 // Community Card component
-const CommunityCard = ({ community }) => {
-  const [following, setFollowing] = useState(false);
+const CommunityCard = ({ community, user }) => {
+  console.log("community._id:", community._id);
+  console.log("followedCommunities:", user?.followedCommunities);
+  const [following, setFollowing] = useState(
+    () =>
+      user?.followedCommunities?.some(
+        (id) => id === community._id || id?._id === community._id
+      ) ?? false
+  );
   const [loadingFollow, setLoadingFollow] = useState(false);
   const router = useRouter();
 
@@ -205,7 +212,11 @@ const Suggestions = ({ hideSearch = false }) => {
           communities
             .slice(0, expandedCommunities ? communities.length : 3)
             .map((community) => (
-              <CommunityCard key={community._id} community={community} />
+              <CommunityCard
+                key={community._id}
+                community={community}
+                user={user}
+              />
             ))
         )}
 
