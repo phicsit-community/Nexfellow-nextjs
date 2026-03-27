@@ -6,6 +6,7 @@ import styles from "./Suggestions.module.css";
 import Footerlink from "../FooterLink/Footerlink";
 
 import fallbackTop from "./assets/Advertisement-1.png";
+import avatar from "../../../assets/avatar.svg";
 
 import SuggestionCard from "./SuggestionCard";
 import { Button } from "../ui/button";
@@ -63,28 +64,46 @@ const CommunityCard = ({ community, isFollowing: initialFollowing = false }) => 
     router.push(`/explore/${community.owner?.username}`);
   };
 
+  const truncateText = (text, maxLength) => {
+    if (!text) return "";
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+
   return (
     <div
-      className={styles.communityCard}
+      className={styles.suggestionCard}
       onClick={handleNavigate}
       style={{ cursor: "pointer" }}
     >
-      <div className={styles.communityInfo}>
-        <span className={styles.communityName}>{community.owner?.name}</span>
-        <span className={styles.communityFollowers}>
-          {community.followerCount?.toLocaleString() || 0} Followers
-        </span>
+      <div className={styles.left}>
+        <img
+          src={community.owner?.picture || avatar}
+          alt={community.owner?.name}
+          className={styles.suggestionCardImg}
+          title={community.owner?.name || "Community Avatar"}
+          loading="lazy"
+        />
+        <div className={styles.suggestionCardInfo}>
+          <h4 className={styles.suggestionCardName} title={community.owner?.name}>
+            {truncateText(community.owner?.name, 12)}
+          </h4>
+          <p className={styles.suggestionCardUsername}>
+            {community.followerCount?.toLocaleString() || 0} Followers
+          </p>
+        </div>
       </div>
-      <div
-        className={
-          following
-            ? styles.unfollowSuggestionCardBtn
-            : styles.suggestionCardBtn
-        }
-        onClick={handleFollow}
-        style={{ pointerEvents: loadingFollow ? "none" : "auto", opacity: loadingFollow ? 0.7 : 1 }}
-      >
-        {loadingFollow ? "..." : following ? "Unfollow" : "Follow"}
+      <div className={styles.right}>
+        <div
+          className={
+            following
+              ? styles.unfollowSuggestionCardBtn
+              : styles.suggestionCardBtn
+          }
+          onClick={handleFollow}
+          style={{ pointerEvents: loadingFollow ? "none" : "auto", opacity: loadingFollow ? 0.7 : 1 }}
+        >
+          {loadingFollow ? "..." : following ? "Unfollow" : "Follow"}
+        </div>
       </div>
     </div>
   );
