@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+
 "use client";
 
 import * as React from "react";
@@ -131,7 +131,7 @@ export default function SearchCommand() {
           border: "1px solid #E6E6E6",
         }}
         onClick={() => setOpen(true)}
-        className="sm:flex hidden items-center w-full gap-2 text-[16px] bg-background hover:bg-accent/50 transition-all duration-200 cursor-pointer"
+        className="sm:flex hidden items-center w-full gap-2 text-[16px] bg-background hover:bg-accent/50 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 transition-all duration-200 cursor-pointer"
       >
         <span className="sr-only">Open search</span>
         <Search className="h-4 w-4" style={{ color: "#6A6A6A" }} />
