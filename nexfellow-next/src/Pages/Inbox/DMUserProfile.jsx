@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import {
     IoClose,
-    IoBookmarkOutline,
+    IoStarOutline,
     IoLocationOutline,
     IoTimeOutline,
     IoShareSocialOutline,
@@ -114,8 +114,8 @@ const DMUserProfile = ({
             <div className={styles.hero}>
                 {/* floating top-bar buttons sit on the gradient */}
                 <div className={styles.heroBar}>
-                    <button className={styles.heroIconBtn} aria-label="Bookmark">
-                        <IoBookmarkOutline size={17} />
+                    <button className={styles.heroIconBtn} aria-label="Star">
+                        <IoStarOutline size={17} />
                     </button>
                     <button
                         ref={closeBtnRef}

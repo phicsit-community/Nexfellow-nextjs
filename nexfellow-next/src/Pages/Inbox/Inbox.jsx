@@ -12,8 +12,15 @@ import {
   IoAdd,
   IoMenu,
   IoChevronBack,
+  IoCallOutline,
+  IoVideocamOutline,
+  IoInformationCircleOutline,
+  IoEllipsisVertical,
+  IoHappyOutline,
+  IoDocumentTextOutline,
+  IoDownloadOutline,
 } from "react-icons/io5";
-import { AiOutlineSend } from "react-icons/ai";
+import { AiOutlineSend, AiOutlinePaperClip } from "react-icons/ai";
 import styles from "./Inbox.module.css";
 import { BiTrashAlt } from "react-icons/bi";
 import { IoCheckmarkCircle, IoCloseCircle, IoBan } from "react-icons/io5";
@@ -1212,21 +1219,35 @@ const Inbox = () => {
                 onKeyDown={(e) => e.key === "Enter" && setProfileOpen(true)}
                 aria-label="View profile"
               >
-                <img
-                  src={
-                    selectedConversation.otherUser?.picture ||
-                    selectedConversation.otherUser?.profile?.profilePhoto ||
-                    "/default-avatar.png"
-                  }
-                  alt={selectedConversation.otherUser.name}
-                  className={styles.headerAvatar}
-                />
+                <div className={styles.headerAvatarContainer}>
+                  <img
+                    src={
+                      selectedConversation.otherUser?.picture ||
+                      selectedConversation.otherUser?.profile?.profilePhoto ||
+                      "/default-avatar.png"
+                    }
+                    alt={selectedConversation.otherUser.name}
+                    className={styles.headerAvatar}
+                  />
+                  <div className={styles.activeIndicator}></div>
+                </div>
                 <div>
-                  <h3 className={styles.headerName}>{selectedConversation.otherUser.name}</h3>
-                  <p className={styles.username}>@{selectedConversation.otherUser.username}</p>
+                  <h3 className={styles.headerName}>
+                    {selectedConversation.otherUser.name}
+                    {selectedConversation.otherUser.verified && (
+                      <span className={styles.verifiedBadgeHeader}>
+                        <IoCheckmarkCircle className={styles.verifiedIcon} />
+                      </span>
+                    )}
+                  </h3>
+                  <p className={styles.activeStatus}>Active now</p>
                 </div>
               </div>
-              {/* Could add more header actions here */}
+              <div className={styles.headerActions}>
+                <button className={styles.headerIconButton}><IoSearch /></button>
+                <button className={styles.headerIconButton}><IoInformationCircleOutline /></button>
+                <button className={styles.headerIconButton}><IoEllipsisVertical /></button>
+              </div>
             </div>
 
             <div className={styles.messagesContainer}>
@@ -1277,9 +1298,38 @@ const Inbox = () => {
                             className={styles.messageAvatar}
                           />
                         )}
-                        <div className={styles.messageContent}>
-                          <p>{message.content}</p>
+                        <div className={styles.messageBubbleWrapper}>
+                          <div className={styles.messageContent}>
+                            {message.fileUrl ? (
+                              <div className={styles.fileAttachmentContainer}>
+                                <div className={styles.fileIconWrapper}>
+                                  <IoDocumentTextOutline />
+                                </div>
+                                <div className={styles.fileInfo}>
+                                  <span className={styles.fileName}>{message.fileName || "File"}</span>
+                                  <span className={styles.fileSize}>{message.fileSize || ""}</span>
+                                </div>
+                                <a href={message.fileUrl} download target="_blank" rel="noopener noreferrer" className={styles.downloadIcon}>
+                                  <IoDownloadOutline />
+                                </a>
+                              </div>
+                            ) : (
+                              <p>{message.content}</p>
+                            )}
+                          </div>
                           <div className={styles.messageFooter}>
+                            {isCurrentUser && (
+                              <span className={styles.readStatus}>
+                                {message.isRead ? (
+                                  <IoCheckmarkDone
+                                    className={styles.readIcon}
+                                    color="#2db2a5"
+                                  />
+                                ) : (
+                                  <IoCheckmarkDone color="#2db2a5" />
+                                )}
+                              </span>
+                            )}
                             <span className={styles.messageTime}>
                               {new Date(message.createdAt).toLocaleTimeString(
                                 [],
@@ -1289,17 +1339,6 @@ const Inbox = () => {
                                 }
                               )}
                             </span>
-                            {isCurrentUser && (
-                              <span className={styles.readStatus}>
-                                {message.isRead ? (
-                                  <IoCheckmarkDone
-                                    className={styles.readIcon}
-                                  />
-                                ) : (
-                                  <IoCheckmarkDone />
-                                )}
-                              </span>
-                            )}
                           </div>
                         </div>
                       </div>
@@ -1338,35 +1377,45 @@ const Inbox = () => {
                 className={styles.messageInputContainer}
                 onSubmit={handleSendMessage}
               >
-                <input
-                  type="text"
-                  value={newMessage}
-                  onChange={(e) => {
-                    setNewMessage(e.target.value);
-                    if (e.target.value.trim()) {
-                      handleTyping(true);
-                    } else {
-                      handleTyping(false);
-                    }
-                  }}
-                  placeholder="Type a message..."
-                  ref={messageInputRef}
-                  disabled={
-                    selectedConversation.status === "pending" &&
-                    selectedConversation._id
-                  }
-                />
-                <button
-                  type="submit"
-                  className={styles.sendButton}
-                  disabled={
-                    !newMessage.trim() ||
-                    (selectedConversation.status === "pending" &&
-                      selectedConversation._id)
-                  }
-                >
-                  <AiOutlineSend />
+                <button type="button" className={styles.attachButton}>
+                  <AiOutlinePaperClip />
                 </button>
+                <div className={styles.inputWrapper}>
+                  <input
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => {
+                      setNewMessage(e.target.value);
+                      if (e.target.value.trim()) {
+                        handleTyping(true);
+                      } else {
+                        handleTyping(false);
+                      }
+                    }}
+                    placeholder="Type a message..."
+                    ref={messageInputRef}
+                    disabled={
+                      selectedConversation.status === "pending" &&
+                      selectedConversation._id
+                    }
+                  />
+                  <button type="button" className={styles.emojiButton}>
+                    <IoHappyOutline />
+                  </button>
+                </div>
+                {newMessage.trim().length > 0 && (
+                  <button
+                    type="submit"
+                    className={styles.sendButton}
+                    disabled={
+                      !newMessage.trim() ||
+                      (selectedConversation.status === "pending" &&
+                        selectedConversation._id)
+                    }
+                  >
+                    <AiOutlineSend />
+                  </button>
+                )}
               </form>
             )}
           </>
