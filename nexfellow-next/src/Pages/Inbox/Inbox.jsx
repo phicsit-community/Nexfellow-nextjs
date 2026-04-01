@@ -1178,6 +1178,7 @@ const Inbox = () => {
       </div>
 
       <div className={styles.conversationView}>
+        <div className={styles.chatArea}>
         {selectedConversation ? (
           <>
             <div className={styles.conversationHeaderMain}>
@@ -1385,6 +1386,54 @@ const Inbox = () => {
             </button>
           </div>
         )}
+        </div>
+
+        {profileOpen && selectedConversation?.otherUser && (
+          <DMUserProfile
+            open={true}
+            onClose={() => setProfileOpen(false)}
+            user={selectedConversation?.otherUser}
+            conversation={selectedConversation}
+            currentUserId={currentUserId}
+            conversationStatus={selectedConversation?.status}
+            blockedBy={selectedConversation?.blockedBy || null}
+            onStartChat={() => {
+              setProfileOpen(false);
+              if (messageInputRef?.current) messageInputRef.current.focus();
+            }}
+            onBlock={() => {
+              const id = selectedConversation?.otherUser?._id;
+              if (!id) return;
+              setProfileOpen(false);
+              blockUser(id);
+            }}
+            onUnblock={() => {
+              const id = selectedConversation?.otherUser?._id;
+              if (!id) return;
+              setProfileOpen(false);
+              unblockUser(id);
+            }}
+            onAcceptRequest={() => {
+              const cid = selectedConversation?._id;
+              if (!cid) return;
+              setProfileOpen(false);
+              handleAcceptRequest(cid);
+            }}
+            onRejectRequest={() => {
+              const cid = selectedConversation?._id;
+              if (!cid) return;
+              setProfileOpen(false);
+              handleRejectRequest(cid);
+            }}
+            onDeleteChat={() => {
+              const cid = selectedConversation?._id;
+              if (!cid) return;
+              setProfileOpen(false);
+              deleteConversation(cid);
+            }}
+            onViewProfile={handleViewProfile}
+          />
+        )}
       </div>
 
       {/* New Message Modal */}
@@ -1577,52 +1626,6 @@ const Inbox = () => {
         </div>
       )}
 
-      <DMUserProfile
-        open={!!profileOpen && !!selectedConversation?.otherUser}
-        onClose={() => setProfileOpen(false)}
-        user={selectedConversation?.otherUser}
-        conversation={selectedConversation}
-        currentUserId={currentUserId}
-        // Pass status and blockedBy explicitly if DMUserProfile needs them
-        conversationStatus={selectedConversation?.status}
-        blockedBy={selectedConversation?.blockedBy || null}
-        // Actions
-        onStartChat={() => {
-          setProfileOpen(false);
-          if (messageInputRef?.current) messageInputRef.current.focus();
-        }}
-        onBlock={() => {
-          const id = selectedConversation?.otherUser?._id;
-          if (!id) return;
-          setProfileOpen(false);
-          blockUser(id);
-        }}
-        onUnblock={() => {
-          const id = selectedConversation?.otherUser?._id;
-          if (!id) return;
-          setProfileOpen(false);
-          unblockUser(id);
-        }}
-        onAcceptRequest={() => {
-          const cid = selectedConversation?._id;
-          if (!cid) return;
-          setProfileOpen(false);
-          handleAcceptRequest(cid);
-        }}
-        onRejectRequest={() => {
-          const cid = selectedConversation?._id;
-          if (!cid) return;
-          setProfileOpen(false);
-          handleRejectRequest(cid);
-        }}
-        onDeleteChat={() => {
-          const cid = selectedConversation?._id;
-          if (!cid) return;
-          setProfileOpen(false);
-          deleteConversation(cid);
-        }}
-        onViewProfile={handleViewProfile}
-      />
     </div>
   );
 };

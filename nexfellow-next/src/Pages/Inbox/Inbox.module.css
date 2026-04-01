@@ -714,10 +714,20 @@
 .conversationView {
   flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   background-color: var(--chat-bg, #ffffff);
   position: relative;
   transition: transform 0.3s ease;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.chatArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .conversationHeader {
@@ -1598,6 +1608,11 @@
   .conversationView {
     width: 100%;
     z-index: 5;
+    flex-direction: column;
+  }
+
+  .chatArea {
+    width: 100%;
   }
 
   .mobileNavToggle {
@@ -1806,7 +1821,8 @@
   }
 
   /* Main chat area */
-  .conversationView {
+  .conversationView,
+  .chatArea {
     background-color: var(--color-card) !important;
     color: var(--color-card-foreground) !important;
   }
