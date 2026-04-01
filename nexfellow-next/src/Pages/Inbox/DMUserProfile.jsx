@@ -70,6 +70,7 @@ const DMUserProfile = ({
     mutualConnections = [],
     filesCount = 0,
     linksCount = 0,
+    messagesCount: propMessagesCount,
 }) => {
     const closeBtnRef = useRef(null);
 
@@ -83,7 +84,7 @@ const DMUserProfile = ({
     const country       = safe(user?.country);
     const followers     = user?.followersCount;
     const following     = user?.followingCount;
-    const messagesCount = user?.messagesCount;
+    const messagesCount = propMessagesCount ?? user?.messagesCount;
     const joinedAt      = user?.joinedAt;
     const bio           = safe(user?.bio);
     const email         = safe(user?.email);
@@ -340,8 +341,9 @@ const DMUserProfile = ({
                 <div className={styles.section}>
                     <p className={styles.sectionLabel}>Privacy &amp; Settings</p>
 
+                    {/* Notifications — card box */}
                     {typeof onToggleMute === "function" && (
-                        <div className={styles.settingRow}>
+                        <div className={styles.settingCard}>
                             <div className={styles.settingIcon} style={{ background: "#e6f9f4" }}>
                                 <IoNotificationsOutline size={16} style={{ color: "#1ab99a" }} />
                             </div>
@@ -356,7 +358,8 @@ const DMUserProfile = ({
                         </div>
                     )}
 
-                    <button className={styles.settingRow}>
+                    {/* Search in Conversation — card box */}
+                    <button className={styles.settingCard}>
                         <div className={styles.settingIcon} style={{ background: "#e8f0ff" }}>
                             <IoSearchOutline size={16} style={{ color: "#4a7bf7" }} />
                         </div>
@@ -364,19 +367,14 @@ const DMUserProfile = ({
                             <span className={styles.settingTitle}>Search in Conversation</span>
                             <span className={styles.settingHint}>Find messages</span>
                         </div>
+                        <IoChevronForwardOutline size={15} className={styles.rowChevron} />
                     </button>
 
-                    <button className={styles.settingRow}>
-                        <div className={styles.settingIcon} style={{ background: "#f3f4f6" }}>
-                            <IoArchiveOutline size={16} style={{ color: "#6b7280" }} />
-                        </div>
-                        <div className={styles.settingInfo}>
-                            <span className={styles.settingTitle}>Archive conversation</span>
-                        </div>
-                    </button>
+                    {/* divider before plain rows */}
+                    <div className={styles.settingDivider} />
 
                     {canAcceptReject && (
-                        <div className={styles.requestRow}>
+                        <div className={styles.plainRow}>
                             <span className={styles.settingTitle}>Message request</span>
                             <div className={styles.reqBtns}>
                                 {onAcceptRequest && <button className={styles.acceptBtn} onClick={onAcceptRequest}>Accept</button>}
@@ -385,56 +383,57 @@ const DMUserProfile = ({
                         </div>
                     )}
 
+                    {/* Archive — plain row */}
+                    <button className={styles.plainRow}>
+                        <div className={styles.plainIcon}>
+                            <IoArchiveOutline size={16} style={{ color: "#6b7280" }} />
+                        </div>
+                        <span className={styles.settingTitle}>Archive conversation</span>
+                    </button>
+
+                    {/* Block / Unblock — plain row */}
                     {isBlocked ? (
                         iBlocked ? (
-                            <button className={styles.settingRow} onClick={onUnblock}>
-                                <div className={styles.settingIcon} style={{ background: "#fff3e0" }}>
-                                    <IoPersonRemoveOutline size={16} style={{ color: "#f57c00" }} />
+                            <button className={styles.plainRow} onClick={onUnblock}>
+                                <div className={styles.plainIcon}>
+                                    <IoPersonRemoveOutline size={16} style={{ color: "#6b7280" }} />
                                 </div>
-                                <div className={styles.settingInfo}>
-                                    <span className={styles.settingTitle}>Unblock user</span>
-                                </div>
+                                <span className={styles.settingTitle}>Unblock user</span>
                             </button>
                         ) : (
-                            <div className={styles.settingRow}>
-                                <div className={styles.settingIcon} style={{ background: "#ffeaea" }}>
-                                    <IoPersonRemoveOutline size={16} style={{ color: "#e53935" }} />
+                            <div className={styles.plainRow}>
+                                <div className={styles.plainIcon}>
+                                    <IoPersonRemoveOutline size={16} style={{ color: "#6b7280" }} />
                                 </div>
-                                <div className={styles.settingInfo}>
-                                    <span className={styles.settingTitleMuted}>You&apos;re blocked</span>
-                                </div>
+                                <span className={styles.settingTitleMuted}>You&apos;re blocked</span>
                             </div>
                         )
                     ) : onBlock && (
-                        <button className={styles.settingRow} onClick={onBlock}>
-                            <div className={styles.settingIcon} style={{ background: "#f3f4f6" }}>
-                                <IoPersonRemoveOutline size={16} style={{ color: "#374151" }} />
+                        <button className={styles.plainRow} onClick={onBlock}>
+                            <div className={styles.plainIcon}>
+                                <IoPersonRemoveOutline size={16} style={{ color: "#6b7280" }} />
                             </div>
-                            <div className={styles.settingInfo}>
-                                <span className={styles.settingTitle}>Block user</span>
-                            </div>
+                            <span className={styles.settingTitle}>Block user</span>
                         </button>
                     )}
 
+                    {/* Report — plain row, red text */}
                     {onReport && (
-                        <button className={styles.settingRow} onClick={onReport}>
-                            <div className={styles.settingIcon} style={{ background: "#fff0f0" }}>
+                        <button className={styles.plainRow} onClick={onReport}>
+                            <div className={styles.plainIcon}>
                                 <IoWarningOutline size={16} style={{ color: "#e53935" }} />
                             </div>
-                            <div className={styles.settingInfo}>
-                                <span className={styles.settingTitleDanger}>Report user</span>
-                            </div>
+                            <span className={styles.settingTitleDanger}>Report user</span>
                         </button>
                     )}
 
+                    {/* Delete — plain row */}
                     {onDeleteChat && (
-                        <button className={styles.settingRow} onClick={onDeleteChat}>
-                            <div className={styles.settingIcon} style={{ background: "#f3f4f6" }}>
-                                <IoTrashOutline size={16} style={{ color: "#374151" }} />
+                        <button className={styles.plainRow} onClick={onDeleteChat}>
+                            <div className={styles.plainIcon}>
+                                <IoTrashOutline size={16} style={{ color: "#6b7280" }} />
                             </div>
-                            <div className={styles.settingInfo}>
-                                <span className={styles.settingTitle}>Delete conversation</span>
-                            </div>
+                            <span className={styles.settingTitle}>Delete conversation</span>
                         </button>
                     )}
                 </div>

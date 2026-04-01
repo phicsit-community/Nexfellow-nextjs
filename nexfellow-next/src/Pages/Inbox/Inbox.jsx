@@ -1432,6 +1432,12 @@ const Inbox = () => {
               deleteConversation(cid);
             }}
             onViewProfile={handleViewProfile}
+            messagesCount={messages.length}
+            mediaPreviews={messages
+              .filter((m) => m.fileUrl && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(m.fileUrl))
+              .map((m) => ({ url: m.fileUrl, thumb: m.fileUrl }))}
+            filesCount={messages.filter((m) => m.fileUrl && !/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(m.fileUrl)).length}
+            linksCount={messages.filter((m) => !m.fileUrl && /https?:\/\/\S+/.test(m.content || "")).length}
           />
         )}
       </div>
