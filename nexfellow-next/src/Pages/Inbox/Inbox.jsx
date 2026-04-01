@@ -23,7 +23,7 @@ import {
 import { AiOutlineSend, AiOutlinePaperClip } from "react-icons/ai";
 import styles from "./Inbox.module.css";
 import { BiTrashAlt } from "react-icons/bi";
-import { IoCheckmarkCircle, IoCloseCircle, IoBan } from "react-icons/io5";
+import { IoCheckmarkCircle, IoCloseCircle, IoBan, IoFilterOutline, IoPin } from "react-icons/io5";
 import messageIcon from "./assets/message.svg";
 import searchIcon from "./assets/searchIcon.svg";
 import newConvImg from "./assets/Overlay.svg";
@@ -968,25 +968,30 @@ const Inbox = () => {
           />
         </div>
 
-        <div className={styles.tabsContainer}>
-          <button
-            className={`${styles.tab} ${activeTab === "conversations" ? styles.activeTab : ""
-              }`}
-            onClick={() => setActiveTab("conversations")}
-          >
-            Conversations
-          </button>
-          <button
-            className={`${styles.tab} ${activeTab === "requests" ? styles.activeTab : ""
-              }`}
-            onClick={() => setActiveTab("requests")}
-          >
-            Requests
-            {messageRequests.length > 0 && (
-              <span className={styles.requestBadge}>
-                {messageRequests.length}
-              </span>
-            )}
+        <div className={styles.tabsHeaderContainer}>
+          <div className={styles.tabsContainer}>
+            <button
+              className={`${styles.tab} ${activeTab === "conversations" ? styles.activeTab : ""
+                }`}
+              onClick={() => setActiveTab("conversations")}
+            >
+              Conversations
+            </button>
+            <button
+              className={`${styles.tab} ${activeTab === "requests" ? styles.activeTab : ""
+                }`}
+              onClick={() => setActiveTab("requests")}
+            >
+              Requests
+              {messageRequests.length > 0 && (
+                <span className={styles.requestBadge}>
+                  {messageRequests.length}
+                </span>
+              )}
+            </button>
+          </div>
+          <button className={styles.filterButton}>
+            <IoFilterOutline size={18} />
           </button>
         </div>
 
@@ -1041,63 +1046,64 @@ const Inbox = () => {
                       }
                       alt={conversation.otherUser.name}
                     />
-                    {!conversation.isRead && (
-                      <div className={styles.unreadIndicator}></div>
+                    {(conversation.otherUser?.online || conversation.otherUser?.isOnline || conversation.status === "accepted") && (
+                      <div className={styles.activeDot}></div>
                     )}
-                    {/* {conversation.otherUser.verified && (
-                      <div className={styles.verifiedBadge}>✓</div>
-                    )} */}
                   </div>
 
                   <div className={styles.conversationInfo}>
                     <div className={styles.conversationHeader}>
                       <h3>
                         {conversation.otherUser.name}
-                        {!conversation.isRead && (
-                          <span className={styles.dotIndicator}></span>
-                        )}
+                        {conversation.isPinned && <IoPin className={styles.pinIcon} />}
                       </h3>
                       <span className={styles.timeStamp}>
                         {formatTime(conversation.lastUpdatedAt)}
                       </span>
                     </div>
-                    <div className={styles.messagePreview}>
-                      {conversation.status === "pending" ? (
-                        <span className={styles.pendingLabel}>
-                          Pending request
-                        </span>
-                      ) : conversation.lastMessage ? (
-                        <>
-                          {conversation.lastMessage.sender._id ===
-                            currentUserId && (
-                              <span className={styles.outgoingIndicator}>
-                                {conversation.lastMessage.isRead ? (
-                                  <IoCheckmarkDone className={styles.readIcon} />
-                                ) : (
-                                  <IoCheckmarkDone />
-                                )}
-                              </span>
-                            )}
-                          <p
-                            className={`${styles.previewText} ${!conversation.isRead
-                              ? styles.unreadPreviewText
-                              : ""
-                              }`}
-                          >
+                    <div className={styles.messagePreviewRow}>
+                      <div className={styles.messagePreview}>
+                        {conversation.status === "pending" ? (
+                          <span className={styles.pendingLabel}>
+                            Pending request
+                          </span>
+                        ) : typingUsers && typingUsers[str(conversation.otherUser?._id)] ? (
+                          <span className={styles.typingText}>Typing...</span>
+                        ) : conversation.lastMessage ? (
+                          <>
                             {conversation.lastMessage.sender._id ===
                               currentUserId && (
-                                <span className={styles.youPrefix}>You: </span>
+                                <span className={styles.outgoingIndicator}>
+                                  {conversation.lastMessage.isRead ? (
+                                    <IoCheckmarkDone className={styles.readIcon} />
+                                  ) : (
+                                    <IoCheckmarkDone />
+                                  )}
+                                </span>
                               )}
-                            {conversation.lastMessage.content.length > 30
-                              ? conversation.lastMessage.content.substring(
-                                0,
-                                30
-                              ) + "..."
-                              : conversation.lastMessage.content}
-                          </p>
-                        </>
-                      ) : (
-                        <p className={styles.previewText}>No messages yet</p>
+                            <p
+                              className={`${styles.previewText} ${!conversation.isRead && conversation.lastMessage.sender._id !== currentUserId
+                                  ? styles.unreadPreviewText
+                                  : ""
+                                }`}
+                            >
+                              {conversation.lastMessage.sender._id ===
+                                currentUserId && (
+                                  <span className={styles.youPrefix}>You: </span>
+                                )}
+                              {conversation.lastMessage.content?.length > 30
+                                ? conversation.lastMessage.content.substring(0, 30) + "..."
+                                : conversation.lastMessage.content}
+                            </p>
+                          </>
+                        ) : (
+                          <p className={styles.previewText}>No messages yet</p>
+                        )}
+                      </div>
+                      {!conversation.isRead && conversation.lastMessage?.sender?._id !== currentUserId && (
+                        <div className={styles.unreadBadge}>
+                          {conversation.unreadCount || 1}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -1403,10 +1409,10 @@ const Inbox = () => {
                     <IoHappyOutline />
                   </button>
                 </div>
-                {newMessage.trim().length > 0 && (
                   <button
                     type="submit"
                     className={styles.sendButton}
+                    style={{ display: newMessage.trim().length > 0 ? "flex" : "none" }}
                     disabled={
                       !newMessage.trim() ||
                       (selectedConversation.status === "pending" &&
@@ -1415,7 +1421,6 @@ const Inbox = () => {
                   >
                     <AiOutlineSend />
                   </button>
-                )}
               </form>
             )}
           </>
