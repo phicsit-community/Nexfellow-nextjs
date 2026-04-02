@@ -1,6 +1,6 @@
 # Nexfellow
 
-**Nexfellow** is a full-stack developer community platform built to connect developers, enable knowledge sharing, and foster collaboration through posts, communities, contests, events, quizzes, challenges, and real-time messaging.
+**Nexfellow** is builders platform built to connect developers, enable knowledge sharing, and foster collaboration through posts, communities, contests, events, quizzes, challenges, and real-time messaging.
 
 > 🌐 Live at [nexfellow.com](https://nexfellow.com)
 
