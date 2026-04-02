@@ -3,7 +3,7 @@
   height: calc(100vh - 80px);
   width: 100%;
   background-color: var(--background-color, #f5f7fb);
-  border-radius: 8px;
+  border-radius: 8px 0 0 8px;
   overflow: hidden;
   position: relative;
 }
