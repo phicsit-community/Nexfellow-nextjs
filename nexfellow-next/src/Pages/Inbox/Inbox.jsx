@@ -1046,7 +1046,7 @@ const Inbox = () => {
                       }
                       alt={conversation.otherUser.name}
                     />
-                    {(conversation.otherUser?.online || conversation.otherUser?.isOnline || conversation.status === "accepted") && (
+                    {(conversation.otherUser?.online || conversation.otherUser?.isOnline) && (
                       <div className={styles.activeDot}></div>
                     )}
                   </div>
@@ -1235,7 +1235,9 @@ const Inbox = () => {
                     alt={selectedConversation.otherUser.name}
                     className={styles.headerAvatar}
                   />
-                  <div className={styles.activeIndicator}></div>
+                  {(selectedConversation.otherUser?.online || selectedConversation.otherUser?.isOnline) && (
+                    <div className={styles.activeIndicator}></div>
+                  )}
                 </div>
                 <div>
                   <h3 className={styles.headerName}>
@@ -1246,7 +1248,9 @@ const Inbox = () => {
                       </span>
                     )}
                   </h3>
-                  <p className={styles.activeStatus}>Active now</p>
+                  {(selectedConversation.otherUser?.online || selectedConversation.otherUser?.isOnline) && (
+                    <p className={styles.activeStatus}>Active now</p>
+                  )}
                 </div>
               </div>
               <div className={styles.headerActions}>
