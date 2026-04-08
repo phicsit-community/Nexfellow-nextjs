@@ -25,6 +25,7 @@ import PlayOnce from "../animatedIcon/PlayOnce";
 import AnimatedAccount from "./animated/account.json";
 import staticCommuntiy from "./animated/staticCommuntiy.png";
 import AnimatedSettings from "./animated/settings.json";
+import { Package, Globe, Rocket, Activity, Settings, Star } from "lucide-react";
 
 function Sidebar() {
   const pathname = usePathname();
@@ -74,21 +75,32 @@ function Sidebar() {
     fetchUserData();
   }, [isLoggedIn]);
 
-  const menuItems = [
-    { path: "/feed", icon: AnimatedHome, label: "Home" },
-    { path: "/explore", icon: AnimatedExplore, label: "Explore" },
-    { path: "/leaderboard", icon: AnimatedLeaderboard, label: "Leaderboard" },
+  const coreItems = [
+    { path: "/feed", icon: AnimatedHome, label: "Home", section: "core", id: "home" },
+    { path: "/my-products", isStatic: true, iconComponent: Package, label: "My Products", badge: "3", section: "core", id: "my-products" },
+  ];
+
+  const discoverItems = [
+    { path: "/buildersmap", isStatic: true, iconComponent: Globe, label: "BuildersMap", badgeNew: "2 new", section: "discover", id: "buildersmap" },
+    { path: "/launches", isStatic: true, iconComponent: Rocket, label: "Launches", section: "discover", id: "launches" },
+    { path: "/momentum", isStatic: true, iconComponent: Activity, label: "Momentum Board", section: "discover", id: "momentum" },
+  ];
+
+  const communityItems = [
     {
       path: "/communities",
       icon: AnimatedCommunity?.src || AnimatedCommunity,
       label: "Community",
       staticIcon: staticCommuntiy?.src || staticCommuntiy,
+      hasDot: true,
+      section: "community",
+      id: "community"
     },
-    { path: "/inbox", icon: AnimatedMessenger, label: "Inbox" },
-    { path: "/notifications", icon: AnimatedNotification, label: "Notification" },
+    { path: "/leaderboard", icon: AnimatedLeaderboard, label: "Leaderboard", section: "community", id: "leaderboard" },
+    { path: "/inbox", icon: AnimatedMessenger, label: "Inbox", section: "community", id: "inbox" },
   ];
 
-  const displayMenuItems = menuItems;
+  const allItems = [...coreItems, ...discoverItems, ...communityItems];
 
   const isActive = (path) => activeTab.startsWith(path);
 
@@ -120,6 +132,53 @@ function Sidebar() {
     }
   };
 
+  const renderItem = (item) => (
+    <Link
+      href={item.path}
+      key={item.id}
+      onClick={(e) => {
+        if (pathname === item.path) {
+          e.preventDefault();
+          window.location.reload();
+        } else {
+          setActiveTab(item.path);
+        }
+      }}
+      style={{ textDecoration: "none" }}
+    >
+      <li
+        className={isActive(item.path) ? style.setTab : ""}
+        onMouseEnter={() => setHoveredIndex(item.id)}
+        onMouseLeave={() => setHoveredIndex(null)}
+      >
+        <div className={style.iconContainer}>
+          {item.isStatic ? (
+            <item.iconComponent size={20} strokeWidth={2} />
+          ) : (
+            <PlayOnce
+              icon={item.icon}
+              staticIcon={item.staticIcon}
+              play={hoveredIndex === item.id}
+              style={{ width: 24, height: 24 }}
+            />
+          )}
+        </div>
+        {!isMobile && (
+          <div className={style.labelRow}>
+            <span>{item.label}</span>
+            {item.badge && <div className={style.badge}>{item.badge}</div>}
+            {item.badgeNew && <div className={style.badgeNew}>{item.badgeNew}</div>}
+            {item.hasDot && <div className={style.redDot}></div>}
+          </div>
+        )}
+      </li>
+    </Link>
+  );
+
+  const getInitials = (name) => {
+    return name?.charAt(0).toUpperCase() || "U";
+  };
+
   return (
     <div className={style.sidebar}>
       {/* Logo at top of sidebar */}
@@ -135,81 +194,83 @@ function Sidebar() {
       </div>
 
       <ul className={style.menuItems}>
-        {displayMenuItems.map((item, idx) => (
-          <Link
-            href={item.path}
-            key={item.path}
-            onClick={(e) => {
-              if (pathname === item.path) {
-                e.preventDefault();
-                window.location.reload();
-              } else {
-                setActiveTab(item.path);
-              }
-            }}
-          >
-            <li
-              className={isActive(item.path) ? style.setTab : ""}
-              onMouseEnter={() => setHoveredIndex(idx)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              <div className={style.iconContainer}>
-                <PlayOnce
-                  icon={item.icon}
-                  staticIcon={item.staticIcon}
-                  play={hoveredIndex === idx}
-                  style={{ width: 24, height: 24 }}
-                />
-              </div>
-              {!isMobile && <span style={{ marginLeft: "10px" }}>{item.label}</span>}
-            </li>
-          </Link>
-        ))}
+        {!isMobile ? (
+          <>
+            <div className={style.sectionContainer}>
+              <div className={style.sectionHeader}>CORE</div>
+              {coreItems.map(renderItem)}
+            </div>
+
+            <div className={style.sectionContainer}>
+              <div className={style.sectionHeader}>DISCOVER</div>
+              {discoverItems.map(renderItem)}
+            </div>
+
+            <div className={style.sectionContainer}>
+              <div className={style.sectionHeader}>COMMUNITY</div>
+              {communityItems.map(renderItem)}
+            </div>
+          </>
+        ) : (
+          allItems.map(renderItem)
+        )}
       </ul>
 
       {!isMobile && (
-        <div className={style.accountManagement}>
-          <p className={style.am}>ACCOUNT MANAGEMENT</p>
-
-          <Link
-            className={style.amLink}
-            href={user?.username ? `/dashboard/${user.username}` : "#"}
-            onClick={() => setActiveTab("/profile")}
-          >
-            <div
-              className={style.amItems}
-              onMouseEnter={() => setHoveredIndex(7)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              <div className={style.iconContainer}>
-                <PlayOnce
-                  icon={AnimatedAccount}
-                  play={hoveredIndex === 7}
-                  style={{ width: 20, height: 20 }}
-                />
-              </div>
-              <span>Profile</span>
+        <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column' }}>
+          
+          <Link href="/submit" className={style.ctaBanner}>
+            <div className={style.ctaInner}>
+              <span style={{ fontSize: '16px' }}>🚀</span>
+              <span className={style.ctaText}>Submit your product</span>
             </div>
+            <span className={style.ctaSub}>Get feedback in 24 hrs &gt;</span>
           </Link>
 
+          <div className={style.divider} />
+
+          <div
+            className={style.userProfileRow}
+            onClick={() => {
+              setActiveTab("/profile");
+              router.push(user?.username ? `/dashboard/${user.username}` : "#");
+            }}
+          >
+            {user?.profilePhoto && !error ? (
+              <img 
+                src={user.profilePhoto} 
+                alt="Avatar" 
+                className={style.avatar} 
+                onError={(e) => {
+                  e.target.parentElement.innerHTML = `<div class="${style.initials}">${getInitials(user.name)}</div>` + e.target.parentElement.innerHTML.replace(e.target.outerHTML, '');
+                }}
+              />
+            ) : (
+              <div className={style.initials}>
+                {getInitials(user?.name)}
+              </div>
+            )}
+            <div className={style.userInfo}>
+              <span className={style.userName}>{user?.name || "Rahul K."}</span>
+              <span className={style.userSub}>{user?.designation || "Founder"} &middot; {user?.city || "Mumbai"}</span>
+            </div>
+          </div>
+
           <Link
-            className={style.amLink}
             href="/settings"
+            style={{ textDecoration: 'none' }}
             onClick={() => setActiveTab("/settings")}
           >
             <div
               className={style.amItems}
-              onMouseEnter={() => setHoveredIndex(8)}
+              style={{ margin: '0 14px 16px 14px' }}
+              onMouseEnter={() => setHoveredIndex("settings")}
               onMouseLeave={() => setHoveredIndex(null)}
             >
               <div className={style.iconContainer}>
-                <PlayOnce
-                  icon={AnimatedSettings}
-                  play={hoveredIndex === 8}
-                  style={{ width: 20, height: 20 }}
-                />
+                <Settings size={20} strokeWidth={2} />
               </div>
-              <span>Settings</span>
+              <span style={{ marginLeft: "10px" }}>Settings</span>
             </div>
           </Link>
         </div>
