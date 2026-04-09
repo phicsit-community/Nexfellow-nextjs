@@ -1,0 +1,95 @@
+
+const STEPS_CONFIG = [
+  { name:"Welcome",        desc:"Get started",              icon:"🏠" },
+  { name:"Account type",   desc:"Individual or community",  icon:"👤" },
+  { name:"Your profile",   desc:"Name, bio, location",      icon:"📝" },
+  { name:"Skills & stage", desc:"What you bring",           icon:"⚡" },
+  { name:"Co-founder",     desc:"Availability & match",     icon:"🤝" },
+  { name:"Credits",        desc:"Economy & interests",      icon:"💎" },
+  { name:"Connect",        desc:"Social & profile review",  icon:"🔗" },
+  { name:"All done!",      desc:"You're a builder",         icon:"🚀" },
+];
+
+let currentScreen = 0;
+
+function renderSteps(active) {
+  const nav = document.getElementById('steps-nav');
+  nav.innerHTML = STEPS_CONFIG.map((s, i) => {
+    let cls = i < active ? 'done' : i === active ? 'active' : 'upcoming';
+    let dotContent = i < active
+      ? `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+      : `${i + 1}`;
+    return `<div class="step-item ${cls}">
+      <div class="step-dot">${dotContent}</div>
+      <div class="step-label">
+        <div class="step-name">${s.name}</div>
+        <div class="step-desc">${s.desc}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateProgress(n) {
+  const pct = Math.round((n / (STEPS_CONFIG.length - 1)) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+function goTo(n) {
+  const prev = document.getElementById('screen-' + currentScreen);
+  const next = document.getElementById('screen-' + n);
+  if (!next) return;
+  prev.classList.remove('active');
+  next.classList.add('active');
+  currentScreen = n;
+  renderSteps(n);
+  updateProgress(n);
+  document.querySelector('.right').scrollTop = 0;
+}
+
+function selectType(type) {
+  document.getElementById('type-individual').classList.remove('selected');
+  document.getElementById('type-community').classList.remove('selected');
+  document.getElementById('type-individual').classList.add(type === 'individual' ? 'blue' : '');
+  if (type === 'individual') {
+    document.getElementById('type-individual').classList.add('selected');
+  } else {
+    document.getElementById('type-community').classList.add('selected');
+  }
+}
+
+function selectRadio(el, group) {
+  el.closest('.radio-cards').querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectAvail(el, colorClass) {
+  el.closest('.avail-cards').querySelectorAll('.avail-card').forEach(c => {
+    c.classList.remove('selected','green','amber','gray');
+  });
+  el.classList.add('selected', colorClass);
+}
+
+function toggleChip(el, group) {
+  el.classList.toggle('selected');
+}
+
+const socialState = { twitter: false, github: true, linkedin: false, portfolio: false };
+function toggleSocial(name) {
+  socialState[name] = !socialState[name];
+  const item = document.getElementById('si-' + name);
+  const btn = document.getElementById('btn-' + name);
+  if (!item || !btn) return;
+  if (socialState[name]) {
+    item.classList.add('connected');
+    btn.className = 'si-btn done';
+    btn.textContent = 'Connected ✓';
+  } else {
+    item.classList.remove('connected');
+    btn.className = 'si-btn connect';
+    btn.textContent = name === 'pf' ? 'Add URL' : 'Connect';
+  }
+}
+
+// Init
+renderSteps(0);
+updateProgress(0);
