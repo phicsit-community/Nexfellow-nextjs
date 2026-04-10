@@ -252,7 +252,7 @@ function Sidebar() {
             )}
             <div className={style.userInfo}>
               <span className={style.userName}>{user?.name || "Rahul K."}</span>
-              <span className={style.userSub}>{user?.designation || "Founder"} &middot; {user?.city || "Mumbai"}</span>
+              <span className={style.userSub}>{user?.occupation || (user?.professions?.[0]) || "Founder"} &middot; {user?.country || "Mumbai"}</span>
             </div>
           </div>
 

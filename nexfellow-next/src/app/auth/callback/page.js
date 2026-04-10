@@ -76,11 +76,17 @@ export default function AuthCallback() {
                         localStorage.setItem("expiresIn", new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString());
                     }
 
+                    // Set isOnboarded cookie on the frontend domain so Next.js middleware can read it
+                    const isOnboarded = response.data.payload?.isOnboarded;
+                    const onboardedExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
+                    document.cookie = `isOnboarded=${isOnboarded ? "true" : "false"};expires=${onboardedExpiry};path=/;SameSite=Lax`;
+
                     // Final wait to ensure everything is synced
                     await new Promise(resolve => setTimeout(resolve, 200));
 
-                    // Use window.location for a full page reload to ensure state is fresh
-                    window.location.href = "/feed";
+                    // Route based on onboarding status
+                    const destination = response.data.redirect || (isOnboarded ? "/feed" : "/onboarding");
+                    window.location.href = destination;
                 } else {
                     throw new Error("Failed to authenticate");
                 }
