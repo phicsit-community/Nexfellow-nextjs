@@ -16,6 +16,7 @@ const { getIo } = require("../utils/websocket");
 const tokenUtils = require("../utils/token");
 const otpManager = require("../utils/otpManager");
 const backendURL = process.env.BACKEND_DOMAIN;
+const isProduction = process.env.NODE_ENV === "production" || !!process.env.RENDER;
 const { uploadOnBunny, removeFromBunny } = require("../utils/attachments");
 const defaultProfilePicture =
   "https://nexfellow.b-cdn.net/defaults/default-profile.png";
@@ -131,7 +132,15 @@ module.exports.login = async (req, res) => {
     isCommunityAccount: user.isCommunityAccount
   };
 
-  const redirectUrl = req.signedCookies.redirectUrl || "/feed";
+  res.cookie("isOnboarded", user.isOnboarded ? "true" : "false", {
+    httpOnly: false,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  const defaultRedirect = user.isOnboarded ? "/feed" : "/onboarding";
+  const redirectUrl = req.signedCookies.redirectUrl || defaultRedirect;
   res.clearCookie("redirectUrl", { signed: true, httpOnly: true });
 
   return res.status(200).json({
@@ -222,7 +231,15 @@ module.exports.verifyOtp = async (req, res) => {
     isCommunityAccount: user.isCommunityAccount,
   };
 
-  const redirectUrl = req.signedCookies.redirectUrl || "/feed";
+  res.cookie("isOnboarded", user.isOnboarded ? "true" : "false", {
+    httpOnly: false,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  const defaultRedirect = user.isOnboarded ? "/feed" : "/onboarding";
+  const redirectUrl = req.signedCookies.redirectUrl || defaultRedirect;
   res.clearCookie("redirectUrl", { signed: true, httpOnly: true });
 
   return res.status(200).json({
@@ -442,10 +459,7 @@ module.exports.forgotPassword = async (req, res) => {
     transporter
       .sendMail(message)
       .then(() => res.status(201).json("email sent"))
-      .catch((err) => {
-        console.error("Error sending forgot password email:", err);
-        res.status(400).json(err);
-      });
+      .catch((err) => res.status(400).json(err));
   } else {
     res.status(400).json("email not registered");
   }

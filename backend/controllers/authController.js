@@ -126,17 +126,27 @@ module.exports.exchangeOAuthCode = async (req, res) => {
       verified: user.verified,
       verificationBadge: user.verificationBadge,
       isCommunityAccount: user.isCommunityAccount,
+      isOnboarded: user.isOnboarded,
     };
   }
 
   console.log(`[authController] Exchange code successful for user: ${payload.email}`);
+
+  if (!authData.isAdmin) {
+    res.cookie("isOnboarded", payload.isOnboarded ? "true" : "false", {
+      httpOnly: false,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+  }
 
   res.status(200).json({
     success: true,
     payload,
     token: authData.accessToken,
     expiresIn: new Date(Date.now() + 15 * 60 * 1000),
-    redirect: "/feed",
+    redirect: payload.isOnboarded ? "/feed" : "/onboarding",
   });
 };
 

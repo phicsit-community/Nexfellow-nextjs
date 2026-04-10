@@ -166,7 +166,7 @@ const Inbox = () => {
 
         // Mark messages as read on the server if received from other user
         if (msgSenderId !== me) {
-          api.patch(`/api/your-endpoint/messages/${convId}/read`).catch(() => { });
+          api.patch(`/direct-messages/conversations/${convId}/read`).catch(() => { });
         }
       }
 

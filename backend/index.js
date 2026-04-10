@@ -249,6 +249,9 @@ app.use("/advertisements", advertisementRoutes);
 const featuredCommunitiesRoutes = require("./routes/featuredCommunitiesRoutes");
 app.use("/", featuredCommunitiesRoutes);
 
+const onboardingRoutes = require("./routes/onboarding");
+app.use("/api/onboarding", onboardingRoutes);
+
 const bookmarkRoutes = require("./routes/bookmarkRoutes");
 app.use("/bookmarks", bookmarkRoutes);
 

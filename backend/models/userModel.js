@@ -281,6 +281,16 @@ const userSchema = new schema(
         allowMentions: true,
       },
     },
+
+    isOnboarded: {
+      type: Boolean,
+      default: false,
+    },
+
+    onboardingProfile: {
+      type: schema.Types.ObjectId,
+      ref: "OnboardingProfile",
+    },
   },
   { timestamps: true }
 );
