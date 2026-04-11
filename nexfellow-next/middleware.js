@@ -27,6 +27,7 @@ const PRIVATE_ROUTES = [
     "/contest-completed",
     "/contest-question",
     "/moderators",
+    "/onboarding",
 ];
 
 // Routes that should redirect logged-in users
@@ -61,6 +62,12 @@ export function middleware(request) {
         const loginUrl = new URL("/login", request.url);
         loginUrl.searchParams.set("redirect", pathname);
         return NextResponse.redirect(loginUrl);
+    }
+
+    // Redirect logged-in but non-onboarded users to onboarding
+    const isOnboarded = request.cookies.get("isOnboarded")?.value;
+    if (isLoggedIn && isOnboarded === "false" && !pathname.startsWith("/onboarding")) {
+        return NextResponse.redirect(new URL("/onboarding", request.url));
     }
 
     // Note: Removed auto-redirect from auth routes to feed
