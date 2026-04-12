@@ -46,7 +46,7 @@ export default function Onboarding() {
   const [submitError, setSubmitError]   = useState('');
   const [screenError, setScreenError]   = useState('');
 
-  // Redirect if already onboarded
+  // TODO: re-enable redirect after design review
   useEffect(() => {
     const checkOnboarded = async () => {
       try {
@@ -173,12 +173,7 @@ export default function Onboarding() {
           <div className={styles["left-deco2"]}></div>
 
           <div className={styles["logo"]}>
-            <div className={styles["logo-mark"]}>
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M4 9l4 4 6-6" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <span className={styles["logo-text"]}>NexFellow</span>
+            <img src="/NexFellowLogo.svg" alt="NexFellow" className={styles["logo-img"]} />
           </div>
 
           <div className={styles["steps"]} id="steps-nav">
@@ -189,7 +184,11 @@ export default function Onboarding() {
                   <div className={styles["step-dot"]}>
                     {i < currentScreen ? (
                       <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    ) : `${i + 1}`}
+                    ) : i === 0 ? (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    ) : i === STEPS_CONFIG.length - 1 ? (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    ) : `${i}`}
                   </div>
                   <div className={styles["step-label"]}>
                     <div className={styles["step-name"]}>{s.name}</div>
@@ -222,22 +221,19 @@ export default function Onboarding() {
             {/* ─── SCREEN 0: WELCOME ─── */}
             <div className={`${styles["screen"]} ${currentScreen === 0 ? styles["active"] : ""}`}>
               <div className={styles["screen-step"]}>Welcome to NexFellow</div>
-              <div className={styles["screen-title"]}>Build something people<br />actually want.</div>
+              <div className={styles["screen-title"]}>Build something people<br />actually want</div>
               <div className={styles["screen-sub"]}>Join 500+ builders getting real feedback, finding co-founders, and growing their early user base — all in one place.</div>
               <div className={styles["welcome-hero"]}>
-                <div className={styles["wh-deco"]}></div>
                 <div className={styles["wh-icon"]}>
-                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                    <path d="M8 16l6 6 10-10" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <img src="/android-chrome-192x192.png" alt="NexFellow mascot" />
                 </div>
                 <div className={styles["wh-title"]}>You're in the right place</div>
                 <div className={styles["wh-sub"]}>Set up your builder profile in 5 minutes.<br />We'll match you with reviewers based on your product category.</div>
               </div>
               <div className={styles["welcome-stats"]}>
                 <div className={styles["ws-card"]}><div className={styles["ws-val"]}>500+</div><div className={styles["ws-lbl"]}>Builders</div></div>
-                <div className={styles["ws-card"]}><div className={styles["ws-val"]}>4.3★</div><div className={styles["ws-lbl"]}>Avg feedback</div></div>
-                <div className={styles["ws-card"]}><div className={styles["ws-val"]}>24hr</div><div className={styles["ws-lbl"]}>Response time</div></div>
+                <div className={styles["ws-card"]}><div className={styles["ws-val"]}>4.3★</div><div className={styles["ws-lbl"]}>Avg Feedback</div></div>
+                <div className={styles["ws-card"]}><div className={styles["ws-val"]}>24hr</div><div className={styles["ws-lbl"]}>Response Time</div></div>
               </div>
               <div className={styles["btn-row"]}>
                 <button className={`${styles["btn"]} ${styles["btn-primary"]} ${styles["btn-lg"]}`} onClick={() => goTo(1)}>
@@ -255,27 +251,31 @@ export default function Onboarding() {
               <div className={styles["type-cards"]}>
                 <div className={`${styles["type-card"]} ${styles["blue"]} ${isTypeSelected("individual")}`} onClick={() => selectType("individual")}>
                   <div className={styles["tc-badge"]}>
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    {accountType === "individual" ? (
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    ) : null}
                   </div>
-                  <span className={styles["tc-icon"]}>👤</span>
+                  <span className={styles["tc-icon"]}>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  </span>
                   <div className={styles["tc-title"]}>Individual builder</div>
                   <div className={styles["tc-desc"]}>Solo founder, indie hacker, or developer building your own product.</div>
-                  <div className={`${styles["tc-badge-label"]} ${styles["blue-badge"]}`}>
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" fill="#6c5ce7"/><path d="M3 5l1.5 1.5 2.5-2.5" stroke="white" strokeWidth="1"/></svg>
-                    Blue badge
-                  </div>
                 </div>
                 <div className={`${styles["type-card"]} ${styles["orange"]} ${isTypeSelected("community")}`} onClick={() => selectType("community")}>
                   <div className={styles["tc-badge"]}>
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none"></svg>
+                    {accountType === "community" ? (
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    ) : null}
                   </div>
-                  <span className={styles["tc-icon"]}>🏢</span>
+                  <span className={styles["tc-icon"]}>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="17"/><line x1="9" y1="14.5" x2="15" y2="14.5"/>
+                    </svg>
+                  </span>
                   <div className={styles["tc-title"]}>Community / org</div>
                   <div className={styles["tc-desc"]}>Running a startup community, accelerator, college e-cell, or org page.</div>
-                  <div className={`${styles["tc-badge-label"]} ${styles["orange-badge"]}`}>
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="2" y="2" width="6" height="6" rx="1" fill="#fdcb6e"/></svg>
-                    Orange badge
-                  </div>
                 </div>
               </div>
               <div className={styles["btn-row"]}>
@@ -360,18 +360,34 @@ export default function Onboarding() {
               <hr className={styles["section-divider"]} />
 
               <div className={styles["field"]}>
-                <label>Product stage</label>
+                <div style={{ fontSize:"11px", fontWeight:"700", color:"var(--t2)", textTransform:"uppercase", letterSpacing:".08em", marginBottom:"10px" }}>Product Stage</div>
                 <div className={styles["radio-cards"]}>
                   {[
-                    { val: "Idea stage",  icon: "💡", bg: "rgba(108,92,231,0.12)", desc: "Validating the concept, no product yet" },
-                    { val: "MVP built",   icon: "🚀", bg: "rgba(0,184,148,0.1)",   desc: "Have a working product, need feedback" },
-                    { val: "Launched",    icon: "📈", bg: "rgba(253,203,110,0.1)", desc: "Live with users, growing and iterating" },
-                    { val: "Pivoting",    icon: "🔁", bg: "rgba(225,112,85,0.1)",  desc: "Changing direction, need fresh eyes" },
-                  ].map(({ val, icon, bg, desc }) => (
+                    {
+                      val: "Idea stage", desc: "Validating the concept, no product yet",
+                      bg: "rgba(108,92,231,0.10)", color: "#6c5ce7",
+                      icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.5-1.3 4.7-3.3 6L15 18H9l-.7-3C6.3 13.7 5 11.5 5 9a7 7 0 017-7z"/></svg>
+                    },
+                    {
+                      val: "MVP built", desc: "Have a working product, need feedback",
+                      bg: "rgba(36,178,180,0.10)", color: "#24b2b4",
+                      icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 16.5c-1.5 1.5-2 5-2 5s3.5-.5 5-2l11.5-11.5a5.5 5.5 0 00-3-3L4.5 16.5z"/><path d="M15 5c2 0 4 2 4 4"/><path d="M5 19l3-3"/></svg>
+                    },
+                    {
+                      val: "Launched", desc: "Live with users, growing and iterating",
+                      bg: "rgba(245,158,11,0.10)", color: "#f59e0b",
+                      icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                    },
+                    {
+                      val: "Pivoting", desc: "Changing direction, need fresh eyes",
+                      bg: "rgba(239,68,68,0.10)", color: "#ef4444",
+                      icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                    },
+                  ].map(({ val, icon, bg, color, desc }) => (
                     <div key={val} className={`${styles["radio-card"]} ${isStageSelected(val)}`} onClick={() => selectRadio('stage', val)}>
-                      <div className={styles["rc-icon"]} style={{ background: bg }}>{icon}</div>
+                      <div className={styles["rc-icon"]} style={{ background: bg, color }}>{icon}</div>
                       <div><div className={styles["rc-label"]}>{val}</div><div className={styles["rc-desc"]}>{desc}</div></div>
-                      <div className={styles["rc-check"]}><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg></div>
+                      <div className={styles["rc-check"]}>{stage === val && <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}</div>
                     </div>
                   ))}
                 </div>
@@ -394,15 +410,15 @@ export default function Onboarding() {
 
               <div className={styles["avail-cards"]} style={{ marginBottom: "24px" }}>
                 {[
-                  { color: "green", val: "Yes — actively looking",        dot: "#00b894", desc: "I'm open to meeting potential co-founders right now." },
-                  { color: "amber", val: "Maybe — open to conversations",  dot: "#fdcb6e", desc: "Not actively searching, but happy to connect if there's a fit." },
-                  { color: "gray",  val: "No — building solo",             dot: "#4a4f5e", desc: "I'm heads-down on my own product. Don't show me as available." },
-                  { color: "amber", val: "Advisor / mentor",               dot: "#0984e3", desc: "I want to advise early-stage builders, not co-found." },
+                  { color: "green", val: "Yes — actively looking",        dot: "#10b981", desc: "I'm open to meeting potential co-founders right now." },
+                  { color: "amber", val: "Maybe — open to conversations",  dot: "#f59e0b", desc: "Not actively searching, but happy to connect if there's a fit." },
+                  { color: "gray",  val: "No — building solo",             dot: "#6b7280", desc: "I'm heads-down on my own product. Don't show me as available." },
+                  { color: "green", val: "Advisor / mentor",               dot: "#24b2b4", desc: "I want to advise early-stage builders, not co-found." },
                 ].map(({ color, val, dot, desc }) => (
                   <div key={val} className={`${styles["avail-card"]} ${styles[color]} ${isAvailSelected(val)}`} onClick={() => selectAvail(color, val)}>
                     <div className={styles["avail-dot"]} style={{ background: dot }}></div>
                     <div><div className={styles["avail-title"]}>{val}</div><div className={styles["avail-desc"]}>{desc}</div></div>
-                    <div className={styles["rc-check"]} style={{ marginLeft: "auto" }}>
+                    <div className={`${styles["rc-check"]} ${styles["avail-check"]}`} style={{ marginLeft: "auto" }}>
                       {isAvailSelected(val) && <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}
                     </div>
                   </div>
@@ -432,41 +448,41 @@ export default function Onboarding() {
             {/* ─── SCREEN 5: CREDITS & INTERESTS ─── */}
             <div className={`${styles["screen"]} ${currentScreen === 5 ? styles["active"] : ""}`}>
               <div className={styles["screen-step"]}>Step 5 of 6 — Credits &amp; interests</div>
-              <div className={styles["screen-title"]}>Here's how credits<br />work for you.</div>
+              <div className={styles["screen-title"]}>Here's how credits<br />work for you</div>
               <div className={styles["screen-sub"]}>NexFellow runs on a credit economy — you earn by giving feedback and spend to receive it. You start with 30 free credits.</div>
 
               <div className={styles["credit-cards"]}>
                 <div className={styles["credit-card"]}>
-                  <div className={styles["cc-icon"]} style={{ background: "var(--gsoft)" }}>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M5 5l3-3 3 3" stroke="#00b894" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <div className={styles["cc-icon"]} style={{ background: "var(--asoft)" }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
                   </div>
                   <div className={styles["cc-title"]}>Earn credits</div>
                   <div className={styles["cc-desc"]}>Give feedback on products, refer builders, complete your profile.</div>
-                  <div className={styles["cc-val"]} style={{ color: "var(--green)" }}>+8 cr / review</div>
+                  <div className={styles["cc-val"]} style={{ color: "var(--accent)" }}>+8 cr / review</div>
                 </div>
                 <div className={styles["credit-card"]}>
-                  <div className={styles["cc-icon"]} style={{ background: "rgba(108,92,231,0.1)" }}>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 14V2M5 11l3 3 3-3" stroke="#a29bfe" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <div className={styles["cc-icon"]} style={{ background: "var(--asoft)" }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
                   </div>
                   <div className={styles["cc-title"]}>Spend credits</div>
                   <div className={styles["cc-desc"]}>Submit products for feedback, boost listings, connect on BuilderMap.</div>
-                  <div className={styles["cc-val"]} style={{ color: "var(--acc2)" }}>20 cr / round</div>
+                  <div className={styles["cc-val"]} style={{ color: "var(--accent)" }}>20 cr / round</div>
                 </div>
                 <div className={styles["credit-card"]}>
-                  <div className={styles["cc-icon"]} style={{ background: "rgba(253,203,110,0.1)" }}>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="#fdcb6e" strokeWidth="1.2"/><text x="8" y="11" textAnchor="middle" fontSize="7" fill="#fdcb6e" fontWeight="700">C</text></svg>
+                  <div className={styles["cc-icon"]} style={{ background: "rgba(245,158,11,0.10)" }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2 2"/></svg>
                   </div>
                   <div className={styles["cc-title"]}>Buy credits</div>
                   <div className={styles["cc-desc"]}>Top up any time. Bought credits never expire. Packs from ₹149.</div>
-                  <div className={styles["cc-val"]} style={{ color: "var(--gold)" }}>₹149 → 50 cr</div>
+                  <div className={styles["cc-val"]} style={{ color: "#f59e0b" }}>₹149 → 50 cr</div>
                 </div>
                 <div className={styles["credit-card"]}>
-                  <div className={styles["cc-icon"]} style={{ background: "rgba(225,112,85,0.1)" }}>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 3 3.3.5-2.4 2.3.6 3.3L8 9.6 5 11.1l.6-3.3L3.1 5.5l3.3-.5z" fill="#e17055" opacity=".8"/></svg>
+                  <div className={styles["cc-icon"]} style={{ background: "rgba(245,158,11,0.10)" }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                   </div>
                   <div className={styles["cc-title"]}>Bonus credits</div>
                   <div className={styles["cc-desc"]}>Complete profile +20, 7-day streak +15, refer a builder +25.</div>
-                  <div className={styles["cc-val"]} style={{ color: "var(--coral)" }}>Up to +175 cr</div>
+                  <div className={styles["cc-val"]} style={{ color: "#f59e0b" }}>Up to +175 cr</div>
                 </div>
               </div>
 
@@ -499,44 +515,44 @@ export default function Onboarding() {
             {/* ─── SCREEN 6: CONNECT & REVIEW ─── */}
             <div className={`${styles["screen"]} ${currentScreen === 6 ? styles["active"] : ""}`}>
               <div className={styles["screen-step"]}>Step 6 of 6 — Connect &amp; review</div>
-              <div className={styles["screen-title"]}>Almost there!<br />Connect your accounts.</div>
+              <div className={styles["screen-title"]}>Almost there!<br />Connect your accounts</div>
               <div className={styles["screen-sub"]}>Link your social profiles to strengthen your builder identity. This boosts your Fellow Score and helps others trust your reviews.</div>
 
               <div className={styles["social-row"]} style={{ marginBottom: "24px" }}>
                 <div className={`${styles["social-item"]} ${socialState.twitter ? styles["connected"] : ""}`} onClick={() => toggleSocial("twitter")}>
-                  <div className={styles["si-icon"]} style={{ background: "#1a1f2e" }}>
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 3h4l3 4.5L13 3h3L11 9.5 16 16h-4l-3.5-5L4 16H1l5.5-7L2 3z" fill="#9ca3af"/></svg>
+                  <div className={styles["si-icon"]} style={{ background: "#111827", borderRadius: "10px" }}>
+                    <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M2 3h4l3 4.5L13 3h3L11 9.5 16 16h-4l-3.5-5L4 16H1l5.5-7L2 3z" fill="#ffffff"/></svg>
                   </div>
                   <div><div className={styles["si-name"]}>Twitter / X</div><div className={styles["si-handle"]}>{socialState.twitter ? `@${profile.handle.replace(/^@/, '')}` : "Not connected"}</div></div>
                   <button className={`${styles["si-btn"]} ${socialState.twitter ? styles["done"] : styles["connect"]}`}>{socialState.twitter ? "Connected ✓" : "Connect"}</button>
                 </div>
                 <div className={`${styles["social-item"]} ${socialState.github ? styles["connected"] : ""}`} onClick={() => toggleSocial("github")}>
-                  <div className={styles["si-icon"]} style={{ background: "#1a1f2e" }}>
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2a7 7 0 00-2.21 13.64c.35.06.48-.15.48-.34v-1.2c-1.94.42-2.35-.94-2.35-.94-.32-.81-.78-1.02-.78-1.02-.64-.43.05-.43.05-.43.7.05 1.07.72 1.07.72.63 1.07 1.64.76 2.04.58.06-.45.24-.76.44-.94-1.55-.18-3.18-.78-3.18-3.46 0-.76.27-1.39.72-1.87-.07-.18-.31-.89.07-1.85 0 0 .59-.19 1.92.72a6.7 6.7 0 013.5 0c1.33-.91 1.92-.72 1.92-.72.38.96.14 1.67.07 1.85.45.48.72 1.11.72 1.87 0 2.69-1.64 3.28-3.2 3.45.25.22.48.65.48 1.3v1.94c0 .19.13.4.48.34A7 7 0 009 2z" fill="#9ca3af"/></svg>
+                  <div className={styles["si-icon"]} style={{ background: "#24292e", borderRadius: "10px" }}>
+                    <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 2a7 7 0 00-2.21 13.64c.35.06.48-.15.48-.34v-1.2c-1.94.42-2.35-.94-2.35-.94-.32-.81-.78-1.02-.78-1.02-.64-.43.05-.43.05-.43.7.05 1.07.72 1.07.72.63 1.07 1.64.76 2.04.58.06-.45.24-.76.44-.94-1.55-.18-3.18-.78-3.18-3.46 0-.76.27-1.39.72-1.87-.07-.18-.31-.89.07-1.85 0 0 .59-.19 1.92.72a6.7 6.7 0 013.5 0c1.33-.91 1.92-.72 1.92-.72.38.96.14 1.67.07 1.85.45.48.72 1.11.72 1.87 0 2.69-1.64 3.28-3.2 3.45.25.22.48.65.48 1.3v1.94c0 .19.13.4.48.34A7 7 0 009 2z" fill="#ffffff"/></svg>
                   </div>
                   <div><div className={styles["si-name"]}>GitHub</div><div className={styles["si-handle"]}>{socialState.github ? `@${profile.handle.replace(/^@/, '') || 'rahulkumar'}` : "Not connected"}</div></div>
                   <button className={`${styles["si-btn"]} ${socialState.github ? styles["done"] : styles["connect"]}`}>{socialState.github ? "Connected ✓" : "Connect"}</button>
                 </div>
                 <div className={`${styles["social-item"]} ${socialState.linkedin ? styles["connected"] : ""}`} onClick={() => toggleSocial("linkedin")}>
-                  <div className={styles["si-icon"]} style={{ background: "#1a1f2e" }}>
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="2" fill="#2867B2" opacity=".5"/><path d="M5 7.5v5M5 5.5v.5M8.5 7.5v5M8.5 9.5a2 2 0 114 0v3" stroke="#9ca3af" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                  <div className={styles["si-icon"]} style={{ background: "#0a66c2", borderRadius: "10px" }}>
+                    <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><rect x="2" y="6" width="2.5" height="9" fill="#fff"/><circle cx="3.25" cy="3.5" r="1.5" fill="#fff"/><path d="M8 6v9M8 9.5a3 3 0 016 0V15" stroke="#fff" strokeWidth="2" strokeLinecap="round"/></svg>
                   </div>
                   <div><div className={styles["si-name"]}>LinkedIn</div><div className={styles["si-handle"]}>{socialState.linkedin ? `@${profile.handle.replace(/^@/, '')}` : "Not connected"}</div></div>
                   <button className={`${styles["si-btn"]} ${socialState.linkedin ? styles["done"] : styles["connect"]}`}>{socialState.linkedin ? "Connected ✓" : "Connect"}</button>
                 </div>
                 <div className={`${styles["social-item"]} ${socialState.portfolio ? styles["connected"] : ""}`} onClick={() => toggleSocial("portfolio")}>
-                  <div className={styles["si-icon"]} style={{ background: "#1a1f2e" }}>
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.5" stroke="#9ca3af" strokeWidth="1.2"/><path d="M9 2.5C7 5 6 7 6 9s1 4 3 6.5M9 2.5C11 5 12 7 12 9s-1 4-3 6.5M2.5 9h13" stroke="#9ca3af" strokeWidth="1.2"/></svg>
+                  <div className={styles["si-icon"]} style={{ background: "#374151", borderRadius: "10px" }}>
+                    <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.5" stroke="#fff" strokeWidth="1.3"/><path d="M9 2.5C7 5 6 7 6 9s1 4 3 6.5M9 2.5C11 5 12 7 12 9s-1 4-3 6.5M2.5 9h13" stroke="#fff" strokeWidth="1.3"/></svg>
                   </div>
                   <div><div className={styles["si-name"]}>Portfolio / website</div><div className={styles["si-handle"]}>{socialState.portfolio ? "Added" : "Not added"}</div></div>
-                  <button className={`${styles["si-btn"]} ${socialState.portfolio ? styles["done"] : styles["connect"]}`}>{socialState.portfolio ? "Connected ✓" : "Add URL"}</button>
+                  <button className={`${styles["si-btn"]} ${socialState.portfolio ? styles["done"] : styles["connect"]}`}>{socialState.portfolio ? "Connected ✓" : "Add"}</button>
                 </div>
               </div>
 
               <hr className={styles["section-divider"]} />
 
               <div style={{ marginBottom: "8px" }}>
-                <div style={{ fontSize: "12px", fontWeight: "600", color: "var(--t2)", textTransform: "uppercase", letterSpacing: ".05em", fontFamily: "'Syne',sans-serif", marginBottom: "14px" }}>Your profile preview</div>
+                <div style={{ fontSize: "11px", fontWeight: "700", color: "var(--t2)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: "12px" }}>Your Profile Preview</div>
                 <div className={styles["profile-preview"]}>
                   <div className={styles["pp-cover"]}><div className={styles["pp-cover-pattern"]}></div></div>
                   <div className={styles["pp-av-wrap"]}>
@@ -576,31 +592,20 @@ export default function Onboarding() {
             {/* ─── SCREEN 7: DONE ─── */}
             <div className={`${styles["screen"]} ${currentScreen === 7 ? styles["active"] : ""}`}>
               <div className={styles["done-hero"]}>
-                <div className={styles["confetti-row"]}>
-                  <div className={styles["confetti-dot"]} style={{ background: "#6c5ce7" }}></div>
-                  <div className={styles["confetti-dot"]} style={{ background: "#00b894" }}></div>
-                  <div className={styles["confetti-dot"]} style={{ background: "#fdcb6e" }}></div>
-                  <div className={styles["confetti-dot"]} style={{ background: "#fd79a8" }}></div>
-                  <div className={styles["confetti-dot"]} style={{ background: "#0984e3" }}></div>
-                </div>
-                <div className={styles["done-icon"]}>
-                  <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                    <path d="M8 20l8 8 16-16" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-                <div className={styles["screen-title"]} style={{ textAlign: "center", marginBottom: "8px" }}>You're in, builder.</div>
+                <img src="/android-chrome-192x192.png" alt="NexFellow" style={{ width: "72px", height: "72px", objectFit: "contain", margin: "0 auto 20px", display: "block" }} />
+                <div className={styles["screen-title"]} style={{ textAlign: "center", marginBottom: "10px" }}>You're in, builder.</div>
                 <div className={styles["screen-sub"]} style={{ textAlign: "center", marginBottom: "0" }}>Your profile is live. 30 free credits are in your wallet.<br />Here's what to do first.</div>
               </div>
 
-              <div style={{ background: "var(--s2)", border: "1px solid var(--border)", borderRadius: "var(--rl)", padding: "14px 16px", marginBottom: "20px", display: "flex", alignItems: "center", gap: "12px" }}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="#fdcb6e" strokeWidth="1.2"/><text x="8" y="11" textAnchor="middle" fontSize="7" fill="#fdcb6e" fontWeight="700">C</text></svg>
-                <div style={{ fontSize: "13px", color: "var(--t2)" }}>Your balance: <strong style={{ color: "var(--gold)" }}>30 credits</strong> · Complete your profile to unlock <strong style={{ color: "var(--green)" }}>+20 bonus credits</strong></div>
+              <div style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.25)", borderRadius: "var(--rl)", padding: "14px 16px", marginBottom: "20px", display: "flex", alignItems: "center", gap: "12px" }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <div style={{ fontSize: "13px", color: "var(--t2)" }}>Your balance: <strong style={{ color: "var(--text)" }}>30 credits</strong> · Complete your profile to unlock <strong style={{ color: "#f59e0b" }}>+20 bonus credits</strong></div>
               </div>
 
               <div className={styles["next-steps"]}>
                 <div className={styles["ns-item"]}>
                   <div className={styles["ns-icon"]} style={{ background: "var(--asoft)" }}>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="#a29bfe" strokeWidth="1.2"/><path d="M5 8h6M8 5v6" stroke="#a29bfe" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                   </div>
                   <div>
                     <div className={styles["ns-title"]}>Submit your first product</div>
@@ -609,8 +614,8 @@ export default function Onboarding() {
                   <span className={styles["ns-arrow"]}>›</span>
                 </div>
                 <div className={styles["ns-item"]}>
-                  <div className={styles["ns-icon"]} style={{ background: "var(--gsoft)" }}>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 3h12v9H8l-3 2V12H2V3z" fill="#00b894" opacity=".7"/></svg>
+                  <div className={styles["ns-icon"]} style={{ background: "var(--asoft)" }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
                   </div>
                   <div>
                     <div className={styles["ns-title"]}>Give feedback · earn 8 credits</div>
@@ -619,8 +624,8 @@ export default function Onboarding() {
                   <span className={styles["ns-arrow"]}>›</span>
                 </div>
                 <div className={styles["ns-item"]}>
-                  <div className={styles["ns-icon"]} style={{ background: "rgba(9,132,227,0.1)" }}>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#0984e3" strokeWidth="1.2"/><circle cx="5" cy="7" r="1" fill="#0984e3"/><circle cx="11" cy="5" r="1" fill="#0984e3"/><circle cx="9" cy="11" r="1" fill="#0984e3"/></svg>
+                  <div className={styles["ns-icon"]} style={{ background: "var(--asoft)" }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
                   </div>
                   <div>
                     <div className={styles["ns-title"]}>Explore BuilderMap</div>
@@ -629,8 +634,8 @@ export default function Onboarding() {
                   <span className={styles["ns-arrow"]}>›</span>
                 </div>
                 <div className={styles["ns-item"]}>
-                  <div className={styles["ns-icon"]} style={{ background: "rgba(253,203,110,0.1)" }}>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 3 3.3.5-2.4 2.3.6 3.3L8 9.6 5 11.1l.6-3.3L3.1 5.5l3.3-.5z" fill="#fdcb6e" opacity=".8"/></svg>
+                  <div className={styles["ns-icon"]} style={{ background: "rgba(245,158,11,0.10)" }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
                   </div>
                   <div>
                     <div className={styles["ns-title"]}>Check the leaderboard</div>
