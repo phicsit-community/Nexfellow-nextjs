@@ -151,7 +151,7 @@ function Sidebar() {
         onMouseEnter={() => setHoveredIndex(item.id)}
         onMouseLeave={() => setHoveredIndex(null)}
       >
-        <div className={style.iconContainer}>
+        <div className={item.isStatic ? style.iconContainer : `${style.iconContainer} ${style.iconContainerAnimated}`}>
           {item.isStatic ? (
             <item.iconComponent size={20} strokeWidth={2} />
           ) : (

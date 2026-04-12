@@ -98,7 +98,15 @@
   color: var(--color-card-foreground);
 }
 
+.iconContainer {
+  color: #000000;
+}
+
 :global(.dark) .iconContainer {
+  color: var(--color-card-foreground);
+}
+
+:global(.dark) .iconContainerAnimated {
   filter: invert(1);
 }
 
