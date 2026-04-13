@@ -408,9 +408,9 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
                       cursor: "pointer",
                       maxWidth: width < 319 ? 120 : 150,
                     }}>
-                      {post.author.name.length > nameMaxLength
+                      {(post.author?.name?.length ?? 0) > nameMaxLength
                         ? post.author.name.slice(0, nameMaxLength) + "..."
-                        : post.author.name}
+                        : (post.author?.name ?? "")}
                     </div>
                     {post.author.isCommunityAccount &&
                       post.author.createdCommunity ? (

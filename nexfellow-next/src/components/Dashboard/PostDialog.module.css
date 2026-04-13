@@ -1897,3 +1897,9 @@
     }
   }
 }
+
+.noCommunityMsg {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  font-style: italic;
+}

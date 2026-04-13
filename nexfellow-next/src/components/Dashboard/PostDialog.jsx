@@ -4,7 +4,6 @@ import {
   FaRegSmile,
   FaUsers,
   FaNewspaper,
-  FaComments,
   FaChevronDown,
   FaEdit,
   FaTrash,
@@ -15,6 +14,7 @@ import { IoClose, IoArrowBack } from "react-icons/io5";
 import styles from "./PostDialog.module.css";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import api from "../../lib/axios";
 
 const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
   const [title, setTitle] = useState("");
@@ -26,6 +26,9 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
   const [removedAttachments, setRemovedAttachments] = useState([]);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Select Channel");
+  const [selectedCommunityId, setSelectedCommunityId] = useState(null);
+  const [communities, setCommunities] = useState([]);
+  const [communitiesLoading, setCommunitiesLoading] = useState(false);
   const [showDrafts, setShowDrafts] = useState(false);
   const [drafts, setDrafts] = useState([]);
   const [searchDraft, setSearchDraft] = useState("");
@@ -172,7 +175,29 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
       autosaveTimeoutRef.current = null;
       lastSavedContentRef.current = "";
     }
+
+    // Reset community selection on close
+    if (!isOpen) {
+      setSelectedCommunityId(null);
+      setSelectedOption("Select Channel");
+    }
   }, [post, isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const fetchCommunities = async () => {
+      setCommunitiesLoading(true);
+      try {
+        const res = await api.get("/user/moderated-communities");
+        setCommunities(res.data || []);
+      } catch {
+        setCommunities([]);
+      } finally {
+        setCommunitiesLoading(false);
+      }
+    };
+    fetchCommunities();
+  }, [isOpen]);
 
   const handleAttachmentChange = (e) => {
     const files = Array.from(e.target.files);
@@ -236,6 +261,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
 
   const handleSubmit = () => {
     if (!content && attachments.length === 0) return;
+    if (!post && !selectedCommunityId) return; // nothing selected yet
 
     setIsSubmitting(true);
 
@@ -246,6 +272,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
       attachments: attachments.map((att) => att.file || att.url),
       private: privacy === "Only me",
       removeAttachments: [...new Set(removedAttachments)],
+      communityId: selectedCommunityId,
     };
 
     if (!post) {
@@ -341,10 +368,23 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
     );
   };
 
+  const GENERAL_FEED_OPTION = {
+    value: "general",
+    label: "General Feed",
+    icon: <FaNewspaper />,
+  };
+
   const options = [
-    { value: "Group", label: "Group", icon: <FaUsers /> },
-    { value: "Feed", label: "Feed", icon: <FaNewspaper /> },
-    { value: "Chat", label: "Chat", icon: <FaComments /> },
+    GENERAL_FEED_OPTION,
+    ...communities.map((c) => ({
+      value: c._id,
+      label: c.name,
+      icon: c.profileImage ? (
+        <img src={c.profileImage} alt={c.name} style={{ width: 16, height: 16, borderRadius: "50%", objectFit: "cover" }} />
+      ) : (
+        <FaUsers />
+      ),
+    })),
   ];
 
   const closeModal = () => {
@@ -507,11 +547,10 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                     <div className={styles.dropdownContainer}>
                       <div
                         className={styles.selectedOption}
-                        onClick={() => setIsOpenModal(true)}
+                        onClick={() => !communitiesLoading && setIsOpenModal(true)}
                       >
-                        {options.find((opt) => opt.label === selectedOption)
-                          ?.icon || null}
-                        {selectedOption} <FaChevronDown />
+                        {options.find((opt) => opt.value === selectedCommunityId)?.icon || null}
+                        {communitiesLoading ? "Loading..." : selectedOption} <FaChevronDown />
                       </div>
 
                       <AnimatePresence>
@@ -533,7 +572,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                               onClick={(e) => e.stopPropagation()}
                             >
                               <div className={styles.popupHeader}>
-                                <span>Select Channel</span>
+                                <span>Select Community</span>
                                 <button
                                   className={styles.closeBtn}
                                   onClick={closeModal}
@@ -542,18 +581,25 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                                 </button>
                               </div>
                               <div className={styles.popupOptions}>
-                                {options.map((option) => (
-                                  <div
-                                    key={option.value}
-                                    className={styles.option}
-                                    onClick={() => {
-                                      setSelectedOption(option.label);
-                                      setIsOpenModal(false);
-                                    }}
-                                  >
-                                    {option.icon} {option.label}
+                                {options.length === 0 ? (
+                                  <div className={styles.option} style={{ color: "var(--muted)", cursor: "default" }}>
+                                    No communities found
                                   </div>
-                                ))}
+                                ) : (
+                                  options.map((option) => (
+                                    <div
+                                      key={option.value}
+                                      className={styles.option}
+                                      onClick={() => {
+                                        setSelectedOption(option.label);
+                                        setSelectedCommunityId(option.value);
+                                        setIsOpenModal(false);
+                                      }}
+                                    >
+                                      {option.icon} {option.label}
+                                    </div>
+                                  ))
+                                )}
                               </div>
                             </motion.div>
                           </motion.div>
@@ -661,7 +707,10 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                     <button
                       onClick={handleSubmit}
                       className={styles.postButton}
-                      disabled={!content.trim() && attachments.length === 0}
+                      disabled={
+                        (!content.trim() && attachments.length === 0) ||
+                        (!post && !selectedCommunityId)
+                      }
                     >
                       {isSubmitting ? (
                         <>{post ? "Updating..." : "Posting..."}</>

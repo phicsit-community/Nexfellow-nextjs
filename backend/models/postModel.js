@@ -43,7 +43,12 @@ const postSchema = new Schema(
     community: {
       type: Schema.Types.ObjectId,
       ref: "Community",
-      required: true,
+      required: false,
+      default: null,
+    },
+    isGeneralFeed: {
+      type: Boolean,
+      default: false,
     },
     views: {
       type: Number,

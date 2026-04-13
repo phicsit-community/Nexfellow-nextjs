@@ -56,44 +56,51 @@ module.exports.createPost = async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    const { title, content, community, private } = req.body;
-
-    const postCommunity = await Community.findById(community)
-      .populate("owner moderators")
-      .session(session);
-
-    if (!postCommunity) {
-      throw new ExpressError("Community not found", 404);
-    }
-
-    // Check if user is owner or content-admin moderator
-    const isAuthorized = userIsContentAdminOrOwner(postCommunity, req.userId);
-    if (!isAuthorized) {
-      throw new ExpressError(
-        "Unauthorized to create a post in this community",
-        403
-      );
-    }
+    const { title, content, community, private: isPrivate } = req.body;
+    const isGeneralFeed = !community || community === "general";
 
     let authorId = req.userId;
-    if (
-      postCommunity.owner &&
-      String(postCommunity.owner) !== String(req.userId) &&
-      postCommunity.moderators.some(
-        (mod) =>
-          String(mod.user) === String(req.userId) &&
-          mod.role === "content-admin"
-      )
-    ) {
-      authorId = postCommunity.owner;
+    let postCommunity = null;
+
+    if (!isGeneralFeed) {
+      postCommunity = await Community.findById(community)
+        .populate("owner moderators")
+        .session(session);
+
+      if (!postCommunity) {
+        throw new ExpressError("Community not found", 404);
+      }
+
+      // Check if user is owner or content-admin moderator
+      const isAuthorized = userIsContentAdminOrOwner(postCommunity, req.userId);
+      if (!isAuthorized) {
+        throw new ExpressError(
+          "Unauthorized to create a post in this community",
+          403
+        );
+      }
+
+      // If posting as a content-admin, attribute the post to the community owner
+      if (
+        postCommunity.owner &&
+        String(postCommunity.owner) !== String(req.userId) &&
+        postCommunity.moderators.some(
+          (mod) =>
+            String(mod.user) === String(req.userId) &&
+            mod.role === "content-admin"
+        )
+      ) {
+        authorId = postCommunity.owner;
+      }
     }
 
     const post = new Post({
       author: authorId,
       title,
       content,
-      community,
-      private,
+      community: isGeneralFeed ? null : community,
+      private: isPrivate,
+      isGeneralFeed,
     });
 
     const tempId = post._id;
@@ -103,15 +110,17 @@ module.exports.createPost = async (req, res) => {
         content,
         req.userId,
         tempId,
-        community
+        isGeneralFeed ? null : community
       );
 
     post.content = processedContent;
 
     const savedPost = await post.save({ session });
 
-    postCommunity.posts.push(savedPost);
-    await postCommunity.save({ session });
+    if (postCommunity) {
+      postCommunity.posts.push(savedPost);
+      await postCommunity.save({ session });
+    }
 
     if (req.files && req.files.length > 0) {
       const attachmentPromises = req.files.map(async (file) => {
@@ -131,11 +140,16 @@ module.exports.createPost = async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
-    getIo().emit("newPost", savedPost);
+    const populatedPost = await Post.findById(savedPost._id)
+      .populate("author", "-password -refreshToken -googleAccessToken -googleRefreshToken")
+      .populate("attachments")
+      .populate("community");
+
+    getIo().emit("newPost", populatedPost);
 
     res.status(201).json({
       message: "Post created successfully!",
-      post: savedPost,
+      post: populatedPost,
       shortenedUrls: shortenedUrls,
     });
   } catch (error) {
@@ -264,12 +278,12 @@ module.exports.deletePost = async (req, res) => {
       throw new ExpressError("Post not found", 404);
     }
 
-    const isContentAdminOrOwner = userIsContentAdminOrOwner(
-      post.community,
-      req.userId
-    );
+    const isAuthor = post.author.toString() === req.userId;
+    const isContentAdminOrOwner = post.community
+      ? userIsContentAdminOrOwner(post.community, req.userId)
+      : false;
 
-    if (!isContentAdminOrOwner) {
+    if (!isAuthor && !isContentAdminOrOwner) {
       throw new ExpressError("Unauthorized to delete this post", 403);
     }
 

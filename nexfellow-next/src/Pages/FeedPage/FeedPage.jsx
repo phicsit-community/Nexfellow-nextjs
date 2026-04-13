@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
 import styles from "./FeedPage.module.css";
 import Suggestions from "../../components/Suggestions/Suggestions";
 import SearchCommand from "../../components/SearchBar/search-command";
 import ProfileDropdown from "../../components/ProfileDropdown/ProfileDropdown";
 import TrendingFeed from "./TrendingFeed";
+import PostDialog from "../../components/Dashboard/PostDialog";
+import api from "../../lib/axios";
 import photoIcon from "../../assets/Icons-Feed/photo.png";
 import pollIcon from "../../assets/Icons-Feed/poll.png";
 import linkIcon from "../../assets/Icons-Feed/link.png";
@@ -22,15 +23,54 @@ const FeedPage = () => {
   const [activeTab, setActiveTab] = useState("trending");
   const [isWhatsNewOpen, setIsWhatsNewOpen] = useState(false);
   const [isAnnouncementHovered, setIsAnnouncementHovered] = useState(false);
-  const router = useRouter();
+  const [isPostDialogOpen, setIsPostDialogOpen] = useState(false);
+  const [feedRefreshKey, setFeedRefreshKey] = useState(0);
   const user = useSelector((state) => state.auth.user);
 
   const toggleWhatsNew = () => setIsWhatsNewOpen((prev) => !prev);
 
   const handleCreatePostClick = () => {
-    // Navigate to user's dashboard with query param to open post dialog
-    if (user?.username) {
-      router.push(`/dashboard/${user.username}?createPost=true`);
+    setIsPostDialogOpen(true);
+  };
+
+  const handlePostSubmit = async (postData) => {
+    try {
+      const formData = new FormData();
+      formData.append("title", postData.title || "");
+      formData.append("content", postData.content);
+      if (postData.communityId && postData.communityId !== "general") {
+        formData.append("community", postData.communityId);
+      }
+      formData.append("private", postData.private);
+
+      if (postData.attachments && postData.attachments.length > 0) {
+        postData.attachments.forEach((file) => {
+          formData.append("files", file);
+        });
+      }
+
+      if (postData.removeAttachments && postData.removeAttachments.length > 0) {
+        formData.append(
+          "removeAttachments",
+          JSON.stringify(postData.removeAttachments)
+        );
+      }
+
+      const response = await api.post("/post", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (response.data.shortenedUrls && response.data.shortenedUrls.length > 0) {
+        const { toast } = await import("sonner");
+        toast.info(
+          `${response.data.shortenedUrls.length} URL${response.data.shortenedUrls.length > 1 ? "s" : ""} have been shortened for tracking`
+        );
+      }
+
+      setFeedRefreshKey((k) => k + 1);
+    } catch (err) {
+      const { toast } = await import("sonner");
+      toast.error("Failed to create post: " + (err.response?.data?.message || err.message));
     }
   };
 
@@ -124,7 +164,7 @@ const FeedPage = () => {
           </div>
         )}
 
-        <TrendingFeed type={activeTab} />
+        <TrendingFeed key={feedRefreshKey} type={activeTab} />
       </div>
       <div className={styles.suggestionsColumn}>
         <div className={styles.searchHeader}>
@@ -135,6 +175,11 @@ const FeedPage = () => {
           <Suggestions hideSearch />
         </div>
       </div>
+      <PostDialog
+        isOpen={isPostDialogOpen}
+        onClose={() => setIsPostDialogOpen(false)}
+        onSubmit={handlePostSubmit}
+      />
     </div>
   );
 };
