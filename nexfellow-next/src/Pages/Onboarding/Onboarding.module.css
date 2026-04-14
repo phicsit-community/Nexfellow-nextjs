@@ -540,8 +540,8 @@
     white-space:nowrap;
   }
 
-  /* right content area: tighter padding */
-  .right-inner{padding:28px 20px 48px;}
+  /* right content area: tighter padding + room for fixed bottom bar */
+  .right-inner{padding:28px 20px 140px;}
 
   /* headings */
   .screen-title{font-size:26px;}
@@ -562,21 +562,54 @@
   /* welcome hero */
   .welcome-hero{padding:28px 20px;}
 
-  /* button row: stack, primary on top */
-  .btn-row{
-    flex-direction:column-reverse;
-    gap:10px;
-    margin-top:24px;
-  }
-  .btn-row .btn{width:100%;flex:none !important;}
+  /* hide in-screen button rows — bottom nav handles them */
+  .btn-row{display:none !important;}
 
   /* done screen */
   .done-hero{padding:8px 0 16px;}
 }
 
+/* ── MOBILE BOTTOM NAV (hidden on desktop) ──────────────────────── */
+.mobile-bottom-nav{display:none;}
+
+@media (max-width: 767px) {
+  .mobile-bottom-nav{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    position:fixed;
+    bottom:0;left:0;right:0;
+    background:#ffffff;
+    border-top:1px solid var(--border);
+    padding:12px 20px env(safe-area-inset-bottom, 16px);
+    z-index:20;
+    box-shadow:0 -4px 20px rgba(0,0,0,0.07);
+  }
+
+  /* Step-progress dashes */
+  .mobile-step-dots{
+    display:flex;gap:4px;
+  }
+  .msd-item{
+    flex:1;height:3px;border-radius:2px;
+    transition:background .3s;
+  }
+  .msd-done{background:var(--accent);opacity:.55;}
+  .msd-active{background:var(--accent);}
+  .msd-pending{background:var(--s3);}
+
+  /* Buttons row inside bottom nav */
+  .mobile-btns{
+    display:flex;gap:10px;align-items:center;
+  }
+  .mobile-btns .btn{font-size:14px;padding:13px 20px;}
+  .mobile-btns .btn-primary{flex:1;}
+  .mobile-btns .btn-ghost{min-width:80px;}
+}
+
 /* ── SMALL PHONES (≤ 479px) ─────────────────────────────────────── */
 @media (max-width: 479px) {
-  .right-inner{padding:20px 16px 48px;}
+  .right-inner{padding:20px 16px 140px;}
 
   .screen-title{font-size:22px;}
 

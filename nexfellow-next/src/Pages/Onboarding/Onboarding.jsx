@@ -667,6 +667,77 @@ export default function Onboarding() {
             </div>
 
           </div>{/* /right-inner */}
+
+          {/* ── MOBILE STICKY BOTTOM NAV ── */}
+          <div className={styles["mobile-bottom-nav"]}>
+            {/* Step-progress dashes */}
+            {currentScreen !== 7 && (
+              <div className={styles["mobile-step-dots"]}>
+                {STEPS_CONFIG.map((_, i) => (
+                  <div
+                    key={i}
+                    className={`${styles["msd-item"]} ${
+                      i < currentScreen ? styles["msd-done"] :
+                      i === currentScreen ? styles["msd-active"] : styles["msd-pending"]
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Action buttons */}
+            <div className={styles["mobile-btns"]}>
+              {/* Back — screens 1-6 */}
+              {currentScreen > 0 && currentScreen < 7 && (
+                <button className={`${styles["btn"]} ${styles["btn-ghost"]}`} onClick={() => goTo(currentScreen - 1)}>Back</button>
+              )}
+
+              {/* Screen 0: Start setup */}
+              {currentScreen === 0 && (
+                <button className={`${styles["btn"]} ${styles["btn-primary"]}`} onClick={() => goTo(1)}>
+                  Start setup&nbsp;
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+              )}
+
+              {/* Screens 1, 3, 4, 5: simple Continue */}
+              {[1, 3, 4, 5].includes(currentScreen) && (
+                <button className={`${styles["btn"]} ${styles["btn-primary"]}`} onClick={() => goTo(currentScreen + 1)}>
+                  Continue&nbsp;
+                  <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 7.5h9M8 3.5l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+              )}
+
+              {/* Screen 2: profile validation */}
+              {currentScreen === 2 && (
+                <button className={`${styles["btn"]} ${styles["btn-primary"]}`} onClick={continueFromProfile}>
+                  Continue&nbsp;
+                  <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 7.5h9M8 3.5l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+              )}
+
+              {/* Screen 6: submit */}
+              {currentScreen === 6 && (
+                <button
+                  className={`${styles["btn"]} ${styles["btn-primary"]}`}
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  style={{ opacity: isSubmitting ? 0.7 : 1 }}
+                >
+                  {isSubmitting ? "Saving…" : <>Complete setup&nbsp;<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 7.5l4 4 6-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg></>}
+                </button>
+              )}
+
+              {/* Screen 7: done */}
+              {currentScreen === 7 && (
+                <button className={`${styles["btn"]} ${styles["btn-primary"]}`} onClick={() => router.push('/feed')}>
+                  Go to my dashboard&nbsp;
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+              )}
+            </div>
+          </div>
+
         </div>{/* /right */}
       </div>{/* /shell */}
     </div>
