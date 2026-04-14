@@ -213,6 +213,16 @@ export default function Onboarding() {
 
         {/* ══════════ RIGHT CONTENT ══════════ */}
         <div className={styles["right"]}>
+          {/* Mobile-only sticky header (logo + step indicator) */}
+          <div className={styles["mobile-header"]}>
+            <img src="/NexFellowLogo.svg" alt="NexFellow" className={styles["mobile-header-logo"]} />
+            {currentScreen > 0 && currentScreen < STEPS_CONFIG.length - 1 && (
+              <span className={styles["mobile-step-badge"]}>
+                {currentScreen} / {STEPS_CONFIG.length - 2}
+              </span>
+            )}
+          </div>
+
           <div className={styles["progress-top"]}>
             <div className={styles["progress-fill"]} style={{ width: getProgressWidth() }}></div>
           </div>

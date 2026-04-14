@@ -486,3 +486,115 @@
 .right::-webkit-scrollbar{width:4px;}
 .right::-webkit-scrollbar-track{background:transparent;}
 .right::-webkit-scrollbar-thumb{background:var(--s3);border-radius:2px;}
+
+/* ── MOBILE HEADER (hidden on desktop) ─────────────────────────── */
+.mobile-header{
+  display:none;
+}
+
+/* ── TABLET / MOBILE  (≤ 767px) ────────────────────────────────── */
+@media (max-width: 767px) {
+
+  /* wrapper: allow natural scroll height */
+  .onboardingWrapper{height:auto;overflow:visible;}
+
+  /* single-column layout */
+  .shell{
+    grid-template-columns:1fr;
+    height:auto;
+    min-height:100vh;
+    overflow:visible;
+  }
+
+  /* hide the sidebar */
+  .left{display:none;}
+
+  /* right panel takes full screen height and scrolls */
+  .right{
+    height:100vh;
+    overflow-y:auto;
+    overflow-x:hidden;
+  }
+
+  /* sticky mobile top bar */
+  .mobile-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 20px;
+    background:#ffffff;
+    border-bottom:1px solid var(--border);
+    position:sticky;
+    top:0;
+    z-index:10;
+  }
+  .mobile-header-logo{height:24px;width:auto;max-width:140px;}
+  .mobile-step-badge{
+    font-size:11px;font-weight:700;
+    color:var(--t2);
+    background:var(--s2);
+    border:1px solid var(--border2);
+    border-radius:20px;
+    padding:4px 10px;
+    font-family:'Epilogue',sans-serif;
+    white-space:nowrap;
+  }
+
+  /* right content area: tighter padding */
+  .right-inner{padding:28px 20px 48px;}
+
+  /* headings */
+  .screen-title{font-size:26px;}
+  .screen-sub{font-size:14px;margin-bottom:24px;}
+
+  /* account type cards: stack vertically */
+  .type-cards{grid-template-columns:1fr;}
+
+  /* 2-col grids: stack */
+  .grid-cards-2{grid-template-columns:1fr;}
+
+  /* first/last name side-by-side → stacked */
+  .field-row{grid-template-columns:1fr;gap:0;}
+
+  /* credit cards: keep 2 cols on mid-mobile, looks fine */
+  .credit-cards{grid-template-columns:1fr 1fr;}
+
+  /* welcome hero */
+  .welcome-hero{padding:28px 20px;}
+
+  /* button row: stack, primary on top */
+  .btn-row{
+    flex-direction:column-reverse;
+    gap:10px;
+    margin-top:24px;
+  }
+  .btn-row .btn{width:100%;flex:none !important;}
+
+  /* done screen */
+  .done-hero{padding:8px 0 16px;}
+}
+
+/* ── SMALL PHONES (≤ 479px) ─────────────────────────────────────── */
+@media (max-width: 479px) {
+  .right-inner{padding:20px 16px 48px;}
+
+  .screen-title{font-size:22px;}
+
+  /* credit cards: single col on small phones */
+  .credit-cards{grid-template-columns:1fr;}
+
+  /* welcome stats: keep 3-up but shrink text */
+  .ws-val{font-size:18px;}
+  .ws-lbl{font-size:9px;}
+  .ws-card{padding:14px 8px;}
+
+  /* welcome hero icon shrink */
+  .wh-icon{width:60px;height:60px;margin-bottom:14px;}
+  .wh-icon img{width:60px;height:60px;}
+
+  /* type card title */
+  .tc-title{font-size:14px;}
+
+  /* profile screen: reduce textarea */
+  .onboardingWrapper textarea{min-height:80px;}
+}
