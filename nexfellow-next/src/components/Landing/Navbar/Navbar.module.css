@@ -66,6 +66,7 @@
 .navbarButton:focus {
   background-color: #1a9e9d;
   transform: scale(1.05);
+  color: white;
 }
 
 .navbarProfileButtons {
