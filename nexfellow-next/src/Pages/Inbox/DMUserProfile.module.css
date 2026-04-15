@@ -621,3 +621,25 @@ button:focus-visible {
 :global(.dark) .settingTitle { color: var(--color-foreground); }
 :global(.dark) .settingRow:hover { background: var(--color-muted); }
 :global(.dark) .groupRow:hover   { background: var(--color-muted); }
+
+/* ══════════════════════════════════════════
+   MOBILE — full-screen overlay instead of side panel
+══════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .panel {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        height: 100%;
+        border-left: none;
+        z-index: 200;
+        animation: slideUp 220ms ease-out;
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(30px); opacity: 0; }
+        to   { transform: translateY(0);    opacity: 1; }
+    }
+}

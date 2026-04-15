@@ -1,6 +1,6 @@
 .inboxContainer {
   display: flex;
-  height: calc(100vh - 80px);
+  height: calc(100dvh - 80px);
   width: 100%;
   background-color: var(--background-color, #f5f7fb);
   border-radius: 8px 0 0 8px;
@@ -911,6 +911,13 @@
   scrollbar-color: var(--scrollbar-thumb, #cbd5e1) transparent;
 }
 
+/* Pushes messages to the bottom when there are too few to fill the area */
+.messagesContainer::before {
+  content: '';
+  flex: 1;
+  min-height: 0;
+}
+
 .messagesContainer::-webkit-scrollbar {
   width: 6px;
 }
@@ -1786,7 +1793,7 @@
   /* ── Container: stack vertically ── */
   .inboxContainer {
     flex-direction: column;
-    height: 100%;
+    height: calc(100dvh - 65px); /* 65px ≈ PageHeader auto-height on tablet */
     border-radius: 0;
     position: relative;
     overflow: hidden;
@@ -1885,6 +1892,33 @@
   /* ── Conversation list items: tighter ── */
   .conversationItem {
     padding: 10px 16px;
+  }
+}
+
+/* ─── MOBILE WITH BOTTOM NAV (≤ 640px) ────────────────────────── */
+@media (max-width: 640px) {
+  /* Account for fixed bottom nav (70px padding) + PageHeader (~60px) */
+  .inboxContainer {
+    height: calc(100dvh - 130px);
+  }
+
+  /* Sidebar overlay must match the corrected container height */
+  .sidebar {
+    top: 0;
+    bottom: 0;
+    height: 100%;
+  }
+
+  .conversationHeaderMain {
+    padding: 8px 12px;
+  }
+
+  .headerActions {
+    gap: 10px;
+  }
+
+  .headerIconButton {
+    font-size: 1.2rem;
   }
 }
 
