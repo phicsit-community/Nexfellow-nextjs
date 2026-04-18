@@ -2,6 +2,7 @@
 'use client';
 import React, { useState } from 'react';
 import './launches.css';
+import PrivateLayout from '../../layouts/PrivateLayout';
 
 export default function LaunchesPage() {
   const [activeTab, setActiveTab] = useState('today');
@@ -11,53 +12,10 @@ export default function LaunchesPage() {
   // For now we just render the template statically. If we were fully hooking it up, we would extract the products data here.
   
   return (
-    <div className="launches-page-container w-full h-screen overflow-hidden text-[#18170f] font-sans antialiased bg-[#fafaf8]">
-
-<div className="shell">
-
-{/* ══════════ SIDEBAR ══════════ */}
-<aside className="sidebar">
-  <div className="sb-logo">
-    <div className="logo-tri"></div>
-    Nex<em>Fellow</em>
-  </div>
-
-  <nav className="sb-nav">
-    <div className="si" ><div className="si-icon">🏠</div> Home</div>
-    <div className="si" ><div className="si-icon">🗺️</div> Builder Map</div>
-    <div className="si" ><div className="si-icon">📊</div> Leaderboard</div>
-    <div className="si active" ><div className="si-icon">🚀</div> Launches<span className="si-badge sbg">Live</span></div>
-    <div className="si" ><div className="si-icon">🤝</div> Community</div>
-    <div className="si" >
-      <div className="si-icon">💬</div> Inbox
-      <span className="si-badge sbp">5</span>
-    </div>
-    <div className="si" ><div className="si-icon">🔔</div> Notifications<span className="si-badge sbo">2</span></div>
-
-    <div className="sb-lbl">Account</div>
-    <div className="si" ><div className="si-icon">👤</div> Profile</div>
-    <div className="si" ><div className="si-icon">⚙️</div> Settings</div>
-  </nav>
-
-  <div className="sb-launch-cta">
-    <strong>🚀 Submit your product</strong>
-    <span>8 reviews collected — you're ready</span>
-  </div>
-
-  <div className="sb-profile">
-    <div className="sb-prow">
-      <div className="sb-av">R</div>
-      <div className="sb-info">
-        <strong>Rohan Mehta</strong>
-        <span>Mumbai · Builder</span>
-      </div>
-      <div className="sb-credits">124 cr</div>
-    </div>
-  </div>
-</aside>
-
-{/* ══════════ MAIN ══════════ */}
-<main className="main">
+    <PrivateLayout>
+      <div className="launches-page-container w-full h-screen overflow-hidden text-[#18170f] font-sans antialiased bg-background">
+        {/* ══════════ MAIN ══════════ */}
+        <main className="main">
   <div className="topbar">
     <div className="tb-title">Launches</div>
     <div className="tb-tabs">
@@ -393,7 +351,6 @@ export default function LaunchesPage() {
     </div>
   </div>
 </main>
-</div>{/* /shell */}
 
 {/* ══════════════════════════════════════════
      PRODUCT DETAIL FULL-SCREEN PAGE
@@ -731,6 +688,7 @@ export default function LaunchesPage() {
 </div>{/* /detail-page */}
 
 
-    </div>
+      </div>
+    </PrivateLayout>
   );
 }
