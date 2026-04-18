@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexFellow — Launches</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════ TOKENS ════════════════════════════ */
+:root {
+  --bg:     #fafaf8;
+  --sur:    #ffffff;
+  --sur2:   #f5f4f0;
+  --sur3:   #eeece7;
+  --b:      #e8e6e0;
+  --b2:     #d4d1c8;
+  --tx:     #18170f;
+  --tx2:    #6b6960;
+  --tx3:    #a8a59c;
+
+  --G:      #4a7c00;
+  --Gl:     #7fb800;
+  --Gbg:    #f0f8e0;
+  --Gb:     rgba(74,124,0,.18);
+
+  --O:      #c05a18;
+  --Obg:    #fef2e6;
+
+  --P:      #5542a8;
+  --Pbg:    #f0edff;
+  --Pb:     rgba(85,66,168,.2);
+
+  --T:      #006e5c;
+  --Tbg:    #e6f5f2;
+
+  --R:      #c0182c;
+  --Rbg:    #ffeef0;
+
+  --live:   #1a8a1a;
+  --r:      10px;
+  --rl:     14px;
+  --sw:     228px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; font-family: 'Geist', sans-serif; background: var(--bg); color: var(--tx); font-size: 13.5px; -webkit-font-smoothing: antialiased; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--b2); border-radius: 2px; }
+
+/* ════════════════════════════ SIDEBAR ════════════════════════════ */
+.shell { display: flex; height: 100vh; overflow: hidden; }
+
+.sidebar {
+  width: var(--sw); height: 100vh;
+  background: var(--sur); border-right: 1px solid var(--b);
+  display: flex; flex-direction: column; flex-shrink: 0;
+}
+
+.sb-logo {
+  padding: 18px 16px 14px; border-bottom: 1px solid var(--b);
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'Instrument Serif', serif; font-size: 18px;
+  letter-spacing: -.3px; cursor: pointer;
+}
+.sb-logo em { color: var(--G); font-style: normal; }
+.logo-tri { width: 18px; height: 18px; background: var(--G); clip-path: polygon(50% 0%, 0% 100%, 100% 100%); flex-shrink: 0; }
+
+.sb-nav { padding: 8px 8px; flex: 1; overflow-y: auto; }
+.sb-nav::-webkit-scrollbar { display: none; }
+.sb-lbl { font-size: 9.5px; text-transform: uppercase; letter-spacing: 1.4px; color: var(--tx3); padding: 10px 8px 4px; font-weight: 600; }
+
+.si {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 10px; border-radius: 8px;
+  cursor: pointer; color: var(--tx2); font-size: 13px;
+  transition: all .12s; margin-bottom: 1px; position: relative;
+}
+.si:hover { background: var(--sur2); color: var(--tx); }
+.si.active { background: var(--Gbg); color: var(--G); font-weight: 500; }
+.si.active::before {
+  content: ''; position: absolute; left: 0; top: 5px; bottom: 5px;
+  width: 2.5px; background: var(--G); border-radius: 0 2px 2px 0;
+}
+.si-icon { width: 16px; text-align: center; flex-shrink: 0; font-size: 14px; }
+.si-badge {
+  margin-left: auto; font-size: 10px; font-weight: 700;
+  padding: 1px 7px; border-radius: 100px;
+}
+.sbg { background: var(--Gbg); color: var(--G); }
+.sbo { background: var(--Obg); color: var(--O); }
+.sbp { background: var(--Pbg); color: var(--P); }
+
+.sb-launch-cta {
+  margin: 10px; background: var(--G); border-radius: 10px;
+  padding: 12px 14px; cursor: pointer;
+  transition: opacity .15s, transform .15s;
+}
+.sb-launch-cta:hover { opacity: .88; transform: translateY(-1px); }
+.sb-launch-cta strong { display: block; font-size: 12.5px; color: #fff; margin-bottom: 2px; font-weight: 600; }
+.sb-launch-cta span { font-size: 11px; color: rgba(255,255,255,.6); }
+
+.sb-profile {
+  padding: 8px; border-top: 1px solid var(--b);
+}
+.sb-prow {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: 8px;
+  cursor: pointer; transition: background .12s;
+}
+.sb-prow:hover { background: var(--sur2); }
+.sb-av {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--P); display: flex; align-items: center;
+  justify-content: center; font-weight: 700; font-size: 11px; color: #fff; flex-shrink: 0;
+}
+.sb-info strong { font-size: 12.5px; display: block; }
+.sb-info span { font-size: 11px; color: var(--tx3); }
+.sb-credits {
+  margin-left: auto; background: var(--Gbg);
+  border: 1px solid var(--Gb); border-radius: 100px;
+  padding: 2px 8px; font-size: 11px; font-weight: 700; color: var(--G);
+}
+
+/* ════════════════════════════ MAIN ════════════════════════════ */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* Topbar */
+.topbar {
+  height: 52px; border-bottom: 1px solid var(--b);
+  background: rgba(255,255,255,.92); backdrop-filter: blur(16px);
+  display: flex; align-items: center; padding: 0 24px; gap: 0;
+  flex-shrink: 0; position: sticky; top: 0; z-index: 20;
+}
+.tb-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 19px; letter-spacing: -.3px; margin-right: 24px;
+  flex-shrink: 0;
+}
+.tb-tabs { display: flex; flex: 1; }
+.tbtab {
+  background: none; border: none; border-bottom: 2px solid transparent;
+  color: var(--tx2); font-family: 'Geist', sans-serif; font-size: 13.5px;
+  padding: 0 16px; height: 52px; cursor: pointer;
+  transition: all .14s; font-weight: 400; margin-bottom: -1px;
+}
+.tbtab:hover:not(.active) { color: var(--tx); }
+.tbtab.active { color: var(--tx); border-bottom-color: var(--G); font-weight: 600; }
+.tb-right { display: flex; align-items: center; gap: 8px; }
+.tb-btn {
+  background: none; border: 1px solid var(--b2); color: var(--tx2);
+  padding: 6px 14px; border-radius: 8px; font-size: 12.5px;
+  cursor: pointer; font-family: 'Geist', sans-serif;
+  transition: all .12s; display: flex; align-items: center; gap: 5px;
+}
+.tb-btn:hover { border-color: var(--b2); color: var(--tx); background: var(--sur2); }
+.tb-btn.pri { background: var(--G); border-color: var(--G); color: #fff; font-weight: 600; }
+.tb-btn.pri:hover { opacity: .9; box-shadow: 0 2px 12px rgba(74,124,0,.25); }
+
+/* Scroll area */
+.scroll-area { flex: 1; overflow-y: auto; overflow-x: hidden; }
+
+/* 2-col layout */
+.content-grid { display: grid; grid-template-columns: 1fr 288px; min-height: 100%; }
+.main-col { border-right: 1px solid var(--b); }
+.right-col { padding: 20px 18px 32px; }
+
+/* ════════ LIVE STRIP ════════ */
+.live-strip { padding: 14px 22px 16px; border-bottom: 1px solid var(--b); }
+.ls-head { display: flex; align-items: center; gap: 8px; margin-bottom: 11px; }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--live); flex-shrink: 0; animation: livePulse 2s infinite; }
+@keyframes livePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
+.ls-label { font-size: 11.5px; font-weight: 700; color: var(--live); text-transform: uppercase; letter-spacing: .8px; }
+.ls-sub { font-size: 12px; color: var(--tx3); }
+.live-cards { display: flex; gap: 8px; }
+.live-card {
+  background: var(--sur); border: 1.5px solid var(--b);
+  border-radius: var(--r); padding: 12px 14px;
+  cursor: pointer; transition: all .15s; flex: 1; min-width: 0;
+}
+.live-card:hover { border-color: var(--G); box-shadow: 0 2px 10px rgba(0,0,0,.06); transform: translateY(-1px); }
+.live-card.hot { border-color: rgba(74,124,0,.3); background: var(--Gbg); }
+.lc-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.lc-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.lc-name { font-size: 12.5px; font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lc-hot-tag { font-size: 9px; font-weight: 700; background: var(--G); color: #fff; padding: 2px 6px; border-radius: 4px; letter-spacing: .3px; flex-shrink: 0; }
+.lc-bar { height: 3px; background: var(--b); border-radius: 100px; overflow: hidden; margin-bottom: 7px; }
+.lc-bar-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--G), var(--Gl)); animation: barPulse 2.5s ease-in-out infinite; }
+@keyframes barPulse { 0%,100%{opacity:.8} 50%{opacity:1} }
+.lc-stats { display: flex; gap: 10px; }
+.lc-stat { font-size: 11px; color: var(--tx3); display: flex; align-items: center; gap: 2px; }
+.lc-stat strong { color: var(--tx); font-weight: 600; font-size: 11.5px; }
+.lc-time { font-size: 10.5px; color: var(--tx3); margin-top: 5px; }
+
+/* ════════ DAY HEADER ════════ */
+.day-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 22px 10px;
+}
+.dh-date { font-size: 12px; font-weight: 700; color: var(--tx3); text-transform: uppercase; letter-spacing: .8px; }
+.sort-btns { display: flex; gap: 0; background: var(--sur2); border-radius: 7px; padding: 2px; }
+.sort-btn {
+  background: none; border: none; color: var(--tx3);
+  font-family: 'Geist', sans-serif; font-size: 11.5px;
+  padding: 4px 11px; border-radius: 5px; cursor: pointer;
+  transition: all .13s;
+}
+.sort-btn.active, .sort-btn:hover { background: var(--sur); color: var(--tx); box-shadow: 0 1px 3px rgba(0,0,0,.07); }
+
+/* Day divider */
+.day-divider {
+  padding: 8px 22px 6px; background: var(--sur2);
+  border-top: 1px solid var(--b); border-bottom: 1px solid var(--b);
+  display: flex; align-items: center; gap: 10px;
+}
+.dd-label { font-size: 11px; font-weight: 700; color: var(--tx3); text-transform: uppercase; letter-spacing: .8px; }
+.dd-count { font-size: 11px; color: var(--tx3); }
+
+/* ════════ LAUNCH ROWS ════════ */
+.launch-row {
+  display: flex; align-items: center; gap: 0;
+  padding: 14px 22px; border-bottom: 1px solid var(--b);
+  cursor: pointer; transition: background .12s;
+  background: var(--sur); position: relative;
+}
+.launch-row:hover { background: var(--sur2); }
+.launch-row.featured { border-left: 3px solid var(--G); padding-left: 19px; background: linear-gradient(90deg, rgba(74,124,0,.025), var(--sur)); }
+
+.lr-rank {
+  width: 28px; font-family: 'Instrument Serif', serif;
+  font-size: 18px; color: var(--tx3); text-align: center; flex-shrink: 0;
+}
+.lr-rank.r1 { color: var(--G); }
+.lr-rank.r2 { color: #888; }
+.lr-rank.r3 { color: var(--O); }
+
+.lr-icon {
+  width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; border: 1px solid var(--b); margin: 0 14px 0 8px;
+}
+
+.lr-info { flex: 1; min-width: 0; }
+.lr-name-row { display: flex; align-items: center; gap: 7px; margin-bottom: 3px; flex-wrap: wrap; }
+.lr-name { font-size: 14.5px; font-weight: 600; letter-spacing: -.2px; }
+.lr-tag { font-size: 9.5px; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
+.tag-featured { background: var(--Gbg); color: var(--G); }
+.tag-new { background: var(--Pbg); color: var(--P); }
+.tag-hot { background: var(--Obg); color: var(--O); }
+
+.lr-desc { font-size: 12.5px; color: var(--tx2); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 440px; }
+.lr-meta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.lr-builder { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--tx3); }
+.lr-bav { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7px; font-weight: 700; flex-shrink: 0; }
+.lr-traction { display: flex; align-items: center; gap: 10px; }
+.lr-tr { font-size: 12px; color: var(--tx3); display: flex; align-items: center; gap: 3px; }
+.lr-tr.g { color: var(--G); }
+.lr-cats { display: flex; gap: 5px; }
+.lr-cat { font-size: 10.5px; padding: 2px 8px; border-radius: 100px; background: var(--sur2); color: var(--tx3); border: 1px solid var(--b); }
+
+.lr-actions { display: flex; align-items: center; gap: 7px; margin-left: 16px; flex-shrink: 0; }
+
+.vote-btn {
+  display: flex; flex-direction: column; align-items: center;
+  width: 50px; border: 1.5px solid var(--b); border-radius: 9px;
+  padding: 7px 5px; cursor: pointer; background: var(--sur);
+  transition: all .15s; gap: 1px;
+}
+.vote-btn:hover, .vote-btn.voted { border-color: var(--G); background: var(--Gbg); }
+.vote-btn.voted .vb-arr, .vote-btn.voted .vb-num { color: var(--G); }
+.vb-arr { font-size: 12px; color: var(--tx3); line-height: 1; }
+.vb-num { font-size: 13.5px; font-weight: 700; color: var(--tx); line-height: 1; }
+
+.want-btn {
+  display: flex; align-items: center; gap: 5px;
+  background: var(--sur); border: 1.5px solid var(--b);
+  border-radius: 9px; padding: 8px 12px;
+  font-size: 12px; font-weight: 600; color: var(--tx3);
+  cursor: pointer; transition: all .15s;
+  font-family: 'Geist', sans-serif; white-space: nowrap;
+}
+.want-btn:hover, .want-btn.wanted { border-color: var(--P); color: var(--P); background: var(--Pbg); }
+
+/* ════════ RIGHT COLUMN ════════ */
+.rc-card {
+  background: var(--sur); border: 1px solid var(--b);
+  border-radius: var(--r); padding: 15px;
+  margin-bottom: 12px;
+}
+.rc-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--tx3); font-weight: 600; margin-bottom: 11px; }
+
+.stat-mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.stat-mini { background: var(--sur2); border-radius: 8px; padding: 10px 12px; }
+.sm-n { font-family: 'Instrument Serif', serif; font-size: 24px; letter-spacing: -1px; line-height: 1; margin-bottom: 2px; }
+.sm-l { font-size: 11px; color: var(--tx3); }
+.sm-n.g { color: var(--G); } .sm-n.p { color: var(--P); } .sm-n.o { color: var(--O); } .sm-n.t { color: var(--T); }
+
+.top-voter { display: flex; align-items: center; gap: 9px; padding: 7px 0; border-bottom: 1px solid var(--b); }
+.top-voter:last-child { border-bottom: none; padding-bottom: 0; }
+.tv-rank { font-family: 'Instrument Serif', serif; font-size: 15px; color: var(--tx3); width: 16px; flex-shrink: 0; }
+.tv-rank.r1 { color: #c5960a; } .tv-rank.r2 { color: #888; } .tv-rank.r3 { color: var(--O); }
+.tv-av { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 9px; flex-shrink: 0; }
+.tv-name { font-size: 12px; font-weight: 600; }
+.tv-role { font-size: 10.5px; color: var(--tx3); }
+.tv-votes { font-size: 12px; font-weight: 700; color: var(--G); margin-left: auto; }
+
+.draft-card {
+  background: var(--Gbg); border: 1px solid var(--Gb);
+  border-radius: 9px; padding: 13px; cursor: pointer;
+  transition: all .15s;
+}
+.draft-card:hover { border-color: rgba(74,124,0,.4); transform: translateY(-1px); }
+.dc-header { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.dc-icon { font-size: 17px; }
+.dc-name { font-size: 13px; font-weight: 600; }
+.dc-desc { font-size: 11.5px; color: var(--tx2); margin-bottom: 10px; }
+.dc-btn {
+  width: 100%; background: var(--G); color: #fff;
+  border: none; border-radius: 7px; padding: 8px;
+  font-size: 12.5px; font-weight: 600; cursor: pointer;
+  font-family: 'Geist', sans-serif; transition: opacity .15s;
+}
+.dc-btn:hover { opacity: .88; }
+
+.tag-cloud { display: flex; gap: 6px; flex-wrap: wrap; }
+.tc-tag {
+  background: var(--sur2); border: 1px solid var(--b);
+  border-radius: 100px; padding: 5px 11px; font-size: 12px;
+  color: var(--tx2); cursor: pointer; transition: all .13s;
+}
+.tc-tag:hover, .tc-tag.on { background: var(--Gbg); border-color: var(--Gb); color: var(--G); font-weight: 500; }
+
+.activity-item { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; }
+.activity-item:last-child { margin-bottom: 0; }
+.act-av { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8.5px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.act-text { font-size: 12px; color: var(--tx2); line-height: 1.5; }
+.act-text strong { color: var(--tx); font-weight: 600; }
+
+/* ════════════════════════════ PRODUCT DETAIL PAGE ════════════════════════════ */
+.detail-page {
+  position: fixed; inset: 0; background: var(--bg);
+  z-index: 200; display: none; flex-direction: column; overflow: hidden;
+  animation: pgIn .22s ease;
+}
+.detail-page.open { display: flex; }
+@keyframes pgIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Detail topbar */
+.dp-topbar {
+  height: 52px; background: rgba(255,255,255,.94); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--b);
+  display: flex; align-items: center; padding: 0 28px; gap: 12px;
+  flex-shrink: 0; position: sticky; top: 0; z-index: 10;
+}
+.dp-back {
+  display: flex; align-items: center; gap: 7px;
+  background: none; border: 1px solid var(--b2);
+  border-radius: 8px; padding: 6px 13px;
+  font-size: 12.5px; color: var(--tx2); cursor: pointer;
+  font-family: 'Geist', sans-serif; transition: all .12s;
+}
+.dp-back:hover { background: var(--sur2); color: var(--tx); border-color: var(--b2); }
+.dp-breadcrumb { font-size: 13px; color: var(--tx3); display: flex; align-items: center; gap: 6px; }
+.dp-breadcrumb span { color: var(--tx); font-weight: 500; }
+.dp-sep { color: var(--tx3); }
+.dp-top-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+/* Detail scroll */
+.dp-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; }
+
+/* Detail body layout */
+.dp-layout { display: grid; grid-template-columns: 1fr 320px; max-width: 1100px; margin: 0 auto; padding: 32px 28px 60px; gap: 32px; }
+
+/* ── Left column ── */
+.dp-left {}
+
+/* Hero */
+.dp-hero { display: flex; align-items: flex-start; gap: 18px; margin-bottom: 24px; }
+.dp-prod-icon {
+  width: 72px; height: 72px; border-radius: 16px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; border: 1px solid var(--b);
+}
+.dp-prod-info { flex: 1; }
+.dp-prod-name { font-family: 'Instrument Serif', serif; font-size: 28px; letter-spacing: -.5px; margin-bottom: 6px; line-height: 1.1; }
+.dp-prod-tagline { font-size: 15px; color: var(--tx2); line-height: 1.5; margin-bottom: 10px; }
+.dp-cats { display: flex; gap: 6px; flex-wrap: wrap; }
+.dp-cat { font-size: 11.5px; padding: 3px 10px; border-radius: 100px; background: var(--sur2); color: var(--tx2); border: 1px solid var(--b); }
+
+/* Action bar */
+.dp-action-bar { display: flex; gap: 8px; margin-bottom: 28px; }
+.dp-vote-big {
+  display: flex; align-items: center; gap: 9px;
+  border: 1.5px solid var(--b); border-radius: 10px;
+  padding: 10px 18px; cursor: pointer; background: var(--sur);
+  font-weight: 700; font-size: 15px; transition: all .15s;
+}
+.dp-vote-big:hover, .dp-vote-big.voted { border-color: var(--G); background: var(--Gbg); color: var(--G); }
+.dp-want-big {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+  border: 1.5px solid var(--b); border-radius: 10px;
+  padding: 10px; cursor: pointer; background: var(--sur);
+  font-size: 13.5px; font-weight: 600; transition: all .15s;
+}
+.dp-want-big:hover, .dp-want-big.wanted { border-color: var(--P); background: var(--Pbg); color: var(--P); }
+.dp-visit {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+  background: var(--tx); color: #fff; border-radius: 10px;
+  padding: 10px; cursor: pointer; font-size: 13.5px; font-weight: 600;
+  border: none; font-family: 'Geist', sans-serif; transition: opacity .15s;
+}
+.dp-visit:hover { opacity: .85; }
+
+/* Media gallery */
+.dp-section-title { font-size: 13px; font-weight: 700; color: var(--tx3); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 12px; }
+
+.dp-gallery { margin-bottom: 28px; }
+.dp-media-main {
+  width: 100%; aspect-ratio: 16/9; border-radius: 12px;
+  background: var(--sur3); border: 1px solid var(--b);
+  overflow: hidden; position: relative; margin-bottom: 8px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.dp-video-thumb {
+  width: 100%; height: 100%; object-fit: cover;
+  background: linear-gradient(135deg, #1a2a1a 0%, #0f1f12 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+}
+.dp-play-btn {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: var(--tx); cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+}
+.dp-play-btn:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(0,0,0,.25); }
+.dp-video-label { font-size: 12.5px; color: rgba(255,255,255,.7); }
+.dp-video-duration { font-size: 11.5px; color: rgba(255,255,255,.5); }
+
+.dp-thumbnails { display: flex; gap: 8px; }
+.dp-thumb {
+  flex: 1; aspect-ratio: 16/9; border-radius: 8px;
+  border: 2px solid transparent; overflow: hidden;
+  cursor: pointer; transition: all .15s; background: var(--sur3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.dp-thumb.active { border-color: var(--G); }
+.dp-thumb:hover { border-color: var(--b2); }
+.dp-thumb-img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Description */
+.dp-description { margin-bottom: 28px; }
+.dp-desc-text { font-size: 14px; color: var(--tx2); line-height: 1.75; }
+.dp-desc-text p { margin-bottom: 12px; }
+.dp-desc-text p:last-child { margin-bottom: 0; }
+.dp-desc-text strong { color: var(--tx); font-weight: 600; }
+
+/* Traction */
+.dp-traction { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 28px; }
+.tr-card { background: var(--sur2); border-radius: 10px; padding: 13px 14px; text-align: center; }
+.tr-num { font-family: 'Instrument Serif', serif; font-size: 26px; letter-spacing: -.8px; line-height: 1; margin-bottom: 3px; }
+.tr-lbl { font-size: 11px; color: var(--tx3); }
+.tr-g { color: var(--G); } .tr-p { color: var(--P); } .tr-t { color: var(--T); } .tr-o { color: var(--O); }
+
+/* Feedback section */
+.dp-feedback { }
+.dp-feedback-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.dp-feedback-count { font-size: 12px; color: var(--tx3); }
+.dp-rating-summary {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--sur2); border-radius: 10px;
+  padding: 14px 16px; margin-bottom: 16px;
+}
+.dp-rating-big { font-family: 'Instrument Serif', serif; font-size: 40px; letter-spacing: -2px; color: var(--tx); line-height: 1; }
+.dp-rating-stars { color: #f5a623; font-size: 16px; letter-spacing: 2px; margin-bottom: 3px; }
+.dp-rating-sub { font-size: 11.5px; color: var(--tx3); }
+.dp-rating-bars { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.dp-rb-row { display: flex; align-items: center; gap: 8px; }
+.dp-rb-lbl { font-size: 11px; color: var(--tx3); width: 12px; text-align: right; flex-shrink: 0; }
+.dp-rb-track { flex: 1; height: 6px; background: var(--b); border-radius: 100px; overflow: hidden; }
+.dp-rb-fill { height: 100%; border-radius: 100px; background: #f5a623; }
+.dp-rb-count { font-size: 11px; color: var(--tx3); width: 20px; text-align: right; }
+
+/* Write feedback */
+.dp-write-feedback {
+  background: var(--sur); border: 1px solid var(--b);
+  border-radius: var(--r); padding: 16px; margin-bottom: 16px;
+}
+.dp-wf-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.dp-wf-av {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--P); display: flex; align-items: center;
+  justify-content: center; font-weight: 700; font-size: 12px;
+  color: #fff; flex-shrink: 0;
+}
+.dp-wf-label { font-size: 13px; font-weight: 600; }
+.dp-wf-sub { font-size: 11.5px; color: var(--tx3); }
+.dp-star-row { display: flex; gap: 6px; margin-bottom: 12px; }
+.dp-star {
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid var(--b); background: var(--sur2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer; transition: all .12s;
+  color: var(--tx3);
+}
+.dp-star.lit, .dp-star:hover { background: #fff8e6; border-color: #f5a623; color: #f5a623; }
+.dp-textarea {
+  width: 100%; background: var(--sur2); border: 1px solid var(--b);
+  border-radius: 8px; padding: 10px 13px; font-size: 13px;
+  color: var(--tx); font-family: 'Geist', sans-serif;
+  resize: none; outline: none; min-height: 80px; transition: border-color .13s;
+}
+.dp-textarea:focus { border-color: var(--G); }
+.dp-textarea::placeholder { color: var(--tx3); }
+.dp-wf-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+.dp-wf-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.dp-wf-tag {
+  font-size: 11px; padding: 3px 9px; border-radius: 100px;
+  border: 1px solid var(--b2); background: none; color: var(--tx3);
+  cursor: pointer; font-family: 'Geist', sans-serif; transition: all .12s;
+}
+.dp-wf-tag.on { background: var(--Gbg); border-color: var(--Gb); color: var(--G); }
+.dp-submit-btn {
+  background: var(--G); color: #fff; border: none;
+  border-radius: 8px; padding: 8px 18px; font-size: 12.5px;
+  font-weight: 600; cursor: pointer; font-family: 'Geist', sans-serif;
+  transition: opacity .13s;
+}
+.dp-submit-btn:hover { opacity: .88; }
+
+/* Feedback cards */
+.dp-fb-card {
+  background: var(--sur); border: 1px solid var(--b);
+  border-radius: var(--r); padding: 15px 16px; margin-bottom: 10px;
+  transition: border-color .12s;
+}
+.dp-fb-card:hover { border-color: var(--b2); }
+.dp-fb-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.dp-fb-av { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; flex-shrink: 0; }
+.dp-fb-name { font-size: 13px; font-weight: 600; }
+.dp-fb-role { font-size: 11px; color: var(--tx3); }
+.dp-fb-stars { color: #f5a623; font-size: 12px; letter-spacing: 1px; margin-left: auto; }
+.dp-fb-time { font-size: 11px; color: var(--tx3); }
+.dp-fb-text { font-size: 13px; color: var(--tx2); line-height: 1.65; margin-bottom: 10px; }
+.dp-fb-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+.dp-fb-tag { font-size: 10.5px; padding: 2px 8px; border-radius: 100px; }
+.fbt-ux { background: var(--Pbg); color: var(--P); }
+.fbt-perf { background: var(--Tbg); color: var(--T); }
+.fbt-design { background: var(--Obg); color: var(--O); }
+.fbt-bug { background: var(--Rbg); color: var(--R); }
+.fbt-feature { background: var(--Gbg); color: var(--G); }
+.dp-fb-actions { display: flex; align-items: center; gap: 8px; }
+.dp-fb-btn {
+  background: none; border: 1px solid var(--b); color: var(--tx3);
+  padding: 4px 12px; border-radius: 6px; font-size: 11.5px;
+  cursor: pointer; font-family: 'Geist', sans-serif; transition: all .12s;
+}
+.dp-fb-btn:hover { border-color: var(--b2); color: var(--tx); background: var(--sur2); }
+.dp-helpful { font-size: 11.5px; color: var(--tx3); margin-left: auto; }
+
+/* ── Right sidebar in detail ── */
+.dp-right {}
+
+.dp-r-card {
+  background: var(--sur); border: 1px solid var(--b);
+  border-radius: var(--r); padding: 15px; margin-bottom: 14px;
+}
+.dp-r-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--tx3); font-weight: 600; margin-bottom: 12px; }
+
+/* Builder card */
+.dp-builder-av {
+  width: 46px; height: 46px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 16px; flex-shrink: 0;
+}
+.dp-builder-info strong { font-size: 14px; display: block; margin-bottom: 2px; }
+.dp-builder-info span { font-size: 12px; color: var(--tx3); }
+.dp-builder-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin: 12px 0; }
+.dp-bs { background: var(--sur2); border-radius: 8px; padding: 8px; text-align: center; }
+.dp-bs .n { font-family: 'Instrument Serif', serif; font-size: 18px; font-weight: 400; display: block; }
+.dp-bs .l { font-size: 9.5px; color: var(--tx3); }
+.dp-builder-note { font-size: 12px; color: var(--tx2); line-height: 1.6; padding-top: 10px; border-top: 1px solid var(--b); }
+
+/* Timeline */
+.dp-timeline { display: flex; flex-direction: column; gap: 0; }
+.dp-tl-item { display: flex; gap: 10px; padding-bottom: 12px; position: relative; }
+.dp-tl-item:last-child { padding-bottom: 0; }
+.dp-tl-item:not(:last-child)::before {
+  content: ''; position: absolute; left: 14px; top: 26px; bottom: 0;
+  width: 1px; background: var(--b);
+}
+.dp-tl-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--b2); background: var(--sur); display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; z-index: 1; }
+.dp-tl-dot.done { border-color: var(--G); background: var(--Gbg); }
+.dp-tl-info {}
+.dp-tl-title { font-size: 12.5px; font-weight: 600; }
+.dp-tl-meta { font-size: 11px; color: var(--tx3); margin-top: 1px; }
+
+/* Early adopters */
+.dp-adopters { display: flex; align-items: center; }
+.dp-adopter-av { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--sur); margin-left: -6px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; }
+.dp-adopter-av:first-child { margin-left: 0; }
+.dp-adopt-more { font-size: 12px; color: var(--tx3); margin-left: 10px; }
+.dp-adopt-cta {
+  display: block; width: 100%; background: none;
+  border: 1.5px dashed var(--Gb); border-radius: 8px;
+  padding: 9px; font-size: 12.5px; font-weight: 600;
+  color: var(--G); cursor: pointer; font-family: 'Geist', sans-serif;
+  margin-top: 11px; transition: all .13s;
+}
+.dp-adopt-cta:hover { background: var(--Gbg); border-style: solid; }
+
+/* Related */
+.dp-related-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--b); cursor: pointer; transition: background .12s; }
+.dp-related-item:last-child { border-bottom: none; }
+.dp-related-item:hover { opacity: .75; }
+.dp-rel-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 1px solid var(--b); flex-shrink: 0; }
+.dp-rel-name { font-size: 12.5px; font-weight: 600; }
+.dp-rel-votes { font-size: 11.5px; color: var(--tx3); margin-left: auto; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ══════════ SIDEBAR ══════════ -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-tri"></div>
+    Nex<em>Fellow</em>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="si" onclick="sNav(this)"><div class="si-icon">🏠</div> Home</div>
+    <div class="si" onclick="sNav(this)"><div class="si-icon">🗺️</div> Builder Map</div>
+    <div class="si" onclick="sNav(this)"><div class="si-icon">📊</div> Leaderboard</div>
+    <div class="si active" onclick="sNav(this)"><div class="si-icon">🚀</div> Launches<span class="si-badge sbg">Live</span></div>
+    <div class="si" onclick="sNav(this)"><div class="si-icon">🤝</div> Community</div>
+    <div class="si" onclick="sNav(this)">
+      <div class="si-icon">💬</div> Inbox
+      <span class="si-badge sbp">5</span>
+    </div>
+    <div class="si" onclick="sNav(this)"><div class="si-icon">🔔</div> Notifications<span class="si-badge sbo">2</span></div>
+
+    <div class="sb-lbl">Account</div>
+    <div class="si" onclick="sNav(this)"><div class="si-icon">👤</div> Profile</div>
+    <div class="si" onclick="sNav(this)"><div class="si-icon">⚙️</div> Settings</div>
+  </nav>
+
+  <div class="sb-launch-cta">
+    <strong>🚀 Submit your product</strong>
+    <span>8 reviews collected — you're ready</span>
+  </div>
+
+  <div class="sb-profile">
+    <div class="sb-prow">
+      <div class="sb-av">R</div>
+      <div class="sb-info">
+        <strong>Rohan Mehta</strong>
+        <span>Mumbai · Builder</span>
+      </div>
+      <div class="sb-credits">124 cr</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══════════ MAIN ══════════ -->
+<main class="main">
+  <div class="topbar">
+    <div class="tb-title">Launches</div>
+    <div class="tb-tabs">
+      <button class="tbtab active" onclick="tbTab(this)">Today</button>
+      <button class="tbtab" onclick="tbTab(this)">This week</button>
+      <button class="tbtab" onclick="tbTab(this)">All time</button>
+    </div>
+    <div class="tb-right">
+      <button class="tb-btn">🔍 Filter</button>
+      <button class="tb-btn pri" onclick="openDetail('taskflow')">+ Submit product</button>
+    </div>
+  </div>
+
+  <div class="scroll-area">
+    <div class="content-grid">
+      <div class="main-col">
+
+        <!-- Live strip -->
+        <div class="live-strip">
+          <div class="ls-head">
+            <div class="live-dot"></div>
+            <div class="ls-label">Live now</div>
+            <div class="ls-sub">3 products launching · feedback flowing in</div>
+          </div>
+          <div class="live-cards">
+            <div class="live-card hot" onclick="openDetail('taskflow')">
+              <div class="lc-top">
+                <div class="lc-icon" style="background:#f0f9d4">📋</div>
+                <div class="lc-name">TaskFlow AI</div>
+                <div class="lc-hot-tag">🔥 Hot</div>
+              </div>
+              <div class="lc-bar"><div class="lc-bar-fill" style="width:88%"></div></div>
+              <div class="lc-stats">
+                <div class="lc-stat">▲ <strong>316</strong></div>
+                <div class="lc-stat">💬 <strong>22</strong></div>
+                <div class="lc-stat">⭐ <strong>4.2</strong></div>
+              </div>
+              <div class="lc-time">Launched 4h ago</div>
+            </div>
+            <div class="live-card" onclick="openDetail('designkit')">
+              <div class="lc-top">
+                <div class="lc-icon" style="background:#f0eeff">🎨</div>
+                <div class="lc-name">DesignKit</div>
+              </div>
+              <div class="lc-bar"><div class="lc-bar-fill" style="width:62%"></div></div>
+              <div class="lc-stats">
+                <div class="lc-stat">▲ <strong>184</strong></div>
+                <div class="lc-stat">💬 <strong>14</strong></div>
+                <div class="lc-stat">⭐ <strong>4.4</strong></div>
+              </div>
+              <div class="lc-time">Launched 6h ago</div>
+            </div>
+            <div class="live-card" onclick="openDetail('nocodeapi')">
+              <div class="lc-top">
+                <div class="lc-icon" style="background:#e6f5f2">⚡</div>
+                <div class="lc-name">NoCodeAPI</div>
+              </div>
+              <div class="lc-bar"><div class="lc-bar-fill" style="width:44%"></div></div>
+              <div class="lc-stats">
+                <div class="lc-stat">▲ <strong>97</strong></div>
+                <div class="lc-stat">💬 <strong>9</strong></div>
+                <div class="lc-stat">⭐ <strong>4.6</strong></div>
+              </div>
+              <div class="lc-time">Launched 2h ago</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day header -->
+        <div class="day-head">
+          <div class="dh-date">April 6, 2026</div>
+          <div class="sort-btns">
+            <button class="sort-btn active" onclick="sortOpt(this)">Top</button>
+            <button class="sort-btn" onclick="sortOpt(this)">New</button>
+            <button class="sort-btn" onclick="sortOpt(this)">Trending</button>
+          </div>
+        </div>
+
+        <!-- Today's launches -->
+        <div class="launch-row featured" onclick="openDetail('taskflow')">
+          <div class="lr-rank r1">1</div>
+          <div class="lr-icon" style="background:#f0f9d4">📋</div>
+          <div class="lr-info">
+            <div class="lr-name-row">
+              <div class="lr-name">TaskFlow AI</div>
+              <span class="lr-tag tag-featured">✦ Featured</span>
+              <span class="lr-tag tag-hot">🔥 Hot</span>
+            </div>
+            <div class="lr-desc">AI-powered project management that learns how your team actually works</div>
+            <div class="lr-meta">
+              <div class="lr-builder"><div class="lr-bav" style="background:#c8f060;color:#111">R</div>Rohan Mehta · 2nd launch</div>
+              <div class="lr-traction">
+                <div class="lr-tr g">⭐ 4.2</div>
+                <div class="lr-tr">💬 22 feedbacks</div>
+                <div class="lr-tr g">👤 4 adopters</div>
+              </div>
+              <div class="lr-cats"><span class="lr-cat">Productivity</span><span class="lr-cat">AI</span></div>
+            </div>
+          </div>
+          <div class="lr-actions">
+            <button class="want-btn wanted" onclick="event.stopPropagation();toggleWant(this)">🌟 Wanted</button>
+            <button class="vote-btn voted" onclick="event.stopPropagation();toggleVote(this)"><div class="vb-arr">▲</div><div class="vb-num">316</div></button>
+          </div>
+        </div>
+
+        <div class="launch-row" onclick="openDetail('designkit')">
+          <div class="lr-rank r2">2</div>
+          <div class="lr-icon" style="background:#f0eeff">🎨</div>
+          <div class="lr-info">
+            <div class="lr-name-row"><div class="lr-name">DesignKit</div><span class="lr-tag tag-new">New</span></div>
+            <div class="lr-desc">Figma-to-code design system builder for solo founders and small teams</div>
+            <div class="lr-meta">
+              <div class="lr-builder"><div class="lr-bav" style="background:#ff8c5a;color:#111">A</div>Anika Sharma · 1st launch</div>
+              <div class="lr-traction"><div class="lr-tr g">⭐ 4.4</div><div class="lr-tr">💬 14 feedbacks</div><div class="lr-tr">👤 2 adopters</div></div>
+              <div class="lr-cats"><span class="lr-cat">Design</span><span class="lr-cat">Dev Tools</span></div>
+            </div>
+          </div>
+          <div class="lr-actions">
+            <button class="want-btn" onclick="event.stopPropagation();toggleWant(this)">🌟 Want this</button>
+            <button class="vote-btn" onclick="event.stopPropagation();toggleVote(this)"><div class="vb-arr">▲</div><div class="vb-num">184</div></button>
+          </div>
+        </div>
+
+        <div class="launch-row" onclick="openDetail('nocodeapi')">
+          <div class="lr-rank r3">3</div>
+          <div class="lr-icon" style="background:#e6f5f2">⚡</div>
+          <div class="lr-info">
+            <div class="lr-name-row"><div class="lr-name">NoCodeAPI</div><span class="lr-tag tag-new">New</span></div>
+            <div class="lr-desc">Build and deploy APIs without writing a single line of code</div>
+            <div class="lr-meta">
+              <div class="lr-builder"><div class="lr-bav" style="background:#6be0ff;color:#111">M</div>Miguel Torres · 1st launch</div>
+              <div class="lr-traction"><div class="lr-tr g">⭐ 4.6</div><div class="lr-tr">💬 9 feedbacks</div><div class="lr-tr">👤 3 adopters</div></div>
+              <div class="lr-cats"><span class="lr-cat">Dev Tools</span><span class="lr-cat">No-Code</span></div>
+            </div>
+          </div>
+          <div class="lr-actions">
+            <button class="want-btn" onclick="event.stopPropagation();toggleWant(this)">🌟 Want this</button>
+            <button class="vote-btn" onclick="event.stopPropagation();toggleVote(this)"><div class="vb-arr">▲</div><div class="vb-num">97</div></button>
+          </div>
+        </div>
+
+        <div class="launch-row">
+          <div class="lr-rank">4</div>
+          <div class="lr-icon" style="background:#fff5f0">🚢</div>
+          <div class="lr-info">
+            <div class="lr-name-row"><div class="lr-name">ShipLog</div></div>
+            <div class="lr-desc">Beautiful changelogs and release notes for developer tools</div>
+            <div class="lr-meta">
+              <div class="lr-builder"><div class="lr-bav" style="background:#c8f060;color:#111">R</div>Rohan Mehta</div>
+              <div class="lr-traction"><div class="lr-tr g">⭐ 4.7</div><div class="lr-tr">💬 15 feedbacks</div><div class="lr-tr g">👤 6 adopters</div></div>
+              <div class="lr-cats"><span class="lr-cat">Dev Tools</span></div>
+            </div>
+          </div>
+          <div class="lr-actions">
+            <button class="want-btn" onclick="event.stopPropagation();toggleWant(this)">🌟 Want this</button>
+            <button class="vote-btn" onclick="event.stopPropagation();toggleVote(this)"><div class="vb-arr">▲</div><div class="vb-num">88</div></button>
+          </div>
+        </div>
+
+        <div class="launch-row">
+          <div class="lr-rank">5</div>
+          <div class="lr-icon" style="background:#e6f5f2">🧘</div>
+          <div class="lr-info">
+            <div class="lr-name-row"><div class="lr-name">Habitual</div></div>
+            <div class="lr-desc">Build habits that actually stick — smart reminders, zero guilt</div>
+            <div class="lr-meta">
+              <div class="lr-builder"><div class="lr-bav" style="background:#f0c040;color:#111">P</div>Priya Mankar</div>
+              <div class="lr-traction"><div class="lr-tr">⭐ 3.9</div><div class="lr-tr">💬 7 feedbacks</div><div class="lr-tr">👤 1 adopter</div></div>
+              <div class="lr-cats"><span class="lr-cat">Health</span><span class="lr-cat">Mobile</span></div>
+            </div>
+          </div>
+          <div class="lr-actions">
+            <button class="want-btn" onclick="event.stopPropagation();toggleWant(this)">🌟 Want this</button>
+            <button class="vote-btn" onclick="event.stopPropagation();toggleVote(this)"><div class="vb-arr">▲</div><div class="vb-num">74</div></button>
+          </div>
+        </div>
+
+        <div class="launch-row">
+          <div class="lr-rank">6</div>
+          <div class="lr-icon" style="background:#fdf0e6">💰</div>
+          <div class="lr-info">
+            <div class="lr-name-row"><div class="lr-name">InvoiceZap</div></div>
+            <div class="lr-desc">Send GST invoices in under 30 seconds. Built for Indian freelancers.</div>
+            <div class="lr-meta">
+              <div class="lr-builder"><div class="lr-bav" style="background:#f0c040;color:#111">K</div>Karan Shah</div>
+              <div class="lr-traction"><div class="lr-tr g">⭐ 4.1</div><div class="lr-tr">💬 11 feedbacks</div><div class="lr-tr">👤 2 adopters</div></div>
+              <div class="lr-cats"><span class="lr-cat">Fintech</span><span class="lr-cat">B2B</span></div>
+            </div>
+          </div>
+          <div class="lr-actions">
+            <button class="want-btn" onclick="event.stopPropagation();toggleWant(this)">🌟 Want this</button>
+            <button class="vote-btn" onclick="event.stopPropagation();toggleVote(this)"><div class="vb-arr">▲</div><div class="vb-num">61</div></button>
+          </div>
+        </div>
+
+        <div class="launch-row">
+          <div class="lr-rank">7</div>
+          <div class="lr-icon" style="background:#ffeef0">🤖</div>
+          <div class="lr-info">
+            <div class="lr-name-row"><div class="lr-name">AutoForm</div></div>
+            <div class="lr-desc">Turn any data into a working Webflow form in 60 seconds</div>
+            <div class="lr-meta">
+              <div class="lr-builder"><div class="lr-bav" style="background:#ff5a72;color:#fff">S</div>Sara K.</div>
+              <div class="lr-traction"><div class="lr-tr">⭐ 3.8</div><div class="lr-tr">💬 9 feedbacks</div><div class="lr-tr">👤 0 adopters</div></div>
+              <div class="lr-cats"><span class="lr-cat">No-Code</span><span class="lr-cat">Automation</span></div>
+            </div>
+          </div>
+          <div class="lr-actions">
+            <button class="want-btn" onclick="event.stopPropagation();toggleWant(this)">🌟 Want this</button>
+            <button class="vote-btn" onclick="event.stopPropagation();toggleVote(this)"><div class="vb-arr">▲</div><div class="vb-num">48</div></button>
+          </div>
+        </div>
+
+        <!-- Day divider -->
+        <div class="day-divider">
+          <div class="dd-label">April 5, 2026</div>
+          <div class="dd-count">9 launches</div>
+        </div>
+
+        <div class="launch-row featured" onclick="openDetail('communityos')">
+          <div class="lr-rank r1">1</div>
+          <div class="lr-icon" style="background:#e6f5f2">🌐</div>
+          <div class="lr-info">
+            <div class="lr-name-row"><div class="lr-name">CommunityOS</div><span class="lr-tag tag-featured">✦ Featured</span></div>
+            <div class="lr-desc">The operating system for builder communities. Challenges, office hours, collab boards built in.</div>
+            <div class="lr-meta">
+              <div class="lr-builder"><div class="lr-bav" style="background:#00c9a7;color:#111">D</div>Deependra Gaur · 3rd launch</div>
+              <div class="lr-traction"><div class="lr-tr g">⭐ 4.8</div><div class="lr-tr">💬 47 feedbacks</div><div class="lr-tr g">👤 12 adopters</div></div>
+              <div class="lr-cats"><span class="lr-cat">Community</span><span class="lr-cat">SaaS</span></div>
+            </div>
+          </div>
+          <div class="lr-actions">
+            <button class="want-btn wanted" onclick="event.stopPropagation();toggleWant(this)">🌟 Wanted</button>
+            <button class="vote-btn voted" onclick="event.stopPropagation();toggleVote(this)"><div class="vb-arr">▲</div><div class="vb-num">428</div></button>
+          </div>
+        </div>
+
+        <div class="launch-row">
+          <div class="lr-rank r2">2</div>
+          <div class="lr-icon" style="background:#f7f0ff">🎯</div>
+          <div class="lr-info">
+            <div class="lr-name-row"><div class="lr-name">FocusTime</div></div>
+            <div class="lr-desc">Deep work sessions with accountability partners. Built for remote builders.</div>
+            <div class="lr-meta">
+              <div class="lr-builder"><div class="lr-bav" style="background:#8b7aff;color:#fff">V</div>Vikram Rao</div>
+              <div class="lr-traction"><div class="lr-tr g">⭐ 4.3</div><div class="lr-tr">💬 19 feedbacks</div><div class="lr-tr">👤 5 adopters</div></div>
+              <div class="lr-cats"><span class="lr-cat">Productivity</span></div>
+            </div>
+          </div>
+          <div class="lr-actions">
+            <button class="want-btn" onclick="event.stopPropagation();toggleWant(this)">🌟 Want this</button>
+            <button class="vote-btn" onclick="event.stopPropagation();toggleVote(this)"><div class="vb-arr">▲</div><div class="vb-num">241</div></button>
+          </div>
+        </div>
+
+      </div><!-- /main-col -->
+
+      <!-- Right column -->
+      <div class="right-col">
+
+        <!-- Today stats -->
+        <div class="rc-card">
+          <div class="rc-label">Today · Apr 6</div>
+          <div class="stat-mini-grid">
+            <div class="stat-mini"><div class="sm-n g">7</div><div class="sm-l">launches today</div></div>
+            <div class="stat-mini"><div class="sm-n p">868</div><div class="sm-l">total votes</div></div>
+            <div class="stat-mini"><div class="sm-n t">87</div><div class="sm-l">feedbacks given</div></div>
+            <div class="stat-mini"><div class="sm-n o">18</div><div class="sm-l">early adopters</div></div>
+          </div>
+        </div>
+
+        <!-- Your draft -->
+        <div class="rc-card">
+          <div class="rc-label">Your drafts</div>
+          <div class="draft-card">
+            <div class="dc-header"><div class="dc-icon">🎯</div><div class="dc-name">FocusDock</div></div>
+            <div class="dc-desc">8/10 reviews collected. Ready to launch.</div>
+            <button class="dc-btn">Submit to Launches →</button>
+          </div>
+        </div>
+
+        <!-- Top supporters -->
+        <div class="rc-card">
+          <div class="rc-label">Top supporters today</div>
+          <div class="top-voter">
+            <div class="tv-rank r1">1</div>
+            <div class="tv-av" style="background:#c8f060;color:#111">R</div>
+            <div style="flex:1"><div class="tv-name">Rohan M.</div><div class="tv-role">Mumbai</div></div>
+            <div class="tv-votes">12 votes</div>
+          </div>
+          <div class="top-voter">
+            <div class="tv-rank r2">2</div>
+            <div class="tv-av" style="background:#00c9a7;color:#111">D</div>
+            <div style="flex:1"><div class="tv-name">Deependra G.</div><div class="tv-role">Bangalore</div></div>
+            <div class="tv-votes">9 votes</div>
+          </div>
+          <div class="top-voter">
+            <div class="tv-rank r3">3</div>
+            <div class="tv-av" style="background:#ff8c5a;color:#111">A</div>
+            <div style="flex:1"><div class="tv-name">Anika S.</div><div class="tv-role">Pune</div></div>
+            <div class="tv-votes">7 votes</div>
+          </div>
+          <div class="top-voter">
+            <div class="tv-rank">4</div>
+            <div class="tv-av" style="background:#8b7aff;color:#fff">V</div>
+            <div style="flex:1"><div class="tv-name">Vikram R.</div><div class="tv-role">Hyderabad</div></div>
+            <div class="tv-votes">6 votes</div>
+          </div>
+        </div>
+
+        <!-- Trending tags -->
+        <div class="rc-card">
+          <div class="rc-label">Trending categories</div>
+          <div class="tag-cloud">
+            <div class="tc-tag on" onclick="tcTag(this)">AI · 3</div>
+            <div class="tc-tag" onclick="tcTag(this)">Dev Tools · 2</div>
+            <div class="tc-tag" onclick="tcTag(this)">No-Code · 2</div>
+            <div class="tc-tag" onclick="tcTag(this)">Productivity</div>
+            <div class="tc-tag" onclick="tcTag(this)">Fintech</div>
+            <div class="tc-tag" onclick="tcTag(this)">Design</div>
+          </div>
+        </div>
+
+        <!-- Just happened -->
+        <div class="rc-card" style="border:none;background:none;padding:0">
+          <div class="rc-label">Just happened</div>
+          <div class="activity-item"><div class="act-av" style="background:#c8f060;color:#111">R</div><div class="act-text"><strong>Rohan</strong> got early adopter #4 on TaskFlow AI · 2m ago</div></div>
+          <div class="activity-item"><div class="act-av" style="background:#00c9a7;color:#111">D</div><div class="act-text"><strong>Deependra</strong> left feedback on DesignKit · 5m ago</div></div>
+          <div class="activity-item"><div class="act-av" style="background:#6be0ff;color:#111">M</div><div class="act-text"><strong>Miguel</strong> hit 100 votes on NoCodeAPI · 12m ago</div></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ══════════════════════════════════════════
+     PRODUCT DETAIL FULL-SCREEN PAGE
+══════════════════════════════════════════ -->
+<div class="detail-page" id="detail-page">
+  <!-- Detail topbar -->
+  <div class="dp-topbar">
+    <button class="dp-back" onclick="closeDetail()">← Back to Launches</button>
+    <div class="dp-breadcrumb">Launches <span class="dp-sep">/</span> <span id="dp-breadcrumb-name">TaskFlow AI</span></div>
+    <div class="dp-top-actions">
+      <button class="tb-btn">🔗 Share</button>
+      <button class="tb-btn">🚩 Report</button>
+    </div>
+  </div>
+
+  <div class="dp-scroll">
+    <div class="dp-layout">
+
+      <!-- ── Left ── -->
+      <div class="dp-left">
+
+        <!-- Hero -->
+        <div class="dp-hero">
+          <div class="dp-prod-icon" id="dp-icon" style="background:#f0f9d4">📋</div>
+          <div class="dp-prod-info">
+            <div class="dp-prod-name" id="dp-name">TaskFlow AI</div>
+            <div class="dp-prod-tagline" id="dp-tagline">AI-powered project management that learns how your team actually works</div>
+            <div class="dp-cats" id="dp-cats">
+              <span class="dp-cat">Productivity</span>
+              <span class="dp-cat">Artificial Intelligence</span>
+              <span class="dp-cat">SaaS</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action bar -->
+        <div class="dp-action-bar">
+          <button class="dp-vote-big" id="dp-vote-btn" onclick="this.classList.toggle('voted');this.querySelector('.dp-vc').textContent=this.classList.contains('voted')?parseInt(this.querySelector('.dp-vc').textContent)+1+'':parseInt(this.querySelector('.dp-vc').textContent)-1+''">
+            ▲ <span class="dp-vc" id="dp-votes">316</span>
+          </button>
+          <button class="dp-want-big" onclick="this.classList.toggle('wanted');this.innerHTML=this.classList.contains('wanted')?'🌟 Wanted':'🌟 Want this'">🌟 Want this</button>
+          <button class="dp-visit">↗ Visit product</button>
+        </div>
+
+        <!-- Media gallery -->
+        <div class="dp-gallery">
+          <div class="dp-section-title">Media</div>
+          <div class="dp-media-main">
+            <div class="dp-video-thumb">
+              <div class="dp-play-btn">▶</div>
+              <div class="dp-video-label">Product Demo — TaskFlow AI v2.1</div>
+              <div class="dp-video-duration">3 min 42 sec</div>
+            </div>
+          </div>
+          <div class="dp-thumbnails">
+            <div class="dp-thumb active" style="background:linear-gradient(135deg,#1a3a1a,#0f2010);color:rgba(255,255,255,.5);font-size:14px">▶</div>
+            <div class="dp-thumb" style="background:linear-gradient(135deg,#f0f9d4,#e0f0b0);font-size:24px">📋</div>
+            <div class="dp-thumb" style="background:linear-gradient(135deg,#e8f5d4,#d4e8a0);font-size:24px">⚡</div>
+            <div class="dp-thumb" style="background:linear-gradient(135deg,#d4f0e0,#b0e0cc);font-size:24px">📊</div>
+            <div class="dp-thumb" style="background:linear-gradient(135deg,#f4f0ff,#e8e0ff);font-size:24px">🤖</div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="dp-description">
+          <div class="dp-section-title">About this product</div>
+          <div class="dp-desc-text" id="dp-description">
+            <p><strong>TaskFlow AI</strong> is a project management tool that learns from how your team actually works — not how project managers think you should work.</p>
+            <p>After 14 weeks building in public on NexFellow, Rohan redesigned the onboarding entirely based on community feedback. The result: <strong>drop rate fell from 68% to 31%</strong> in one iteration.</p>
+            <p>The AI engine observes task completion patterns, meeting frequency, and communication cadence to surface the right tasks at the right time — without endless configuration.</p>
+            <p><strong>What makes it different:</strong> Unlike Asana or Linear, TaskFlow doesn't require you to set up a perfect system. It adapts to your team's natural rhythm over the first 2 weeks.</p>
+          </div>
+        </div>
+
+        <!-- Traction -->
+        <div style="margin-bottom:28px">
+          <div class="dp-section-title">Traction on NexFellow</div>
+          <div class="dp-traction">
+            <div class="tr-card"><div class="tr-num tr-g" id="dp-rating">4.2★</div><div class="tr-lbl">Community rating</div></div>
+            <div class="tr-card"><div class="tr-num tr-p" id="dp-feedbacks">22</div><div class="tr-lbl">Feedbacks received</div></div>
+            <div class="tr-card"><div class="tr-num tr-t" id="dp-adopters">4</div><div class="tr-lbl">Early adopters</div></div>
+            <div class="tr-card"><div class="tr-num tr-o" id="dp-comments">316</div><div class="tr-lbl">Upvotes today</div></div>
+          </div>
+        </div>
+
+        <!-- Feedback section -->
+        <div class="dp-feedback">
+          <div class="dp-feedback-head">
+            <div class="dp-section-title" style="margin-bottom:0">Community Feedback</div>
+            <div class="dp-feedback-count" id="dp-fb-count">22 feedbacks · avg 4.2★</div>
+          </div>
+
+          <!-- Rating summary -->
+          <div class="dp-rating-summary">
+            <div style="text-align:center;padding-right:12px;border-right:1px solid var(--b)">
+              <div class="dp-rating-big">4.2</div>
+              <div class="dp-rating-stars">★★★★☆</div>
+              <div class="dp-rating-sub">22 reviews</div>
+            </div>
+            <div class="dp-rating-bars">
+              <div class="dp-rb-row"><div class="dp-rb-lbl">5</div><div class="dp-rb-track"><div class="dp-rb-fill" style="width:55%"></div></div><div class="dp-rb-count">12</div></div>
+              <div class="dp-rb-row"><div class="dp-rb-lbl">4</div><div class="dp-rb-track"><div class="dp-rb-fill" style="width:25%"></div></div><div class="dp-rb-count">6</div></div>
+              <div class="dp-rb-row"><div class="dp-rb-lbl">3</div><div class="dp-rb-track"><div class="dp-rb-fill" style="width:9%"></div></div><div class="dp-rb-count">2</div></div>
+              <div class="dp-rb-row"><div class="dp-rb-lbl">2</div><div class="dp-rb-track"><div class="dp-rb-fill" style="width:5%"></div></div><div class="dp-rb-count">1</div></div>
+              <div class="dp-rb-row"><div class="dp-rb-lbl">1</div><div class="dp-rb-track"><div class="dp-rb-fill" style="width:5%"></div></div><div class="dp-rb-count">1</div></div>
+            </div>
+          </div>
+
+          <!-- Write feedback -->
+          <div class="dp-write-feedback">
+            <div class="dp-wf-head">
+              <div class="dp-wf-av">R</div>
+              <div>
+                <div class="dp-wf-label">Leave feedback</div>
+                <div class="dp-wf-sub">Your review helps the builder improve</div>
+              </div>
+            </div>
+            <div class="dp-star-row" id="star-row">
+              <div class="dp-star" onclick="rateStar(1)">★</div>
+              <div class="dp-star" onclick="rateStar(2)">★</div>
+              <div class="dp-star" onclick="rateStar(3)">★</div>
+              <div class="dp-star" onclick="rateStar(4)">★</div>
+              <div class="dp-star" onclick="rateStar(5)">★</div>
+            </div>
+            <textarea class="dp-textarea" placeholder="What did you think? What could be improved? Specific feedback is more valuable than general praise." rows="3"></textarea>
+            <div class="dp-wf-footer">
+              <div class="dp-wf-tags">
+                <button class="dp-wf-tag" onclick="this.classList.toggle('on')">UX</button>
+                <button class="dp-wf-tag" onclick="this.classList.toggle('on')">Performance</button>
+                <button class="dp-wf-tag" onclick="this.classList.toggle('on')">Design</button>
+                <button class="dp-wf-tag" onclick="this.classList.toggle('on')">Feature request</button>
+                <button class="dp-wf-tag" onclick="this.classList.toggle('on')">Bug report</button>
+              </div>
+              <button class="dp-submit-btn">Submit feedback</button>
+            </div>
+          </div>
+
+          <!-- Feedback list -->
+          <div id="dp-fb-list">
+            <div class="dp-fb-card">
+              <div class="dp-fb-top">
+                <div class="dp-fb-av" style="background:#6be0ff;color:#111">M</div>
+                <div>
+                  <div class="dp-fb-name">Miguel Torres</div>
+                  <div class="dp-fb-role">Full-stack · Bangalore · Verified Builder</div>
+                </div>
+                <div class="dp-fb-stars" style="margin-left:auto">★★★★★</div>
+                <div class="dp-fb-time">2h ago</div>
+              </div>
+              <div class="dp-fb-text">The AI task suggestion is genuinely magic. Cut my morning planning time in half. The way it learns your rhythm over the first week is unlike anything else I've tried. The onboarding is finally smooth — you can tell they iterated a lot on it.</div>
+              <div class="dp-fb-tags">
+                <span class="dp-fb-tag fbt-ux">UX</span>
+                <span class="dp-fb-tag fbt-feature">Feature ✦</span>
+              </div>
+              <div class="dp-fb-actions">
+                <button class="dp-fb-btn" onclick="this.innerHTML='👍 Helpful (1)'">👍 Helpful</button>
+                <button class="dp-fb-btn">💬 Reply</button>
+                <div class="dp-helpful">3 found this helpful</div>
+              </div>
+            </div>
+
+            <div class="dp-fb-card">
+              <div class="dp-fb-top">
+                <div class="dp-fb-av" style="background:#00c9a7;color:#111">D</div>
+                <div>
+                  <div class="dp-fb-name">Deependra Gaur</div>
+                  <div class="dp-fb-role">Full-stack · Community Builder · Bangalore</div>
+                </div>
+                <div class="dp-fb-stars" style="margin-left:auto">★★★★☆</div>
+                <div class="dp-fb-time">4h ago</div>
+              </div>
+              <div class="dp-fb-text">Dark mode contrast still needs work in the sidebar — some text is hard to read. But the core product is excellent. The AI prediction accuracy improved a lot since the last launch. Would love calendar integration to be prioritized.</div>
+              <div class="dp-fb-tags">
+                <span class="dp-fb-tag fbt-design">Design</span>
+                <span class="dp-fb-tag fbt-feature">Feature request</span>
+              </div>
+              <div class="dp-fb-actions">
+                <button class="dp-fb-btn">👍 Helpful</button>
+                <button class="dp-fb-btn">💬 Reply</button>
+                <div class="dp-helpful">1 found this helpful</div>
+              </div>
+            </div>
+
+            <div class="dp-fb-card">
+              <div class="dp-fb-top">
+                <div class="dp-fb-av" style="background:#ff8c5a;color:#111">A</div>
+                <div>
+                  <div class="dp-fb-name">Anika Sharma</div>
+                  <div class="dp-fb-role">Designer · Indie Hacker · Pune</div>
+                </div>
+                <div class="dp-fb-stars" style="margin-left:auto">★★★★★</div>
+                <div class="dp-fb-time">5h ago</div>
+              </div>
+              <div class="dp-fb-text">Switched from Notion to TaskFlow last week. The setup took 5 minutes compared to hours. I didn't realize how much cognitive load Notion was adding until I felt the difference. Genuinely recommend for solo founders and tiny teams.</div>
+              <div class="dp-fb-tags">
+                <span class="dp-fb-tag fbt-ux">UX</span>
+                <span class="dp-fb-tag fbt-perf">Performance</span>
+              </div>
+              <div class="dp-fb-actions">
+                <button class="dp-fb-btn">👍 Helpful</button>
+                <button class="dp-fb-btn">💬 Reply</button>
+                <div class="dp-helpful">5 found this helpful</div>
+              </div>
+            </div>
+
+            <div class="dp-fb-card">
+              <div class="dp-fb-top">
+                <div class="dp-fb-av" style="background:#f0c040;color:#111">K</div>
+                <div>
+                  <div class="dp-fb-name">Karan Shah</div>
+                  <div class="dp-fb-role">Fintech Builder · Mumbai</div>
+                </div>
+                <div class="dp-fb-stars" style="margin-left:auto">★★★☆☆</div>
+                <div class="dp-fb-time">6h ago</div>
+              </div>
+              <div class="dp-fb-text">Still feels a bit slow when loading for the first time, especially on mobile. The AI predictions are impressive but I wish there was more transparency on how they're generated. The analytics tab is a great addition though.</div>
+              <div class="dp-fb-tags">
+                <span class="dp-fb-tag fbt-perf">Performance</span>
+                <span class="dp-fb-tag fbt-bug">Bug</span>
+              </div>
+              <div class="dp-fb-actions">
+                <button class="dp-fb-btn">👍 Helpful</button>
+                <button class="dp-fb-btn">💬 Reply</button>
+                <div class="dp-helpful">2 found this helpful</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /dp-left -->
+
+      <!-- ── Right ── -->
+      <div class="dp-right">
+
+        <!-- Builder card -->
+        <div class="dp-r-card">
+          <div class="dp-r-label">Builder</div>
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:12px">
+            <div class="dp-builder-av" id="dp-builder-av" style="background:#c8f060;color:#111">R</div>
+            <div class="dp-builder-info">
+              <strong id="dp-builder-name">Rohan Mehta</strong>
+              <span id="dp-builder-role">Founder · SaaS · Mumbai</span>
+            </div>
+          </div>
+          <div class="dp-builder-stats">
+            <div class="dp-bs"><span class="n" style="color:var(--G)" id="dp-credits">124</span><span class="l">credits</span></div>
+            <div class="dp-bs"><span class="n" style="color:var(--P)" id="dp-reviews-given">31</span><span class="l">reviews given</span></div>
+            <div class="dp-bs"><span class="n" style="color:var(--T)" id="dp-launches-count">2</span><span class="l">launches</span></div>
+          </div>
+          <div class="dp-builder-note" id="dp-builder-note">
+            Rohan's been building TaskFlow for 14 weeks in public on NexFellow. This is his second launch — the first got 12 feedbacks and led to a full onboarding redesign.
+          </div>
+        </div>
+
+        <!-- Early adopters -->
+        <div class="dp-r-card">
+          <div class="dp-r-label">Early Adopters <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--tx3)">4 so far</span></div>
+          <div class="dp-adopters">
+            <div class="dp-adopter-av" style="background:#c8f060;color:#111">R</div>
+            <div class="dp-adopter-av" style="background:#00c9a7;color:#111">D</div>
+            <div class="dp-adopter-av" style="background:#ff8c5a;color:#111">A</div>
+            <div class="dp-adopter-av" style="background:#6be0ff;color:#111">M</div>
+            <div class="dp-adopt-more">+0 adopters</div>
+          </div>
+          <button class="dp-adopt-cta">Become an early adopter →</button>
+        </div>
+
+        <!-- Build timeline -->
+        <div class="dp-r-card">
+          <div class="dp-r-label">Build Timeline</div>
+          <div class="dp-timeline">
+            <div class="dp-tl-item">
+              <div class="dp-tl-dot done">✓</div>
+              <div class="dp-tl-info">
+                <div class="dp-tl-title">1st launch</div>
+                <div class="dp-tl-meta">Mar 10 · 12 feedbacks · redesigned onboarding</div>
+              </div>
+            </div>
+            <div class="dp-tl-item">
+              <div class="dp-tl-dot done">✓</div>
+              <div class="dp-tl-info">
+                <div class="dp-tl-title">Drop rate: 68% → 31%</div>
+                <div class="dp-tl-meta">2 weeks after redesign · NexFellow pipeline</div>
+              </div>
+            </div>
+            <div class="dp-tl-item">
+              <div class="dp-tl-dot done">✓</div>
+              <div class="dp-tl-info">
+                <div class="dp-tl-title">2nd launch · today</div>
+                <div class="dp-tl-meta">v2.1 · AI engine + team analytics</div>
+              </div>
+            </div>
+            <div class="dp-tl-item">
+              <div class="dp-tl-dot">→</div>
+              <div class="dp-tl-info">
+                <div class="dp-tl-title">Next: calendar integration</div>
+                <div class="dp-tl-meta">Most-requested · targeting May 2026</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Related launches -->
+        <div class="dp-r-card">
+          <div class="dp-r-label">Similar launches</div>
+          <div class="dp-related-item" onclick="openDetail('focusdock')">
+            <div class="dp-rel-icon" style="background:#f7f0ff">🎯</div>
+            <div>
+              <div class="dp-rel-name">FocusDock</div>
+              <div style="font-size:11px;color:var(--tx3)">Productivity · SaaS</div>
+            </div>
+            <div class="dp-rel-votes">▲ 241</div>
+          </div>
+          <div class="dp-related-item" onclick="openDetail('communityos')">
+            <div class="dp-rel-icon" style="background:#e6f5f2">🌐</div>
+            <div>
+              <div class="dp-rel-name">CommunityOS</div>
+              <div style="font-size:11px;color:var(--tx3)">Community · SaaS</div>
+            </div>
+            <div class="dp-rel-votes">▲ 428</div>
+          </div>
+          <div class="dp-related-item">
+            <div class="dp-rel-icon" style="background:#e6f5f2">🧘</div>
+            <div>
+              <div class="dp-rel-name">Habitual</div>
+              <div style="font-size:11px;color:var(--tx3)">Health · Mobile</div>
+            </div>
+            <div class="dp-rel-votes">▲ 74</div>
+          </div>
+        </div>
+
+      </div><!-- /dp-right -->
+    </div><!-- /dp-layout -->
+  </div><!-- /dp-scroll -->
+</div><!-- /detail-page -->
+
+<script>
+/* ── product data ── */
+const products = {
+  taskflow:{
+    id:'taskflow', icon:'📋', iconBg:'#f0f9d4', name:'TaskFlow AI',
+    tagline:'AI-powered project management that learns how your team actually works',
+    cats:['Productivity','Artificial Intelligence','SaaS'],
+    votes:316, rating:'4.2', feedbacks:22, adopters:4,
+    description:`<p><strong>TaskFlow AI</strong> is a project management tool that learns from how your team actually works — not how project managers think you should work.</p><p>After 14 weeks building in public on NexFellow, Rohan redesigned the onboarding entirely based on community feedback. The result: <strong>drop rate fell from 68% to 31%</strong> in one iteration.</p><p>The AI engine observes task completion patterns, meeting frequency, and communication cadence to surface the right tasks at the right time — without endless configuration.</p><p><strong>What makes it different:</strong> Unlike Asana or Linear, TaskFlow doesn't require you to set up a perfect system. It adapts to your team's natural rhythm over the first 2 weeks.</p>`,
+    builder:{name:'Rohan Mehta', role:'Founder · SaaS · Mumbai', av:'R', avBg:'#c8f060', avC:'#111', credits:124, reviewsGiven:31, launches:2},
+    builderNote:`Rohan's been building TaskFlow for 14 weeks in public on NexFellow. This is his second launch — the first got 12 feedbacks and led to a full onboarding redesign.`,
+  },
+  designkit:{
+    id:'designkit', icon:'🎨', iconBg:'#f0eeff', name:'DesignKit',
+    tagline:'Figma-to-code design system builder for solo founders and small teams',
+    cats:['Design Tools','Developer Tools'],
+    votes:184, rating:'4.4', feedbacks:14, adopters:2,
+    description:`<p><strong>DesignKit</strong> bridges the gap between design and code for teams without a dedicated design system engineer.</p><p>Anika spent 16 weeks iterating with 23 NexFellow reviews, pivoting her pricing model completely after feedback showed that enterprise pricing was blocking her core users.</p><p>Connect your Figma file, define your tokens, and DesignKit generates production-ready Tailwind, CSS variables, or Styled Components output.</p>`,
+    builder:{name:'Anika Sharma', role:'Designer · Indie Hacker · Pune', av:'A', avBg:'#ff8c5a', avC:'#111', credits:88, reviewsGiven:22, launches:1},
+    builderNote:`Anika's been building DesignKit for 16 weeks. She got 23 reviews on NexFellow and pivoted her pricing model completely after feedback. Launched today — already 2 early adopters in 6 hours.`,
+  },
+  nocodeapi:{
+    id:'nocodeapi', icon:'⚡', iconBg:'#e6f5f2', name:'NoCodeAPI',
+    tagline:'Build and deploy APIs without writing a single line of code',
+    cats:['Developer Tools','No-Code','APIs'],
+    votes:97, rating:'4.6', feedbacks:9, adopters:3,
+    description:`<p><strong>NoCodeAPI</strong> lets non-technical founders and indie hackers build and deploy real APIs through a visual interface.</p><p>Miguel built this in 8 weeks after seeing non-technical founders struggle with backend integrations for their side projects. Connect data sources, define endpoints, set auth rules — deploy in one click.</p><p>Integrates with Airtable, Google Sheets, Notion, and Supabase out of the box.</p>`,
+    builder:{name:'Miguel Torres', role:'Full-stack · Bangalore', av:'M', avBg:'#6be0ff', avC:'#111', credits:67, reviewsGiven:18, launches:1},
+    builderNote:`Miguel built NoCodeAPI in 8 weeks after seeing non-technical founders struggle with backend integrations. Top-rated feedback on NexFellow with 4.6 avg rating.`,
+  },
+  communityos:{
+    id:'communityos', icon:'🌐', iconBg:'#e6f5f2', name:'CommunityOS',
+    tagline:'The operating system for builder communities',
+    cats:['Community','SaaS','Developer Tools'],
+    votes:428, rating:'4.8', feedbacks:47, adopters:12,
+    description:`<p><strong>CommunityOS</strong> is Deependra's most ambitious product — a full operating system for builder communities, with challenges, office hours, collab boards, and revenue sharing built in.</p><p>Built over 20 weeks with 38 NexFellow reviews. Grew to ₹1L MRR without paid ads, using NexFellow's early adopter pipeline exclusively.</p><p>Think Discord + GitHub + Loom — purpose-built for indie builders and open source communities.</p>`,
+    builder:{name:'Deependra Gaur', role:'Full-stack · Community · Bangalore', av:'D', avBg:'#00c9a7', avC:'#111', credits:201, reviewsGiven:48, launches:3},
+    builderNote:`Deependra's most successful NexFellow launch. CommunityOS grew to ₹1L MRR without paid ads, using NexFellow's early adopter pipeline exclusively.`,
+  },
+};
+
+let currentRating = 0;
+
+function openDetail(id) {
+  const p = products[id];
+  if (!p) return;
+  document.getElementById('dp-breadcrumb-name').textContent = p.name;
+  document.getElementById('dp-icon').style.background = p.iconBg;
+  document.getElementById('dp-icon').textContent = p.icon;
+  document.getElementById('dp-name').textContent = p.name;
+  document.getElementById('dp-tagline').textContent = p.tagline;
+  document.getElementById('dp-cats').innerHTML = p.cats.map(c=>`<span class="dp-cat">${c}</span>`).join('');
+  document.getElementById('dp-votes').textContent = p.votes;
+  document.getElementById('dp-vote-btn').classList.remove('voted');
+  document.getElementById('dp-description').innerHTML = p.description;
+  document.getElementById('dp-rating').textContent = p.rating + '★';
+  document.getElementById('dp-feedbacks').textContent = p.feedbacks;
+  document.getElementById('dp-adopters').textContent = p.adopters;
+  document.getElementById('dp-comments').textContent = p.votes;
+  document.getElementById('dp-fb-count').textContent = p.feedbacks + ' feedbacks · avg ' + p.rating + '★';
+  const b = p.builder;
+  document.getElementById('dp-builder-av').style.background = b.avBg;
+  document.getElementById('dp-builder-av').style.color = b.avC;
+  document.getElementById('dp-builder-av').textContent = b.av;
+  document.getElementById('dp-builder-name').textContent = b.name;
+  document.getElementById('dp-builder-role').textContent = b.role;
+  document.getElementById('dp-credits').textContent = b.credits;
+  document.getElementById('dp-reviews-given').textContent = b.reviewsGiven;
+  document.getElementById('dp-launches-count').textContent = b.launches;
+  document.getElementById('dp-builder-note').textContent = p.builderNote;
+  document.getElementById('dp-vote-btn').querySelector('.dp-vc').textContent = p.votes;
+  resetStars();
+  const page = document.getElementById('detail-page');
+  page.classList.add('open');
+  page.querySelector('.dp-scroll').scrollTop = 0;
+}
+
+function closeDetail() {
+  document.getElementById('detail-page').classList.remove('open');
+}
+
+function resetStars() {
+  currentRating = 0;
+  document.querySelectorAll('#star-row .dp-star').forEach(s => s.classList.remove('lit'));
+}
+
+function rateStar(n) {
+  currentRating = n;
+  document.querySelectorAll('#star-row .dp-star').forEach((s, i) => {
+    s.classList.toggle('lit', i < n);
+  });
+}
+
+/* nav helpers */
+function sNav(el) {
+  document.querySelectorAll('.si').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+function tbTab(el) {
+  document.querySelectorAll('.tbtab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+function sortOpt(el) {
+  el.closest('.sort-btns').querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+function tcTag(el) { el.classList.toggle('on'); }
+
+function toggleVote(btn) {
+  btn.classList.toggle('voted');
+  const n = btn.querySelector('.vb-num');
+  n.textContent = btn.classList.contains('voted') ? parseInt(n.textContent)+1 : parseInt(n.textContent)-1;
+}
+function toggleWant(btn) {
+  btn.classList.toggle('wanted');
+  btn.textContent = btn.classList.contains('wanted') ? '🌟 Wanted' : '🌟 Want this';
+}
+
+/* thumbnail click */
+document.querySelectorAll('.dp-thumb').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.dp-thumb').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

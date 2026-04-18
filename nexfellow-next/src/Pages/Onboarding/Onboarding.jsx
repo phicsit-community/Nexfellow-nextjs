@@ -4,12 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/axios';
 import styles from './Onboarding.module.css';
+import { Country, State } from 'country-state-city';
 
 const STEPS_CONFIG = [
   { name: "Welcome",        desc: "Get started",              icon: "🏠" },
   { name: "Account type",   desc: "Individual or community",  icon: "👤" },
   { name: "Your profile",   desc: "Name, bio, location",      icon: "📝" },
-  { name: "Skills & stage", desc: "What you bring",           icon: "⚡" },
+  { name: "Skills",         desc: "What you bring",           icon: "⚡" },
   { name: "Co-founder",     desc: "Availability & match",     icon: "🤝" },
   { name: "Credits",        desc: "Economy & interests",      icon: "💎" },
   { name: "Connect",        desc: "Social & profile review",  icon: "🔗" },
@@ -29,13 +30,14 @@ export default function Onboarding() {
 
   const [currentScreen, setCurrentScreen] = useState(0);
   const [accountType, setAccountType]     = useState('individual');
-  const [stage, setStage]                 = useState('MVP built');
   const [availability, setAvailability]   = useState('Yes — actively looking');
   const [skills, setSkills]               = useState([]);
   const [cofounder, setCofounder]         = useState(['Design co-founder', 'AI / ML expertise']);
   const [interests, setInterests]         = useState(['SaaS / web apps', 'Mobile apps', 'Edtech']);
   const [socialState, setSocialState]     = useState({ twitter: false, github: true, linkedin: false, portfolio: false });
-  const [profile, setProfile]             = useState({ fname: '', lname: '', handle: '', email: '', location: '', bio: '' });
+  const [profile, setProfile]             = useState({ fname: '', lname: '', handle: '', email: '', bio: '' });
+  const [countryIso, setCountryIso]       = useState('');
+  const [stateIso, setStateIso]           = useState('');
 
   // Username availability check
   const [usernameAvailable, setUsernameAvailable] = useState(null); // null = unchecked
@@ -47,19 +49,19 @@ export default function Onboarding() {
   const [screenError, setScreenError]   = useState('');
 
   // TODO: re-enable redirect after design review
-  useEffect(() => {
-    const checkOnboarded = async () => {
-      try {
-        const { data } = await api.get('/api/onboarding');
-        if (data.isOnboardingComplete) {
-          router.replace('/feed');
-        }
-      } catch {
-        // Not onboarded or not logged in — stay on page
-      }
-    };
-    checkOnboarded();
-  }, [router]);
+  // useEffect(() => {
+  //   const checkOnboarded = async () => {
+  //     try {
+  //       const { data } = await api.get('/api/onboarding');
+  //       if (data.isOnboardingComplete) {
+  //         router.replace('/feed');
+  //       }
+  //     } catch {
+  //       // Not onboarded or not logged in — stay on page
+  //     }
+  //   };
+  //   checkOnboarded();
+  // }, [router]);
 
   // Debounced username availability check
   useEffect(() => {
@@ -105,7 +107,6 @@ export default function Onboarding() {
   };
 
   const selectType   = (type)       => setAccountType(type);
-  const selectRadio  = (group, val) => { if (group === 'stage') setStage(val); };
   const selectAvail  = (color, val) => setAvailability(val);
   const toggleChip   = (group, val) => {
     const toggle = (arr) => arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val];
@@ -119,7 +120,6 @@ export default function Onboarding() {
     Math.round((currentScreen / (STEPS_CONFIG.length - 1)) * 100) + '%';
 
   const isTypeSelected  = (type) => accountType  === type  ? styles['selected'] : '';
-  const isStageSelected = (val)  => stage         === val   ? styles['selected'] : '';
   const isAvailSelected = (val)  => availability  === val   ? styles['selected'] : '';
   const isChipSelected  = (group, val) => {
     if (group === 'skills')    return skills.includes(val)    ? styles['selected'] : '';
@@ -138,10 +138,9 @@ export default function Onboarding() {
         lastName:   profile.lname,
         username:   profile.handle.replace(/^@/, ''),
         email:      profile.email,
-        location:   profile.location,
+        location:   [State.getStateByCodeAndCountry(stateIso, countryIso)?.name, Country.getCountryByCode(countryIso)?.name].filter(Boolean).join(', '),
         bio:        profile.bio,
         skills,
-        productStage:           stage,
         cofounderAvailability:  AVAIL_MAP[availability] || 'open-to-conversations',
         cofounderLookingFor:    cofounder,
         reviewInterests:        interests,
@@ -330,9 +329,35 @@ export default function Onboarding() {
                 <label>Email address</label>
                 <input type="email" placeholder="rahul@nexfellow.com" value={profile.email} onChange={e => setProfile({...profile, email: e.target.value})} />
               </div>
-              <div className={styles["field"]}>
-                <label>City &amp; country</label>
-                <input type="text" placeholder="Mumbai, India" value={profile.location} onChange={e => setProfile({...profile, location: e.target.value})} />
+              <div className={`${styles["field"]} ${styles["field-row"]}`}>
+                <div>
+                  <label>Country</label>
+                  <select 
+                    value={countryIso}
+                    onChange={(e) => {
+                      setCountryIso(e.target.value);
+                      setStateIso("");
+                    }}
+                  >
+                    <option value="">Select Country</option>
+                    {Country.getAllCountries().map(c => (
+                      <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label>State / Region</label>
+                  <select 
+                    value={stateIso}
+                    onChange={(e) => setStateIso(e.target.value)}
+                    disabled={!countryIso}
+                  >
+                    <option value="">Select State</option>
+                    {countryIso && State.getStatesOfCountry(countryIso).map(s => (
+                      <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div className={styles["field"]}>
                 <label>Short bio <span style={{ color: "var(--t4)", fontWeight: "400", textTransform: "none", letterSpacing: "0" }}>(what are you building?)</span></label>
@@ -352,9 +377,9 @@ export default function Onboarding() {
               </div>
             </div>
 
-            {/* ─── SCREEN 3: SKILLS & STAGE ─── */}
+            {/* ─── SCREEN 3: SKILLS ─── */}
             <div className={`${styles["screen"]} ${currentScreen === 3 ? styles["active"] : ""}`}>
-              <div className={styles["screen-step"]}>Step 3 of 6 — Skills &amp; stage</div>
+              <div className={styles["screen-step"]}>Step 3 of 6 — Skills</div>
               <div className={styles["screen-title"]}>What do you bring<br />to the table?</div>
               <div className={styles["screen-sub"]}>This helps us match you with the right reviewers and surface you to compatible co-founders on BuilderMap.</div>
 
@@ -363,42 +388,6 @@ export default function Onboarding() {
                 <div className={styles["chip-grid"]}>
                   {["Full-stack dev","Frontend dev","Backend dev","Mobile dev","Product design","UI/UX","Product strategy","Growth hacking","Marketing","Sales","AI / ML","No-code / low-code","Fundraising","Operations"].map(val => (
                     <div key={val} className={`${styles["chip"]} ${isChipSelected('skills', val)}`} onClick={() => toggleChip('skills', val)}>{val}</div>
-                  ))}
-                </div>
-              </div>
-
-              <hr className={styles["section-divider"]} />
-
-              <div className={styles["field"]}>
-                <div style={{ fontSize:"11px", fontWeight:"700", color:"var(--t2)", textTransform:"uppercase", letterSpacing:".08em", marginBottom:"10px" }}>Product Stage</div>
-                <div className={styles["radio-cards"]}>
-                  {[
-                    {
-                      val: "Idea stage", desc: "Validating the concept, no product yet",
-                      bg: "rgba(108,92,231,0.10)", color: "#6c5ce7",
-                      icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.5-1.3 4.7-3.3 6L15 18H9l-.7-3C6.3 13.7 5 11.5 5 9a7 7 0 017-7z"/></svg>
-                    },
-                    {
-                      val: "MVP built", desc: "Have a working product, need feedback",
-                      bg: "rgba(36,178,180,0.10)", color: "#24b2b4",
-                      icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 16.5c-1.5 1.5-2 5-2 5s3.5-.5 5-2l11.5-11.5a5.5 5.5 0 00-3-3L4.5 16.5z"/><path d="M15 5c2 0 4 2 4 4"/><path d="M5 19l3-3"/></svg>
-                    },
-                    {
-                      val: "Launched", desc: "Live with users, growing and iterating",
-                      bg: "rgba(245,158,11,0.10)", color: "#f59e0b",
-                      icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                    },
-                    {
-                      val: "Pivoting", desc: "Changing direction, need fresh eyes",
-                      bg: "rgba(239,68,68,0.10)", color: "#ef4444",
-                      icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 013.51 15"/></svg>
-                    },
-                  ].map(({ val, icon, bg, color, desc }) => (
-                    <div key={val} className={`${styles["radio-card"]} ${isStageSelected(val)}`} onClick={() => selectRadio('stage', val)}>
-                      <div className={styles["rc-icon"]} style={{ background: bg, color }}>{icon}</div>
-                      <div><div className={styles["rc-label"]}>{val}</div><div className={styles["rc-desc"]}>{desc}</div></div>
-                      <div className={styles["rc-check"]}>{stage === val && <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}</div>
-                    </div>
                   ))}
                 </div>
               </div>
@@ -571,7 +560,7 @@ export default function Onboarding() {
                     </div>
                   </div>
                   <div className={styles["pp-name"]}>{profile.fname || profile.lname ? `${profile.fname} ${profile.lname}` : "Your Name"}</div>
-                  <div className={styles["pp-handle"]}>{profile.handle ? `@${profile.handle.replace(/^@/, '')}` : "@username"} · {profile.location || "City, Country"}</div>
+                  <div className={styles["pp-handle"]}>{profile.handle ? `@${profile.handle.replace(/^@/, '')}` : "@username"} · {[State.getStateByCodeAndCountry(stateIso, countryIso)?.name, Country.getCountryByCode(countryIso)?.name].filter(Boolean).join(', ') || "City, Country"}</div>
                   <div className={styles["pp-bio"]}>{profile.bio || "Your short bio describing what you are building."}</div>
                   <div className={styles["pp-chips"]}>
                     {skills.slice(0, 3).map(skill => <div key={skill} className={styles["pp-chip"]}>{skill}</div>)}
