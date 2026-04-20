@@ -9,7 +9,7 @@ import PageHeader from "@/components/Header/PageHeader";
 import style from "./PrivateLayout.module.css";
 
 // Pages where PageHeader should NOT appear
-const EXCLUDED_PATHS = ["/feed", "/notifications", "/launches", "/my-products"];
+const EXCLUDED_PATHS = ["/feed", "/notifications", "/launches"];
 
 export default function PrivateLayout({ children }) {
     const user = useSelector((state) => state.auth.user);

@@ -39,12 +39,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 28px 12px;
+  padding: 16px 28px 12px;
   background: var(--mp-bg);
   border-bottom: 1px solid var(--mp-border);
-  position: sticky;
-  top: 0;
-  z-index: 10;
 }
 .mp-topbar-title {
   font-size: 20px;
