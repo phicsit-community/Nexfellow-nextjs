@@ -279,6 +279,27 @@
 
 .mp-muted { color: var(--mp-text-3); font-size: 13px; }
 
+.mp-loading {
+  padding: 40px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--mp-text-3);
+}
+.mp-empty-row {
+  padding: 40px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--mp-text-3);
+}
+.mp-fb-card--resolved {
+  opacity: 0.6;
+}
+.mp-submit-error {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--mp-red);
+}
+
 /* ── Action column ── */
 .mp-td-action {
   vertical-align: middle;
