@@ -13,7 +13,7 @@ export default function LaunchesPage() {
   
   return (
     <PrivateLayout>
-      <div className="launches-page-container w-full h-screen overflow-hidden text-[#18170f] font-sans antialiased bg-background">
+      <div className="launches-page-container w-full text-[#18170f] font-sans antialiased bg-background">
         {/* ══════════ MAIN ══════════ */}
         <main className="main">
   <div className="topbar">
