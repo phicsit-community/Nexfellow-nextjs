@@ -190,10 +190,16 @@
 /* ── Table ── */
 .mp-table-wrap {
   background: var(--mp-bg);
+  border-top: 1px solid var(--mp-border);
+  border-left: 1px solid var(--mp-border);
+  border-right: 1px solid var(--mp-border);
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
 }
 .mp-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 .mp-thead-row {
   background: var(--mp-bg2);
@@ -201,18 +207,20 @@
 .mp-th {
   padding: 10px 16px;
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.7px;
   color: var(--mp-text-3);
   text-align: left;
   border-bottom: 1px solid var(--mp-border);
+  white-space: nowrap;
 }
 .mp-td {
-  padding: 14px 16px;
+  padding: 13px 16px;
   vertical-align: middle;
   border-bottom: 1px solid var(--mp-border);
   font-size: 13px;
   color: var(--mp-text);
+  line-height: 1.4;
 }
 .mp-product-row {
   cursor: pointer;
@@ -223,9 +231,18 @@
   background: color-mix(in srgb, #24b2b4 5%, var(--mp-bg));
 }
 
-.mp-td-product { min-width: 160px; }
+/* column widths */
+.mp-table colgroup col:nth-child(1) { width: 28%; }
+.mp-table colgroup col:nth-child(2) { width: 11%; }
+.mp-table colgroup col:nth-child(3) { width: 13%; }
+.mp-table colgroup col:nth-child(4) { width: 10%; }
+.mp-table colgroup col:nth-child(5) { width: 10%; }
+.mp-table colgroup col:nth-child(6) { width: 28%; }
+
+.mp-td-product { }
+
 .mp-prod-name { font-weight: 600; font-size: 13px; color: var(--mp-text); }
-.mp-prod-cat { font-size: 11px; color: var(--mp-text-3); margin-top: 2px; }
+.mp-prod-cat  { font-size: 11px; color: var(--mp-text-3); margin-top: 3px; }
 
 /* badges */
 .mp-stage-badge {
@@ -252,69 +269,111 @@
 .mp-status-orange { background: #fef3c7; color: #b45309; }
 .mp-status-gray   { background: var(--mp-bg2); color: var(--mp-text-3); border: 1px solid var(--mp-border); }
 
-/* reviews bar */
-.mp-reviews-cell { display: flex; align-items: center; gap: 8px; min-width: 90px; }
-.mp-reviews-bar-track {
-  flex: 1; height: 4px;
-  background: var(--mp-border);
-  border-radius: 2px; overflow: hidden;
-}
-.mp-reviews-bar-fill {
-  height: 100%;
-  background: var(--mp-blue);
-  border-radius: 2px;
-}
-.mp-reviews-label { font-size: 12px; color: var(--mp-text-3); white-space: nowrap; }
+/* reviews count — no bar */
+.mp-reviews-count { font-size: 13px; font-weight: 500; color: var(--mp-text); }
 
 /* rating */
 .mp-rating-cell { display: flex; align-items: center; gap: 4px; }
 .mp-rating-star { color: #f59e0b; font-size: 14px; }
 .mp-rating-num { font-weight: 600; font-size: 13px; }
 
-/* health bar */
-.mp-health-cell { display: flex; align-items: center; gap: 8px; min-width: 90px; }
-.mp-health-bar-track {
-  flex: 1; height: 4px;
-  background: var(--mp-border);
-  border-radius: 2px; overflow: hidden;
-}
-.mp-health-bar-fill {
-  height: 100%;
-  background: var(--mp-primary);
-  border-radius: 2px;
-}
-.mp-health-label { font-size: 12px; color: var(--mp-text-3); white-space: nowrap; }
 .mp-muted { color: var(--mp-text-3); font-size: 13px; }
 
-/* visibility */
-.mp-td-visibility { display: flex !important; align-items: center; gap: 6px; }
-.mp-vis-dot { font-size: 10px; }
-.mp-vis-label { font-size: 12px; color: var(--mp-text-2); }
-.mp-submit-badge {
-  margin-left: 6px;
-  padding: 3px 10px;
-  background: var(--mp-primary);
-  color: #fff;
+/* ── Action column ── */
+.mp-td-action {
+  vertical-align: middle;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.mp-action-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mp-action-btns {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+.mp-action-icons {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.mp-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
   border: none;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--mp-text-3);
   cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  padding: 0;
+}
+.mp-icon-btn:hover {
+  background: var(--mp-bg2);
+  color: var(--mp-text);
 }
 
-/* actions */
-.mp-td-actions { white-space: nowrap; }
-.mp-icon-btn {
-  background: none;
-  border: none;
+.mp-action-resubmit {
+  padding: 6px 14px;
+  border: 1px solid var(--mp-border);
+  border-radius: 6px;
+  background: var(--mp-bg);
+  color: var(--mp-text-2);
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
-  font-size: 14px;
-  padding: 4px 5px;
-  border-radius: 4px;
-  opacity: 0.55;
-  transition: opacity 0.15s, background 0.15s;
+  transition: all 0.15s;
+  white-space: nowrap;
+  height: 32px;
+  line-height: 1;
 }
-.mp-icon-btn:hover { opacity: 1; background: var(--mp-bg2); }
+.mp-action-resubmit:hover {
+  border-color: var(--mp-primary);
+  color: var(--mp-primary);
+  background: var(--mp-primary-light);
+}
+
+.mp-action-analysis {
+  padding: 6px 14px;
+  border: 1px solid var(--mp-primary);
+  border-radius: 6px;
+  background: var(--mp-primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+  height: 32px;
+  line-height: 1;
+}
+.mp-action-analysis:hover { opacity: 0.85; }
+
+.mp-action-submit {
+  padding: 6px 16px;
+  border: 1px solid var(--mp-primary);
+  border-radius: 6px;
+  background: var(--mp-primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+  height: 32px;
+  line-height: 1;
+}
+.mp-action-submit:hover { opacity: 0.85; }
 
 /* ── Feedback panel ── */
 .mp-feedback-cell { padding: 0 !important; }
@@ -348,6 +407,14 @@
 .mp-filter-tag:hover:not(.active) { background: var(--mp-bg2); }
 
 .mp-feedback-list { display: flex; flex-direction: column; gap: 14px; }
+.mp-feedback-empty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 0 6px;
+  font-size: 13px;
+  color: var(--mp-text-3);
+}
 
 /* feedback card */
 .mp-fb-card {

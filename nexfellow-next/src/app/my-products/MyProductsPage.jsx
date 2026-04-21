@@ -17,9 +17,6 @@ const PRODUCTS = [
     reviewsCount: 12,
     reviewsTotal: 12,
     rating: 4.2,
-    health: 86,
-    visibility: 'On board',
-    visibilityIcon: '🟢',
     feedback: [
       {
         id: 1,
@@ -75,9 +72,6 @@ const PRODUCTS = [
     reviewsCount: 7,
     reviewsTotal: 10,
     rating: null,
-    health: null,
-    visibility: 'Not listed',
-    visibilityIcon: '⚫',
     feedback: []
   },
   {
@@ -91,9 +85,6 @@ const PRODUCTS = [
     reviewsCount: 12,
     reviewsTotal: 12,
     rating: 4.4,
-    health: 94,
-    visibility: 'Featured',
-    visibilityIcon: '⭐',
     feedback: []
   },
   {
@@ -107,10 +98,6 @@ const PRODUCTS = [
     reviewsCount: 0,
     reviewsTotal: 0,
     rating: null,
-    health: null,
-    visibility: 'Edit draft',
-    visibilityIcon: '✏️',
-    hasSubmitBtn: true,
     feedback: []
   }
 ];
@@ -259,14 +246,9 @@ function ProductRow({ product, expanded, onToggle }) {
           <span className={`mp-status-badge mp-status-${product.statusColor}`}>{product.status}</span>
         </td>
         <td className="mp-td">
-          {product.reviewsTotal > 0 ? (
-            <div className="mp-reviews-cell">
-              <div className="mp-reviews-bar-track">
-                <div className="mp-reviews-bar-fill" style={{ width: `${(product.reviewsCount / product.reviewsTotal) * 100}%` }} />
-              </div>
-              <span className="mp-reviews-label">{product.reviewsCount}/{product.reviewsTotal}</span>
-            </div>
-          ) : <span className="mp-muted">—</span>}
+          {product.reviewsTotal > 0
+            ? <span className="mp-reviews-count">{product.reviewsCount}/{product.reviewsTotal}</span>
+            : <span className="mp-muted">—</span>}
         </td>
         <td className="mp-td">
           {product.rating ? (
@@ -276,48 +258,67 @@ function ProductRow({ product, expanded, onToggle }) {
             </div>
           ) : <span className="mp-muted">—</span>}
         </td>
-        <td className="mp-td">
-          {product.health ? (
-            <div className="mp-health-cell">
-              <div className="mp-health-bar-track">
-                <div className="mp-health-bar-fill" style={{ width: `${product.health}%` }} />
-              </div>
-              <span className="mp-health-label">{product.health}%</span>
+        <td className="mp-td mp-td-action" onClick={e => e.stopPropagation()}>
+          <div className="mp-action-cell">
+            <div className="mp-action-btns">
+              {(product.stage === 'LAUNCHED' || product.stage === 'MVP') && (
+                <>
+                  <button className="mp-action-resubmit">Re-submit</button>
+                  <button className="mp-action-analysis">Analysis</button>
+                </>
+              )}
+              {product.stage === 'DRAFT' && (
+                <button className="mp-action-submit">Submit</button>
+              )}
             </div>
-          ) : <span className="mp-muted">—</span>}
-        </td>
-        <td className="mp-td mp-td-visibility">
-          <span className="mp-vis-dot">{product.visibilityIcon}</span>
-          <span className="mp-vis-label">{product.visibility}</span>
-          {product.hasSubmitBtn && (
-            <button className="mp-submit-badge" onClick={e => e.stopPropagation()}>Submit</button>
-          )}
-        </td>
-        <td className="mp-td mp-td-actions" onClick={e => e.stopPropagation()}>
-          <button className="mp-icon-btn" title="Edit">✏️</button>
-          <button className="mp-icon-btn" title="More">⋮</button>
+            <div className="mp-action-icons">
+              <button className="mp-icon-btn" title="Analytics">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10" />
+                  <line x1="12" y1="20" x2="12" y2="4" />
+                  <line x1="6"  y1="20" x2="6"  y2="14" />
+                </svg>
+              </button>
+              <button className="mp-icon-btn" title="More options">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <circle cx="12" cy="5"  r="1.5" />
+                  <circle cx="12" cy="12" r="1.5" />
+                  <circle cx="12" cy="19" r="1.5" />
+                </svg>
+              </button>
+            </div>
+          </div>
         </td>
       </tr>
 
-      {expanded && product.feedback.length > 0 && (
+      {expanded && (
         <tr className="mp-feedback-row">
-          <td colSpan={8} className="mp-feedback-cell">
+          <td colSpan={6} className="mp-feedback-cell">
             <div className="mp-feedback-panel">
               <div className="mp-feedback-panel-header">
                 <span className="mp-feedback-count">Feedback ({product.feedback.length})</span>
-                <div className="mp-feedback-tags">
-                  {FEEDBACK_TAGS.map(t => (
-                    <button
-                      key={t}
-                      className={`mp-filter-tag ${activeTag === t ? 'active' : ''}`}
-                      onClick={() => setActiveTag(t)}
-                    >{t}</button>
-                  ))}
+                {product.feedback.length > 0 && (
+                  <div className="mp-feedback-tags">
+                    {FEEDBACK_TAGS.map(t => (
+                      <button
+                        key={t}
+                        className={`mp-filter-tag ${activeTag === t ? 'active' : ''}`}
+                        onClick={() => setActiveTag(t)}
+                      >{t}</button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {product.feedback.length > 0 ? (
+                <div className="mp-feedback-list">
+                  {filteredFeedback.map(fb => <FeedbackCard key={fb.id} fb={fb} />)}
                 </div>
-              </div>
-              <div className="mp-feedback-list">
-                {filteredFeedback.map(fb => <FeedbackCard key={fb.id} fb={fb} />)}
-              </div>
+              ) : (
+                <div className="mp-feedback-empty">
+                  <span className="mp-feedback-empty-icon">💬</span>
+                  <span>No feedback yet for this product.</span>
+                </div>
+              )}
             </div>
           </td>
         </tr>
@@ -818,6 +819,9 @@ export default function MyProductsPage() {
         {/* Product table */}
         <div className="mp-table-wrap">
           <table className="mp-table">
+            <colgroup>
+              <col /><col /><col /><col /><col /><col />
+            </colgroup>
             <thead>
               <tr className="mp-thead-row">
                 <th className="mp-th">PRODUCT</th>
@@ -825,9 +829,7 @@ export default function MyProductsPage() {
                 <th className="mp-th">STATUS</th>
                 <th className="mp-th">REVIEWS</th>
                 <th className="mp-th">RATING</th>
-                <th className="mp-th">HEALTH</th>
-                <th className="mp-th">VISIBILITY</th>
-                <th className="mp-th"></th>
+                <th className="mp-th">ACTION</th>
               </tr>
             </thead>
             <tbody>
