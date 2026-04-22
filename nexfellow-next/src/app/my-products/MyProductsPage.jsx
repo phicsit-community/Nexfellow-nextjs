@@ -504,6 +504,20 @@ function StepFocus({ form, setForm }) {
 }
 
 function StepLinks({ form, setForm }) {
+  const fileInputRef = React.useRef(null);
+
+  const addFiles = (files) => {
+    const valid = Array.from(files).filter(
+      f => f.type.startsWith('image/') && f.size <= 5 * 1024 * 1024
+    );
+    setForm(f => ({ ...f, screenshots: [...f.screenshots, ...valid].slice(0, 5) }));
+  };
+
+  const formatSize = (bytes) =>
+    bytes < 1024 * 1024
+      ? `${Math.round(bytes / 1024)} KB`
+      : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+
   return (
     <div className="mp-step">
       <h3 className="mp-step-title">Links & media</h3>
@@ -515,7 +529,7 @@ function StepLinks({ form, setForm }) {
           <div className="mp-input-prefix">
             <span className="mp-prefix">https://</span>
             <input
-              className="mp-input mp-input-prefixed"
+              className= "mp-input-prefixed"
               placeholder="focusdock.app"
               value={form.productUrl}
               onChange={e => setForm(f => ({ ...f, productUrl: e.target.value }))}
@@ -533,16 +547,77 @@ function StepLinks({ form, setForm }) {
               onChange={e => setForm(f => ({ ...f, demoVideo: e.target.value }))}
             />
           </div>
+          <span className="mp-hint">Loom, YouTube, or any public link.</span>
+        </div>
+        <div className="mp-form-group">
+          <label className="mp-label">GITHUB <span className="mp-optional">(optional)</span></label>
+          <div className="mp-input-prefix">
+            <span className="mp-prefix">github.com/</span>
+            <input
+              className="mp-input mp-input-prefixed"
+              placeholder="username/repo"
+              value={form.githubUrl}
+              onChange={e => setForm(f => ({ ...f, githubUrl: e.target.value }))}
+            />
+          </div>
+        </div>
+        <div className="mp-form-group">
+          <label className="mp-label">PRODUCT HUNT <span className="mp-optional">(optional)</span></label>
+          <div className="mp-input-prefix">
+            <span className="mp-prefix">ph.com/posts/</span>
+            <input
+              className="mp-input mp-input-prefixed"
+              placeholder="your-product"
+              value={form.productHuntUrl}
+              onChange={e => setForm(f => ({ ...f, productHuntUrl: e.target.value }))}
+            />
+          </div>
         </div>
       </div>
 
       <div className="mp-form-group">
         <label className="mp-label">SCREENSHOTS <span className="mp-optional">(up to 5)</span></label>
-        <div className="mp-upload-zone">
-          <div className="mp-upload-icon">⬆</div>
+        <div
+          className="mp-upload-zone"
+          onClick={() => fileInputRef.current?.click()}
+          onDrop={e => { e.preventDefault(); addFiles(e.dataTransfer.files); }}
+          onDragOver={e => e.preventDefault()}
+        >
+          <div className="mp-upload-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+          </div>
           <p className="mp-upload-text">Drop screenshots or click to browse</p>
-          <p className="mp-upload-hint">PNG, JPG up to 5MB · ideal: 1280 × 800</p>
+          <p className="mp-upload-hint">PNG, JPG up to 5MB · Ideal: 1280 × 800</p>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/png,image/jpeg"
+            multiple
+            style={{ display: 'none' }}
+            onChange={e => { addFiles(e.target.files); e.target.value = ''; }}
+          />
         </div>
+        {form.screenshots.length > 0 && (
+          <div className="mp-screenshot-list">
+            {form.screenshots.map((file, i) => (
+              <div key={i} className="mp-screenshot-item">
+                <span className="mp-screenshot-dot" />
+                <div className="mp-screenshot-info">
+                  <span className="mp-screenshot-name">{file.name}</span>
+                  <span className="mp-screenshot-size">{formatSize(file.size)}</span>
+                </div>
+                <button
+                  className="mp-screenshot-remove"
+                  onClick={() => setForm(f => ({ ...f, screenshots: f.screenshots.filter((_, j) => j !== i) }))}
+                >✕</button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -653,7 +728,7 @@ function NewSubmissionModal({ onClose, onCreated }) {
   const [form,       setForm]       = useState({
     name: '', tagline: '', description: '', category: '', buildStage: '',
     focusAreas: [], specificQuestion: '', reviewerType: '',
-    productUrl: '', demoVideo: '',
+    productUrl: '', demoVideo: '', githubUrl: '', productHuntUrl: '', screenshots: [],
   });
 
   const STEPS = ['Basics', 'Focus', 'Links', 'Review'];
@@ -722,14 +797,18 @@ function NewSubmissionModal({ onClose, onCreated }) {
 
         <div className="mp-step-bar">
           {STEPS.map((s, i) => (
-            <div
-              key={s}
-              className={`mp-step-item ${i + 1 < step ? 'done' : ''} ${i + 1 === step ? 'active' : ''}`}
-              onClick={() => i + 1 < step && setStep(i + 1)}
-            >
-              <div className="mp-step-circle">{i + 1 < step ? '✓' : i + 1}</div>
-              <span className="mp-step-label">{s}</span>
-            </div>
+            <React.Fragment key={s}>
+              <div
+                className={`mp-step-item ${i + 1 < step ? 'done' : ''} ${i + 1 === step ? 'active' : ''}`}
+                onClick={() => i + 1 < step && setStep(i + 1)}
+              >
+                <div className="mp-step-circle">{i + 1 < step ? '✓' : i + 1}</div>
+                <span className="mp-step-label">{s}</span>
+              </div>
+              {i < STEPS.length - 1 && (
+                <div className={`mp-step-connector${i + 1 < step ? ' done' : ''}`} />
+              )}
+            </React.Fragment>
           ))}
         </div>
 
