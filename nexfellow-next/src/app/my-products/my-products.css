@@ -4,34 +4,45 @@
 ═══════════════════════════════════════════ */
 
 .mp-page {
-  /* Map to global theme tokens */
-  --mp-primary: #24b2b4;
-  --mp-primary-light: color-mix(in srgb, #24b2b4 12%, transparent);
-  --mp-green: #16a34a;
-  --mp-green-light: #dcfce7;
-  --mp-blue: #3b82f6;
-  --mp-blue-light: #dbeafe;
-  --mp-orange: #f59e0b;
-  --mp-purple: #8b5cf6;
-  --mp-purple-light: #f3e8ff;
-  --mp-red: #ef4444;
+  --mp-primary:       #24b2b4;
+  --mp-primary-light: rgba(36, 178, 180, 0.12);
+  --mp-green:         #16a34a;
+  --mp-green-light:   #dcfce7;
+  --mp-blue:          #3b82f6;
+  --mp-blue-light:    #dbeafe;
+  --mp-orange:        #f59e0b;
+  --mp-purple:        #8b5cf6;
+  --mp-purple-light:  #f3e8ff;
+  --mp-red:           #ef4444;
 
-  /* These pull directly from globals.css theme vars */
-  --mp-bg:      var(--background);
-  --mp-bg2:     var(--secondary);
-  --mp-border:  var(--border);
-  --mp-text:    var(--foreground);
-  --mp-text-2:  var(--muted-foreground);
-  --mp-text-3:  var(--muted-foreground);
-  --mp-input-bg: var(--input);
-  --mp-card:    var(--card);
+  /* Explicit hex tokens — light mode */
+  --mp-bg:       #ffffff;
+  --mp-bg2:      #f5f5f5;
+  --mp-border:   #e5e7eb;
+  --mp-text:     #111827;
+  --mp-text-2:   #374151;
+  --mp-text-3:   #9ca3af;
+  --mp-input-bg: #f3f4f6;
+  --mp-card:     #ffffff;
 
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 14px;
   color: var(--mp-text);
-  background: var(--mp-bg2);
+  background: var(--mp-bg);
   min-height: 100vh;
   padding: 0 0 40px;
+}
+
+/* Dark mode overrides */
+.dark .mp-page {
+  --mp-bg:      #1a1a1a;
+  --mp-bg2:     #111111;
+  --mp-border:  #2e2e2e;
+  --mp-text:    #f0f0f0;
+  --mp-text-2:  #a0a0a0;
+  --mp-text-3:  #6b6b6b;
+  --mp-input-bg:#1f1f1f;
+  --mp-card:    #1a1a1a;
 }
 
 /* ── Top bar ── */
@@ -119,6 +130,7 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 14px;
   padding: 16px 28px 16px;
+  background: var(--mp-bg);
 }
 .mp-stat-card {
   display: flex;
@@ -158,13 +170,23 @@
 }
 .mp-stat-sub { font-size: 11px; color: var(--mp-text-3); }
 
+/* ── Table section wrapper ── */
+.mp-table-section {
+  margin: 12px 28px 24px;
+  border: 1px solid var(--mp-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--mp-bg);
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+
 /* ── Tabs ── */
 .mp-tabs {
   display: flex;
   gap: 4px;
   padding: 0 28px 0;
   border-bottom: 1px solid var(--mp-border);
-  background: var(--mp-bg);
+  background: transparent;
 }
 .mp-tab {
   padding: 9px 14px;
@@ -188,11 +210,6 @@
 
 /* ── Table ── */
 .mp-table-wrap {
-  background: var(--mp-bg);
-  border-top: 1px solid var(--mp-border);
-  border-left: 1px solid var(--mp-border);
-  border-right: 1px solid var(--mp-border);
-  border-radius: 0 0 8px 8px;
   overflow: hidden;
 }
 .mp-table {
@@ -201,7 +218,7 @@
   table-layout: fixed;
 }
 .mp-thead-row {
-  background: var(--mp-bg2);
+  background: var(--mp-bg);
 }
 .mp-th {
   padding: 10px 16px;
@@ -227,7 +244,7 @@
 }
 .mp-product-row:hover { background: var(--mp-bg2); }
 .mp-product-row--expanded {
-  background: color-mix(in srgb, #24b2b4 5%, var(--mp-bg));
+  background: var(--mp-bg);
 }
 
 /* column widths */
@@ -1005,7 +1022,8 @@
 @media (max-width: 640px) {
   .mp-topbar { padding: 14px 16px 10px; flex-wrap: wrap; gap: 10px; }
   .mp-stats-row { padding: 0 16px 16px; }
-  .mp-tabs { padding: 0 16px; }
+  .mp-tabs { padding: 0 12px; }
+  .mp-table-section { margin: 0 16px 20px; }
   .mp-alert-banner { margin: 12px 16px; }
   .mp-modal { width: 100vw; }
   .mp-category-grid { grid-template-columns: repeat(2, 1fr); }

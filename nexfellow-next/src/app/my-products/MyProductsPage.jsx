@@ -1022,6 +1022,7 @@ export default function MyProductsPage() {
           ))}
         </div>
 
+        <div className="mp-table-section">
         <div className="mp-table-wrap">
           {loading ? (
             <div className="mp-loading">Loading your products…</div>
@@ -1057,6 +1058,7 @@ export default function MyProductsPage() {
               </tbody>
             </table>
           )}
+        </div>
         </div>
 
         {showModal && (
