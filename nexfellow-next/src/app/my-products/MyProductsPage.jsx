@@ -68,18 +68,46 @@ function isRecent(dateStr) {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function StatCard({ icon, label, value, sub, color }) {
+function StatCard({ label, value, sub, iconBg, icon }) {
   return (
     <div className="mp-stat-card">
-      <div className="mp-stat-icon" style={{ background: color }}>{icon}</div>
       <div className="mp-stat-body">
         <div className="mp-stat-label">{label}</div>
         <div className="mp-stat-value">{value}</div>
         <div className="mp-stat-sub">{sub}</div>
       </div>
+      <div className="mp-stat-icon" style={{ background: iconBg }}>{icon}</div>
     </div>
   );
 }
+
+const CubeIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+    <line x1="12" y1="22.08" x2="12" y2="12"/>
+  </svg>
+);
+
+const DollarIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="12" y1="1" x2="12" y2="23"/>
+    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+  </svg>
+);
+
+const StarOutlineIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+  </svg>
+);
+
+const TrendingUpIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0d9488" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+    <polyline points="17 6 23 6 23 12"/>
+  </svg>
+);
 
 function TagPill({ label }) {
   const colorMap = {
@@ -846,7 +874,12 @@ export default function MyProductsPage() {
   const [expandedId,  setExpandedId]  = useState(null);
   const [showModal,   setShowModal]   = useState(false);
   const [products,    setProducts]    = useState([]);
-  const [stats,       setStats]       = useState({ totalProducts: 0, totalReviews: 0, avgRating: 0 });
+  const [stats,       setStats]       = useState({
+    totalProducts: 0, totalReviews: 0, avgRating: 0,
+    productsThisMonth: 0, reviewsThisMonth: 0,
+    ratingChange: 0, responseRate: 0, responseRateChange: 0,
+    alert: null, // { productName, unreadReviews, topThemeCount, topTheme }
+  });
   const [loading,     setLoading]     = useState(true);
 
   useEffect(() => {
@@ -858,7 +891,7 @@ export default function MyProductsPage() {
           api.get('/products/stats'),
         ]);
         setProducts(prodRes.data  || []);
-        setStats(statsRes.data    || { totalProducts: 0, totalReviews: 0, avgRating: 0 });
+        setStats(prev => ({ ...prev, ...(statsRes.data || {}) }));
       } catch (err) {
         console.error('Failed to load products', err);
       } finally {
@@ -902,26 +935,81 @@ export default function MyProductsPage() {
     return true;
   });
 
+  const bannerAlert = stats.alert || null;
+
   return (
     <PrivateLayout>
       <div className="mp-page">
         <div className="mp-topbar">
           <h1 className="mp-topbar-title">My products</h1>
           <div className="mp-topbar-actions">
-            <button className="mp-action-btn-ghost"><span>⚡</span> Filter</button>
-            <button className="mp-action-btn-ghost"><span>↕</span> Sort</button>
-            <button className="mp-action-btn-ghost"><span>↗</span> Export</button>
+            <button className="mp-action-btn-ghost">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+              Filter
+            </button>
+            <button className="mp-action-btn-ghost">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M7 16V4m0 0L4 7m3-3l3 3"/><path d="M17 8v12m0 0l3-3m-3 3l-3-3"/>
+              </svg>
+              Sort
+            </button>
+            <button className="mp-action-btn-ghost">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Export
+            </button>
             <button className="mp-action-btn-primary" onClick={() => setShowModal(true)}>
               + New submission
             </button>
           </div>
         </div>
 
+        {bannerAlert && (
+          <div className="mp-alert-banner">
+            <span className="mp-alert-dot">•</span>
+            <span className="mp-alert-text">
+              <strong>{bannerAlert.productName}</strong> has {bannerAlert.unreadReviews} unread review{bannerAlert.unreadReviews !== 1 ? 's' : ''}
+              {bannerAlert.topThemeCount && bannerAlert.topTheme
+                ? ` — ${bannerAlert.topThemeCount} mention ${bannerAlert.topTheme}`
+                : ''
+              }. Responding within 24h boosts engagement.
+            </span>
+            <button className="mp-alert-view">View</button>
+          </div>
+        )}
+
         <div className="mp-stats-row">
-          <StatCard icon="📦" label="TOTAL PRODUCTS" value={String(stats.totalProducts)} sub="All time"           color="#e8f4e8" />
-          <StatCard icon="💬" label="TOTAL REVIEWS"  value={String(stats.totalReviews)}  sub="Across all products" color="#e8f0fe" />
-          <StatCard icon="💵" label="AVG. RATING"    value={stats.avgRating > 0 ? String(stats.avgRating) : '—'}  sub="Across all products" color="#e8f8f0" />
-          <StatCard icon="⭐" label="RESPONSE RATE"  value="—"                            sub="Coming soon"         color="#fff8e8" />
+          <StatCard
+            label="TOTAL PRODUCTS"
+            value={String(stats.totalProducts)}
+            sub={stats.productsThisMonth > 0 ? `+${stats.productsThisMonth} this month` : 'All time'}
+            iconBg="#ede9fe"
+            icon={<CubeIcon />}
+          />
+          <StatCard
+            label="TOTAL REVIEWS"
+            value={String(stats.totalReviews)}
+            sub={stats.reviewsThisMonth > 0 ? `+${stats.reviewsThisMonth} this month` : 'Across all products'}
+            iconBg="#d1fae5"
+            icon={<DollarIcon />}
+          />
+          <StatCard
+            label="AVG. RATING"
+            value={stats.avgRating > 0 ? stats.avgRating.toFixed(1) : '—'}
+            sub={stats.ratingChange ? `↑${stats.ratingChange} vs last round` : 'Across all products'}
+            iconBg="#fef3c7"
+            icon={<StarOutlineIcon />}
+          />
+          <StatCard
+            label="RESPONSE RATE"
+            value={stats.responseRate > 0 ? `${stats.responseRate}%` : '—'}
+            sub={stats.responseRateChange > 0 ? `↑${stats.responseRateChange}% this week` : 'Coming soon'}
+            iconBg="#ccfbf1"
+            icon={<TrendingUpIcon />}
+          />
         </div>
 
         <div className="mp-tabs">
