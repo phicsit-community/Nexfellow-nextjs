@@ -26,6 +26,8 @@ const FEEDBACK_FOCUS_OPTIONS = [
 
 const PRODUCT_STATUSES = ["draft", "in_review", "launched", "archived"];
 
+const LAUNCH_FIELDS = ["launchedAt", "upvotes", "upvoteCount"];
+
 const productSchema = new Schema(
   {
     name: {
@@ -108,17 +110,30 @@ const productSchema = new Schema(
       type: Date,
       default: null,
     },
+    launchedAt: {
+      type: Date,
+      default: null,
+    },
+    upvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    upvoteCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
 
 productSchema.index({ owner: 1, status: 1 });
 productSchema.index({ owner: 1, createdAt: -1 });
+productSchema.index({ status: 1, launchedAt: -1 });
+productSchema.index({ status: 1, upvoteCount: -1 });
 
 productSchema.pre("save", function (next) {
-  if (this.isModified("status") && this.status === "in_review") {
-    if (!this.submittedAt) this.submittedAt = new Date();
-    this.reviewRound = (this.reviewRound || 0) + 1;
+  if (this.isModified("status")) {
+    if (this.status === "in_review") {
+      if (!this.submittedAt) this.submittedAt = new Date();
+      this.reviewRound = (this.reviewRound || 0) + 1;
+    }
+    if (this.status === "launched" && !this.launchedAt) {
+      this.launchedAt = new Date();
+    }
   }
   next();
 });
@@ -127,3 +142,4 @@ module.exports = mongoose.model("Product", productSchema);
 module.exports.CATEGORIES = CATEGORIES;
 module.exports.BUILD_STAGES = BUILD_STAGES;
 module.exports.FEEDBACK_FOCUS_OPTIONS = FEEDBACK_FOCUS_OPTIONS;
+module.exports.LAUNCH_FIELDS = LAUNCH_FIELDS;

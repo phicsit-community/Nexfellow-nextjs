@@ -269,6 +269,9 @@ app.use("/blogs", blogRoutes);
 const productRoutes = require("./routes/productRoutes");
 app.use("/products", productRoutes);
 
+const launchRoutes = require("./routes/launchRoutes");
+app.use("/launches", launchRoutes);
+
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = "Something went wrong!";
