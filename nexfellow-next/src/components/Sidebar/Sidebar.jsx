@@ -98,6 +98,7 @@ function Sidebar() {
     },
     { path: "/leaderboard", icon: AnimatedLeaderboard, label: "Leaderboard", section: "community", id: "leaderboard" },
     { path: "/inbox", icon: AnimatedMessenger, label: "Inbox", section: "community", id: "inbox" },
+    { path: "/notifications", icon: AnimatedNotification, label: "Notification", section: "community", id: "notification" },
   ];
 
   const allItems = [...coreItems, ...discoverItems, ...communityItems];
