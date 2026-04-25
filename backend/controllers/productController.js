@@ -4,7 +4,12 @@ const ProductReview = require("../models/productReviewModel");
 const ExpressError = require("../utils/ExpressError");
 const { uploadOnBunny, removeFromBunny } = require("../utils/attachments");
 const path = require("path");
+const { FEEDBACK_FOCUS_OPTIONS } = require("../models/productModel");
+const { REVIEW_TAGS } = require("../models/productReviewModel");
 
+const MIN_REVIEWS_TO_LAUNCH = 5;
+
+// Fields the owner can update before launch (all editable fields)
 const ALLOWED_UPDATE_FIELDS = [
   "name",
   "tagline",
@@ -16,6 +21,22 @@ const ALLOWED_UPDATE_FIELDS = [
   "productUrl",
   "demoVideo",
 ];
+
+// Fields the owner can still update after launch — identity fields (name, tagline, category)
+// are locked once a product is publicly listed to prevent silent misrepresentation.
+const POST_LAUNCH_UPDATE_FIELDS = [
+  "description",
+  "buildStage",
+  "feedbackFocus",
+  "specificQuestion",
+  "productUrl",
+  "demoVideo",
+];
+
+function assertValidId(id) {
+  if (!mongoose.Types.ObjectId.isValid(id))
+    throw new ExpressError("Invalid ID", 400);
+}
 
 // POST /products
 const createProduct = async (req, res) => {
@@ -29,17 +50,20 @@ const createProduct = async (req, res) => {
     specificQuestion,
     productUrl,
     demoVideo,
-    status,
   } = req.body;
 
-  if (feedbackFocus && feedbackFocus.length > 3) {
-    throw new ExpressError("feedbackFocus can have at most 3 items", 400);
+  if (feedbackFocus) {
+    if (!Array.isArray(feedbackFocus))
+      throw new ExpressError("feedbackFocus must be an array", 400);
+    if (feedbackFocus.length > 3)
+      throw new ExpressError("feedbackFocus can have at most 3 items", 400);
+    for (const item of feedbackFocus) {
+      if (!FEEDBACK_FOCUS_OPTIONS.includes(item))
+        throw new ExpressError(`Invalid feedbackFocus item: "${item}"`, 400);
+    }
   }
 
-  const allowedStatuses = ["draft", "in_review"];
-  const productStatus =
-    status && allowedStatuses.includes(status) ? status : "draft";
-
+  // Products must always start as drafts — status cannot be set on creation.
   const product = new Product({
     name,
     tagline,
@@ -50,7 +74,7 @@ const createProduct = async (req, res) => {
     specificQuestion,
     productUrl,
     demoVideo,
-    status: productStatus,
+    status: "draft",
     owner: req.userId,
   });
 
@@ -73,11 +97,7 @@ const getDashboardStats = async (req, res) => {
   }).distinct("_id");
 
   if (productIds.length === 0) {
-    return res.status(200).json({
-      totalProducts: 0,
-      totalReviews: 0,
-      avgRating: 0,
-    });
+    return res.status(200).json({ totalProducts: 0, totalReviews: 0, avgRating: 0 });
   }
 
   const [stats] = await ProductReview.aggregate([
@@ -136,7 +156,8 @@ const getMyProducts = async (req, res) => {
         },
       },
     },
-    { $project: { reviews: 0 } },
+    // Never expose the upvotes array (voter IDs) to clients.
+    { $project: { reviews: 0, upvotes: 0 } },
   ]);
 
   res.status(200).json(products);
@@ -144,11 +165,23 @@ const getMyProducts = async (req, res) => {
 
 // GET /products/:id
 const getProductById = async (req, res) => {
-  const product = await Product.findById(req.params.id).populate(
+  assertValidId(req.params.id);
+
+  const product = await Product.findById(req.params.id, { upvotes: 0 }).populate(
     "owner",
     "name username picture"
   );
   if (!product) throw new ExpressError("Product not found", 404);
+
+  // Visibility guard: drafts and archived products are only visible to their owner.
+  // in_review products are visible to any authenticated user (they need to review).
+  // launched products are publicly readable (but better served via /launches/:id).
+  if (
+    (product.status === "draft" || product.status === "archived") &&
+    product.owner._id.toString() !== req.userId
+  ) {
+    throw new ExpressError("Product not found", 404);
+  }
 
   const reviews = await ProductReview.find({ product: product._id })
     .populate("reviewer", "name username picture")
@@ -183,6 +216,8 @@ const getProductById = async (req, res) => {
 
 // PUT /products/:id
 const updateProduct = async (req, res) => {
+  assertValidId(req.params.id);
+
   const product = await Product.findById(req.params.id);
   if (!product) throw new ExpressError("Product not found", 404);
   if (product.owner.toString() !== req.userId)
@@ -190,14 +225,28 @@ const updateProduct = async (req, res) => {
   if (product.status === "archived")
     throw new ExpressError("Cannot edit an archived product", 400);
 
-  if (req.body.feedbackFocus && req.body.feedbackFocus.length > 3) {
-    throw new ExpressError("feedbackFocus can have at most 3 items", 400);
+  if (req.body.feedbackFocus !== undefined) {
+    if (!Array.isArray(req.body.feedbackFocus))
+      throw new ExpressError("feedbackFocus must be an array", 400);
+    if (req.body.feedbackFocus.length > 3)
+      throw new ExpressError("feedbackFocus can have at most 3 items", 400);
+    for (const item of req.body.feedbackFocus) {
+      if (!FEEDBACK_FOCUS_OPTIONS.includes(item))
+        throw new ExpressError(`Invalid feedbackFocus item: "${item}"`, 400);
+    }
   }
 
+  // Once launched, identity fields are locked to prevent misrepresentation in the feed.
+  const allowedFields =
+    product.status === "launched" ? POST_LAUNCH_UPDATE_FIELDS : ALLOWED_UPDATE_FIELDS;
+
   const updates = {};
-  for (const field of ALLOWED_UPDATE_FIELDS) {
+  for (const field of allowedFields) {
     if (req.body[field] !== undefined) updates[field] = req.body[field];
   }
+
+  if (Object.keys(updates).length === 0)
+    throw new ExpressError("No valid fields to update", 400);
 
   Object.assign(product, updates);
   await product.save();
@@ -206,6 +255,8 @@ const updateProduct = async (req, res) => {
 
 // POST /products/:id/submit
 const submitProduct = async (req, res) => {
+  assertValidId(req.params.id);
+
   const product = await Product.findById(req.params.id);
   if (!product) throw new ExpressError("Product not found", 404);
   if (product.owner.toString() !== req.userId)
@@ -218,8 +269,33 @@ const submitProduct = async (req, res) => {
   res.status(200).json({ message: "Product submitted for review", product });
 };
 
+// POST /products/:id/launch
+const launchProduct = async (req, res) => {
+  assertValidId(req.params.id);
+
+  const product = await Product.findById(req.params.id);
+  if (!product) throw new ExpressError("Product not found", 404);
+  if (product.owner.toString() !== req.userId)
+    throw new ExpressError("Forbidden", 403);
+  if (product.status !== "in_review")
+    throw new ExpressError("Only products in review can be launched", 400);
+
+  const reviewCount = await ProductReview.countDocuments({ product: product._id });
+  if (reviewCount < MIN_REVIEWS_TO_LAUNCH)
+    throw new ExpressError(
+      `You need at least ${MIN_REVIEWS_TO_LAUNCH} reviews before launching (you have ${reviewCount})`,
+      400
+    );
+
+  product.status = "launched";
+  await product.save();
+  res.status(200).json({ message: "Product launched successfully", product });
+};
+
 // DELETE /products/:id
 const deleteProduct = async (req, res) => {
+  assertValidId(req.params.id);
+
   const product = await Product.findById(req.params.id);
   if (!product) throw new ExpressError("Product not found", 404);
   if (product.owner.toString() !== req.userId)
@@ -232,6 +308,8 @@ const deleteProduct = async (req, res) => {
 
 // POST /products/:id/screenshots
 const uploadScreenshots = async (req, res) => {
+  assertValidId(req.params.id);
+
   const product = await Product.findById(req.params.id);
   if (!product) throw new ExpressError("Product not found", 404);
   if (product.owner.toString() !== req.userId)
@@ -264,12 +342,14 @@ const uploadScreenshots = async (req, res) => {
 
 // POST /products/:id/reviews
 const createReview = async (req, res) => {
+  assertValidId(req.params.id);
+
   const product = await Product.findById(req.params.id);
   if (!product) throw new ExpressError("Product not found", 404);
   if (product.owner.toString() === req.userId)
     throw new ExpressError("You cannot review your own product", 403);
-  if (product.status !== "in_review")
-    throw new ExpressError("This product is not open for review", 400);
+  if (!["in_review", "launched"].includes(product.status))
+    throw new ExpressError("This product is not open for feedback", 400);
 
   const existing = await ProductReview.findOne({
     product: product._id,
@@ -279,15 +359,30 @@ const createReview = async (req, res) => {
     throw new ExpressError("You have already reviewed this product", 400);
 
   const { rating, content, tags } = req.body;
-  if (!rating || !content)
-    throw new ExpressError("rating and content are required", 400);
+
+  // Explicit range check — !rating would silently reject a valid rating of 0.
+  const ratingNum = Number(rating);
+  if (!Number.isInteger(ratingNum) || ratingNum < 1 || ratingNum > 5)
+    throw new ExpressError("rating must be an integer between 1 and 5", 400);
+
+  if (!content || typeof content !== "string" || content.trim().length < 10)
+    throw new ExpressError("content must be at least 10 characters", 400);
+
+  // Validate tags against the enum before hitting the DB.
+  const tagsArr = tags || [];
+  if (!Array.isArray(tagsArr))
+    throw new ExpressError("tags must be an array", 400);
+  for (const tag of tagsArr) {
+    if (!REVIEW_TAGS.includes(tag))
+      throw new ExpressError(`Invalid tag: "${tag}"`, 400);
+  }
 
   const review = new ProductReview({
     product: product._id,
     reviewer: req.userId,
-    rating,
-    content,
-    tags: tags || [],
+    rating: ratingNum,
+    content: content.trim(),
+    tags: tagsArr,
     round: product.reviewRound,
   });
 
@@ -298,12 +393,18 @@ const createReview = async (req, res) => {
 
 // GET /products/:id/reviews
 const getReviews = async (req, res) => {
-  const page = Math.max(1, parseInt(req.query.page) || 1);
-  const limit = Math.min(50, parseInt(req.query.limit) || 10);
+  assertValidId(req.params.id);
+
+  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 10));
   const { tag } = req.query;
 
   const filter = { product: req.params.id };
-  if (tag) filter.tags = tag;
+  if (tag) {
+    if (!REVIEW_TAGS.includes(tag))
+      throw new ExpressError("Invalid tag filter", 400);
+    filter.tags = tag;
+  }
 
   const [reviews, total] = await Promise.all([
     ProductReview.find(filter)
@@ -315,16 +416,14 @@ const getReviews = async (req, res) => {
     ProductReview.countDocuments(filter),
   ]);
 
-  res.status(200).json({
-    reviews,
-    total,
-    page,
-    totalPages: Math.ceil(total / limit),
-  });
+  res.status(200).json({ reviews, total, page, totalPages: Math.ceil(total / limit) });
 };
 
 // POST /products/:id/reviews/:reviewId/reply
 const replyToReview = async (req, res) => {
+  assertValidId(req.params.id);
+  assertValidId(req.params.reviewId);
+
   const product = await Product.findById(req.params.id);
   if (!product) throw new ExpressError("Product not found", 404);
   if (product.owner.toString() !== req.userId)
@@ -337,9 +436,10 @@ const replyToReview = async (req, res) => {
   if (!review) throw new ExpressError("Review not found", 404);
 
   const { content } = req.body;
-  if (!content) throw new ExpressError("Reply content is required", 400);
+  if (!content || typeof content !== "string" || !content.trim())
+    throw new ExpressError("Reply content is required", 400);
 
-  review.replies.push({ author: req.userId, content });
+  review.replies.push({ author: req.userId, content: content.trim() });
   await review.save();
   await review.populate("replies.author", "name username picture");
   res.status(200).json(review);
@@ -347,31 +447,54 @@ const replyToReview = async (req, res) => {
 
 // POST /products/:id/reviews/:reviewId/helpful
 const markHelpful = async (req, res) => {
+  assertValidId(req.params.id);
+  assertValidId(req.params.reviewId);
+
   const userId = new mongoose.Types.ObjectId(req.userId);
 
-  const review = await ProductReview.findOne({
-    _id: req.params.reviewId,
-    product: req.params.id,
-  });
+  const review = await ProductReview.findOne(
+    { _id: req.params.reviewId, product: req.params.id },
+    { reviewer: 1 }
+  );
   if (!review) throw new ExpressError("Review not found", 404);
 
-  const alreadyMarked = review.helpfulBy.some((id) => id.equals(userId));
+  // Reviewer cannot mark their own review as helpful.
+  if (review.reviewer.equals(userId))
+    throw new ExpressError("You cannot mark your own review as helpful", 403);
 
-  const update = alreadyMarked
-    ? { $pull: { helpfulBy: userId }, $inc: { helpfulCount: -1 } }
-    : { $addToSet: { helpfulBy: userId }, $inc: { helpfulCount: 1 } };
-
-  const updated = await ProductReview.findByIdAndUpdate(
-    review._id,
-    update,
-    { new: true }
+  // Atomic toggle — same pattern as toggleUpvote.
+  const marked = await ProductReview.findOneAndUpdate(
+    { _id: review._id, helpfulBy: { $ne: userId } },
+    { $addToSet: { helpfulBy: userId }, $inc: { helpfulCount: 1 } },
+    { new: true, select: "helpfulCount" }
   );
 
-  res.status(200).json({ helpfulCount: updated.helpfulCount, marked: !alreadyMarked });
+  if (marked) {
+    return res.status(200).json({ helpfulCount: marked.helpfulCount, marked: true });
+  }
+
+  const unmarked = await ProductReview.findOneAndUpdate(
+    { _id: review._id, helpfulBy: userId },
+    { $pull: { helpfulBy: userId }, $inc: { helpfulCount: -1 } },
+    { new: true, select: "helpfulCount" }
+  );
+
+  if (unmarked) {
+    const safeCount = Math.max(0, unmarked.helpfulCount);
+    if (unmarked.helpfulCount < 0) {
+      await ProductReview.findByIdAndUpdate(review._id, { $set: { helpfulCount: 0 } });
+    }
+    return res.status(200).json({ helpfulCount: safeCount, marked: false });
+  }
+
+  throw new ExpressError("Review not found", 404);
 };
 
 // PUT /products/:id/reviews/:reviewId/resolve
 const resolveReview = async (req, res) => {
+  assertValidId(req.params.id);
+  assertValidId(req.params.reviewId);
+
   const product = await Product.findById(req.params.id);
   if (!product) throw new ExpressError("Product not found", 404);
   if (product.owner.toString() !== req.userId)
@@ -395,6 +518,7 @@ module.exports = {
   getProductById,
   updateProduct,
   submitProduct,
+  launchProduct,
   deleteProduct,
   uploadScreenshots,
   createReview,

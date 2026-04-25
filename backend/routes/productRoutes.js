@@ -12,6 +12,7 @@ const {
   getProductById,
   updateProduct,
   submitProduct,
+  launchProduct,
   deleteProduct,
   uploadScreenshots,
   createReview,
@@ -54,6 +55,7 @@ router.get("/:id", isAuthenticated, catchAsync(getProductById));
 router.put("/:id", isAuthenticated, catchAsync(updateProduct));
 router.delete("/:id", isAuthenticated, catchAsync(deleteProduct));
 router.post("/:id/submit", isAuthenticated, catchAsync(submitProduct));
+router.post("/:id/launch", isAuthenticated, catchAsync(launchProduct));
 router.post(
   "/:id/screenshots",
   isAuthenticated,

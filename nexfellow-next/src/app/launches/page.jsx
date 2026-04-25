@@ -9,7 +9,7 @@ export default function LaunchesPage() {
   const [detailId, setDetailId] = useState(null);
 
   // For now we just render the template statically. If we were fully hooking it up, we would extract the products data here.
-  
+
   return (
     <div className="launches-page-container w-full h-screen overflow-hidden text-[#18170f] font-sans antialiased bg-[#fafaf8]">
 
