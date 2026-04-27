@@ -33,57 +33,6 @@ export default function LaunchesPage() {
     <div className="content-grid">
       <div className="main-col">
 
-        {/* Live strip */}
-        <div className="live-strip">
-          <div className="ls-head">
-            <div className="live-dot"></div>
-            <div className="ls-label">Live now</div>
-            <div className="ls-sub">3 products launching · feedback flowing in</div>
-          </div>
-          <div className="live-cards">
-            <div className="live-card hot" >
-              <div className="lc-top">
-                <div className="lc-icon" style={{'background': '#f0f9d4'}}>📋</div>
-                <div className="lc-name">TaskFlow AI</div>
-                <div className="lc-hot-tag">🔥 Hot</div>
-              </div>
-              <div className="lc-bar"><div className="lc-bar-fill" style={{'width': '88%'}}></div></div>
-              <div className="lc-stats">
-                <div className="lc-stat">▲ <strong>316</strong></div>
-                <div className="lc-stat">💬 <strong>22</strong></div>
-                <div className="lc-stat">⭐ <strong>4.2</strong></div>
-              </div>
-              <div className="lc-time">Launched 4h ago</div>
-            </div>
-            <div className="live-card" >
-              <div className="lc-top">
-                <div className="lc-icon" style={{'background': '#f0eeff'}}>🎨</div>
-                <div className="lc-name">DesignKit</div>
-              </div>
-              <div className="lc-bar"><div className="lc-bar-fill" style={{'width': '62%'}}></div></div>
-              <div className="lc-stats">
-                <div className="lc-stat">▲ <strong>184</strong></div>
-                <div className="lc-stat">💬 <strong>14</strong></div>
-                <div className="lc-stat">⭐ <strong>4.4</strong></div>
-              </div>
-              <div className="lc-time">Launched 6h ago</div>
-            </div>
-            <div className="live-card" >
-              <div className="lc-top">
-                <div className="lc-icon" style={{'background': '#e6f5f2'}}>⚡</div>
-                <div className="lc-name">NoCodeAPI</div>
-              </div>
-              <div className="lc-bar"><div className="lc-bar-fill" style={{'width': '44%'}}></div></div>
-              <div className="lc-stats">
-                <div className="lc-stat">▲ <strong>97</strong></div>
-                <div className="lc-stat">💬 <strong>9</strong></div>
-                <div className="lc-stat">⭐ <strong>4.6</strong></div>
-              </div>
-              <div className="lc-time">Launched 2h ago</div>
-            </div>
-          </div>
-        </div>
-
         {/* Day header */}
         <div className="day-head">
           <div className="dh-date">April 6, 2026</div>
@@ -110,13 +59,11 @@ export default function LaunchesPage() {
               <div className="lr-traction">
                 <div className="lr-tr g">⭐ 4.2</div>
                 <div className="lr-tr">💬 22 feedbacks</div>
-                <div className="lr-tr g">👤 4 adopters</div>
               </div>
               <div className="lr-cats"><span className="lr-cat">Productivity</span><span className="lr-cat">AI</span></div>
             </div>
           </div>
           <div className="lr-actions">
-            <button className="want-btn wanted" >🌟 Wanted</button>
             <button className="vote-btn voted" ><div className="vb-arr">▲</div><div className="vb-num">316</div></button>
           </div>
         </div>
@@ -129,12 +76,11 @@ export default function LaunchesPage() {
             <div className="lr-desc">Figma-to-code design system builder for solo founders and small teams</div>
             <div className="lr-meta">
               <div className="lr-builder"><div className="lr-bav" style={{'background': '#ff8c5a', 'color': '#111'}}>A</div>Anika Sharma · 1st launch</div>
-              <div className="lr-traction"><div className="lr-tr g">⭐ 4.4</div><div className="lr-tr">💬 14 feedbacks</div><div className="lr-tr">👤 2 adopters</div></div>
+              <div className="lr-traction"><div className="lr-tr g">⭐ 4.4</div><div className="lr-tr">💬 14 feedbacks</div></div>
               <div className="lr-cats"><span className="lr-cat">Design</span><span className="lr-cat">Dev Tools</span></div>
             </div>
           </div>
           <div className="lr-actions">
-            <button className="want-btn" >🌟 Want this</button>
             <button className="vote-btn" ><div className="vb-arr">▲</div><div className="vb-num">184</div></button>
           </div>
         </div>
@@ -147,12 +93,11 @@ export default function LaunchesPage() {
             <div className="lr-desc">Build and deploy APIs without writing a single line of code</div>
             <div className="lr-meta">
               <div className="lr-builder"><div className="lr-bav" style={{'background': '#6be0ff', 'color': '#111'}}>M</div>Miguel Torres · 1st launch</div>
-              <div className="lr-traction"><div className="lr-tr g">⭐ 4.6</div><div className="lr-tr">💬 9 feedbacks</div><div className="lr-tr">👤 3 adopters</div></div>
+              <div className="lr-traction"><div className="lr-tr g">⭐ 4.6</div><div className="lr-tr">💬 9 feedbacks</div></div>
               <div className="lr-cats"><span className="lr-cat">Dev Tools</span><span className="lr-cat">No-Code</span></div>
             </div>
           </div>
           <div className="lr-actions">
-            <button className="want-btn" >🌟 Want this</button>
             <button className="vote-btn" ><div className="vb-arr">▲</div><div className="vb-num">97</div></button>
           </div>
         </div>
@@ -165,12 +110,11 @@ export default function LaunchesPage() {
             <div className="lr-desc">Beautiful changelogs and release notes for developer tools</div>
             <div className="lr-meta">
               <div className="lr-builder"><div className="lr-bav" style={{'background': '#c8f060', 'color': '#111'}}>R</div>Rohan Mehta</div>
-              <div className="lr-traction"><div className="lr-tr g">⭐ 4.7</div><div className="lr-tr">💬 15 feedbacks</div><div className="lr-tr g">👤 6 adopters</div></div>
+              <div className="lr-traction"><div className="lr-tr g">⭐ 4.7</div><div className="lr-tr">💬 15 feedbacks</div></div>
               <div className="lr-cats"><span className="lr-cat">Dev Tools</span></div>
             </div>
           </div>
           <div className="lr-actions">
-            <button className="want-btn" >🌟 Want this</button>
             <button className="vote-btn" ><div className="vb-arr">▲</div><div className="vb-num">88</div></button>
           </div>
         </div>
@@ -183,12 +127,11 @@ export default function LaunchesPage() {
             <div className="lr-desc">Build habits that actually stick — smart reminders, zero guilt</div>
             <div className="lr-meta">
               <div className="lr-builder"><div className="lr-bav" style={{'background': '#f0c040', 'color': '#111'}}>P</div>Priya Mankar</div>
-              <div className="lr-traction"><div className="lr-tr">⭐ 3.9</div><div className="lr-tr">💬 7 feedbacks</div><div className="lr-tr">👤 1 adopter</div></div>
+              <div className="lr-traction"><div className="lr-tr">⭐ 3.9</div><div className="lr-tr">💬 7 feedbacks</div></div>
               <div className="lr-cats"><span className="lr-cat">Health</span><span className="lr-cat">Mobile</span></div>
             </div>
           </div>
           <div className="lr-actions">
-            <button className="want-btn" >🌟 Want this</button>
             <button className="vote-btn" ><div className="vb-arr">▲</div><div className="vb-num">74</div></button>
           </div>
         </div>
@@ -201,12 +144,11 @@ export default function LaunchesPage() {
             <div className="lr-desc">Send GST invoices in under 30 seconds. Built for Indian freelancers.</div>
             <div className="lr-meta">
               <div className="lr-builder"><div className="lr-bav" style={{'background': '#f0c040', 'color': '#111'}}>K</div>Karan Shah</div>
-              <div className="lr-traction"><div className="lr-tr g">⭐ 4.1</div><div className="lr-tr">💬 11 feedbacks</div><div className="lr-tr">👤 2 adopters</div></div>
+              <div className="lr-traction"><div className="lr-tr g">⭐ 4.1</div><div className="lr-tr">💬 11 feedbacks</div></div>
               <div className="lr-cats"><span className="lr-cat">Fintech</span><span className="lr-cat">B2B</span></div>
             </div>
           </div>
           <div className="lr-actions">
-            <button className="want-btn" >🌟 Want this</button>
             <button className="vote-btn" ><div className="vb-arr">▲</div><div className="vb-num">61</div></button>
           </div>
         </div>
@@ -219,12 +161,11 @@ export default function LaunchesPage() {
             <div className="lr-desc">Turn any data into a working Webflow form in 60 seconds</div>
             <div className="lr-meta">
               <div className="lr-builder"><div className="lr-bav" style={{'background': '#ff5a72', 'color': '#fff'}}>S</div>Sara K.</div>
-              <div className="lr-traction"><div className="lr-tr">⭐ 3.8</div><div className="lr-tr">💬 9 feedbacks</div><div className="lr-tr">👤 0 adopters</div></div>
+              <div className="lr-traction"><div className="lr-tr">⭐ 3.8</div><div className="lr-tr">💬 9 feedbacks</div></div>
               <div className="lr-cats"><span className="lr-cat">No-Code</span><span className="lr-cat">Automation</span></div>
             </div>
           </div>
           <div className="lr-actions">
-            <button className="want-btn" >🌟 Want this</button>
             <button className="vote-btn" ><div className="vb-arr">▲</div><div className="vb-num">48</div></button>
           </div>
         </div>
@@ -243,12 +184,11 @@ export default function LaunchesPage() {
             <div className="lr-desc">The operating system for builder communities. Challenges, office hours, collab boards built in.</div>
             <div className="lr-meta">
               <div className="lr-builder"><div className="lr-bav" style={{'background': '#00c9a7', 'color': '#111'}}>D</div>Deependra Gaur · 3rd launch</div>
-              <div className="lr-traction"><div className="lr-tr g">⭐ 4.8</div><div className="lr-tr">💬 47 feedbacks</div><div className="lr-tr g">👤 12 adopters</div></div>
+              <div className="lr-traction"><div className="lr-tr g">⭐ 4.8</div><div className="lr-tr">💬 47 feedbacks</div></div>
               <div className="lr-cats"><span className="lr-cat">Community</span><span className="lr-cat">SaaS</span></div>
             </div>
           </div>
           <div className="lr-actions">
-            <button className="want-btn wanted" >🌟 Wanted</button>
             <button className="vote-btn voted" ><div className="vb-arr">▲</div><div className="vb-num">428</div></button>
           </div>
         </div>
@@ -261,12 +201,11 @@ export default function LaunchesPage() {
             <div className="lr-desc">Deep work sessions with accountability partners. Built for remote builders.</div>
             <div className="lr-meta">
               <div className="lr-builder"><div className="lr-bav" style={{'background': '#8b7aff', 'color': '#fff'}}>V</div>Vikram Rao</div>
-              <div className="lr-traction"><div className="lr-tr g">⭐ 4.3</div><div className="lr-tr">💬 19 feedbacks</div><div className="lr-tr">👤 5 adopters</div></div>
+              <div className="lr-traction"><div className="lr-tr g">⭐ 4.3</div><div className="lr-tr">💬 19 feedbacks</div></div>
               <div className="lr-cats"><span className="lr-cat">Productivity</span></div>
             </div>
           </div>
           <div className="lr-actions">
-            <button className="want-btn" >🌟 Want this</button>
             <button className="vote-btn" ><div className="vb-arr">▲</div><div className="vb-num">241</div></button>
           </div>
         </div>

@@ -438,15 +438,14 @@ function StepBasics({ form, setForm }) {
 
       <div className="mp-form-group">
         <label className="mp-label">CATEGORY <span className="mp-req">*</span></label>
-        <div className="mp-category-grid">
+        <div className="mp-category-pills">
           {CATEGORIES.map(c => (
             <button
               key={c.id}
-              className={`mp-cat-btn ${form.category === c.id ? 'selected' : ''}`}
+              className={`mp-cat-pill ${form.category === c.id ? 'selected' : ''}`}
               onClick={() => setForm(f => ({ ...f, category: c.id }))}
             >
-              <span className="mp-cat-icon">{c.icon}</span>
-              <span className="mp-cat-label">{c.label}</span>
+              {c.label}
             </button>
           ))}
         </div>
@@ -576,30 +575,6 @@ function StepLinks({ form, setForm }) {
             />
           </div>
           <span className="mp-hint">Loom, YouTube, or any public link.</span>
-        </div>
-        <div className="mp-form-group">
-          <label className="mp-label">GITHUB <span className="mp-optional">(optional)</span></label>
-          <div className="mp-input-prefix">
-            <span className="mp-prefix">github.com/</span>
-            <input
-              className="mp-input mp-input-prefixed"
-              placeholder="username/repo"
-              value={form.githubUrl}
-              onChange={e => setForm(f => ({ ...f, githubUrl: e.target.value }))}
-            />
-          </div>
-        </div>
-        <div className="mp-form-group">
-          <label className="mp-label">PRODUCT HUNT <span className="mp-optional">(optional)</span></label>
-          <div className="mp-input-prefix">
-            <span className="mp-prefix">ph.com/posts/</span>
-            <input
-              className="mp-input mp-input-prefixed"
-              placeholder="your-product"
-              value={form.productHuntUrl}
-              onChange={e => setForm(f => ({ ...f, productHuntUrl: e.target.value }))}
-            />
-          </div>
         </div>
       </div>
 
@@ -940,33 +915,6 @@ export default function MyProductsPage() {
   return (
     <PrivateLayout>
       <div className="mp-page">
-        <div className="mp-topbar">
-          <h1 className="mp-topbar-title">My products</h1>
-          <div className="mp-topbar-actions">
-            <button className="mp-action-btn-ghost">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-              </svg>
-              Filter
-            </button>
-            <button className="mp-action-btn-ghost">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M7 16V4m0 0L4 7m3-3l3 3"/><path d="M17 8v12m0 0l3-3m-3 3l-3-3"/>
-              </svg>
-              Sort
-            </button>
-            <button className="mp-action-btn-ghost">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-              Export
-            </button>
-            <button className="mp-action-btn-primary" onClick={() => setShowModal(true)}>
-              + New submission
-            </button>
-          </div>
-        </div>
-
         {bannerAlert && (
           <div className="mp-alert-banner">
             <span className="mp-alert-dot">•</span>
@@ -980,6 +928,35 @@ export default function MyProductsPage() {
             <button className="mp-alert-view">View</button>
           </div>
         )}
+
+        <div className="mp-tabs-bar">
+          <div className="mp-tabs">
+            {tabs.map(t => (
+              <button
+                key={t.id}
+                className={`mp-tab ${activeTab === t.id ? 'active' : ''}`}
+                onClick={() => setActiveTab(t.id)}
+              >{t.label}</button>
+            ))}
+          </div>
+          <div className="mp-topbar-actions">
+            <button className="mp-action-btn-ghost">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+              Filter
+            </button>
+            {/* <button className="mp-action-btn-ghost">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Export
+            </button> */}
+            <button className="mp-action-btn-primary" onClick={() => setShowModal(true)}>
+              + New submission
+            </button>
+          </div>
+        </div>
 
         <div className="mp-stats-row">
           <StatCard
@@ -1010,16 +987,6 @@ export default function MyProductsPage() {
             iconBg="#ccfbf1"
             icon={<TrendingUpIcon />}
           />
-        </div>
-
-        <div className="mp-tabs">
-          {tabs.map(t => (
-            <button
-              key={t.id}
-              className={`mp-tab ${activeTab === t.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(t.id)}
-            >{t.label}</button>
-          ))}
         </div>
 
         <div className="mp-table-section">

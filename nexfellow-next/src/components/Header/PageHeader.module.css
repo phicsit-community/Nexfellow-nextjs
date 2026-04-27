@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 17px 80px;
+  padding: 10px 30px;
   gap: 10px;
   width: 100%;
   height: 80px;
@@ -19,11 +19,34 @@
   border-bottom-color: var(--color-border-white);
 }
 
+/* Page title shown on specific routes (e.g. My products) */
+.pageTitle {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  margin: 0;
+  color: #111827;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+:global(.dark) .pageTitle {
+  color: var(--color-foreground);
+}
+
 /* Search bar - left-aligned to match content below */
 .searchWrapper {
   flex: 1;
   max-width: 616px;
   margin: 0;
+}
+
+/* Narrower search bar pushed to the right when a page title is shown on the left */
+.searchWrapperNarrow {
+  flex: 0 0 auto;
+  width: 280px;
+  max-width: 320px;
+  margin-left: auto;
 }
 
 .searchButton {
