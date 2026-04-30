@@ -19,7 +19,7 @@ export default function ProductShowcase() {
             bottom: 0,
             left: "50%",
             transform: "translateX(-50%)",
-            width: "85%",
+            width: "92%",
             display: "block",
           }}
         />
