@@ -1,90 +1,87 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { T, BG, DARKER, MUTED, TEXT, BORDER } from "../shared/tokens";
 
-// assets
-import navbarlogo from "./assets/NexFellowLogo.svg";
-
-// styles
-import styles from "./Navbar.module.css";
-import Hamburger from "hamburger-react";
-
-const Navbar = () => {
-  const pathname = usePathname();
-  const [menuActive, setMenuActive] = useState(false);
+export default function Navbar() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled]     = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
+  const [username, setUsername]     = useState("");
 
   useEffect(() => {
-    // Check if user is logged in (client-side only)
-    if (typeof window !== 'undefined') {
-      const isLoggedin = localStorage.getItem("isLoggedIn");
-      const userData = JSON.parse(localStorage.getItem("user") || "{}");
-      // Only consider logged in if both flag is true AND user data exists
-      const loggedIn = isLoggedin === "true" && userData && userData.username;
-      setIsLoggedIn(loggedIn);
-      setUsername(userData?.username || "");
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll);
+
+    if (typeof window !== "undefined") {
+      const flag = localStorage.getItem("isLoggedIn");
+      const ud   = JSON.parse(localStorage.getItem("user") || "{}");
+      if (flag === "true" && ud?.username) {
+        setIsLoggedIn(true);
+        setUsername(ud.username);
+      }
     }
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const toggleMenu = () => {
-    setMenuActive((prev) => !prev);
-  };
+  const link = { color: MUTED, textDecoration: "none", fontSize: 14, fontWeight: 500, transition: "color 0.2s" };
+  const btn  = { background: T, color: DARKER, padding: "8px 22px", borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: "none" };
 
   return (
-    <div className={`${styles.navbar} ${menuActive ? styles.menuActive : ""}`}>
-      <div className={styles.navbarContent}>
-        <div className={styles.navbarLogo}>
-          <Link href="/">
-            <img src={typeof navbarlogo === 'string' ? navbarlogo : navbarlogo.src} alt="NexFellow Logo" />
+    <nav style={{
+      position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+      background: scrolled ? "rgba(7,26,44,0.96)" : "transparent",
+      backdropFilter: scrolled ? "blur(14px)" : "none",
+      borderBottom: scrolled ? `1px solid ${BORDER}` : "none",
+      transition: "all 0.3s",
+    }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 68 }}>
+
+          {/* Logo */}
+          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+            <img src="/NexFellowLogo.svg" alt="NexFellow" style={{ height: 34, width: 34 }} />
+            <span style={{ color: TEXT, fontWeight: 700, fontSize: 18, letterSpacing: "-0.3px" }}>
+              Nex<span style={{ color: T }}>Fellow</span>
+            </span>
           </Link>
 
-          <button
-            className={styles.mobileMenuButton}
-            onClick={toggleMenu}
-            aria-label="Toggle navigation menu"
-            aria-expanded={menuActive}
-          >
-            <Hamburger size={24} />
-          </button>
-        </div>
-
-        <div className={styles.navbarActions}>
-          <div className={styles.navbarLinks}>
-            <Link href="/" className={styles.navbarLink}>
-              Overview
-            </Link>
-            <Link href="/" className={styles.navbarLink}>
-              Analytics
-            </Link>
-            <Link href="/mission" className={styles.navbarLink}>
-              Mission
-            </Link>
-            <Link href="/blogs" className={styles.navbarLink}>
-              Blogs
-            </Link>
+          {/* Desktop links */}
+          <div style={{ display: "flex", alignItems: "center", gap: 36 }}>
+            <Link href="/"               style={link}>Home</Link>
+            <Link href="#how-it-works"   style={link}>How it works</Link>
+            <Link href="/mission"        style={link}>Mission</Link>
+            <Link href="/blogs"          style={link}>Blogs</Link>
           </div>
 
-          {isLoggedIn && username ? (
-            <Link href={`/dashboard/${username}`} className={styles.navbarButton}>
-              Go to Dashboard
-            </Link>
-          ) : (
-            <>
-              <Link href="/login" className={styles.navbarActionLink}>
-                Log In
-              </Link>
-              <Link href="/signup" className={styles.navbarButton}>
-                Get Started
-              </Link>
-            </>
-          )}
+          {/* Actions */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            {isLoggedIn && username ? (
+              <Link href={`/dashboard/${username}`} style={btn}>Dashboard</Link>
+            ) : (
+              <>
+                <Link href="/login"  style={link}>Log In</Link>
+                <Link href="/signup" style={btn}>Get Started</Link>
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    </div>
-  );
-};
 
-export default Navbar;
+        {/* Mobile menu */}
+        {mobileOpen && (
+          <div style={{ borderTop: `1px solid ${BORDER}`, padding: "16px 0", display: "flex", flexDirection: "column", gap: 16 }}>
+            <Link href="/"             style={link}>Home</Link>
+            <Link href="#how-it-works" style={link}>How it works</Link>
+            <Link href="/mission"      style={link}>Mission</Link>
+            <Link href="/blogs"        style={link}>Blogs</Link>
+            <div style={{ display: "flex", gap: 12, paddingTop: 8 }}>
+              <Link href="/login"  style={link}>Log In</Link>
+              <Link href="/signup" style={btn}>Get Started</Link>
+            </div>
+          </div>
+        )}
+      </div>
+    </nav>
+  );
+}

@@ -1,62 +1,85 @@
 "use client";
 
-import React from 'react';
-import Link from 'next/link';
-import styles from './Footer.module.css';
+import Link from "next/link";
+import { T, DARKER, MUTED, TEXT, BORDER, BORDER2 } from "../shared/tokens";
 
-const Footer = () => {
-    const currentYear = new Date().getFullYear();
+const PRODUCT_LINKS  = [["How it works", "#how-it-works", true], ["Features", "/"], ["Launches", "/launches"], ["Changelog", "/"]];
+const COMPANY_LINKS  = [["Mission", "/mission"], ["About us", "/"], ["Success Stories", "/"], ["Contact us", "/contact"]];
+const SUPPORT_LINKS  = [["How credits work", "/", true], ["Report a bug", "/"], ["Request a feature", "/"], ["API docs", "/docs", true]];
+const SOCIAL_ICONS   = ["𝕏", "in", "⌥", "◉"];
 
-    return (
-        <footer className={styles.footer}>
-            <svg className={styles.footerSvg} width="100%" height="100%" viewBox="0 0 1757 706" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path className={styles.footerSvgPath} d="M1757 0L1436.36 13.5C1338.75 13.5 1345.22 -4.30889 1150 72C954.778 148.309 780.889 426.28 585.667 477.073C390.444 528.82 195.222 527.151 97.6111 502.589L0 477.073V706H97.6111C195.222 706 390.444 706 585.667 706C780.889 706 976.111 706 1171.33 706C1366.56 706 1561.78 706 1659.39 706H1757V0Z" />
-            </svg>
-            <div className={styles.container}>
-                <div className={styles.tagline}>
-                    <h1>
-                        We love <span className={styles.highlightYellow}>Geeks</span> who{' '} <br />
-                        <span className={styles.highlightPink}>dream</span> big and{' '} <br />
-                        <span className={styles.highlightBlue}>build</span> bigger.
-                    </h1>
-                    <div className={styles.subscriptionContainer}>
-                        <p>Subscribe for exclusive updates and community news!</p>
-                        <div className={styles.subscription}>
-                            <input type="email" placeholder="Email" className={styles.input} />
-                            <button className={styles.subscribeButton}>Subscribe</button>
-                        </div>
-                    </div>
+function LinkGroup({ title, links }) {
+  return (
+    <div>
+      <h4 style={{ color: TEXT, fontWeight: 700, fontSize: 13, marginBottom: 16, letterSpacing: "0.5px", textTransform: "uppercase" }}>{title}</h4>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {links.map(([label, href, badge], i) => (
+          <Link key={i} href={href || "/"} style={{ color: MUTED, textDecoration: "none", fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
+            {label}
+            {badge && title === "PRODUCT" && (
+              <span style={{ background: T, color: DARKER, fontSize: 9, fontWeight: 700, borderRadius: 4, padding: "1px 5px" }}>NEW</span>
+            )}
+            {badge && title === "SUPPORT" && (
+              <span style={{ background: "rgba(20,184,166,0.15)", color: T, fontSize: 9, fontWeight: 600, borderRadius: 4, padding: "1px 5px", border: `1px solid ${BORDER}` }}>BETA</span>
+            )}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function Footer() {
+  const year = new Date().getFullYear();
+
+  return (
+    <footer style={{ background: DARKER, borderTop: `1px solid ${BORDER2}`, position: "relative", overflow: "hidden" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "64px 24px 40px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 48, marginBottom: 64 }}>
+
+          {/* Brand */}
+          <div>
+            <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", marginBottom: 16 }}>
+              <img src="/NexFellowLogo.svg" alt="NexFellow" style={{ height: 32 }} />
+              <span style={{ color: TEXT, fontWeight: 700, fontSize: 18 }}>Nex<span style={{ color: T }}>Fellow</span></span>
+            </Link>
+            <p style={{ color: MUTED, fontSize: 13, lineHeight: 1.8, maxWidth: 240, marginBottom: 20 }}>
+              NexFellow connects you with experienced builders who give honest, actionable product feedback. Launch faster with real user insights.
+            </p>
+            <div style={{ display: "flex", gap: 12 }}>
+              {SOCIAL_ICONS.map((icon, i) => (
+                <div key={i} style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(255,255,255,0.05)", border: `1px solid ${BORDER2}`, display: "flex", alignItems: "center", justifyContent: "center", color: MUTED, fontSize: 13, cursor: "pointer" }}>
+                  {icon}
                 </div>
-                <div className={styles.links}>
-                    <div>
-                        <h4>Quick Links</h4>
-                        <ul>
-                            <li><Link href="/">Overview</Link></li>
-                            <li><Link href="/features">Features</Link></li>
-                            <li><Link href="/mission">Mission</Link></li>
-                            <li><Link href="/blogs">Blogs</Link></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>Company</h4>
-                        <ul>
-                            <li><Link href="/contact">Contact Us</Link></li>
-                            <li><Link href="/help">Help</Link></li>
-                            <li><Link href="/terms">Terms &amp; Conditions</Link></li>
-                            <li><Link href="/privacy">Privacy Policy</Link></li>
-                        </ul>
-                    </div>
-                </div>
+              ))}
             </div>
-            <div className={styles.footerBottom}>
-                <div className={styles.backgroundText}>NexFellow</div>
-                <p>© {currentYear} NexFellow</p>
-                <p>
-                    <Link href="/terms">Terms and Conditions</Link> • <Link href="/privacy">Privacy Policy</Link>
-                </p>
-            </div>
-        </footer>
-    );
-};
+          </div>
 
-export default Footer;
+          <LinkGroup title="PRODUCT"  links={PRODUCT_LINKS} />
+          <LinkGroup title="COMPANY"  links={COMPANY_LINKS} />
+          <LinkGroup title="SUPPORT"  links={SUPPORT_LINKS} />
+        </div>
+
+        {/* Bottom bar */}
+        <div style={{ borderTop: `1px solid ${BORDER2}`, paddingTop: 24, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <p style={{ color: MUTED, fontSize: 12 }}>© {year} NexFellow</p>
+          <div style={{ display: "flex", gap: 16 }}>
+            <Link href="/terms"   style={{ color: MUTED, textDecoration: "none", fontSize: 12 }}>Terms and Conditions</Link>
+            <span style={{ color: MUTED, fontSize: 12 }}>•</span>
+            <Link href="/privacy" style={{ color: MUTED, textDecoration: "none", fontSize: 12 }}>Privacy Policy</Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Watermark */}
+      <div style={{
+        textAlign: "center", fontSize: "clamp(48px, 12vw, 140px)",
+        fontWeight: 900, color: "rgba(20,184,166,0.04)",
+        letterSpacing: "-4px", lineHeight: 1, paddingBottom: 8,
+        userSelect: "none",
+      }}>
+        NexFellow
+      </div>
+    </footer>
+  );
+}

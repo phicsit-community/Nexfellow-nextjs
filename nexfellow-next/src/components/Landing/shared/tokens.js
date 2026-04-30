@@ -1,0 +1,10 @@
+export const T      = "#14b8a6";  // primary teal
+export const T2     = "#2dd4bf";  // lighter teal
+export const BG     = "#071a2c";  // page background
+export const BG2    = "#0a2032";  // slightly lighter bg
+export const CARD   = "#0d2035";  // card background
+export const DARKER = "#051018";  // darkest shade
+export const BORDER  = "rgba(20,184,166,0.18)";
+export const BORDER2 = "rgba(255,255,255,0.07)";
+export const TEXT   = "#f1f5f9";
+export const MUTED  = "#94a3b8";
