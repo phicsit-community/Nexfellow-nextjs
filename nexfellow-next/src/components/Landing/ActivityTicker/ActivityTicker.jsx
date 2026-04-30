@@ -24,10 +24,10 @@ export default function ActivityTicker() {
       borderBottom: `1px solid ${BORDER2}`,
       padding: "12px 0", overflow: "hidden",
     }}>
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <div style={{
-          background: T, color: DARKER, fontSize: 11, fontWeight: 700,
-          padding: "4px 14px", whiteSpace: "nowrap", flexShrink: 0,
+          color: MUTED, fontSize: 15, fontWeight: 700,
+          padding: "48px 14px", whiteSpace: "nowrap", flexShrink: 0,
           textTransform: "uppercase", letterSpacing: "0.8px",
         }}>
           RECENT ACTIVITY
