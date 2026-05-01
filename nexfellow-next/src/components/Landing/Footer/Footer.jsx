@@ -3,10 +3,41 @@
 import Link from "next/link";
 import { T, DARKER, MUTED, TEXT, BORDER, BORDER2 } from "../shared/tokens";
 
-const PRODUCT_LINKS  = [["How it works", "#how-it-works", true], ["Features", "/"], ["Launches", "/launches"], ["Changelog", "/"]];
-const COMPANY_LINKS  = [["Mission", "/mission"], ["About us", "/"], ["Success Stories", "/"], ["Contact us", "/contact"]];
-const SUPPORT_LINKS  = [["How credits work", "/", true], ["Report a bug", "/"], ["Request a feature", "/"], ["API docs", "/docs", true]];
-const SOCIAL_ICONS   = ["𝕏", "in", "⌥", "◉"];
+const PRODUCT_LINKS = [["How it works", "#how-it-works", true], ["Features", "/"], ["Launches", "/launches"], ["Changelog", "/"]];
+const COMPANY_LINKS = [["Mission", "/mission"], ["About us", "/"], ["Success Stories", "/"], ["Contact us", "/contact"]];
+const SUPPORT_LINKS = [["How credits work", "/", true], ["Report a bug", "/"], ["Request a feature", "/"], ["API docs", "/docs", true]];
+
+const TwitterIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
+
+const LinkedInIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+  </svg>
+);
+
+const GitHubIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+  </svg>
+);
+
+const InstagramIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
+  </svg>
+);
+
+const SOCIAL_ICONS = [TwitterIcon, LinkedInIcon, GitHubIcon, InstagramIcon];
+
+function SoonBadge() {
+  return (
+    <span style={{ background: "rgba(20,184,166,0.15)", color: T, fontSize: 9, fontWeight: 600, borderRadius: 4, padding: "1px 5px", border: `1px solid ${BORDER}` }}>SOON</span>
+  );
+}
 
 function LinkGroup({ title, links }) {
   return (
@@ -16,12 +47,7 @@ function LinkGroup({ title, links }) {
         {links.map(([label, href, badge], i) => (
           <Link key={i} href={href || "/"} style={{ color: MUTED, textDecoration: "none", fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
             {label}
-            {badge && title === "PRODUCT" && (
-              <span style={{ background: T, color: DARKER, fontSize: 9, fontWeight: 700, borderRadius: 4, padding: "1px 5px" }}>NEW</span>
-            )}
-            {badge && title === "SUPPORT" && (
-              <span style={{ background: "rgba(20,184,166,0.15)", color: T, fontSize: 9, fontWeight: 600, borderRadius: 4, padding: "1px 5px", border: `1px solid ${BORDER}` }}>BETA</span>
-            )}
+            {badge && <SoonBadge />}
           </Link>
         ))}
       </div>
@@ -34,51 +60,51 @@ export default function Footer() {
 
   return (
     <footer style={{ background: DARKER, borderTop: `1px solid ${BORDER2}`, position: "relative", overflow: "hidden" }}>
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "64px 24px 40px" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "64px 24px 160px" }}>
         <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 48, marginBottom: 64 }}>
 
           {/* Brand */}
           <div>
             <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", marginBottom: 16 }}>
-              <img src="/NexFellowLogo.svg" alt="NexFellow" style={{ height: 32 }} />
+              {/* Clip the SVG image to show only the owl icon (the text is baked into the SVG file) */}
+              <div style={{ overflow: "hidden", width: 36, height: 32, flexShrink: 0 }}>
+                <img src="/NexFellowLogo.svg" alt="NexFellow" style={{ height: 32 }} />
+              </div>
               <span style={{ color: TEXT, fontWeight: 700, fontSize: 18 }}>Nex<span style={{ color: T }}>Fellow</span></span>
             </Link>
             <p style={{ color: MUTED, fontSize: 13, lineHeight: 1.8, maxWidth: 240, marginBottom: 20 }}>
               NexFellow connects you with experienced builders who give honest, actionable product feedback. Launch faster with real user insights.
             </p>
             <div style={{ display: "flex", gap: 12 }}>
-              {SOCIAL_ICONS.map((icon, i) => (
-                <div key={i} style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(255,255,255,0.05)", border: `1px solid ${BORDER2}`, display: "flex", alignItems: "center", justifyContent: "center", color: MUTED, fontSize: 13, cursor: "pointer" }}>
-                  {icon}
+              {SOCIAL_ICONS.map((Icon, i) => (
+                <div key={i} style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(255,255,255,0.05)", border: `1px solid ${BORDER2}`, display: "flex", alignItems: "center", justifyContent: "center", color: MUTED, cursor: "pointer" }}>
+                  <Icon />
                 </div>
               ))}
             </div>
           </div>
 
-          <LinkGroup title="PRODUCT"  links={PRODUCT_LINKS} />
-          <LinkGroup title="COMPANY"  links={COMPANY_LINKS} />
-          <LinkGroup title="SUPPORT"  links={SUPPORT_LINKS} />
+          <LinkGroup title="PRODUCT" links={PRODUCT_LINKS} />
+          <LinkGroup title="COMPANY" links={COMPANY_LINKS} />
+          <LinkGroup title="SUPPORT" links={SUPPORT_LINKS} />
         </div>
 
         {/* Bottom bar */}
         <div style={{ borderTop: `1px solid ${BORDER2}`, paddingTop: 24, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <p style={{ color: MUTED, fontSize: 12 }}>© {year} NexFellow</p>
           <div style={{ display: "flex", gap: 16 }}>
-            <Link href="/terms"   style={{ color: MUTED, textDecoration: "none", fontSize: 12 }}>Terms and Conditions</Link>
+            <Link href="/terms" style={{ color: MUTED, textDecoration: "none", fontSize: 12 }}>Terms and Conditions</Link>
             <span style={{ color: MUTED, fontSize: 12 }}>•</span>
             <Link href="/privacy" style={{ color: MUTED, textDecoration: "none", fontSize: 12 }}>Privacy Policy</Link>
           </div>
         </div>
       </div>
 
-      {/* Watermark */}
-      <div style={{
-        textAlign: "center", fontSize: "clamp(48px, 12vw, 140px)",
-        fontWeight: 900, color: "rgba(20,184,166,0.04)",
-        letterSpacing: "-4px", lineHeight: 1, paddingBottom: 8,
-        userSelect: "none",
-      }}>
-        NexFellow
+      {/* Watermark — position absolute so it lives in the padding zone below the bottom bar */}
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, display: "flex", justifyContent: "center", alignItems: "flex-end", opacity: 0.15, pointerEvents: "none" }}>
+        <svg width="100%" viewBox="0 0 1195 160" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
+          <path d="M165 -4.76837e-06L138.438 160H102.188L58.4379 75.9375H57.5004L43.4379 160H0.00036622L26.5629 -4.76837e-06H63.4379L106.563 83.75H107.813L121.563 -4.76837e-06H165ZM223.397 162.187C210.585 162.187 199.96 159.74 191.522 154.844C183.085 149.896 177.147 142.812 173.71 133.594C170.272 124.323 169.647 113.229 171.835 100.313C173.918 87.9167 178.215 77.0833 184.725 67.8125C191.288 58.5417 199.543 51.3281 209.491 46.1719C219.491 41.0156 230.689 38.4375 243.085 38.4375C252.147 38.4375 260.09 39.8438 266.913 42.6562C273.788 45.4687 279.387 49.5573 283.71 54.9219C288.033 60.2865 290.949 66.7708 292.46 74.375C294.022 81.9271 294.022 90.4687 292.46 100L290.897 110H183.71L187.46 86.25H254.96C255.481 82.8125 255.142 79.7917 253.944 77.1875C252.798 74.5312 250.949 72.474 248.397 71.0156C245.897 69.5052 242.876 68.75 239.335 68.75C235.793 68.75 232.46 69.5052 229.335 71.0156C226.262 72.526 223.632 74.6354 221.444 77.3437C219.309 80.0521 217.876 83.2292 217.147 86.875L212.46 111.875C211.835 115.729 212.069 119.167 213.163 122.188C214.257 125.208 216.158 127.578 218.866 129.297C221.574 131.016 225.064 131.875 229.335 131.875C232.251 131.875 235.012 131.484 237.616 130.703C240.272 129.87 242.616 128.672 244.647 127.109C246.731 125.495 248.397 123.542 249.647 121.25H289.022C286.21 129.583 281.757 136.823 275.663 142.969C269.621 149.063 262.173 153.802 253.319 157.187C244.517 160.521 234.543 162.187 223.397 162.187ZM362.556 40L373.806 77.1875L398.493 40H441.306L399.118 100L422.868 160H380.368L366.306 121.875L340.368 160H297.243L341.306 100L319.431 40H362.556ZM442.613 160L469.175 -4.76837e-06H581.675L575.738 35H506.675L502.3 62.5H564.488L558.55 97.5H496.363L486.05 160H442.613ZM626.693 162.187C613.881 162.187 603.256 159.74 594.818 154.844C586.381 149.896 580.443 142.812 577.006 133.594C573.568 124.323 572.943 113.229 575.131 100.313C577.214 87.9167 581.511 77.0833 588.021 67.8125C594.584 58.5417 602.839 51.3281 612.787 46.1719C622.787 41.0156 633.985 38.4375 646.381 38.4375C655.443 38.4375 663.386 39.8438 670.209 42.6562C677.084 45.4687 682.683 49.5573 687.006 54.9219C691.329 60.2865 694.245 66.7708 695.756 74.375C697.318 81.9271 697.318 90.4687 695.756 100L694.193 110H587.006L590.756 86.25H658.256C658.777 82.8125 658.438 79.7917 657.24 77.1875C656.094 74.5312 654.245 72.474 651.693 71.0156C649.193 69.5052 646.173 68.75 642.631 68.75C639.089 68.75 635.756 69.5052 632.631 71.0156C629.558 72.526 626.928 74.6354 624.74 77.3437C622.605 80.0521 621.173 83.2292 620.443 86.875L615.756 111.875C615.131 115.729 615.365 119.167 616.459 122.188C617.553 125.208 619.454 127.578 622.162 129.297C624.87 131.016 628.36 131.875 632.631 131.875C635.548 131.875 638.308 131.484 640.912 130.703C643.568 129.87 645.912 128.672 647.943 127.109C650.027 125.495 651.693 123.542 652.943 121.25H692.318C689.506 129.583 685.053 136.823 678.959 142.969C672.917 149.063 665.469 153.802 656.615 157.187C647.813 160.521 637.839 162.187 626.693 162.187ZM779.641 -4.76837e-06L753.078 160H709.953L736.516 -4.76837e-06H779.641ZM851.339 -4.76837e-06L824.776 160H781.651L808.214 -4.76837e-06H851.339ZM910.849 162.187C897.828 162.187 887.099 159.609 878.661 154.453C870.276 149.245 864.39 142.005 861.005 132.734C857.62 123.411 856.943 112.604 858.974 100.313C861.005 88.0208 865.25 77.2396 871.708 67.9687C878.167 58.6458 886.474 51.4062 896.63 46.25C906.786 41.0417 918.401 38.4375 931.474 38.4375C944.443 38.4375 955.12 41.0417 963.505 46.25C971.943 51.4062 977.854 58.6458 981.239 67.9687C984.677 77.2396 985.38 88.0208 983.349 100.313C981.318 112.604 977.047 123.411 970.536 132.734C964.026 142.005 955.693 149.245 945.536 154.453C935.432 159.609 923.87 162.187 910.849 162.187ZM916.161 130.312C919.911 130.312 923.323 129.089 926.396 126.641C929.521 124.193 932.177 120.703 934.364 116.172C936.604 111.641 938.245 106.25 939.286 100C940.328 93.6979 940.484 88.3073 939.755 83.8281C939.026 79.2969 937.515 75.8073 935.224 73.3594C932.932 70.9115 929.911 69.6875 926.161 69.6875C922.411 69.6875 918.974 70.9115 915.849 73.3594C912.724 75.8073 910.068 79.2969 907.88 83.8281C905.693 88.3073 904.078 93.6979 903.036 100C901.995 106.25 901.812 111.641 902.489 116.172C903.219 120.703 904.729 124.193 907.021 126.641C909.364 129.089 912.411 130.312 916.161 130.312ZM1016.55 160L1006.55 40H1049.68L1051.24 113.125H1052.18L1079.68 40H1121.55L1125.3 112.5H1126.24L1151.55 40H1194.68L1144.68 160H1098.11L1091.86 95.625H1090.61L1063.11 160H1016.55Z" fill="#24B2B4" />
+        </svg>
       </div>
     </footer>
   );
