@@ -49,6 +49,36 @@ module.exports.submitOnboarding = async (req, res) => {
         .json({ message: "Missing required onboarding fields" });
     }
 
+    // Validate email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email))) {
+      return res.status(400).json({ message: "Invalid email address" });
+    }
+
+    // Validate accountType
+    if (!["individual", "community"].includes(accountType)) {
+      return res.status(400).json({ message: "Invalid account type" });
+    }
+
+    // Validate cofounderAvailability if provided
+    const VALID_COFOUND_AVAIL = ["actively-looking", "open-to-conversations", "building-solo", "advisor-mentor"];
+    if (cofounderAvailability && !VALID_COFOUND_AVAIL.includes(cofounderAvailability)) {
+      return res.status(400).json({ message: "Invalid cofounderAvailability value" });
+    }
+
+    // Validate array fields are actually arrays and within bounds
+    if (skills !== undefined && !Array.isArray(skills)) {
+      return res.status(400).json({ message: "skills must be an array" });
+    }
+    if (skills && skills.length > 14) {
+      return res.status(400).json({ message: "Maximum 14 skills allowed" });
+    }
+    if (cofounderLookingFor !== undefined && !Array.isArray(cofounderLookingFor)) {
+      return res.status(400).json({ message: "cofounderLookingFor must be an array" });
+    }
+    if (reviewInterests !== undefined && !Array.isArray(reviewInterests)) {
+      return res.status(400).json({ message: "reviewInterests must be an array" });
+    }
+
     // Strip leading @ from username and validate length
     const cleanUsername = username.replace(/^@/, "").trim();
     if (cleanUsername.length < 3 || cleanUsername.length > 30) {
@@ -58,8 +88,8 @@ module.exports.submitOnboarding = async (req, res) => {
       return res.status(400).json({ message: "Username may only contain letters, numbers, underscores, dots, and hyphens" });
     }
 
-    // Strip HTML tags from free-text fields to prevent stored XSS
-    const stripHtml = (str) => (str ? String(str).replace(/<[^>]*>/g, "").trim() : str);
+    // Strip HTML tags from free-text and social link fields to prevent stored XSS
+    const stripHtml = (str) => (str ? String(str).replace(/<[^>]*>/g, "").trim() : "");
     const safeFirstName = stripHtml(firstName);
     const safeLastName  = stripHtml(lastName);
     const safeBio       = stripHtml(bio);
@@ -67,6 +97,13 @@ module.exports.submitOnboarding = async (req, res) => {
     const safeCity      = stripHtml(city);
     const safeState     = stripHtml(state);
     const safeCountry   = stripHtml(country);
+
+    const safeSocialLinks = socialLinks && typeof socialLinks === "object" ? {
+      twitter:   stripHtml(socialLinks.twitter),
+      github:    stripHtml(socialLinks.github),
+      linkedin:  stripHtml(socialLinks.linkedin),
+      portfolio: stripHtml(socialLinks.portfolio),
+    } : { twitter: "", github: "", linkedin: "", portfolio: "" };
 
     // Check username uniqueness against OnboardingProfile (same collection as the unique index)
     const usernameTaken = await OnboardingProfile.findOne({
@@ -97,11 +134,11 @@ module.exports.submitOnboarding = async (req, res) => {
         cofounderAvailability,
         cofounderLookingFor,
         reviewInterests,
-        socialLinks,
+        socialLinks: safeSocialLinks,
         isOnboardingComplete: true,
         completedAt: new Date(),
       },
-      { upsert: true, new: true }
+      { upsert: true, new: true, runValidators: true, context: "query" }
     );
 
     // Update the User document
@@ -161,7 +198,15 @@ module.exports.checkUsername = async (req, res) => {
   const { username } = req.params;
 
   // Strip leading @
-  const cleanUsername = username.replace(/^@/, "");
+  const cleanUsername = String(username).replace(/^@/, "").trim();
+
+  // Validate format before hitting the DB
+  if (cleanUsername.length < 3 || cleanUsername.length > 30) {
+    return res.status(400).json({ available: false, message: "Username must be between 3 and 30 characters" });
+  }
+  if (!/^[a-zA-Z0-9_.-]+$/.test(cleanUsername)) {
+    return res.status(400).json({ available: false, message: "Username contains invalid characters" });
+  }
 
   const existing = await OnboardingProfile.findOne({
     username: cleanUsername,
