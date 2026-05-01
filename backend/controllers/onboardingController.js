@@ -31,6 +31,9 @@ module.exports.submitOnboarding = async (req, res) => {
       username,
       email,
       location,
+      city,
+      state,
+      country,
       bio,
       skills,
       productStage,
@@ -61,6 +64,9 @@ module.exports.submitOnboarding = async (req, res) => {
     const safeLastName  = stripHtml(lastName);
     const safeBio       = stripHtml(bio);
     const safeLocation  = stripHtml(location);
+    const safeCity      = stripHtml(city);
+    const safeState     = stripHtml(state);
+    const safeCountry   = stripHtml(country);
 
     // Check username uniqueness against OnboardingProfile (same collection as the unique index)
     const usernameTaken = await OnboardingProfile.findOne({
@@ -82,6 +88,9 @@ module.exports.submitOnboarding = async (req, res) => {
         username:  cleanUsername,
         email,
         location:  safeLocation,
+        city:      safeCity    || '',
+        state:     safeState   || '',
+        country:   safeCountry || '',
         bio:       safeBio,
         skills,
         productStage,

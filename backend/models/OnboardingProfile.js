@@ -46,6 +46,24 @@ const onboardingProfileSchema = new schema(
       trim: true,
     },
 
+    city: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    state: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    country: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
     bio: {
       type: String,
       trim: true,
