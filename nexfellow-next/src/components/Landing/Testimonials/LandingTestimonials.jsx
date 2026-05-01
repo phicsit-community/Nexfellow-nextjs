@@ -22,11 +22,11 @@ export default function LandingTestimonials() {
               <div style={{ width: 28, height: 2, background: T }} />
               <span style={{ color: T, fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>BUILDERS ON NEXFELLOW</span>
             </div>
-            <h2 style={{ fontSize: "clamp(28px, 4vw, 52px)", fontWeight: 800, color: TEXT, lineHeight: 1.15, letterSpacing: "-1px", maxWidth: 640 }}>
+            <h2 style={{ fontSize: "clamp(28px, 4vw, 52px)", fontWeight: 800, color: TEXT, lineHeight: 1.15, letterSpacing: "-1px" }}>
               The kind of feedback you can't buy with{" "}
               <span style={{ color: T }}>ad spend.</span>
             </h2>
-            <p style={{ color: MUTED, fontSize: 15, maxWidth: 520, marginTop: 12 }}>
+            <p style={{ color: MUTED, fontSize: 15, maxWidth: 570, marginTop: 12 }}>
               Hear from the teams building the next generation of resilient infrastructure with NexFellow's platform.
             </p>
           </div>
@@ -40,7 +40,7 @@ export default function LandingTestimonials() {
               <div style={{ display: "flex", gap: 2, marginBottom: 16 }}>
                 {[1,2,3,4,5].map(i => <span key={i} style={{ color: "#f59e0b", fontSize: 16 }}>★</span>)}
               </div>
-              <p style={{ color: TEXT, fontSize: 16, lineHeight: 1.8, marginBottom: 24, fontStyle: "italic" }}>
+              <p style={{ color: TEXT, fontSize: 23, lineHeight: 1.8, marginBottom: 24, fontStyle: "italic" }}>
                 "I shared my landing page after weeks of almost no signups. People pointed out issues in pricing, copy, and clarity that I had missed. I fixed a few things and started getting my first real users within a week."
               </p>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
