@@ -51,15 +51,15 @@ const AvatarMT = () => (
 );
 
 const LEFT_CARDS = [
-  { quote: "The best feedback I've received in years of building.",                                    name: "Arjun Mehta",    role: "Founder & Indie SaaS Builder",       Avatar: AvatarAM, rotate: -3   },
-  { quote: "The real-time feedback loops reduced our iteration cycle by nearly 40%.",                  name: "Riya Kapoor",    role: "Side Project Builder",               Avatar: AvatarRK, rotate: -1   },
-  { quote: "Direct, actionable insights from people who actually ship code.",                          name: "Daniel Kim",     role: "Startup Founder (B2B SaaS)",         Avatar: AvatarDK, rotate: -2.5 },
+  { quote: "The best feedback I've received in years of building.",                                    name: "Arjun Mehta",    role: "Founder & Indie SaaS Builder",       Avatar: AvatarAM, rotate: -5   },
+  { quote: "The real-time feedback loops reduced our iteration cycle by nearly 40%.",                  name: "Riya Kapoor",    role: "Side Project Builder",               Avatar: AvatarRK, rotate: 5   },
+  { quote: "Direct, actionable insights from people who actually ship code.",                          name: "Daniel Kim",     role: "Startup Founder (B2B SaaS)",         Avatar: AvatarDK, rotate: -5 },
 ];
 
 const RIGHT_CARDS = [
-  { quote: "NexFellow cut our feedback loop from weeks to minutes.",                                   name: "Thabo Nkosi",    role: "SaaS Builder",                       Avatar: AvatarTN, rotate: 2   },
-  { quote: "No fluff. Just raw technical validation from fellow engineers.",                           name: "Emily Rodriguez", role: "Startup Founder (Growth & Product)", Avatar: AvatarER, rotate: 3   },
-  { quote: "We validated our MVP and got our first 100 users through NexFellow feedback.",             name: "Michael Torres", role: "Growth-Focused Founder",             Avatar: AvatarMT, rotate: 1.5 },
+  { quote: "NexFellow cut our feedback loop from weeks to minutes.",                                   name: "Thabo Nkosi",    role: "SaaS Builder",                       Avatar: AvatarTN, rotate: 5   },
+  { quote: "No fluff. Just raw technical validation from fellow engineers.",                           name: "Emily Rodriguez", role: "Startup Founder (Growth & Product)", Avatar: AvatarER, rotate: -5   },
+  { quote: "We validated our MVP and got our first 100 users through NexFellow feedback.",             name: "Michael Torres", role: "Growth-Focused Founder",             Avatar: AvatarMT, rotate: 5 },
 ];
 
 const STATS = [
@@ -69,8 +69,8 @@ const STATS = [
 ];
 
 /* Card positions: [px offset from edge, vh from top] */
-const LEFT_POS  = [[16, 12], [8, 37], [20, 61]];
-const RIGHT_POS = [[16, 16], [8, 40], [20, 64]];
+const LEFT_POS  = [[30, 22], [30, 46], [30, 70]];
+const RIGHT_POS = [[30, 22], [30, 46], [30, 70]];
 
 function TestimonialCard({ card, delay = 0 }) {
   const { quote, name, role, Avatar, rotate = 0 } = card;
@@ -81,7 +81,7 @@ function TestimonialCard({ card, delay = 0 }) {
       transition={{ duration: 0.7, delay }}
       style={{
         background: "rgba(13,32,53,0.88)", border: `1px solid ${BORDER}`,
-        borderRadius: 14, padding: "16px 18px", width: 200,
+        borderRadius: 14, padding: "16px 18px", width: 240,
         backdropFilter: "blur(12px)", boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
         transform: `rotate(${rotate}deg)`,
       }}
