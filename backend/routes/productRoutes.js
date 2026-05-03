@@ -15,6 +15,7 @@ const {
   launchProduct,
   deleteProduct,
   uploadScreenshots,
+  uploadLogo,
   createReview,
   getReviews,
   replyToReview,
@@ -22,25 +23,37 @@ const {
   resolveReview,
 } = require("../controllers/productController");
 
-const screenshotStorage = multer.diskStorage({
+const imageStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "public/temp"),
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, "screenshot-" + uniqueSuffix + ext);
+    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
   },
 });
 
+const ALLOWED_IMAGE_MIMETYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+const ALLOWED_IMAGE_EXTS = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
+
+const imageFilter = (req, file, cb) => {
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (ALLOWED_IMAGE_MIMETYPES.has(file.mimetype) && ALLOWED_IMAGE_EXTS.has(ext)) {
+    cb(null, true);
+  } else {
+    cb(new ExpressError("Only JPEG, PNG, WebP, or GIF images are allowed", 400), false);
+  }
+};
+
 const screenshotUpload = multer({
-  storage: screenshotStorage,
+  storage: imageStorage,
   limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
-      cb(null, true);
-    } else {
-      cb(new ExpressError("Only image files are allowed", 400), false);
-    }
-  },
+  fileFilter: imageFilter,
+});
+
+const logoUpload = multer({
+  storage: imageStorage,
+  limits: { fileSize: 2 * 1024 * 1024 },
+  fileFilter: imageFilter,
 });
 
 // -- Named routes MUST come before /:id --
@@ -61,6 +74,13 @@ router.post(
   isAuthenticated,
   screenshotUpload.array("screenshots", 5),
   catchAsync(uploadScreenshots)
+);
+
+router.post(
+  "/:id/logo",
+  isAuthenticated,
+  logoUpload.single("logo"),
+  catchAsync(uploadLogo)
 );
 
 // -- Review routes --
