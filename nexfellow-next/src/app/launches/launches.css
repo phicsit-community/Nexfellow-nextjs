@@ -134,7 +134,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 6px 22px;
-  background: var(--sur2);
+  background: #fff;
   border-top: 1px solid var(--b);
   border-bottom: 1px solid var(--b);
 }
