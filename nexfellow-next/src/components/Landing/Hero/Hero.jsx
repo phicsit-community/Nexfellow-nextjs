@@ -1,12 +1,11 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import DotGrid from "../shared/DotGrid";
-import { T, T2, BG, CARD, DARKER, MUTED, TEXT, BORDER, BORDER2 } from "../shared/tokens";
+import { T, BG, DARKER, MUTED, TEXT, BORDER, BORDER2 } from "../shared/tokens";
 import TrueFocus from './TrueFocus';
-
-/* ── Avatar SVG placeholders — replace each with your actual avatar SVG ── */
 
 const AvatarAM = () => (
   <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -69,7 +68,6 @@ const STATS = [
   { value: "3,000+", label: "Active builder\nreviewers" },
 ];
 
-/* Card positions: [px offset from edge, vh from top] */
 const LEFT_POS = [[30, 22], [30, 46], [30, 70]];
 const RIGHT_POS = [[30, 22], [30, 46], [30, 70]];
 
@@ -84,7 +82,7 @@ function TestimonialCard({ card, delay = 0 }) {
         background: "rgba(13,32,53,0.88)", border: `1px solid ${BORDER}`,
         borderRadius: 14, padding: "16px 18px", width: 240,
         backdropFilter: "blur(12px)", boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
-        transform: `rotate(${rotate}deg)`,
+        rotate: rotate,
       }}
     >
       <p style={{ color: TEXT, fontSize: 12.5, lineHeight: 1.55, marginBottom: 12, fontStyle: "italic" }}>
@@ -101,13 +99,40 @@ function TestimonialCard({ card, delay = 0 }) {
   );
 }
 
-export default function Hero() {
+/* Each card gets its own scroll-driven x and opacity, staggered by index */
+function ScrollCard({ card, delay, scrollYProgress, side, index, posStyle }) {
+  const start = 0.08 + index * 0.06;
+  const end = 0.58 + index * 0.06;
+  const xTarget = side === "left" ? -900 : 900;
+
+  const x = useTransform(scrollYProgress, [start, end], [0, xTarget]);
+  const opacity = useTransform(scrollYProgress, [start, end - 0.04], [1, 0]);
+
   return (
-    <section style={{
-      position: "relative", minHeight: "100vh", background: BG,
-      display: "flex", flexDirection: "column", alignItems: "center",
-      justifyContent: "center", overflow: "hidden", paddingTop: 68,
-    }}>
+    <motion.div style={{ position: "absolute", zIndex: 10, x, opacity, ...posStyle }}>
+      <TestimonialCard card={card} delay={delay} />
+    </motion.div>
+  );
+}
+
+export default function Hero() {
+  const heroRef = useRef(null);
+
+  /* scrollYProgress: 0 when hero top hits viewport top, 1 when hero bottom hits viewport top */
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+
+  return (
+    <section
+      ref={heroRef}
+      style={{
+        position: "relative", minHeight: "100vh", background: BG,
+        display: "flex", flexDirection: "column", alignItems: "center",
+        justifyContent: "center", overflow: "hidden", paddingTop: 68,
+      }}
+    >
       <DotGrid />
 
       {/* Radial glow */}
@@ -119,18 +144,30 @@ export default function Hero() {
         pointerEvents: "none",
       }} />
 
-      {/* Left testimonials */}
+      {/* Left testimonials — fly out left on scroll */}
       {LEFT_CARDS.map((card, i) => (
-        <div key={i} style={{ position: "absolute", left: LEFT_POS[i][0], top: `${LEFT_POS[i][1]}vh`, zIndex: 10 }}>
-          <TestimonialCard card={card} delay={0.3 + i * 0.2} />
-        </div>
+        <ScrollCard
+          key={i}
+          card={card}
+          delay={0.3 + i * 0.2}
+          scrollYProgress={scrollYProgress}
+          side="left"
+          index={i}
+          posStyle={{ left: LEFT_POS[i][0], top: `${LEFT_POS[i][1]}vh` }}
+        />
       ))}
 
-      {/* Right testimonials */}
+      {/* Right testimonials — fly out right on scroll */}
       {RIGHT_CARDS.map((card, i) => (
-        <div key={i} style={{ position: "absolute", right: RIGHT_POS[i][0], top: `${RIGHT_POS[i][1]}vh`, zIndex: 10 }}>
-          <TestimonialCard card={card} delay={0.4 + i * 0.2} />
-        </div>
+        <ScrollCard
+          key={i}
+          card={card}
+          delay={0.4 + i * 0.2}
+          scrollYProgress={scrollYProgress}
+          side="right"
+          index={i}
+          posStyle={{ right: RIGHT_POS[i][0], top: `${RIGHT_POS[i][1]}vh` }}
+        />
       ))}
 
       {/* Center content */}
@@ -159,32 +196,6 @@ export default function Hero() {
           }}
         >
           Get{" "}
-          {/* <motion.span
-            style={{ color: T, display: "inline-block" }}
-            animate={{
-              textShadow: [
-                `0 0 0px ${T}`,
-                `0 0 24px ${T}`,
-                `0 0 0px ${T}`,
-              ],
-            }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
-          >
-            Real
-          </motion.span>{" "}
-          <motion.span
-            style={{ color: T, display: "inline-block" }}
-            animate={{
-              textShadow: [
-                `0 0 0px ${T}`,
-                `0 0 24px ${T}`,
-                `0 0 0px ${T}`,
-              ],
-            }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
-          >
-            Feedback
-          </motion.span>{" "} */}
           <span style={{ color: T }}>
             <TrueFocus
               sentence="Real Feedback"
