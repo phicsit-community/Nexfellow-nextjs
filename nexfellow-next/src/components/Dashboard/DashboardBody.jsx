@@ -430,33 +430,6 @@ const DashboardBody = ({
           <>
             {activeTab === "Post" && !loading && !error && (
               <div className={styles.feedSection}>
-                <div
-                  className={styles.createPostBox}
-                  onClick={() => setIsDialogOpen(true)}
-                >
-                  <div className={styles.inputBox}>
-                    <div className={styles.avatarWrapper}>
-                      {community?.owner?.picture ? (
-                        <img
-                          src={community?.owner?.picture}
-                          alt="User Avatar"
-                          className={styles.avatar}
-                        />
-                      ) : (
-                        <div className={styles.avatarPlaceholder}>A</div>
-                      )}
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Share a post"
-                      className={styles.postInput}
-                      value={newPost}
-                      onChange={handleNewPostChange}
-                      readOnly
-                    />
-                  </div>
-                </div>
-
                 {posts.length > 0 ? (
                   <div className={styles.feedContainer}>
                     {organizedPosts.pinnedPost && (
