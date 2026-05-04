@@ -85,7 +85,7 @@ function TestimonialCard({ card, delay = 0 }) {
         rotate: rotate,
       }}
     >
-      <p style={{ color: TEXT, fontSize: 12.5, lineHeight: 1.55, marginBottom: 12, fontStyle: "italic" }}>
+      <p style={{ color: TEXT, fontSize: 12.5, lineHeight: 1.55, marginBottom: 12 }}>
         "{quote}"
       </p>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -224,7 +224,7 @@ export default function Hero() {
           <Link href="/signup" style={{
             display: "inline-flex", alignItems: "center", gap: 8,
             background: T, color: DARKER, padding: "14px 32px",
-            borderRadius: 12, fontWeight: 700, fontSize: 16, textDecoration: "none",
+            borderRadius: 100, fontWeight: 700, fontSize: 16, textDecoration: "none",
             boxShadow: `0 0 32px rgba(20,184,166,0.35)`,
           }}>
             Get started free <span style={{ fontSize: 18 }}>→</span>
@@ -235,14 +235,19 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
           style={{
-            display: "flex", justifyContent: "center", gap: 48,
-            marginTop: 60, paddingTop: 32, borderTop: `1px solid ${BORDER2}`,
+            display: "flex", justifyContent: "center", alignItems: "center",
+            marginTop: 60, paddingTop: 32,
           }}
         >
           {STATS.map((s, i) => (
-            <div key={i} style={{ textAlign: "center" }}>
-              <div style={{ color: TEXT, fontSize: 32, fontWeight: 800, letterSpacing: "-1px" }}>{s.value}</div>
-              <div style={{ color: MUTED, fontSize: 12, lineHeight: 1.5, whiteSpace: "pre-line", marginTop: 4 }}>{s.label}</div>
+            <div key={i} style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 36px" }}>
+                <span style={{ color: TEXT, fontSize: 32, fontWeight: 800, letterSpacing: "-1px", whiteSpace: "nowrap" }}>{s.value}</span>
+                <span style={{ color: MUTED, fontSize: 12, lineHeight: 1.5, whiteSpace: "pre-line", textAlign: "left", minWidth: 110 }}>{s.label}</span>
+              </div>
+              {i < STATS.length - 1 && (
+                <div style={{ width: 2, height: 36, background: BORDER2, flexShrink: 0 }} />
+              )}
             </div>
           ))}
         </motion.div>

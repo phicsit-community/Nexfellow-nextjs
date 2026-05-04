@@ -1,93 +1,134 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import './launches.css';
 import PrivateLayout from '../../layouts/PrivateLayout';
+import api from '@/lib/axios';
 
-/* ─── Static product data ─── */
-const PRODUCTS = {
-  today: [
-    {
-      id: 1, rank: 1, icon: '📋', iconBg: '#f0f9d4', name: 'TaskFlow AI',
-      tag: 'FEATURED', tagType: 'featured',
-      desc: 'AI-powered task management that helps your team actually works',
-      authorInitial: 'S', authorBg: '#ff8c5a', author: 'Sarah Chen', launch: '3rd launch',
-      rating: '4.5', feedbacks: 12, cats: ['Productivity', 'AI'], votes: 284, voted: true,
-      about: 'TaskFlow AI is a next-generation task management platform that combines the power of artificial intelligence with intuitive design. Built for modern teams who value both accountability and simplicity, TaskFlow AI learns from your work patterns to make smart suggestions that actually improve productivity. Whether you\'re managing a small startup or coordinating across departments, TaskFlow AI adapts to your workflow.',
-    },
-    {
-      id: 2, rank: 2, icon: '🎨', iconBg: '#f0eeff', name: 'DesignKit',
-      tag: 'NEW', tagType: 'new',
-      desc: 'Figma-to-code design system builder for solo founders and small teams',
-      authorInitial: 'A', authorBg: '#ff8c5a', author: 'Anika Sharma', launch: '1st launch',
-      rating: '4.4', feedbacks: 14, cats: ['Design', 'Dev Tools'], votes: 184, voted: false,
-      about: 'DesignKit bridges the gap between design and development. It automatically converts your Figma components into production-ready code, saving hours of manual implementation. Built specifically for indie founders and small teams who need to move fast without compromising on quality.',
-    },
-    {
-      id: 3, rank: 3, icon: '⚡', iconBg: '#e6f5f2', name: 'NoCODEM',
-      tag: null, tagType: null,
-      desc: 'Build complete web apps without writing a single line of code',
-      authorInitial: 'M', authorBg: '#6be0ff', author: 'Mike Rodriguez', launch: '2nd launch',
-      rating: '4.2', feedbacks: 22, cats: ['No-Code', 'SaaS'], votes: 156, voted: false,
-      about: 'NoCODEM empowers anyone to build fully functional web applications without any coding knowledge. With a powerful drag-and-drop builder and AI assistance, you can go from idea to deployed app in hours instead of months.',
-    },
-  ],
-  yesterday: [
-    {
-      id: 4, rank: 1, icon: '🚢', iconBg: '#fff5f0', name: 'ShipLog',
-      tag: null, tagType: null,
-      desc: 'Lightweight changelog and release notes for developer tools',
-      authorInitial: 'D', authorBg: '#c8f060', author: 'David Kim', launch: '4th launch',
-      rating: '4.6', feedbacks: 8, cats: ['Dev Tools', 'API'], votes: 142, voted: false,
-      about: 'ShipLog makes it effortless to create beautiful, structured changelogs and release notes. Designed for developer tools and SaaS products, it integrates directly with your GitHub workflow to automatically draft release notes from your commit history.',
-    },
-    {
-      id: 5, rank: 2, icon: '🚢', iconBg: '#fff5f0', name: 'ShipLog',
-      tag: null, tagType: null,
-      desc: 'Lightweight changelog and release notes for developer tools',
-      authorInitial: 'D', authorBg: '#c8f060', author: 'David Kim', launch: '4th launch',
-      rating: '4.6', feedbacks: 8, cats: ['Dev Tools', 'API'], votes: 130, voted: false,
-      about: 'ShipLog makes it effortless to create beautiful, structured changelogs and release notes.',
-    },
-  ],
-  may31: [
-    {
-      id: 6, rank: 1, icon: '🚢', iconBg: '#fff5f0', name: 'ShipLog',
-      tag: null, tagType: null,
-      desc: 'Lightweight changelog and release notes for developer tools',
-      authorInitial: 'D', authorBg: '#c8f060', author: 'David Kim', launch: '4th launch',
-      rating: '4.6', feedbacks: 8, cats: ['Dev Tools', 'API'], votes: 141, voted: false,
-      about: 'ShipLog makes it effortless to create beautiful, structured changelogs and release notes.',
-    },
-  ],
+// ─── Constants ───────────────────────────────────────────────────────────────
+
+const AVATAR_COLORS = ['#ff8c5a', '#6be0ff', '#c8f060', '#f0c040', '#b19cd9', '#82e0aa', '#f1948a'];
+
+const CATEGORY_META = {
+  'SaaS/Productivity': { icon: '📊', bg: '#f0f9d4' },
+  'AI/ML tools':       { icon: '🤖', bg: '#e6f0ff' },
+  'Dev tools':         { icon: '💻', bg: '#f0eeff' },
+  'Mobile app':        { icon: '📱', bg: '#fff5f0' },
+  'Health/Wellness':   { icon: '💚', bg: '#e6f5f2' },
+  'Finance':           { icon: '💰', bg: '#fef9e7' },
+  'Education':         { icon: '🎓', bg: '#f0f9d4' },
+  'E-commerce':        { icon: '🛒', bg: '#fce4ec' },
+  'Other':             { icon: '◆',  bg: '#f5f5f5' },
 };
 
-/* ─── Product row tile ─── */
-function ProductRow({ product, onClick }) {
-  const { rank, icon, iconBg, name, tag, tagType, desc, authorInitial, authorBg, author, launch, rating, feedbacks, cats, votes, voted } = product;
+const ORDINALS = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th'];
+
+const TAB_API = { 'Today': 'today', 'This Week': 'week', 'All Time': 'alltime' };
+
+const REVIEW_TAG_CLASS = {
+  'UX':          'fbt-ux',
+  'PRICING':     'fbt-bug',
+  'MOBILE':      'fbt-feature',
+  'POSITIVE':    'fbt-design',
+  'PERFORMANCE': 'fbt-perf',
+  'FEATURE REQ': 'fbt-feature',
+};
+
+const GALLERY_BG = [
+  'linear-gradient(135deg, #1a2e1a 0%, #2d5a2d 50%, #1a3a1a 100%)',
+  'linear-gradient(135deg, #0d1f3c 0%, #1a3a6e 50%, #0d2040 100%)',
+  'linear-gradient(135deg, #2a1a3e 0%, #4a2a6e 50%, #2a1a4a 100%)',
+  'linear-gradient(135deg, #1a2a3a 0%, #2a4a5a 50%, #1a2a3a 100%)',
+];
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function colorFromStr(str = '') {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+}
+
+function launchLabel(round) {
+  return `${ORDINALS[Math.min((round || 1) - 1, ORDINALS.length - 1)]} launch`;
+}
+
+function isUrl(str) {
+  return str && (str.startsWith('http://') || str.startsWith('https://'));
+}
+
+function groupByDate(products) {
+  const now = new Date();
+  const todayStart = new Date(now);
+  todayStart.setHours(0, 0, 0, 0);
+  const yesterdayStart = new Date(todayStart);
+  yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+
+  const order = [];
+  const groups = {};
+
+  for (const p of products) {
+    const d = new Date(p.launchedAt);
+    let key;
+    if (d >= todayStart) key = 'Today';
+    else if (d >= yesterdayStart) key = 'Yesterday';
+    else key = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+    if (!groups[key]) { groups[key] = []; order.push(key); }
+    groups[key].push(p);
+  }
+
+  return order.map(key => ({ label: key, products: groups[key] }));
+}
+
+function formatLaunchDate(dateStr) {
+  if (!dateStr) return '—';
+  return new Date(dateStr).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+// ─── Product Row ──────────────────────────────────────────────────────────────
+
+function ProductRow({ product, rank, voted, votes, onVote, onClick }) {
+  const catMeta = CATEGORY_META[product.category] || { icon: '⚡', bg: '#e8e8e8' };
+  const ownerName = product.owner?.name || 'Builder';
+  const isNew = new Date(product.launchedAt) > new Date(Date.now() - 24 * 3600000);
+  const tag = rank === 1 ? 'FEATURED' : isNew ? 'NEW' : null;
+  const tagType = rank === 1 ? 'featured' : 'new';
+
   return (
     <div className="lp-row" onClick={onClick}>
       <div className="lp-row-rank">{rank}</div>
-      <div className="lp-row-icon" style={{ background: iconBg }}>{icon}</div>
+      {isUrl(product.logo) ? (
+        <div className="lp-row-icon" style={{ background: catMeta.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img src={product.logo} alt="" style={{ width: 28, height: 28, objectFit: 'contain', borderRadius: 4 }} />
+        </div>
+      ) : (
+        <div className="lp-row-icon" style={{ background: catMeta.bg }}>{catMeta.icon}</div>
+      )}
       <div className="lp-row-info">
         <div className="lp-row-name-row">
-          <span className="lp-row-name">{name}</span>
+          <span className="lp-row-name">{product.name}</span>
           {tag && <span className={`lp-tag lp-tag-${tagType}`}>{tag}</span>}
         </div>
-        <div className="lp-row-desc">{desc}</div>
+        <div className="lp-row-desc">{product.tagline}</div>
         <div className="lp-row-meta">
           <div className="lp-row-author">
-            <div className="lp-row-av" style={{ background: authorBg }}>{authorInitial}</div>
-            <span>{author} · {launch}</span>
+            <div className="lp-row-av" style={{ background: colorFromStr(ownerName) }}>
+              {ownerName.charAt(0).toUpperCase()}
+            </div>
+            <span>{ownerName} · {launchLabel(product.reviewRound)}</span>
           </div>
-          <span className="lp-row-rating">★ {rating}</span>
-          <span className="lp-row-fb">💬 {feedbacks} feedbacks</span>
+          <span className="lp-row-rating">★ {product.avgRating?.toFixed(1) ?? '0.0'}</span>
+          <span className="lp-row-fb">💬 {product.totalReviews ?? 0} feedbacks</span>
           <div className="lp-row-cats">
-            {cats.map(cat => <span key={cat} className="lp-cat">{cat}</span>)}
+            {product.category && <span className="lp-cat">{product.category}</span>}
           </div>
         </div>
       </div>
-      <button className={`lp-vote-btn${voted ? ' voted' : ''}`}>
+      <button
+        className={`lp-vote-btn${voted ? ' voted' : ''}`}
+        onClick={e => { e.stopPropagation(); onVote(product._id); }}
+      >
         <span className="lp-vote-arr">▲</span>
         <span className="lp-vote-num">{votes}</span>
       </button>
@@ -104,57 +145,53 @@ function DateSep({ label, count }) {
   );
 }
 
-const REVIEW_TAG_CLASS = {
-  'UX/UI': 'fbt-ux',
-  'Bug Report': 'fbt-bug',
-  'Integration Request': 'fbt-feature',
-  'Performance': 'fbt-perf',
-  'Design': 'fbt-design',
-};
+// ─── Product Detail ───────────────────────────────────────────────────────────
 
-/* ─── Product detail page ─── */
-const FEATURES = [
-  { icon: '🤖', title: 'AI-Powered Suggestions', desc: 'Smart task predictions that learn from your workflow and habits.' },
-  { icon: '👥', title: 'Real-time Collaboration', desc: 'Work together with your team seamlessly in real time.' },
-  { icon: '📊', title: 'Advanced Analytics', desc: 'Track productivity metrics and team performance over time.' },
-  { icon: '🔗', title: 'Deep Integrations', desc: 'Connects with Slack, GitHub, Notion, and 50+ other tools.' },
-];
-
-const GALLERY_BG = [
-  'linear-gradient(135deg, #1a2e1a 0%, #2d5a2d 50%, #1a3a1a 100%)',
-  'linear-gradient(135deg, #0d1f3c 0%, #1a3a6e 50%, #0d2040 100%)',
-  'linear-gradient(135deg, #2a1a3e 0%, #4a2a6e 50%, #2a1a4a 100%)',
-  'linear-gradient(135deg, #1a2a3a 0%, #2a4a5a 50%, #1a2a3a 100%)',
-];
-
-const REVIEWS = [
-  {
-    initials: 'PM', bg: '#f0c040', name: 'Priya Mathur', email: 'priya.mathur@gmail.com',
-    stars: 5,
-    text: "The AI suggestions are exactly what we needed. The suggestions are surprisingly accurate and have saved us hours of planning time. The task automation is incredibly powerful.",
-    tags: ['UX/UI'], helpful: 14,
-  },
-  {
-    initials: 'MJ', bg: '#6be0ff', name: 'Marcus Johnson', email: 'marcus.johnson@gmail.com',
-    stars: 4,
-    text: "The automation is powerful, but the mobile app needs some work. Overall experience is seamless though — tracking experience is solid and the team dashboard is excellent.",
-    tags: ['Bug Report'], helpful: 8,
-  },
-  {
-    initials: 'LA', bg: '#ff8c5a', name: 'Lisa Anderson', email: 'lisa.anderson@gmail.com',
-    stars: 4,
-    text: "Absolutely love it and haven't looked back. The AI makes decisions about task priorities incredibly clear. Our team's output improved significantly within the first week.",
-    tags: ['Integration Request'], helpful: 11,
-  },
-];
-
-function ProductDetail({ product, onBack }) {
+function ProductDetail({ productId, onBack }) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [activeThumb, setActiveThumb] = useState(0);
+
+  useEffect(() => {
+    setLoading(true);
+    setData(null);
+    setActiveThumb(0);
+    api.get(`/launches/${productId}`)
+      .then(res => setData(res.data))
+      .catch(() => setData(null))
+      .finally(() => setLoading(false));
+  }, [productId]);
+
+  if (loading) {
+    return (
+      <div className="dpv-wrap">
+        <div className="dpv-nav">
+          <button className="dpv-back" onClick={onBack}>← Back</button>
+        </div>
+        <div style={{ padding: 48, textAlign: 'center', color: 'var(--tx2)' }}>Loading…</div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="dpv-wrap">
+        <div className="dpv-nav">
+          <button className="dpv-back" onClick={onBack}>← Back</button>
+        </div>
+        <div style={{ padding: 48, textAlign: 'center', color: 'var(--tx2)' }}>Product not found.</div>
+      </div>
+    );
+  }
+
+  const { product, reviews, totalReviews, ratingStats } = data;
+  const catMeta = CATEGORY_META[product.category] || { icon: '⚡', bg: '#e8e8e8' };
+  const ownerName = product.owner?.name || 'Builder';
+  const hasScreenshots = product.screenshots?.length > 0;
+  const galleryItems = hasScreenshots ? product.screenshots : GALLERY_BG;
 
   return (
     <div className="dpv-wrap">
-
-      {/* ── Nav bar ── */}
       <div className="dpv-nav">
         <button className="dpv-back" onClick={onBack}>← Back</button>
         <div className="dpv-breadcrumb">
@@ -164,62 +201,95 @@ function ProductDetail({ product, onBack }) {
         </div>
       </div>
 
-      {/* ── Scrollable content ── */}
       <div className="dpv-scroll">
         <div className="dpv-layout">
 
           {/* ══ Left main ══ */}
           <div className="dpv-main">
 
-            {/* Hero card (inside left column, scrolls with content) */}
+            {/* Hero card */}
             <div className="dpv-hero-section">
               <div className="dpv-hero-left">
-                <div className="dpv-hero-icon" style={{ background: product.iconBg }}>{product.icon}</div>
+                {isUrl(product.logo) ? (
+                  <div className="dpv-hero-icon" style={{ background: catMeta.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img src={product.logo} alt="" style={{ width: 40, height: 40, objectFit: 'contain', borderRadius: 6 }} />
+                  </div>
+                ) : (
+                  <div className="dpv-hero-icon" style={{ background: catMeta.bg }}>{catMeta.icon}</div>
+                )}
                 <div className="dpv-hero-info">
                   <div className="dpv-hero-name">{product.name}</div>
-                  <div className="dpv-hero-tagline">{product.desc}</div>
+                  <div className="dpv-hero-tagline">{product.tagline}</div>
                   <div className="dpv-hero-tags">
-                    {product.cats.map(cat => <span key={cat} className="dpv-hero-tag">{cat}</span>)}
-                    <span className="dpv-hero-tag">Team Collaboration</span>
+                    {product.category && <span className="dpv-hero-tag">{product.category}</span>}
+                    {product.buildStage && <span className="dpv-hero-tag">{product.buildStage}</span>}
                   </div>
                   <div className="dpv-hero-meta">
-                    <span className="dpv-meta-star">★ {product.rating}</span>
+                    <span className="dpv-meta-star">★ {ratingStats.avgRating?.toFixed(1) ?? '0.0'}</span>
                     <span className="dpv-meta-dot">·</span>
-                    <span>{product.feedbacks} reviews</span>
+                    <span>{totalReviews} reviews</span>
                     <span className="dpv-meta-dot">·</span>
-                    <span>2847 views</span>
+                    <span>{product.upvoteCount ?? 0} upvotes</span>
                   </div>
                 </div>
               </div>
               <div className="dpv-hero-right">
-                <div className={`dpv-vote-badge${product.voted ? ' voted' : ''}`}>
+                <div className="dpv-vote-badge">
                   <span className="dpv-vote-arr">▲</span>
-                  <span className="dpv-vote-count">{product.votes}</span>
+                  <span className="dpv-vote-count">{product.upvoteCount ?? 0}</span>
                   <span className="dpv-vote-label">Hot Product</span>
                 </div>
-                <button className="dpv-visit-btn">↗ Visit Product</button>
+                {isUrl(product.productUrl) && (
+                  <a href={product.productUrl} target="_blank" rel="noopener noreferrer" className="dpv-visit-btn">
+                    ↗ Visit Product
+                  </a>
+                )}
               </div>
             </div>
 
             {/* Gallery */}
             <section className="dpv-section">
               <div className="dpv-section-label">PRODUCT GALLERY</div>
-              <div className="dpv-gallery-main" style={{ background: GALLERY_BG[activeThumb] }}>
-                <div className="dpv-gallery-inner">
-                  <div className="dpv-gallery-icon-lg">{product.icon}</div>
-                  <div className="dpv-gallery-caption">{product.name} — Product Demo</div>
-                </div>
-              </div>
-              <div className="dpv-gallery-thumbs">
-                {GALLERY_BG.map((bg, i) => (
-                  <div
-                    key={i}
-                    className={`dpv-thumb${activeThumb === i ? ' active' : ''}`}
-                    style={{ background: bg }}
-                    onClick={() => setActiveThumb(i)}
-                  />
-                ))}
-              </div>
+              {hasScreenshots ? (
+                <>
+                  <div className="dpv-gallery-main" style={{ overflow: 'hidden' }}>
+                    <img
+                      src={galleryItems[activeThumb]}
+                      alt="screenshot"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  </div>
+                  <div className="dpv-gallery-thumbs">
+                    {galleryItems.map((src, i) => (
+                      <div
+                        key={i}
+                        className={`dpv-thumb${activeThumb === i ? ' active' : ''}`}
+                        style={{ backgroundImage: `url(${src})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                        onClick={() => setActiveThumb(i)}
+                      />
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="dpv-gallery-main" style={{ background: GALLERY_BG[activeThumb] }}>
+                    <div className="dpv-gallery-inner">
+                      <div className="dpv-gallery-icon-lg">{catMeta.icon}</div>
+                      <div className="dpv-gallery-caption">{product.name} — Product Demo</div>
+                    </div>
+                  </div>
+                  <div className="dpv-gallery-thumbs">
+                    {GALLERY_BG.map((bg, i) => (
+                      <div
+                        key={i}
+                        className={`dpv-thumb${activeThumb === i ? ' active' : ''}`}
+                        style={{ background: bg }}
+                        onClick={() => setActiveThumb(i)}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
             </section>
 
             {/* Stats */}
@@ -227,78 +297,86 @@ function ProductDetail({ product, onBack }) {
               <div className="dpv-section-label">PRODUCT STATS</div>
               <div className="dpv-stats-grid">
                 <div className="dpv-stat-card">
-                  <div className="dpv-stat-n">{product.votes}</div>
+                  <div className="dpv-stat-n">{product.upvoteCount ?? 0}</div>
                   <div className="dpv-stat-l">Upvotes</div>
                 </div>
                 <div className="dpv-stat-card">
-                  <div className="dpv-stat-n">{product.rating}</div>
+                  <div className="dpv-stat-n">{ratingStats.avgRating?.toFixed(1) ?? '0.0'}</div>
                   <div className="dpv-stat-l">Rating</div>
                 </div>
                 <div className="dpv-stat-card">
-                  <div className="dpv-stat-n">{product.feedbacks}</div>
+                  <div className="dpv-stat-n">{totalReviews}</div>
                   <div className="dpv-stat-l">Reviews</div>
                 </div>
                 <div className="dpv-stat-card">
-                  <div className="dpv-stat-n">2847</div>
-                  <div className="dpv-stat-l">Views</div>
+                  <div className="dpv-stat-n">{product.reviewRound ?? 1}</div>
+                  <div className="dpv-stat-l">Launch #</div>
                 </div>
               </div>
             </section>
 
             {/* About */}
-            <section className="dpv-section">
-              <div className="dpv-section-label">ABOUT</div>
-              <p className="dpv-about">{product.about}</p>
-            </section>
-
-            {/* Key Features */}
-            <section className="dpv-section">
-              <div className="dpv-section-label">KEY FEATURES</div>
-              <div className="dpv-features-grid">
-                {FEATURES.map((f, i) => (
-                  <div key={i} className="dpv-feature-card">
-                    <div className="dpv-feature-icon">{f.icon}</div>
-                    <div className="dpv-feature-title">{f.title}</div>
-                    <div className="dpv-feature-desc">{f.desc}</div>
-                  </div>
-                ))}
-              </div>
-            </section>
+            {product.description && (
+              <section className="dpv-section">
+                <div className="dpv-section-label">ABOUT</div>
+                <p className="dpv-about">{product.description}</p>
+              </section>
+            )}
 
             {/* Reviews */}
             <section className="dpv-section">
               <div className="dpv-reviews-hdr">
-                <div className="dpv-section-label" style={{ margin: 0 }}>REVIEWS ({REVIEWS.length})</div>
+                <div className="dpv-section-label" style={{ margin: 0 }}>REVIEWS ({totalReviews})</div>
                 <div className="dpv-reviews-hdr-right">
-                  <span className="dpv-avg-badge">★ {product.rating} average</span>
-                  <button className="dpv-add-review-btn">+ Add feedback</button>
+                  <span className="dpv-avg-badge">★ {ratingStats.avgRating?.toFixed(1) ?? '0.0'} average</span>
                 </div>
               </div>
               <div className="dpv-reviews-list">
-                {REVIEWS.map((r, i) => (
-                  <div key={i} className="dpv-review-card">
-                    <div className="dpv-review-top">
-                      <div className="dpv-review-av" style={{ background: r.bg }}>{r.initials}</div>
-                      <div className="dpv-review-user">
-                        <div className="dpv-review-name">{r.name}</div>
-                        <div className="dpv-review-email">{r.email}</div>
+                {reviews.length === 0 ? (
+                  <div style={{ padding: '24px 0', color: 'var(--tx2)', textAlign: 'center' }}>No reviews yet.</div>
+                ) : reviews.map(r => {
+                  const reviewerName = r.reviewer?.name || 'Reviewer';
+                  const initials = reviewerName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+                  const stars = Math.round(r.rating);
+                  return (
+                    <div key={r._id} className="dpv-review-card">
+                      <div className="dpv-review-top">
+                        {isUrl(r.reviewer?.picture) ? (
+                          <img
+                            src={r.reviewer.picture}
+                            alt=""
+                            className="dpv-review-av"
+                            style={{ objectFit: 'cover', borderRadius: '50%' }}
+                          />
+                        ) : (
+                          <div className="dpv-review-av" style={{ background: colorFromStr(reviewerName) }}>
+                            {initials}
+                          </div>
+                        )}
+                        <div className="dpv-review-user">
+                          <div className="dpv-review-name">{reviewerName}</div>
+                          <div className="dpv-review-email">
+                            {r.reviewer?.username ? `@${r.reviewer.username}` : ''}
+                          </div>
+                        </div>
+                        <div className="dpv-review-stars">
+                          {'★'.repeat(stars)}{'☆'.repeat(5 - stars)}
+                        </div>
                       </div>
-                      <div className="dpv-review-stars">
-                        {'★'.repeat(r.stars)}{'☆'.repeat(5 - r.stars)}
+                      <div className="dpv-review-text">{r.content}</div>
+                      <div className="dpv-review-footer">
+                        <div className="dpv-review-tags">
+                          {(r.tags || []).map(t => (
+                            <span key={t} className={`dpv-review-tag ${REVIEW_TAG_CLASS[t] || 'fbt-ux'}`}>{t}</span>
+                          ))}
+                        </div>
+                        <div className="dpv-review-actions">
+                          <button className="dpv-review-btn">👍 Helpful ({r.helpfulCount ?? 0})</button>
+                        </div>
                       </div>
                     </div>
-                    <div className="dpv-review-text">{r.text}</div>
-                    <div className="dpv-review-footer">
-                      <div className="dpv-review-tags">
-                        {r.tags.map(t => <span key={t} className={`dpv-review-tag ${REVIEW_TAG_CLASS[t] || 'fbt-ux'}`}>{t}</span>)}
-                      </div>
-                      <div className="dpv-review-actions">
-                        <button className="dpv-review-btn">👍 Helpful ({r.helpful})</button>
-                        <button className="dpv-review-btn">💬 Reply</button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
 
@@ -310,30 +388,70 @@ function ProductDetail({ product, onBack }) {
             {/* CTA card */}
             <div className="dpv-cta-card">
               <div className="dpv-cta-title">Ready to try {product.name}?</div>
-              <button className="dpv-cta-btn">↗ Get Started</button>
-              <button className="dpv-cta-btn">▶ Watch Demo</button>
+              {isUrl(product.productUrl) && (
+                <a
+                  href={product.productUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="dpv-cta-btn"
+                  style={{ textAlign: 'center', textDecoration: 'none' }}
+                >
+                  ↗ Get Started
+                </a>
+              )}
+              {isUrl(product.demoVideo) && (
+                <a
+                  href={product.demoVideo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="dpv-cta-btn"
+                  style={{ textAlign: 'center', textDecoration: 'none' }}
+                >
+                  ▶ Watch Demo
+                </a>
+              )}
             </div>
 
             {/* Builder card */}
             <div className="dpv-card">
               <div className="dpv-card-label">BUILDER</div>
               <div className="dpv-builder-row">
-                <div className="dpv-builder-av" style={{ background: product.authorBg }}>{product.authorInitial}</div>
+                {isUrl(product.owner?.picture) ? (
+                  <img
+                    src={product.owner.picture}
+                    alt=""
+                    className="dpv-builder-av"
+                    style={{ objectFit: 'cover', borderRadius: '50%' }}
+                  />
+                ) : (
+                  <div className="dpv-builder-av" style={{ background: colorFromStr(ownerName) }}>
+                    {ownerName.charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <div className="dpv-builder-info">
-                  <div className="dpv-builder-name">{product.author}</div>
-                  <div className="dpv-builder-bio">Indie builder. {product.launch} on NexFellow. Previously at Design &amp; Growth.</div>
+                  <div className="dpv-builder-name">{ownerName}</div>
+                  <div className="dpv-builder-bio">{launchLabel(product.reviewRound)} on NexFellow.</div>
                 </div>
               </div>
-              <button className="dpv-follow-btn">Follow Builder</button>
-              <div className="dpv-builder-links">
-                <div className="dpv-link-row"><span>Visit Website</span><span className="dpv-link-val">0</span></div>
-                <div className="dpv-link-row"><span>GitHub</span><span className="dpv-link-val">0</span></div>
-                <div className="dpv-link-row"><span>Twitter</span><span className="dpv-link-val">0</span></div>
-              </div>
+              {isUrl(product.productUrl) && (
+                <div className="dpv-builder-links">
+                  <div className="dpv-link-row">
+                    <span>Visit Website</span>
+                    <a
+                      href={product.productUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="dpv-link-val"
+                    >
+                      ↗
+                    </a>
+                  </div>
+                </div>
+              )}
               <div className="dpv-launch-date-row">
                 <div>
-                  <div className="dpv-launch-date-label">First launch date</div>
-                  <div className="dpv-launch-date-val">May 5, 2025</div>
+                  <div className="dpv-launch-date-label">Launch date</div>
+                  <div className="dpv-launch-date-val">{formatLaunchDate(product.launchedAt)}</div>
                 </div>
                 <span className="dpv-launching-badge">LAUNCHED</span>
               </div>
@@ -342,9 +460,8 @@ function ProductDetail({ product, onBack }) {
             {/* Quick actions */}
             <div className="dpv-card dpv-actions-card">
               <div className="dpv-card-label">QUICK ACTIONS</div>
-              <button className="dpv-action-btn">🔖 Save for Later</button>
               <button className="dpv-action-btn">🔗 Share Product</button>
-              <button className="dpv-action-btn dpv-action-danger">⚑ Report on Issue</button>
+              <button className="dpv-action-btn dpv-action-danger">⚑ Report an Issue</button>
             </div>
 
           </div>{/* /dpv-sidebar */}
@@ -354,20 +471,115 @@ function ProductDetail({ product, onBack }) {
   );
 }
 
-/* ─── Main launches page ─── */
+// ─── Main launches page ───────────────────────────────────────────────────────
+
 export default function LaunchesPage() {
   const [activeTab, setActiveTab] = useState('Today');
   const [launchOpen, setLaunchOpen] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [launches, setLaunches] = useState([]);
+  const [trendingProducts, setTrendingProducts] = useState([]);
+  const [podProduct, setPodProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [upvotedIds, setUpvotedIds] = useState(new Set());
+  const [voteCounts, setVoteCounts] = useState({});
 
-  const allProducts = [...PRODUCTS.today, ...PRODUCTS.yesterday, ...PRODUCTS.may31];
+  const fetchLaunches = useCallback(async (tab) => {
+    setLoading(true);
+    try {
+      const res = await api.get(`/launches?tab=${TAB_API[tab]}&sort=top&limit=20`);
+      setLaunches(res.data.launches || []);
+    } catch {
+      setLaunches([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchSidebar = useCallback(async () => {
+    try {
+      const [podRes, trendRes] = await Promise.all([
+        api.get('/launches?tab=today&sort=top&limit=1'),
+        api.get('/launches/live'),
+      ]);
+      const pod = podRes.data.launches?.[0];
+      if (pod) setPodProduct(pod);
+      setTrendingProducts(trendRes.data.live || []);
+    } catch { /* sidebar is non-critical */ }
+  }, []);
+
+  useEffect(() => {
+    fetchLaunches(activeTab);
+  }, [activeTab, fetchLaunches]);
+
+  useEffect(() => {
+    fetchSidebar();
+  }, [fetchSidebar]);
+
+  // Sync vote counts when launches data arrives
+  useEffect(() => {
+    setVoteCounts(prev => {
+      const next = { ...prev };
+      for (const p of launches) {
+        if (!(p._id in next)) next[p._id] = p.upvoteCount ?? 0;
+      }
+      return next;
+    });
+  }, [launches]);
+
+  const handleVote = async (productId) => {
+    const wasVoted = upvotedIds.has(productId);
+
+    // Optimistic update
+    setUpvotedIds(prev => {
+      const next = new Set(prev);
+      wasVoted ? next.delete(productId) : next.add(productId);
+      return next;
+    });
+    setVoteCounts(prev => ({
+      ...prev,
+      [productId]: Math.max(0, (prev[productId] ?? 0) + (wasVoted ? -1 : 1)),
+    }));
+
+    try {
+      const res = await api.post(`/launches/${productId}/upvote`);
+      setUpvotedIds(prev => {
+        const next = new Set(prev);
+        res.data.upvoted ? next.add(productId) : next.delete(productId);
+        return next;
+      });
+      setVoteCounts(prev => ({ ...prev, [productId]: res.data.upvoteCount }));
+    } catch {
+      // Revert on error
+      setUpvotedIds(prev => {
+        const next = new Set(prev);
+        wasVoted ? next.add(productId) : next.delete(productId);
+        return next;
+      });
+      setVoteCounts(prev => ({
+        ...prev,
+        [productId]: Math.max(0, (prev[productId] ?? 0) + (wasVoted ? 1 : -1)),
+      }));
+    }
+  };
+
+  const rankedGroups = useMemo(() => {
+    let rank = 0;
+    return groupByDate(launches).map(group => ({
+      label: group.label,
+      products: group.products.map(p => ({ ...p, _rank: ++rank })),
+    }));
+  }, [launches]);
 
   return (
     <PrivateLayout>
       <div className="lp-wrap">
 
-        {selectedProduct ? (
-          <ProductDetail product={selectedProduct} onBack={() => setSelectedProduct(null)} />
+        {selectedProductId ? (
+          <ProductDetail
+            productId={selectedProductId}
+            onBack={() => setSelectedProductId(null)}
+          />
         ) : (
           <>
             {/* ── Tab bar ── */}
@@ -389,18 +601,36 @@ export default function LaunchesPage() {
 
                 {/* ══ Main product list ══ */}
                 <div className="lp-main-col">
-                  <div className="lp-section-label">Today</div>
-                  {PRODUCTS.today.map(p => (
-                    <ProductRow key={p.id} product={p} onClick={() => setSelectedProduct(p)} />
-                  ))}
-                  <DateSep label="Yesterday" count={2} />
-                  {PRODUCTS.yesterday.map(p => (
-                    <ProductRow key={p.id} product={p} onClick={() => setSelectedProduct(p)} />
-                  ))}
-                  <DateSep label="May 31, 2026" count={9} />
-                  {PRODUCTS.may31.map(p => (
-                    <ProductRow key={p.id} product={p} onClick={() => setSelectedProduct(p)} />
-                  ))}
+                  {loading ? (
+                    <div style={{ padding: '48px 0', textAlign: 'center', color: 'var(--tx2)' }}>
+                      Loading launches…
+                    </div>
+                  ) : launches.length === 0 ? (
+                    <div style={{ padding: '48px 0', textAlign: 'center', color: 'var(--tx2)' }}>
+                      No launches yet.
+                    </div>
+                  ) : (
+                    rankedGroups.map((group, gi) => (
+                      <React.Fragment key={group.label}>
+                        {gi === 0 ? (
+                          <div className="lp-section-label">{group.label}</div>
+                        ) : (
+                          <DateSep label={group.label} count={group.products.length} />
+                        )}
+                        {group.products.map(product => (
+                          <ProductRow
+                            key={product._id}
+                            product={product}
+                            rank={product._rank}
+                            voted={upvotedIds.has(product._id)}
+                            votes={voteCounts[product._id] ?? product.upvoteCount ?? 0}
+                            onVote={handleVote}
+                            onClick={() => setSelectedProductId(product._id)}
+                          />
+                        ))}
+                      </React.Fragment>
+                    ))
+                  )}
                 </div>
 
                 {/* ══ Right sidebar ══ */}
@@ -409,19 +639,42 @@ export default function LaunchesPage() {
                   {/* Product of the Day */}
                   <div className="lps-pod">
                     <div className="lps-pod-eyebrow">PRODUCT OF THE DAY</div>
-                    <div className="lps-pod-product">
-                      <div className="lps-pod-icon">🎨</div>
-                      <div>
-                        <div className="lps-pod-name">DesignKit</div>
-                        <div className="lps-pod-tagline">Figma-to-code design system builder</div>
+                    {podProduct ? (
+                      <>
+                        <div className="lps-pod-product">
+                          <div className="lps-pod-icon">
+                            {isUrl(podProduct.logo) ? (
+                              <img
+                                src={podProduct.logo}
+                                alt=""
+                                style={{ width: 32, height: 32, objectFit: 'contain', borderRadius: 4 }}
+                              />
+                            ) : (
+                              CATEGORY_META[podProduct.category]?.icon || '⚡'
+                            )}
+                          </div>
+                          <div>
+                            <div className="lps-pod-name">{podProduct.name}</div>
+                            <div className="lps-pod-tagline">{podProduct.tagline}</div>
+                          </div>
+                        </div>
+                        <div className="lps-pod-stats">
+                          <span>▲ {podProduct.upvoteCount ?? 0}</span>
+                          <span>★ {podProduct.avgRating?.toFixed(1) ?? '0.0'}</span>
+                          <span>💬 {podProduct.totalReviews ?? 0}</span>
+                        </div>
+                        <button
+                          className="lps-pod-btn"
+                          onClick={() => setSelectedProductId(podProduct._id)}
+                        >
+                          View Product
+                        </button>
+                      </>
+                    ) : (
+                      <div style={{ color: 'var(--tx2)', fontSize: 13, padding: '8px 0' }}>
+                        No launches today yet.
                       </div>
-                    </div>
-                    <div className="lps-pod-stats">
-                      <span>▲ 184</span>
-                      <span>★ 4.4</span>
-                      <span>💬 14</span>
-                    </div>
-                    <button className="lps-pod-btn" onClick={() => setSelectedProduct(PRODUCTS.today[1])}>View Product</button>
+                    )}
                   </div>
 
                   {/* Launch Your Product */}
@@ -443,31 +696,29 @@ export default function LaunchesPage() {
                     <div className="lps-card-title">
                       <span className="lps-card-title-icon">~</span> Trending This Week
                     </div>
-                    {PRODUCTS.today.map((p, i) => (
-                      <div key={p.id} className="lps-trending-item" onClick={() => setSelectedProduct(p)}>
-                        <span className="lps-ti-rank">{i + 1}</span>
-                        <div className="lps-ti-icon" style={{ background: p.iconBg }}>{p.icon}</div>
-                        <span className="lps-ti-name">{p.name}</span>
-                        <span className="lps-ti-votes">~ {p.votes}</span>
+                    {trendingProducts.length === 0 ? (
+                      <div style={{ color: 'var(--tx2)', fontSize: 13, padding: '8px 0' }}>
+                        No trending launches yet.
                       </div>
-                    ))}
-                  </div>
-
-                  {/* Coming Soon */}
-                  <div className="lps-card">
-                    <div className="lps-card-title">Coming Soon</div>
-                    <div className="lps-cs-item">
-                      <div className="lps-cs-info"><div className="lps-cs-name">Notion AI</div><div className="lps-cs-desc">AI-first note-taking rebuilt!</div></div>
-                      <span className="lps-cs-badge lps-cs-green">In 2 days</span>
-                    </div>
-                    <div className="lps-cs-item">
-                      <div className="lps-cs-info"><div className="lps-cs-name">Mealer</div><div className="lps-cs-desc">Meal planning for busy founders</div></div>
-                      <span className="lps-cs-badge lps-cs-orange">In 3 days</span>
-                    </div>
-                    <div className="lps-cs-item">
-                      <div className="lps-cs-info"><div className="lps-cs-name">Digest</div><div className="lps-cs-desc">Daily blog digest in 5 minutes</div></div>
-                      <span className="lps-cs-badge lps-cs-purple">In 5 days</span>
-                    </div>
+                    ) : trendingProducts.map((p, i) => {
+                      const catMeta = CATEGORY_META[p.category] || { icon: '⚡', bg: '#e8e8e8' };
+                      return (
+                        <div
+                          key={p._id}
+                          className="lps-trending-item"
+                          onClick={() => setSelectedProductId(p._id)}
+                        >
+                          <span className="lps-ti-rank">{i + 1}</span>
+                          <div className="lps-ti-icon" style={{ background: catMeta.bg }}>
+                            {isUrl(p.logo) ? (
+                              <img src={p.logo} alt="" style={{ width: 16, height: 16, objectFit: 'contain', borderRadius: 2 }} />
+                            ) : catMeta.icon}
+                          </div>
+                          <span className="lps-ti-name">{p.name}</span>
+                          <span className="lps-ti-votes">▲ {p.upvoteCount ?? 0}</span>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {/* Daily Launch Digest */}
