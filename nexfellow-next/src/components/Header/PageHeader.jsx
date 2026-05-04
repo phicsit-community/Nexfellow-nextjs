@@ -27,6 +27,7 @@ import styles from "./PageHeader.module.css";
 
 const PAGE_TITLES = {
   "/my-products": "My products",
+  "/launches": "Launches",
 };
 
 function PageHeader() {

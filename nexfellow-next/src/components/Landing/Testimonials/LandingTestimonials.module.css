@@ -1,0 +1,16 @@
+@keyframes scrollUp {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+.track {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: scrollUp 20s linear infinite;
+  will-change: transform;
+}
+
+.track.paused {
+  animation-play-state: paused;
+}
