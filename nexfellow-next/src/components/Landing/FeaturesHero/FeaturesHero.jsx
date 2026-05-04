@@ -31,7 +31,8 @@ export default function FeaturesHero() {
         pointerEvents: "none",
       }} />
 
-      <div style={{ position: "relative", zIndex: 5, textAlign: "center", maxWidth: 760, padding: "0 24px" }}>
+      {/* Text content — centered, constrained width */}
+      <div style={{ position: "relative", zIndex: 5, textAlign: "center", maxWidth: 1000, padding: "0 24px", width: "100%" }}>
 
         {/* Platform badge */}
         <motion.div
@@ -51,20 +52,20 @@ export default function FeaturesHero() {
         <motion.h1
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.7 }}
           style={{
-            fontSize: "clamp(36px, 5.5vw, 66px)", fontWeight: 800, lineHeight: 1.12,
-            color: TEXT, marginBottom: 24, letterSpacing: "-1.5px",
+            fontSize: "clamp(38px, 6vw, 72px)", fontWeight: 800, lineHeight: 1.1,
+            color: TEXT, marginBottom: 24, letterSpacing: "-2px"
           }}
         >
           Every tool a builder needs to{" "}
-          <span style={{ color: T }}>get found,</span>{" "}
+          <span style={{ color: T, whiteSpace: "nowrap" }}>get found,</span>{" "}
           get feedback,{" "}
-          <span style={{ color: "#f59e0b" }}>grow.</span>
+          <span style={{ color: "#f59e0b", fontStyle: "italic" }}>grow.</span>
         </motion.h1>
 
         {/* Subtitle */}
         <motion.p
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
-          style={{ color: MUTED, fontSize: 16, lineHeight: 1.7, maxWidth: 580, margin: "0 auto 40px" }}
+          style={{ color: MUTED, fontSize: 16, lineHeight: 1.7, maxWidth: 880, margin: "0 auto 40px" }}
         >
           NexFellow is a platform built as a complete distribution engine, combining visibility, real feedback, meaningful connections, and AI-powered go-to-market strategy in one place.
         </motion.p>
@@ -73,40 +74,40 @@ export default function FeaturesHero() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
           <Link href="/signup" style={{
             display: "inline-flex", alignItems: "center", gap: 8,
-            background: T, color: DARKER, padding: "14px 32px",
+            background: T, color: DARKER, padding: "14px 36px",
             borderRadius: 100, fontWeight: 700, fontSize: 16, textDecoration: "none",
             boxShadow: `0 0 32px rgba(20,184,166,0.35)`,
           }}>
             Get started free <span style={{ fontSize: 18 }}>→</span>
           </Link>
         </motion.div>
-
-        {/* Stats bar */}
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
-          style={{
-            display: "flex", justifyContent: "center", alignItems: "stretch",
-            marginTop: 72,
-            background: "rgba(13,32,53,0.6)",
-            border: `1px solid ${BORDER2}`,
-            borderRadius: 16,
-            backdropFilter: "blur(10px)",
-            overflow: "hidden",
-          }}
-        >
-          {STATS.map((s, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center" }}>
-              <div style={{
-                padding: "24px 28px", textAlign: "center",
-                borderRight: i < STATS.length - 1 ? `1px solid ${BORDER2}` : "none",
-              }}>
-                <div style={{ color: TEXT, fontSize: 26, fontWeight: 800, letterSpacing: "-0.5px", marginBottom: 4 }}>{s.value}</div>
-                <div style={{ color: MUTED, fontSize: 11, lineHeight: 1.4, maxWidth: 90 }}>{s.label}</div>
-              </div>
-            </div>
-          ))}
-        </motion.div>
       </div>
+
+      {/* Stats bar — full width, breaks out of text container */}
+        <motion.div
+        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}
+        style={{
+          position: "relative", zIndex: 5,
+          width: "calc(100% - 48px)", maxWidth: 1000,
+          marginTop: 72,
+          display: "grid", gridTemplateColumns: "repeat(5, 1fr)",
+          background: "rgba(13,32,53,0.65)",
+          border: `1px solid ${BORDER2}`,
+          borderRadius: 16,
+          backdropFilter: "blur(14px)",
+          overflow: "hidden",
+        }}
+      >
+        {STATS.map((s, i) => (
+          <div key={i} style={{
+            padding: "26px 20px", textAlign: "center",
+            borderRight: i < STATS.length - 1 ? `1px solid ${BORDER2}` : "none",
+          }}>
+            <div style={{ color: TEXT, fontSize: "clamp(20px, 2.5vw, 28px)", fontWeight: 800, letterSpacing: "-0.5px", marginBottom: 6 }}>{s.value}</div>
+            <div style={{ color: MUTED, fontSize: 11, lineHeight: 1.45 }}>{s.label}</div>
+          </div>
+        ))}
+      </motion.div>
     </section>
   );
 }

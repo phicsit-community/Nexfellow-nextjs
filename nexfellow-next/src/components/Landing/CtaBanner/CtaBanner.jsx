@@ -61,7 +61,7 @@ export default function CtaBanner() {
             lineHeight: 1.15, letterSpacing: "-1px", marginBottom: 16,
           }}>
             Stop Shipping <br />Into{" "}
-            <em style={{ color: T, fontStyle: "italic" }}>Silence</em>
+            <em style={{ color: "#f59e0b", fontStyle: "italic" }}>Silence</em>
           </h2>
 
           <p style={{ color: MUTED, fontSize: 15, lineHeight: 1.7, marginBottom: 32 }}>
