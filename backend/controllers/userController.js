@@ -618,6 +618,7 @@ module.exports.getProfileByUsername = async (req, res) => {
   const user = await User.findOne({ username })
     .select("+email +dateOfBirth")
     .populate("profile")
+    .populate("onboardingProfile")
     .populate("createdCommunity")
     .populate("followers")
     .lean();
@@ -626,11 +627,22 @@ module.exports.getProfileByUsername = async (req, res) => {
     return res.status(404).json({ error: "User not found" });
   }
 
+  const op = user.onboardingProfile || {};
   const userFullDetails = {
     ...user,
     ...(user.profile || {}),
-    ...(user.createdCommunity || {}),
-    ...(user.followers || {}),
+    bio: op.bio || user.profile?.bio || "",
+    skills: op.skills || [],
+    location: op.location || "",
+    city: op.city || "",
+    state: op.state || "",
+    country: op.country || "",
+    cofounderAvailability: op.cofounderAvailability || "",
+    cofounderLookingFor: op.cofounderLookingFor || [],
+    reviewInterests: op.reviewInterests || [],
+    socialLinks: op.socialLinks || {},
+    createdCommunity: user.createdCommunity || null,
+    followers: user.followers || [],
   };
 
   res.status(200).json(userFullDetails);
@@ -641,6 +653,7 @@ module.exports.getPublicProfileByUsername = async (req, res) => {
 
   const user = await User.findOne({ username })
     .populate("profile")
+    .populate("onboardingProfile")
     .populate("createdCommunity")
     .populate("followers")
     .lean();
@@ -649,11 +662,22 @@ module.exports.getPublicProfileByUsername = async (req, res) => {
     throw new ExpressError("User not found", 400);
   }
 
+  const op = user.onboardingProfile || {};
   const userFullDetails = {
     ...user,
     ...(user.profile || {}),
-    ...(user.createdCommunity || {}),
-    ...(user.followers || {}),
+    bio: op.bio || user.profile?.bio || "",
+    skills: op.skills || [],
+    location: op.location || "",
+    city: op.city || "",
+    state: op.state || "",
+    country: op.country || "",
+    cofounderAvailability: op.cofounderAvailability || "",
+    cofounderLookingFor: op.cofounderLookingFor || [],
+    reviewInterests: op.reviewInterests || [],
+    socialLinks: op.socialLinks || {},
+    createdCommunity: user.createdCommunity || null,
+    followers: user.followers || [],
   };
 
   res.status(200).json(userFullDetails);

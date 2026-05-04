@@ -6,6 +6,8 @@ const { uploadOnBunny, removeFromBunny } = require("../utils/attachments");
 const path = require("path");
 const { FEEDBACK_FOCUS_OPTIONS } = require("../models/productModel");
 const { REVIEW_TAGS } = require("../models/productReviewModel");
+const NotificationService = require("../utils/notificationService");
+const User = require("../models/userModel");
 
 const MIN_REVIEWS_TO_LAUNCH = 5;
 
@@ -253,6 +255,38 @@ const updateProduct = async (req, res) => {
   res.status(200).json(product);
 };
 
+// POST /products/:id/logo
+const uploadLogo = async (req, res) => {
+  assertValidId(req.params.id);
+
+  const product = await Product.findById(req.params.id);
+  if (!product) throw new ExpressError("Product not found", 404);
+  if (product.owner.toString() !== req.userId)
+    throw new ExpressError("Forbidden", 403);
+  if (!req.file) throw new ExpressError("No file provided", 400);
+
+  const ext = path.extname(req.file.originalname).toLowerCase();
+  const targetPath = `products/logos/${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
+
+  const result = await uploadOnBunny(req.file.path, targetPath);
+  if (!result?.url) throw new ExpressError("Logo upload failed", 500);
+
+  // Remove previous logo from CDN storage using its storage path, not the CDN URL
+  if (product.logo) {
+    const cdnBase = process.env.BUNNY_CDN_URL || "";
+    const oldStoragePath = cdnBase ? product.logo.replace(cdnBase + "/", "") : null;
+    if (oldStoragePath && !oldStoragePath.startsWith("http")) {
+      await removeFromBunny(oldStoragePath).catch((err) =>
+        console.error("Failed to remove old logo from CDN:", err.message)
+      );
+    }
+  }
+
+  product.logo = result.url;
+  await product.save();
+  res.status(200).json({ logo: product.logo });
+};
+
 // POST /products/:id/submit
 const submitProduct = async (req, res) => {
   assertValidId(req.params.id);
@@ -266,6 +300,35 @@ const submitProduct = async (req, res) => {
 
   product.status = "in_review";
   await product.save();
+
+  // Notify owner
+  NotificationService.createAndSendNotification({
+    title: "Product submitted for review",
+    message: `Your product <strong>${product.name}</strong> has been submitted and is now live for community feedback.`,
+    senderId: null,
+    senderModel: "System",
+    recipients: [req.userId],
+    type: "system",
+    priority: "normal",
+    meta: { productId: product._id },
+  }).catch((err) => console.error("Submit owner notification failed:", err.message));
+
+  // Notify followers asynchronously so the response isn't delayed
+  User.findById(req.userId).select("followers username").lean().then((owner) => {
+    if (owner?.followers?.length) {
+      NotificationService.createAndSendNotification({
+        title: "New product submitted",
+        message: `<strong>${owner.username}</strong> just submitted <strong>${product.name}</strong> for community feedback.`,
+        senderId: req.userId,
+        senderModel: "User",
+        recipients: owner.followers,
+        type: "system",
+        priority: "normal",
+        meta: { productId: product._id },
+      }).catch((err) => console.error("Submit follower notification failed:", err.message));
+    }
+  }).catch((err) => console.error("Failed to fetch owner followers for submit notification:", err.message));
+
   res.status(200).json({ message: "Product submitted for review", product });
 };
 
@@ -289,6 +352,35 @@ const launchProduct = async (req, res) => {
 
   product.status = "launched";
   await product.save();
+
+  // Notify owner
+  NotificationService.createAndSendNotification({
+    title: "Your product is live! 🚀",
+    message: `Congratulations! <strong>${product.name}</strong> is now publicly launched on NexFellow.`,
+    senderId: null,
+    senderModel: "System",
+    recipients: [req.userId],
+    type: "milestone",
+    priority: "high",
+    meta: { productId: product._id },
+  }).catch((err) => console.error("Launch owner notification failed:", err.message));
+
+  // Notify followers asynchronously
+  User.findById(req.userId).select("followers username").lean().then((owner) => {
+    if (owner?.followers?.length) {
+      NotificationService.createAndSendNotification({
+        title: "New product launched",
+        message: `<strong>${owner.username}</strong> just launched <strong>${product.name}</strong> on NexFellow. Check it out!`,
+        senderId: req.userId,
+        senderModel: "User",
+        recipients: owner.followers,
+        type: "system",
+        priority: "normal",
+        meta: { productId: product._id },
+      }).catch((err) => console.error("Launch follower notification failed:", err.message));
+    }
+  }).catch((err) => console.error("Failed to fetch owner followers for launch notification:", err.message));
+
   res.status(200).json({ message: "Product launched successfully", product });
 };
 
@@ -319,23 +411,23 @@ const uploadScreenshots = async (req, res) => {
   if (product.screenshots.length + req.files.length > 5)
     throw new ExpressError("Maximum 5 screenshots allowed", 400);
 
-  const uploadedUrls = [];
+  const uploadedResults = [];
   try {
     for (const file of req.files) {
-      const ext = path.extname(file.originalname);
+      const ext = path.extname(file.originalname).toLowerCase();
       const targetPath = `products/screenshots/${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
-      const url = await uploadOnBunny(file.path, targetPath);
-      if (!url) throw new Error("Upload failed for " + file.originalname);
-      uploadedUrls.push(url);
+      const result = await uploadOnBunny(file.path, targetPath);
+      if (!result?.url) throw new Error("Upload failed for " + file.originalname);
+      uploadedResults.push(result);
     }
   } catch (err) {
-    for (const url of uploadedUrls) {
-      await removeFromBunny(url);
+    for (const r of uploadedResults) {
+      await removeFromBunny(r.path).catch(() => {});
     }
     throw new ExpressError("Screenshot upload failed: " + err.message, 500);
   }
 
-  product.screenshots.push(...uploadedUrls);
+  product.screenshots.push(...uploadedResults.map((r) => r.url));
   await product.save();
   res.status(200).json({ screenshots: product.screenshots });
 };
@@ -521,6 +613,7 @@ module.exports = {
   launchProduct,
   deleteProduct,
   uploadScreenshots,
+  uploadLogo,
   createReview,
   getReviews,
   replyToReview,

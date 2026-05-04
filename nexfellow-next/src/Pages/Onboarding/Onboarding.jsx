@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/axios';
 import styles from './Onboarding.module.css';
-import { Country, State } from 'country-state-city';
+import { Country, State, City } from 'country-state-city';
 
 const STEPS_CONFIG = [
   { name: "Welcome",        desc: "Get started",              icon: "🏠" },
@@ -38,6 +38,7 @@ export default function Onboarding() {
   const [profile, setProfile]             = useState({ fname: '', lname: '', handle: '', email: '', bio: '' });
   const [countryIso, setCountryIso]       = useState('');
   const [stateIso, setStateIso]           = useState('');
+  const [cityName, setCityName]           = useState('');
 
   // Username availability check
   const [usernameAvailable, setUsernameAvailable] = useState(null); // null = unchecked
@@ -138,7 +139,10 @@ export default function Onboarding() {
         lastName:   profile.lname,
         username:   profile.handle.replace(/^@/, ''),
         email:      profile.email,
-        location:   [State.getStateByCodeAndCountry(stateIso, countryIso)?.name, Country.getCountryByCode(countryIso)?.name].filter(Boolean).join(', '),
+        city:       cityName,
+        state:      State.getStateByCodeAndCountry(stateIso, countryIso)?.name || '',
+        country:    Country.getCountryByCode(countryIso)?.name || '',
+        location:   [cityName, State.getStateByCodeAndCountry(stateIso, countryIso)?.name, Country.getCountryByCode(countryIso)?.name].filter(Boolean).join(', '),
         bio:        profile.bio,
         skills,
         cofounderAvailability:  AVAIL_MAP[availability] || 'open-to-conversations',
@@ -332,11 +336,12 @@ export default function Onboarding() {
               <div className={`${styles["field"]} ${styles["field-row"]}`}>
                 <div>
                   <label>Country</label>
-                  <select 
+                  <select
                     value={countryIso}
                     onChange={(e) => {
                       setCountryIso(e.target.value);
                       setStateIso("");
+                      setCityName("");
                     }}
                   >
                     <option value="">Select Country</option>
@@ -347,9 +352,12 @@ export default function Onboarding() {
                 </div>
                 <div>
                   <label>State / Region</label>
-                  <select 
+                  <select
                     value={stateIso}
-                    onChange={(e) => setStateIso(e.target.value)}
+                    onChange={(e) => {
+                      setStateIso(e.target.value);
+                      setCityName("");
+                    }}
                     disabled={!countryIso}
                   >
                     <option value="">Select State</option>
@@ -358,6 +366,19 @@ export default function Onboarding() {
                     ))}
                   </select>
                 </div>
+              </div>
+              <div className={styles["field"]}>
+                <label>City</label>
+                <select
+                  value={cityName}
+                  onChange={(e) => setCityName(e.target.value)}
+                  disabled={!stateIso}
+                >
+                  <option value="">Select City</option>
+                  {stateIso && City.getCitiesOfState(countryIso, stateIso).map(c => (
+                    <option key={c.name} value={c.name}>{c.name}</option>
+                  ))}
+                </select>
               </div>
               <div className={styles["field"]}>
                 <label>Short bio <span style={{ color: "var(--t4)", fontWeight: "400", textTransform: "none", letterSpacing: "0" }}>(what are you building?)</span></label>
@@ -560,7 +581,7 @@ export default function Onboarding() {
                     </div>
                   </div>
                   <div className={styles["pp-name"]}>{profile.fname || profile.lname ? `${profile.fname} ${profile.lname}` : "Your Name"}</div>
-                  <div className={styles["pp-handle"]}>{profile.handle ? `@${profile.handle.replace(/^@/, '')}` : "@username"} · {[State.getStateByCodeAndCountry(stateIso, countryIso)?.name, Country.getCountryByCode(countryIso)?.name].filter(Boolean).join(', ') || "City, Country"}</div>
+                  <div className={styles["pp-handle"]}>{profile.handle ? `@${profile.handle.replace(/^@/, '')}` : "@username"} · {[cityName, State.getStateByCodeAndCountry(stateIso, countryIso)?.name, Country.getCountryByCode(countryIso)?.name].filter(Boolean).join(', ') || "City, State, Country"}</div>
                   <div className={styles["pp-bio"]}>{profile.bio || "Your short bio describing what you are building."}</div>
                   <div className={styles["pp-chips"]}>
                     {skills.slice(0, 3).map(skill => <div key={skill} className={styles["pp-chip"]}>{skill}</div>)}
