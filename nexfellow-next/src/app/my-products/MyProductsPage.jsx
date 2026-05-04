@@ -241,6 +241,7 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate }) {
   const [reviewsLoading, setReviewsLoading] = useState(false);
   const [reviewsFetched, setReviewsFetched] = useState(false);
   const [actionLoading,  setActionLoading]  = useState(false);
+  const [actionError,    setActionError]    = useState('');
 
   const stageBadge  = getStageBadge(product);
   const statusBadge = getStatusBadge(product.status);
@@ -273,11 +274,26 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate }) {
   const handleSubmit = async (e) => {
     e.stopPropagation();
     setActionLoading(true);
+    setActionError('');
     try {
       const res = await api.post(`/products/${product._id}/submit`);
       onProductUpdate?.({ ...product, ...res.data.product });
     } catch (err) {
-      console.error('Submit failed', err);
+      setActionError(err?.response?.data?.message || 'Submit failed');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleResubmit = async (e) => {
+    e.stopPropagation();
+    setActionLoading(true);
+    setActionError('');
+    try {
+      const res = await api.post(`/products/${product._id}/submit`);
+      onProductUpdate?.({ ...product, ...res.data.product });
+    } catch (err) {
+      setActionError(err?.response?.data?.message || 'Re-submit failed');
     } finally {
       setActionLoading(false);
     }
@@ -316,20 +332,28 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate }) {
         <td className="mp-td mp-td-action" onClick={e => e.stopPropagation()}>
           <div className="mp-action-cell">
             <div className="mp-action-btns">
-              {(product.status === 'launched' || product.status === 'in_review') && (
-                <>
-                  <button className="mp-action-resubmit">Re-submit</button>
-                  <button className="mp-action-analysis">Analysis</button>
-                </>
-              )}
               {product.status === 'draft' && (
                 <button className="mp-action-submit" onClick={handleSubmit} disabled={actionLoading}>
                   {actionLoading ? '…' : 'Submit'}
                 </button>
               )}
+              {product.status === 'in_review' && (
+                <span className="mp-status-label">In Review</span>
+              )}
+              {product.status === 'launched' && (
+                <button className="mp-action-resubmit" onClick={handleResubmit} disabled={actionLoading}>
+                  {actionLoading ? '…' : 'Re-submit'}
+                </button>
+              )}
+              {(product.status === 'in_review' || product.status === 'launched') && (
+                <button className="mp-action-analysis" onClick={e => { e.stopPropagation(); onToggle(); }}>
+                  Analysis
+                </button>
+              )}
             </div>
+            {actionError && <div className="mp-action-error">{actionError}</div>}
             <div className="mp-action-icons">
-              <button className="mp-icon-btn" title="Analytics">
+              <button className="mp-icon-btn" title="Analytics" onClick={e => { e.stopPropagation(); onToggle(); }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="20" x2="18" y2="10" />
                   <line x1="12" y1="20" x2="12" y2="4" />
@@ -754,10 +778,13 @@ function NewSubmissionModal({ onClose, onCreated }) {
         specificQuestion: form.specificQuestion,
         productUrl:       `https://${form.productUrl}`,
         ...(form.demoVideo && { demoVideo: `https://${form.demoVideo}` }),
-        status:           'in_review',
       };
-      const res = await api.post('/products', payload);
-      onCreated?.(res.data);
+      // Step 1: create as draft
+      const createRes = await api.post('/products', payload);
+      const productId = createRes.data._id;
+      // Step 2: submit for review (sets status → in_review and launchedAt)
+      const submitRes = await api.post(`/products/${productId}/submit`);
+      onCreated?.(submitRes.data.product);
       onClose();
     } catch (err) {
       setError(err?.response?.data?.message || 'Submission failed. Please try again.');

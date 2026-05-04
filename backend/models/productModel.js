@@ -130,6 +130,7 @@ productSchema.pre("save", function (next) {
   if (this.isModified("status")) {
     if (this.status === "in_review") {
       if (!this.submittedAt) this.submittedAt = new Date();
+      if (!this.launchedAt) this.launchedAt = new Date();
       this.reviewRound = (this.reviewRound || 0) + 1;
     }
     if (this.status === "launched" && !this.launchedAt) {

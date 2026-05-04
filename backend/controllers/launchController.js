@@ -25,7 +25,7 @@ const getLaunches = async (req, res) => {
   const pageNum = Math.max(1, parseIntSafe(page, 1));
   const limitNum = Math.min(50, Math.max(1, parseIntSafe(limit, 20)));
 
-  const match = { status: "launched" };
+  const match = { status: { $in: ["in_review", "launched"] } };
 
   const now = new Date();
   if (tab === "today") {
@@ -142,7 +142,7 @@ const getLiveLaunches = async (_req, res) => {
   cutoff.setHours(cutoff.getHours() - 48);
 
   const products = await Product.aggregate([
-    { $match: { status: "launched", launchedAt: { $gte: cutoff } } },
+    { $match: { status: { $in: ["in_review", "launched"] }, launchedAt: { $gte: cutoff } } },
     { $sort: { upvoteCount: -1, launchedAt: -1 } },
     { $limit: 5 },
     {
@@ -179,7 +179,7 @@ const getLaunchStats = async (_req, res) => {
   startOfDay.setHours(0, 0, 0, 0);
 
   const [launchStats] = await Product.aggregate([
-    { $match: { status: "launched", launchedAt: { $gte: startOfDay } } },
+    { $match: { status: { $in: ["in_review", "launched"] }, launchedAt: { $gte: startOfDay } } },
     {
       $group: {
         _id: null,
@@ -211,7 +211,7 @@ const getLaunchById = async (req, res) => {
   assertValidId(req.params.id);
 
   const product = await Product.findOne(
-    { _id: req.params.id, status: "launched" },
+    { _id: req.params.id, status: { $in: ["in_review", "launched"] } },
     { upvotes: 0 } // never send voter IDs to clients
   ).populate("owner", "name username picture");
 
@@ -289,7 +289,7 @@ const toggleUpvote = async (req, res) => {
 
   // Guard: owner cannot upvote their own product.
   const product = await Product.findOne(
-    { _id: req.params.id, status: "launched" },
+    { _id: req.params.id, status: { $in: ["in_review", "launched"] } },
     { owner: 1, upvotes: 1 }
   );
   if (!product) throw new ExpressError("Launch not found", 404);
@@ -299,7 +299,7 @@ const toggleUpvote = async (req, res) => {
   // Atomic toggle: attempt to add the upvote only if user is NOT already in the array.
   // This eliminates the read-then-write race condition entirely.
   const added = await Product.findOneAndUpdate(
-    { _id: product._id, status: "launched", upvotes: { $ne: userId } },
+    { _id: product._id, status: { $in: ["in_review", "launched"] }, upvotes: { $ne: userId } },
     { $addToSet: { upvotes: userId }, $inc: { upvoteCount: 1 } },
     { new: true, select: "upvoteCount" }
   );
@@ -310,7 +310,7 @@ const toggleUpvote = async (req, res) => {
 
   // User was already in the array — remove the upvote atomically.
   const removed = await Product.findOneAndUpdate(
-    { _id: product._id, status: "launched", upvotes: userId },
+    { _id: product._id, status: { $in: ["in_review", "launched"] }, upvotes: userId },
     { $pull: { upvotes: userId }, $inc: { upvoteCount: -1 } },
     { new: true, select: "upvoteCount" }
   );

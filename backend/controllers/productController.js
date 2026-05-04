@@ -295,8 +295,8 @@ const submitProduct = async (req, res) => {
   if (!product) throw new ExpressError("Product not found", 404);
   if (product.owner.toString() !== req.userId)
     throw new ExpressError("Forbidden", 403);
-  if (product.status !== "draft")
-    throw new ExpressError("Only draft products can be submitted", 400);
+  if (!["draft", "launched"].includes(product.status))
+    throw new ExpressError("Only draft or launched products can be submitted", 400);
 
   product.status = "in_review";
   await product.save();
