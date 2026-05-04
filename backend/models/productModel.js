@@ -91,6 +91,7 @@ const productSchema = new Schema(
         message: "Maximum 5 screenshots allowed",
       },
     },
+    logo: { type: String, default: "" },
     status: {
       type: String,
       enum: PRODUCT_STATUSES,
