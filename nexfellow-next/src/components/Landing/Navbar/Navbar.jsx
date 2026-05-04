@@ -75,7 +75,7 @@ export default function Navbar() {
           {/* Desktop links */}
           <div style={{ display: "flex", alignItems: "center", gap: 36 }}>
             <Link href="/"             style={navLink("/")}>Home</Link>
-            <Link href="#how-it-works" style={navLink("#how-it-works")}>How it works</Link>
+            <Link href="/features" style={navLink("/features")}>Features</Link>
             <Link href="/mission"      style={navLink("/mission")}>Mission</Link>
             <Link href="/blogs"        style={navLink("/blogs")}>Blogs</Link>
           </div>
