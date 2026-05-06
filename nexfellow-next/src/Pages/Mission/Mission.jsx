@@ -1,27 +1,25 @@
 import React from "react";
-import Hero from "../../components/Mission/Hero/Hero";
-import style from "./Mission.module.css";
-import GetMoreWithCommunity from "../../components/Mission/GetMoreWithGCCommunity/GetMoreWithGCCommunity";
-import ContactCTA from "../../components/Landing/ContactCTA/ContactCTA";
-import Footer from "../../components/Landing/Footer/Footer";
-import Values from "../../components/Mission/Values/Values";
 import Navbar from "../../components/Landing/Navbar/Navbar";
-import WhatDrives from "../../components/Mission/WhatDrivesUs/WhatDrives";
-import MissonAndVision from "../../components/Mission/MissonAndVision/MissonAndVision";
+import Footer from "../../components/Landing/Footer/Footer";
+import CtaBanner from "../../components/Landing/CtaBanner/CtaBanner";
+import MissionHero from "../../components/Mission/MissionHero/MissionHero";
+import ProblemSection from "../../components/Mission/ProblemSection/ProblemSection";
+import ManifestoSection from "../../components/Mission/ManifestoSection/ManifestoSection";
+import SixThingsSection from "../../components/Mission/SixThingsSection/SixThingsSection";
+import FounderSection from "../../components/Mission/FounderSection/FounderSection";
+import { BG } from "../../components/Landing/shared/tokens";
 
 const Mission = () => {
   return (
-    <div className={style.mission}>
+    <div style={{ background: BG, minHeight: "100vh" }}>
       <Navbar />
-      <div className={style.container}>
-        <Hero />
-        <WhatDrives />
-        <MissonAndVision />
-        {/* <GetMoreWithCommunity /> */}
-        <Values />
-        {/* <ContactCTA /> */}
-        <Footer />
-      </div>
+      <MissionHero />
+      <ProblemSection />
+      <ManifestoSection />
+      <SixThingsSection />
+      <FounderSection />
+      <CtaBanner />
+      <Footer />
     </div>
   );
 };
