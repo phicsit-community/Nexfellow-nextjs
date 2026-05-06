@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const OnboardingProfile = require("../models/OnboardingProfile");
+const CreditService = require("../services/creditService");
 
 /**
  * @route   POST /api/onboarding/submit
@@ -148,6 +149,24 @@ module.exports.submitOnboarding = async (req, res) => {
       name: `${firstName} ${lastName}`,
       username: cleanUsername,
     });
+
+    // One-time profile completion bonus (idempotency key prevents re-award on retry)
+    CreditService.award({
+      userId: userId.toString(),
+      eventCode: "PROFILE_COMPLETE",
+      idempotencyKey: `PROFILE_COMPLETE:${userId}`,
+    }).catch((err) => console.error("Credit (profile complete):", err.message));
+
+    // Per-platform social link bonus — once per platform, safe to retry
+    for (const platform of ["twitter", "github", "linkedin"]) {
+      if (safeSocialLinks?.[platform]) {
+        CreditService.award({
+          userId: userId.toString(),
+          eventCode: "SOCIAL_LINK",
+          idempotencyKey: `SOCIAL_LINK:${userId}:${platform}`,
+        }).catch((err) => console.error(`Credit (social link ${platform}):`, err.message));
+      }
+    }
 
     // Set isOnboarded cookie so the frontend can check without an API call
     const isProduction =

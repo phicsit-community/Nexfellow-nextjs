@@ -115,4 +115,10 @@ router.get(
   catchAsync(admin.getActiveUserCount)
 );
 
+router.post(
+  "/credits/penalize",
+  isAdmin,
+  catchAsync(admin.penalizeUser)
+);
+
 module.exports = router;

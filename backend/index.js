@@ -54,6 +54,11 @@ cron.schedule(
 
 console.log("🔄 Post popularity cron job scheduled (every 30 minutes)");
 
+// Inactivity penalty: runs daily at 02:00 UTC
+const inactivityPenaltyCron = require("./jobs/inactivityPenaltyCron");
+cron.schedule("0 2 * * *", inactivityPenaltyCron, { timezone: "UTC" });
+console.log("🔄 Inactivity penalty cron job scheduled (daily 02:00 UTC)");
+
 // if debug
 // if (process.env.NODE_ENV === "development") {
 //   app.use(requestLogger);
@@ -268,6 +273,9 @@ app.use("/blogs", blogRoutes);
 
 const productRoutes = require("./routes/productRoutes");
 app.use("/products", productRoutes);
+
+const creditRoutes = require("./routes/creditRoutes");
+app.use("/credits", creditRoutes);
 
 const launchRoutes = require("./routes/launchRoutes");
 app.use("/launches", launchRoutes);
