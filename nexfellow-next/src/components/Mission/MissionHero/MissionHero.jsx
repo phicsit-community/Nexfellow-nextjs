@@ -92,6 +92,7 @@ export default function MissionHero() {
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
           gap: 0,
+          background: "#0d2035",
           border: `1px solid rgba(255,255,255,0.1)`,
           borderRadius: 16,
           overflow: "hidden",
