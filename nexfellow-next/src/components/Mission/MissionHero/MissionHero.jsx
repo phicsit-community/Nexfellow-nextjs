@@ -37,7 +37,7 @@ export default function MissionHero() {
         pointerEvents: "none",
       }} />
 
-      <FadeIn>
+      <FadeIn style={{ position: "relative", zIndex: 5 }}>
         {/* Badge */}
         <div style={{
           display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 32,
@@ -87,7 +87,7 @@ export default function MissionHero() {
       </FadeIn>
 
       {/* Stats bar */}
-      <FadeIn delay={0.2} style={{ width: "100%", display: "flex", justifyContent: "center", paddingTop: 64 }}>
+      <FadeIn delay={0.2} style={{ position: "relative", zIndex: 5, width: "100%", display: "flex", justifyContent: "center", paddingTop: 64 }}>
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
