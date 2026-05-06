@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import FadeIn from "../../Landing/shared/FadeIn";
+import DotGrid from "../../Landing/shared/DotGrid";
 import { T, MUTED, TEXT, BORDER } from "../../Landing/shared/tokens";
 
 const STATS = [
@@ -24,14 +25,7 @@ export default function MissionHero() {
       textAlign: "center",
       overflow: "hidden",
     }}>
-      {/* Star dots background */}
-      <div style={{
-        position: "absolute", inset: 0,
-        backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)`,
-        backgroundSize: "40px 40px",
-        pointerEvents: "none",
-        opacity: 0.4,
-      }} />
+      <DotGrid />
 
       {/* Teal glow center */}
       <div style={{
