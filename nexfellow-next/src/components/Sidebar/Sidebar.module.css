@@ -521,15 +521,14 @@
 
 /* CTA Banner */
 .ctaBanner {
-  background: linear-gradient(135deg, #0bd2af, #06b6d4);
   border-radius: 12px;
-  padding: 12px;
-  margin: 16px 14px;
+  padding: 1px;
+  margin: 1px 10px;
   display: flex;
   flex-direction: column;
   color: white;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(11, 210, 175, 0.3);
+
   transition: transform 0.2s;
   text-decoration: none;
 }
