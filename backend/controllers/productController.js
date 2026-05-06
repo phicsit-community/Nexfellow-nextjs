@@ -9,6 +9,15 @@ const { REVIEW_TAGS } = require("../models/productReviewModel");
 const NotificationService = require("../utils/notificationService");
 const User = require("../models/userModel");
 
+const getBunnyStoragePath = (cdnUrl) => {
+  try {
+    const url = new URL(cdnUrl);
+    return url.pathname.startsWith("/") ? url.pathname.slice(1) : url.pathname;
+  } catch {
+    return null;
+  }
+};
+
 const MIN_REVIEWS_TO_LAUNCH = 5;
 
 // Fields the owner can update before launch (all editable fields)
@@ -393,9 +402,19 @@ const deleteProduct = async (req, res) => {
   if (product.owner.toString() !== req.userId)
     throw new ExpressError("Forbidden", 403);
 
-  product.status = "archived";
-  await product.save();
-  res.status(200).json({ message: "Product archived" });
+  if (product.logo) {
+    const storagePath = getBunnyStoragePath(product.logo);
+    if (storagePath) await removeFromBunny(storagePath);
+  }
+  for (const screenshotUrl of product.screenshots) {
+    const storagePath = getBunnyStoragePath(screenshotUrl);
+    if (storagePath) await removeFromBunny(storagePath);
+  }
+
+  await ProductReview.deleteMany({ product: product._id });
+  await product.deleteOne();
+
+  res.status(200).json({ message: "Product deleted" });
 };
 
 // POST /products/:id/screenshots
