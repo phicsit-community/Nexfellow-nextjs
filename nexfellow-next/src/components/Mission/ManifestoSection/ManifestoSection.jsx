@@ -27,7 +27,7 @@ const ITEMS = [
 export default function ManifestoSection() {
   return (
     <section style={{ padding: "100px 24px", position: "relative" }}>
-      <div style={{ maxWidth: 860, margin: "0 auto" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         <FadeIn>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
@@ -47,7 +47,7 @@ export default function ManifestoSection() {
           </h2>
         </FadeIn>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+        <div style={{ display: "flex", paddingLeft: 200, flexDirection: "column", gap: 0 }}>
           {ITEMS.map((item, i) => (
             <FadeIn key={i} delay={i * 0.08}>
               <div style={{
