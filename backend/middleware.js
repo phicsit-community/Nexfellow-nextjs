@@ -8,6 +8,16 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 const tokenUtils = require("./utils/token");
+const Profile = require("./models/profileModel");
+
+// Fire-and-forget: keep lastActivityAt fresh for the inactivity cron
+function touchActivity(userId) {
+  const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+  Profile.findOneAndUpdate(
+    { userId, lastActivityAt: { $lt: fiveMinutesAgo } },
+    { $set: { lastActivityAt: new Date() } }
+  ).catch(() => {});
+}
 
 const isAuthenticated = async (req, res, next) => {
   try {
@@ -42,6 +52,7 @@ const isAuthenticated = async (req, res, next) => {
         // Attach user to request object
         req.userId = user.id;
         req.user = user;
+        touchActivity(user.id);
         return next();
       }
     }
@@ -105,6 +116,7 @@ const isAuthenticated = async (req, res, next) => {
       // Attach user to request object
       req.userId = user.id;
       req.user = user;
+      touchActivity(user.id);
       return next();
     }
 

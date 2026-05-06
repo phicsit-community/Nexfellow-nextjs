@@ -18,6 +18,7 @@ const otpManager = require("../utils/otpManager");
 const backendURL = process.env.BACKEND_DOMAIN;
 const isProduction = process.env.NODE_ENV === "production" || !!process.env.RENDER;
 const { uploadOnBunny, removeFromBunny } = require("../utils/attachments");
+const CreditService = require("../services/creditService");
 const defaultProfilePicture =
   "https://nexfellow.b-cdn.net/defaults/default-profile.png";
 const defaultBanner = "https://nexfellow.b-cdn.net/defaults/default-banner.png";
@@ -361,13 +362,18 @@ module.exports.verifyRegistrationOtp = async (req, res) => {
   await user.save();
 
   if (referralcode) {
-    const referrerExists = await Profile.findOne({ referralCodeString: referralcode });
-    if (referrerExists) {
-      await Profile.findOneAndUpdate(
-        { referralCodeString: referralcode },
-        { $inc: { totalUsersReferred: 1, coin: 1 } },
-        { new: true }
-      );
+    const referrerProfile = await Profile.findOneAndUpdate(
+      { referralCodeString: referralcode },
+      { $inc: { totalUsersReferred: 1 } },
+      { new: true }
+    );
+    if (referrerProfile) {
+      CreditService.award({
+        userId: referrerProfile.userId.toString(),
+        eventCode: "REFERRAL_JOIN",
+        idempotencyKey: `REFERRAL_JOIN:${referrerProfile.userId}:${user._id}`,
+        entityRef: { model: "User", id: user._id },
+      }).catch((err) => console.error("Credit (referral join):", err.message));
     }
   }
 

@@ -8,6 +8,7 @@ const { FEEDBACK_FOCUS_OPTIONS } = require("../models/productModel");
 const { REVIEW_TAGS } = require("../models/productReviewModel");
 const NotificationService = require("../utils/notificationService");
 const User = require("../models/userModel");
+const CreditService = require("../services/creditService");
 
 const getBunnyStoragePath = (cdnUrl) => {
   try {
@@ -307,6 +308,21 @@ const submitProduct = async (req, res) => {
   if (!["draft", "launched"].includes(product.status))
     throw new ExpressError("Only draft or launched products can be submitted", 400);
 
+  // Credit gate: submitting for feedback costs 20 credits
+  const creditBalance = await CreditService.getBalance(req.userId);
+  if (creditBalance < 20) {
+    throw new ExpressError(
+      `Insufficient credits — 20 required to submit for feedback (you have ${creditBalance})`,
+      402
+    );
+  }
+  await CreditService.spend({
+    userId: req.userId,
+    eventCode: "SUBMIT_FOR_FEEDBACK",
+    idempotencyKey: `SUBMIT_FOR_FEEDBACK:${req.userId}:${product._id}`,
+    entityRef: { model: "Product", id: product._id },
+  });
+
   product.status = "in_review";
   await product.save();
 
@@ -500,6 +516,14 @@ const createReview = async (req, res) => {
   await review.save();
   await review.populate("reviewer", "name username picture");
   res.status(201).json(review);
+
+  // Fire-and-forget: credit failure must never break the review submission
+  CreditService.award({
+    userId: req.userId,
+    eventCode: "REVIEW_FEEDBACK",
+    idempotencyKey: `REVIEW_FEEDBACK:${req.userId}:${product._id}`,
+    entityRef: { model: "Product", id: product._id },
+  }).catch((err) => console.error("Credit (createReview):", err.message));
 };
 
 // GET /products/:id/reviews
@@ -581,7 +605,26 @@ const markHelpful = async (req, res) => {
   );
 
   if (marked) {
-    return res.status(200).json({ helpfulCount: marked.helpfulCount, marked: true });
+    res.status(200).json({ helpfulCount: marked.helpfulCount, marked: true });
+
+    // Credit the voter +2 (fire-and-forget)
+    CreditService.award({
+      userId: req.userId,
+      eventCode: "REVIEW_HELPFUL_VOTE",
+      idempotencyKey: `REVIEW_HELPFUL_VOTE:${req.userId}:${review._id}`,
+      entityRef: { model: "ProductReview", id: review._id },
+    }).catch((err) => console.error("Credit (helpful vote):", err.message));
+
+    // Milestone +30 when the review crosses 10 helpful votes (fires exactly once)
+    if (marked.helpfulCount === 10) {
+      CreditService.award({
+        userId: review.reviewer.toString(),
+        eventCode: "REVIEW_10_HELPFUL",
+        idempotencyKey: `REVIEW_10_HELPFUL:${review.reviewer}:${review._id}`,
+        entityRef: { model: "ProductReview", id: review._id },
+      }).catch((err) => console.error("Credit (10 helpful milestone):", err.message));
+    }
+    return;
   }
 
   const unmarked = await ProductReview.findOneAndUpdate(
