@@ -1,0 +1,8 @@
+import { Playfair_Display } from "next/font/google";
+
+export const playfair = Playfair_Display({
+  subsets: ["latin"],
+  display: "swap",
+  style: ["normal", "italic"],
+  variable: "--font-playfair",
+});

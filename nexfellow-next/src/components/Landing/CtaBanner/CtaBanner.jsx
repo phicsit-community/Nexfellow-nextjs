@@ -3,6 +3,7 @@
 import Link from "next/link";
 import FadeIn from "../shared/FadeIn";
 import { T, MUTED, TEXT, BORDER, DARKER } from "../shared/tokens";
+import { playfair } from "@/app/fonts";
 
 export default function CtaBanner() {
   return (
@@ -61,7 +62,12 @@ export default function CtaBanner() {
             lineHeight: 1.15, letterSpacing: "-1px", marginBottom: 16,
           }}>
             Stop Shipping <br />Into{" "}
-            <em style={{ color: "#f59e0b", fontStyle: "italic" }}>Silence</em>
+            <em className={playfair.className} style={{
+              fontStyle: "italic",
+              fontWeight: 400,
+              color: "#F6B64C",
+              letterSpacing: "-3px",
+            }}>Silence</em>
           </h2>
 
           <p style={{ color: MUTED, fontSize: 15, lineHeight: 1.7, marginBottom: 32 }}>

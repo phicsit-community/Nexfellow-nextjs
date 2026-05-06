@@ -1,6 +1,7 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/providers/Providers";
+import { playfair } from "./fonts";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -46,7 +47,7 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: themeScript }}
         />
       </head>
-      <body id="root" className={poppins.className}>
+      <body id="root" className={`${poppins.className} ${playfair.variable}`}>
         <Providers>
           {children}
         </Providers>
