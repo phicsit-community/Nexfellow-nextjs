@@ -81,7 +81,8 @@ function TestimonialCard({ card, delay = 0 }) {
       style={{
         background: "rgba(13,32,53,0.88)", border: `1px solid ${BORDER}`,
         borderRadius: 14, padding: "16px 18px", width: 240,
-        backdropFilter: "blur(12px)", boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
+        backdropFilter: "blur(12px)",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.45), 0 0 30px rgba(20,184,166,0.10), 0 0 60px rgba(20,184,166,0.06)",
         rotate: rotate,
       }}
     >
@@ -171,7 +172,7 @@ export default function Hero() {
       ))}
 
       {/* Center content */}
-      <div style={{ position: "relative", zIndex: 5, textAlign: "center", maxWidth: 720, padding: "0 24px" }}>
+      <div style={{ position: "relative", zIndex: 5, textAlign: "center", maxWidth: 800, padding: "0 24px" }}>
 
         {/* Live badge */}
         <motion.div
@@ -191,24 +192,26 @@ export default function Hero() {
         <motion.h1
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.7 }}
           style={{
-            fontSize: "clamp(40px, 6vw, 72px)", fontWeight: 800, lineHeight: 1.1,
+             maxWidth: "100%", fontSize: "clamp(40px, 6vw, 72px)", fontWeight: 800, lineHeight: 1.1,
             color: TEXT, marginBottom: 20, letterSpacing: "-1.5px",
           }}
         >
-          Get{" "}
-          <span style={{ color: T }}>
-            <TrueFocus
-              sentence="Real Feedback"
-              manualMode={false}
-              blurAmount={5}
-              borderColor={T}
-              glowColor={`rgba(20,184,166,0.6)`}
-              animationDuration={0.5}
-              pauseBetweenAnimations={1}
-            />
+          <span style={{ display: "block" }}>
+            Get{" "}
+            <span style={{ color: T, display: "inline-flex", verticalAlign: "middle" }}>
+              <TrueFocus
+                sentence="Real Feedback"
+                manualMode={false}
+                blurAmount={2}
+                borderColor={T}
+                glowColor={`rgba(20,184,166,0.6)`}
+                animationDuration={0.5}
+                pauseBetweenAnimations={1}
+              />
+            </span>
+            {" "}From
           </span>
-          From<br />
-          Builders Who Get it
+          <span style={{ display: "block" }}>Builders Who Get it</span>
         </motion.h1>
 
         {/* Subtitle */}
