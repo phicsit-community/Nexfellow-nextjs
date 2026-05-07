@@ -8,7 +8,7 @@ import { T, BG, MUTED, TEXT } from "../shared/tokens";
 export default function EarlyAdopterSection() {
   return (
     <section style={{ background: BG, padding: "120px 24px" }}>
-      <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1.08fr", gap: 48, alignItems: "center" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1.35fr", gap: 48, alignItems: "center" }}>
 
         {/* Left — text */}
         <FadeIn>
@@ -42,7 +42,7 @@ export default function EarlyAdopterSection() {
             alt="Early Adopter Board dashboard"
             width={820}
             height={574}
-            style={{ width: "114%", height: "auto", borderRadius: 16, mixBlendMode: "lighten", justifySelf: "end" }}
+            style={{ width: "130%", height: "auto", borderRadius: 16, mixBlendMode: "lighten", justifySelf: "end" }}
           />
 
         </FadeIn>
