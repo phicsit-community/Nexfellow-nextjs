@@ -9,6 +9,7 @@ const fs = require("fs");
 const path = require("path");
 const tokenUtils = require("./utils/token");
 const Profile = require("./models/profileModel");
+const { getUserPlan } = require("./utils/planUtils");
 
 // Fire-and-forget: keep lastActivityAt fresh for the inactivity cron
 function touchActivity(userId) {
@@ -509,11 +510,49 @@ const upload = multer({
   limits: { fileSize: 3 * 1024 * 1024 }, // 3MB
 });
 
+/**
+ * Middleware factory that enforces a plan-based limit on a numeric feature.
+ *
+ * Usage:
+ *   requirePlanFeature("screenshotsPerProduct", async (req) => product.screenshots.length)
+ *   requirePlanFeature("postCharLimit", 0)   // compare current=0 just to expose limit on req
+ *
+ * The factory returns a middleware that:
+ *   1. Resolves the user's effective plan via getUserPlan (checks expiry live).
+ *   2. Evaluates getCurrentCount (either a static number or an async fn(req) → number).
+ *   3. Returns 403 if current >= plan[feature], otherwise attaches req.planFeatureLimit and calls next().
+ */
+function requirePlanFeature(feature, getCurrentCount) {
+  return async (req, res, next) => {
+    try {
+      const plan = getUserPlan(req.user);
+      const current =
+        typeof getCurrentCount === "function"
+          ? await getCurrentCount(req)
+          : (getCurrentCount ?? 0);
+
+      if (current >= plan[feature]) {
+        return res.status(403).json({
+          error: `Your ${req.user.subscriptionTier} plan allows a maximum of ${plan[feature]} for ${feature}.`,
+          limit: plan[feature],
+          current,
+        });
+      }
+
+      req.planFeatureLimit = plan[feature];
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
+}
+
 module.exports = {
   isAdmin,
   isClient,
   isCommunityCreator,
   isOwnerOrModeratorWithRole,
+  requirePlanFeature,
   upload,
   isAuthenticated,
   setUserIfLoggedIn,

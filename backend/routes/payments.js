@@ -1,15 +1,14 @@
-const express = require("express")
-const router = express.Router()
-const paymentController = require("../controllers/Payments")
-const { isClient } = require("../middleware")
+const express = require("express");
+const router = express.Router();
+const paymentController = require("../controllers/Payments");
+const { isAuthenticated } = require("../middleware");
 
+// Authenticated: creates a Dodo hosted checkout session.
+// Returns { checkoutUrl } for the frontend to redirect the user.
+router.post("/checkout", isAuthenticated, paymentController.createCheckoutSession);
 
-router.route("/capturePayment")
-    .post(isClient, paymentController.createOrder)
+// Unauthenticated: Dodo calls this directly with a signed webhook event.
+// Signature verification is done inside the controller.
+router.post("/webhook", paymentController.handleWebhook);
 
-    
-router.route("/verifyPayment")
-    .post(isClient, paymentController.verify)
-
-
-module.exports = router
+module.exports = router;

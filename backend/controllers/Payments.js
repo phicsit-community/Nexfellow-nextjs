@@ -1,152 +1,199 @@
-// const { instance } = require("../config/razorpay")
-// // const Course = require("../models/Course")
-// const crypto = require("crypto")
-// const User = require("../models/userModel")
+const crypto = require("crypto");
+const DodoPayments = require("dodopayments");
+const User = require("../models/userModel");
+const Subscription = require("../models/subscriptionModel");
+const { PLANS, VALID_PLAN_IDS, VALID_INTERVALS } = require("../constants/plans");
+const MailSender = require("../utils/mailSender");
 
+const dodo = new DodoPayments({
+  bearerToken: process.env.DODO_PAYMENTS_API_KEY,
+  environment:
+    process.env.NODE_ENV === "production" ? "live_mode" : "test_mode",
+});
 
-// exports.capturePayment = async (req, res) => {
+// POST /payments/checkout
+// Creates a Dodo Payments hosted checkout session for a subscription plan.
+// The client receives a checkoutUrl to redirect the user to.
+// Amount is NEVER taken from the client — it is defined by the Dodo product.
+module.exports.createCheckoutSession = async (req, res) => {
+  const { planId, interval } = req.body;
 
-// //   const userId = req.user.id
-//   let total_amount = 10
-// try {
-//     const cost=50000
-//     const amount = cost; // Amount in paise
-//     const currency = 'INR';
-//     const receipt = 'receipt_' + crypto.randomBytes(5).toString('hex'); 
-//     const order = await instance.orders.create({amount, currency, receipt});
-//     res.json(order);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Failed to create order' });
-//   }
-// }
-
-// // verify the payment
-// exports.verifyPayment = async (req, res) => {
-//   const razorpay_order_id = req.body?.razorpay_order_id
-//   const razorpay_payment_id = req.body?.razorpay_payment_id
-//   const razorpay_signature = req.body?.razorpay_signature
-
-
-//   const userId = req.userId;
-
-//   if (
-//     !razorpay_order_id ||
-//     !razorpay_payment_id ||
-//     !razorpay_signature ||
-//     !userId
-//   ) {
-//     return res.status(200).json({ success: false, message: "Payment Failed" })
-//   }
-
-//   let body = razorpay_order_id + "|" + razorpay_payment_id
-
-//   const expectedSignature = crypto
-//     .createHmac("sha256", process.env.RAZORPAY_SECRET)
-//     .update(body.toString())
-//     .digest("hex")
-
-//   if (expectedSignature === razorpay_signature) {
-//     console.log("Payment Verified")
-//     // find user by and then update the subscription tier
-//     // await User.findByIdAndUpdate
-
-//     const subscription= await User.findByIdAndUpdate(
-//       userId,
-//       {
-//         subscriptionTier: "bronze",
-//       },
-//       { new: true }
-
-//     )
-//     console.log(subscription);
-
-
-//     return res.status(200).json({ success: true, message: "Payment Verified", subscription })
-
-//   }
-
-
-//   return res.status(200).json({ success: false, message: "Payment Failed" })
-// }
-
-
-
-const Razorpay = require('razorpay');
-// const { v4: uuidv4 } = require('uuid');
-const User = require('../models/userModel');
-const crypto = require('crypto');
-// const profileModel = require('../models/profileModel');
-const ExpressError = require('../utils/ExpressError.js');
-// const uploadOnCloudinary = require('../utils/cloudinary');
-const MailSender = require('../utils/mailSender');
-// const fs = require('fs');
-// const path = require('path');
-// const PDFDocument = require('pdfkit');
-// const Invoice = require('../models/invoiceModel');
-// const userPlanStatus = require('../models/userPlanStatus');
-
-const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_SECRET,
-  });
-  
-module.exports.createOrder = async (req, res) => {
-
-    let {amount} = req.body;
-    const user = await User.findById(req.userId);
-    if(!user) {
-        throw new ExpressError("User not found", 400);
-    }
-
-
-    if(!amount) {
-        throw new ExpressError("Amount is required", 400);
-    }
-    
-    const options = {
-    //   amount: amount * 100, // amount in smallest currency unit
-      amount: amount * 1, // amount in smallest currency unit
-      currency: 'INR',
-      receipt: uuidv4(),
-    };
-
-    const order = await razorpay.orders.create(options);    
-    res.json({ order: order });
-};
-
-
-module.exports.verify = async (req, res) => {
-  const { response, plan } = req.body;
-  const userId = req.userId;
-  const user = await User.findById(userId);
-  const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET);
-
-  hmac.update(response.razorpay_order_id + "|" + response.razorpay_payment_id);
-  const generated_signature = hmac.digest('hex');
-
-  if (generated_signature === response.razorpay_signature) {
-    
-      user.subscriptionTier = plan.title;
-    
-      const sending = await MailSender(user.email, "Order Summary", 
-      `<p>Dear ${user.name},</p>
-      <p>Thank you for purchasing our ${plan.title} plan.</p>
-      <p>Attached is your invoice for your records.</p>
-      <p>Order Details:</p>
-      <ul>
-        <li>Order ID: ${response.razorpay_order_id}</li>
-        <li>Payment ID: ${response.razorpay_payment_id}</li>
-        <li>Plan: ${plan.title}</li>
-        <li>Amount: ₹${plan.price}</li>
-        <li>Date: ${new Date().toLocaleDateString()}</li>
-      </ul>
-      <p>Thank you for your purchase!</p>`);
-      
-      // Remove local invoice file after sending email
-
-      res.status(200).send('Payment verified successfully.');
-  } else {
-      res.status(400).send('Payment verification failed.');
+  if (!VALID_PLAN_IDS.includes(planId)) {
+    return res.status(400).json({ error: "Invalid plan." });
   }
+  if (!VALID_INTERVALS.includes(interval)) {
+    return res
+      .status(400)
+      .json({ error: "Invalid interval. Use 'monthly' or 'annual'." });
+  }
+
+  const productId = PLANS[planId].dodoProductIds[interval];
+  if (!productId) {
+    return res.status(400).json({ error: "Plan not available." });
+  }
+
+  const checkoutPayload = {
+    product_cart: [{ product_id: productId, quantity: 1 }],
+    metadata: {
+      userId: req.user._id.toString(),
+      planId,
+      interval,
+    },
+  };
+
+  if (req.user.dodoCustomerId) {
+    checkoutPayload.customer = { customer_id: req.user.dodoCustomerId };
+  }
+
+  const checkout = await dodo.checkoutSessions.create(checkoutPayload);
+  return res.json({ checkoutUrl: checkout.url });
 };
+
+// POST /payments/webhook  (NO auth middleware — Dodo calls this directly)
+// Verifies the HMAC-SHA256 signature, then routes the event to the correct handler.
+module.exports.handleWebhook = async (req, res) => {
+  const timestamp = req.headers["webhook-timestamp"];
+  const signature = req.headers["webhook-signature"];
+  const rawBody = req.rawBody;
+
+  if (!timestamp || !signature || !rawBody) {
+    return res.status(400).end();
+  }
+
+  const signedPayload = `${timestamp}.${rawBody}`;
+  const expected = crypto
+    .createHmac("sha256", process.env.DODO_PAYMENTS_WEBHOOK_KEY)
+    .update(signedPayload)
+    .digest("base64");
+
+  let isValid = false;
+  try {
+    isValid = crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expected)
+    );
+  } catch {
+    isValid = false;
+  }
+
+  if (!isValid) {
+    return res.status(401).json({ error: "Invalid webhook signature." });
+  }
+
+  let event;
+  try {
+    event = JSON.parse(rawBody);
+  } catch {
+    return res.status(400).json({ error: "Invalid JSON body." });
+  }
+
+  const { type, data } = event;
+  const meta = data?.metadata ?? {};
+
+  try {
+    if (type === "subscription.active" || type === "subscription.renewed") {
+      await activateSubscription(data, meta, type);
+    } else if (
+      type === "subscription.cancelled" ||
+      type === "subscription.expired"
+    ) {
+      await deactivateSubscription(data, type);
+    } else if (
+      type === "subscription.on_hold" ||
+      type === "subscription.failed"
+    ) {
+      await holdSubscription(data);
+    }
+    // All other events (disputes, refunds, license) are acknowledged but ignored
+  } catch (err) {
+    console.error("Webhook handler error:", err);
+    // Return 500 so Dodo retries the event
+    return res.status(500).end();
+  }
+
+  return res.status(200).json({ received: true });
+};
+
+async function activateSubscription(data, meta, eventType) {
+  const { userId, planId, interval } = meta;
+  if (!userId || !planId || !PLANS[planId]) return;
+
+  const user = await User.findById(userId).select(
+    "+dodoCustomerId +dodoSubscriptionId"
+  );
+  if (!user) return;
+
+  // Idempotency guard: skip if this exact payment was already processed
+  const paymentId = data.payment_id ?? data.id;
+  if (paymentId) {
+    const existing = await Subscription.findOne({ dodoPaymentId: paymentId });
+    if (existing) return;
+  }
+
+  const now = new Date();
+  const expiresAt = new Date(now);
+  expiresAt.setDate(expiresAt.getDate() + (interval === "annual" ? 365 : 30));
+
+  user.subscriptionTier = planId;
+  user.subscriptionExpiresAt = expiresAt;
+  user.subscriptionInterval = interval;
+  user.dodoCustomerId = data.customer_id ?? user.dodoCustomerId;
+  user.dodoSubscriptionId = data.subscription_id ?? user.dodoSubscriptionId;
+  user.verificationBadge = PLANS[planId].badge !== null;
+
+  const subscriptionRecord = {
+    userId: user._id,
+    plan: planId,
+    interval,
+    dodoSubscriptionId: data.subscription_id,
+    dodoPaymentId: paymentId || undefined,
+    dodoCustomerId: data.customer_id,
+    amountPaid: data.amount,
+    currency: data.currency,
+    status: "active",
+    startsAt: now,
+    expiresAt,
+    eventType,
+  };
+
+  await Promise.all([user.save(), Subscription.create(subscriptionRecord)]);
+
+  const planNames = { builder_pro: "Builder Pro", founder: "Founder" };
+  MailSender(
+    user.email,
+    `Your ${planNames[planId] ?? planId} subscription is active`,
+    `<p>Hi ${user.name},</p>
+     <p>Your <strong>${planNames[planId] ?? planId}</strong> (${interval}) subscription is now active.</p>
+     <p>It renews on <strong>${expiresAt.toDateString()}</strong>.</p>
+     <p>Thank you for supporting NexFellow!</p>`
+  ).catch(() => {});
+}
+
+async function deactivateSubscription(data, eventType) {
+  const subscription = await Subscription.findOne({
+    dodoSubscriptionId: data.subscription_id,
+    status: "active",
+  });
+  if (!subscription) return;
+
+  await User.findByIdAndUpdate(subscription.userId, {
+    subscriptionTier: "free",
+    subscriptionExpiresAt: null,
+    subscriptionInterval: null,
+    dodoSubscriptionId: null,
+    verificationBadge: false,
+  });
+
+  subscription.status =
+    eventType === "subscription.cancelled" ? "cancelled" : "expired";
+  await subscription.save();
+}
+
+async function holdSubscription(data) {
+  // Don't downgrade yet — Dodo will retry billing automatically.
+  // Just mark the subscription record so we can surface it in admin.
+  await Subscription.findOneAndUpdate(
+    { dodoSubscriptionId: data.subscription_id, status: "active" },
+    { status: "on_hold" }
+  );
+}
