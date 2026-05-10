@@ -117,12 +117,12 @@ const STEPS = [
 export default function HowItWorks() {
   return (
     <>
-      <section id="how-it-works" style={{ background: BG, padding: "100px 24px" }}>
+      <section id="how-it-works" className="how-it-works-section" style={{ background: BG, padding: "100px 24px" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
           {/* Header */}
           <FadeIn>
-            <div style={{ marginBottom: 64, textAlign: "center" }}>
+            <div className="how-it-works-header" style={{ marginBottom: 64, textAlign: "center" }}>
               <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
                 <div style={{ width: 28, height: 2, background: T }} />
                 <span style={{ color: T, fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>THE FLOW</span>
@@ -149,15 +149,17 @@ export default function HowItWorks() {
 
             {STEPS.map((s, i) => (
               <FadeIn key={i} delay={0.1 + i * 0.15}>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{
+                <div className="how-it-works-step" style={{ textAlign: "center" }}>
+                  {/* Desktop: icon on top */}
+                  <div className="how-it-works-icon" style={{
                     height: 170, display: "flex",
                     alignItems: "flex-end", justifyContent: "center",
                     marginBottom: 24,
                   }}>
                     {s.icon}
                   </div>
-                  <div style={{
+                  {/* Desktop: number centered */}
+                  <div className="how-it-works-num" style={{
                     width: 48, height: 48, borderRadius: "50%",
                     background: BG,
                     border: `2px solid ${T}`,
@@ -168,8 +170,10 @@ export default function HowItWorks() {
                     position: "relative", zIndex: 1,
                     boxShadow: `0 0 0 4px ${BG}, 0 0 16px rgba(20,184,166,0.3)`,
                   }}>{s.num}</div>
-                  <h3 style={{ color: TEXT, fontSize: 18, fontWeight: 700, marginBottom: 12 }}>{s.title}</h3>
-                  <p style={{ color: MUTED, fontSize: 14, lineHeight: 1.7 }}>{s.desc}</p>
+                  {/* Mobile-only: vertical line below number (hidden on last step) */}
+                  {i < STEPS.length - 1 && <div className="how-it-works-vline" />}
+                  <h3 className="how-it-works-title" style={{ color: TEXT, fontSize: 18, fontWeight: 700, marginBottom: 12 }}>{s.title}</h3>
+                  <p className="how-it-works-desc" style={{ color: MUTED, fontSize: 14, lineHeight: 1.7 }}>{s.desc}</p>
                 </div>
               </FadeIn>
             ))}
@@ -179,11 +183,81 @@ export default function HowItWorks() {
 
       <style>{`
         @media (max-width: 768px) {
-          .how-it-works-grid {
-            grid-template-columns: 1fr !important;
-            gap: 48px !important;
+          .how-it-works-section {
+            padding: 56px 20px !important;
+          }
+          .how-it-works-header {
+            margin-bottom: 36px !important;
           }
           .how-it-works-connector { display: none !important; }
+
+          /* Grid container — single column */
+          .how-it-works-grid {
+            grid-template-columns: 1fr !important;
+            gap: 0 !important;
+            background: none !important;
+          }
+
+          /* Each step: 2-column grid — [num/vline col] | [title/desc/icon col] */
+          .how-it-works-step {
+            display: grid !important;
+            grid-template-areas:
+              "num   title"
+              "vline desc"
+              "vline icon" !important;
+            grid-template-columns: 54px 1fr !important;
+            grid-template-rows: auto auto auto !important;
+            column-gap: 12px !important;
+            row-gap: 6px !important;
+            text-align: left !important;
+            padding-bottom: 32px !important;
+          }
+          .how-it-works-step:last-child {
+            padding-bottom: 0 !important;
+          }
+
+          .how-it-works-num {
+            grid-area: num !important;
+            width: 40px !important;
+            height: 40px !important;
+            font-size: 16px !important;
+            margin: 0 !important;
+            justify-self: center !important;
+            align-self: center !important;
+            position: relative !important;
+            z-index: 1 !important;
+          }
+
+          /* Line fills the combined height of desc + icon rows automatically */
+          .how-it-works-vline {
+            grid-area: vline !important;
+            display: block !important;
+            width: 2px !important;
+            justify-self: center !important;
+            background: linear-gradient(to bottom, rgba(20,184,166,0.6), rgba(20,184,166,0.15)) !important;
+            border-radius: 2px !important;
+          }
+
+          .how-it-works-title {
+            grid-area: title !important;
+            align-self: center !important;
+            margin-bottom: 0 !important;
+            font-size: 16px !important;
+          }
+          .how-it-works-desc {
+            grid-area: desc !important;
+            margin: 0 !important;
+          }
+          .how-it-works-icon {
+            grid-area: icon !important;
+            height: 130px !important;
+            margin: 8px 0 0 0 !important;
+            justify-content: center !important;
+          }
+          .how-it-works-icon svg {
+            width: 170px !important;
+            height: auto !important;
+          }
         }
       `}</style>
     </>
