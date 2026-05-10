@@ -65,6 +65,12 @@ const profileSchema = new schema({
     default: 0,
   },
 
+  // Updated on authenticated activity — used by the inactivity penalty cron
+  lastActivityAt: {
+    type: Date,
+    default: Date.now,
+  },
+
   platformLinks: [],
 
   professions: [],

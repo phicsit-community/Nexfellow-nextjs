@@ -23,6 +23,8 @@ const fs = require("fs");
 const { removeFromBunny } = require("../utils/attachments");
 const NotificationService = require("../utils/notificationService");
 const Notification = require("../models/Notification");
+const CreditService = require("../services/creditService");
+const { PENALTY_CODES } = require("../constants/creditEvents");
 
 module.exports.adminlogin = async (req, res) => {
   let { email, password } = req.body;
@@ -1036,4 +1038,33 @@ module.exports.getActiveUserCount = async (req, res) => {
     console.error(err);
     res.status(500).json({ message: "Failed to fetch active user count" });
   }
+};
+
+// POST /admin/credits/penalize
+module.exports.penalizeUser = async (req, res) => {
+  const { userId, eventCode, adminNote } = req.body;
+
+  if (!userId || !eventCode || !adminNote) {
+    return res.status(400).json({ message: "userId, eventCode, and adminNote are required" });
+  }
+  if (!PENALTY_CODES.has(eventCode)) {
+    return res.status(400).json({
+      message: `Invalid penalty event code. Allowed: ${[...PENALTY_CODES].join(", ")}`,
+    });
+  }
+
+  const iKey = `${eventCode}:${userId}:${req.adminId}:${Date.now()}`;
+  const result = await CreditService.penalize({
+    userId,
+    eventCode,
+    idempotencyKey: iKey,
+    source: "admin",
+    adminNote,
+  });
+
+  res.status(200).json({
+    message: "Penalty applied",
+    newBalance: result.newBalance,
+    transaction: result.transaction,
+  });
 };
