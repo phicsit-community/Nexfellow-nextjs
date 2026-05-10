@@ -230,23 +230,25 @@ export default function Hero() {
           {/* CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}
+            style={{ display: "flex", flexDirection: "column", alignItems: "stretch", gap: 12, maxWidth: 320, margin: "0 auto" }}
           >
             <Link href="/signup" style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
+              display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8,
               background: T, color: DARKER, padding: "14px 32px",
               borderRadius: 100, fontWeight: 700, fontSize: 16, textDecoration: "none",
               boxShadow: `0 0 32px rgba(20,184,166,0.35)`,
+              width: "100%",
             }}>
               Join the community
             </Link>
             <Link href="#how-it-works" style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
+              display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8,
               background: "rgba(255,255,255,0.06)", color: TEXT,
               border: "1px solid rgba(255,255,255,0.14)",
               padding: "13px 32px", borderRadius: 100,
               fontWeight: 600, fontSize: 15, textDecoration: "none",
               backdropFilter: "blur(8px)",
+              width: "100%",
             }}>
               See how it works
             </Link>
@@ -264,11 +266,11 @@ export default function Hero() {
             {STATS.map((s, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 36px" }}>
-                  <span style={{ color: TEXT, fontSize: 32, fontWeight: 800, letterSpacing: "-1px", whiteSpace: "nowrap" }}>{s.value}</span>
-                  <span style={{ color: MUTED, fontSize: 12, lineHeight: 1.5, whiteSpace: "pre-line", textAlign: "left", minWidth: 110 }}>{s.label}</span>
+                  <span className="hero-stats-value" style={{ color: TEXT, fontSize: 32, fontWeight: 800, letterSpacing: "-1px", whiteSpace: "nowrap" }}>{s.value}</span>
+                  <span className="hero-stats-label" style={{ color: MUTED, fontSize: 12, lineHeight: 1.5, whiteSpace: "pre-line", textAlign: "left", minWidth: 110 }}>{s.label}</span>
                 </div>
                 {i < STATS.length - 1 && (
-                  <div style={{ width: 2, height: 36, background: BORDER2, flexShrink: 0 }} />
+                  <div className="hero-stats-sep" style={{ width: 2, height: 36, background: BORDER2, flexShrink: 0 }} />
                 )}
               </div>
             ))}
@@ -284,21 +286,33 @@ export default function Hero() {
           .hero-subtitle { font-size: 16px !important; }
 
           .hero-stats {
-            flex-wrap: wrap !important;
-            gap: 0 !important;
-            margin-top: 40px !important;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 12px 0 !important;
+            margin-top: 32px !important;
+            padding-top: 20px !important;
           }
           .hero-stats > div {
-            flex: 0 0 50% !important;
-            margin-bottom: 16px !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
           }
           .hero-stats > div:last-child {
-            flex: 0 0 100% !important;
-            justify-content: center !important;
+            grid-column: 1 / -1 !important;
           }
           .hero-stats > div > div {
-            padding: 0 16px !important;
+            padding: 0 10px !important;
+            gap: 6px !important;
           }
+          .hero-stats-value {
+            font-size: 22px !important;
+            letter-spacing: -0.5px !important;
+          }
+          .hero-stats-label {
+            font-size: 10px !important;
+            min-width: 0 !important;
+          }
+          .hero-stats-sep { display: none !important; }
         }
       `}</style>
     </>

@@ -70,3 +70,13 @@
   border-left: none;
   border-top: none;
 }
+
+@media (max-width: 768px) {
+  .corner {
+    border-width: 2px;
+  }
+  .top-left    { top: -5px;  left: -5px; }
+  .top-right   { top: -5px;  right: -5px; }
+  .bottom-left { bottom: -5px; left: -5px; }
+  .bottom-right { bottom: -5px; right: -5px; }
+}

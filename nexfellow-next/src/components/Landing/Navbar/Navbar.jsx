@@ -10,9 +10,14 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll);
 
@@ -23,7 +28,10 @@ export default function Navbar() {
       setUsername(ud.username);
     }
 
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", checkMobile);
+    };
   }, []);
 
   useEffect(() => {
@@ -59,18 +67,30 @@ export default function Navbar() {
   return (
     <>
       <nav style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        background: scrolled || menuOpen ? "rgba(7,26,44,0.97)" : "transparent",
-        backdropFilter: scrolled || menuOpen ? "blur(14px)" : "none",
-        borderBottom: scrolled ? `1px solid ${BORDER}` : "none",
-        transition: "all 0.3s",
+        position: "fixed", zIndex: 100,
+        ...(isMobile ? {
+          top: 10, left: 12, right: 12,
+          borderRadius: 14,
+          background: "#ffffff",
+          boxShadow: "0 2px 16px rgba(0,0,0,0.13)",
+          border: "none",
+          backdropFilter: "none",
+        } : {
+          top: 0, left: 0, right: 0,
+          borderRadius: 0,
+          background: scrolled || menuOpen ? "rgba(7,26,44,0.97)" : "transparent",
+          backdropFilter: scrolled || menuOpen ? "blur(14px)" : "none",
+          borderBottom: scrolled ? `1px solid ${BORDER}` : "none",
+          boxShadow: "none",
+        }),
+        transition: "background 0.3s",
       }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
           {/* Main row */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 68 }}>
 
             {/* Logo */}
-            <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+            <Link href="/" className="navbar-logo-wrap" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
               <svg width="234" height="63" viewBox="0 0 234 63" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M51.5655 9.32775C48.8684 7.6466 40.7709 15.0879 39.9092 14.2659C39.1925 13.5814 45.0669 8.6946 43.9059 6.85933C42.8592 5.20515 36.2348 7.22535 23.0283 11.3338C16.9689 13.2218 13.8455 14.2621 11.1754 16.9578C10.2456 17.8979 7.28786 20.8878 6.79854 25.2672C6.74973 25.6949 6.73561 26.0507 6.73047 26.2947V43.4363C6.73047 50.7273 13.5244 56.6363 21.9045 56.6363H41.6134C42.8194 56.644 47.8795 56.5516 52.1242 52.9684C52.5403 52.6165 56.9891 48.7533 57.0816 43.3823C57.0816 43.3053 57.0816 43.2411 57.0816 43.2C57.0816 38.2511 57.0816 33.3023 57.0816 28.3534C57.0816 28.207 57.106 27.8564 57.0816 27.3889C57.0225 26.2806 56.7669 25.3058 56.3572 24.2347C55.9295 23.1173 55.3298 22.0783 54.1302 19.9965C53.5973 19.073 52.8459 17.826 52.6764 17.5563C52.4324 17.171 52.4272 17.18 52.3373 16.9578C50.6986 12.9135 52.8138 10.1048 51.5655 9.32775Z" fill="#24B2B4" stroke="black" strokeWidth="0.235419" strokeMiterlimit="10" />
                 <path d="M50.7377 37.8542C49.1631 31.204 42.6157 31.904 42.6157 31.904C42.6157 31.904 39.405 32.0324 37.3681 34.5034C36.3008 35.7993 36.0131 37.2454 35.8153 38.2626C35.0987 41.9536 36.6206 43.6926 35.4082 45.045C34.5811 45.9671 33.1222 45.9966 31.9406 46.0197C30.759 46.0429 29.4003 46.0724 28.5411 45.2492C27.2349 43.9957 28.5064 42.1668 27.6356 38.2651C27.3595 37.0258 27.0769 35.7119 26.0842 34.506C24.046 32.0324 20.8365 31.9065 20.8365 31.9065C20.8365 31.9065 14.2866 31.2066 12.7146 37.8567C12.1867 40.0888 11.8336 40.5396 11.045 41.368C9.84931 42.6176 8.0911 42.9901 6.76184 43.1057C6.72358 44.1346 6.8238 45.164 7.0598 46.1662C7.47431 47.7959 8.20716 49.3275 9.21615 50.6728C9.86729 51.5539 10.6199 52.3553 11.4585 53.0603C13.0173 54.3416 14.8188 55.2947 16.755 55.8626C18.1201 56.2737 19.528 56.5263 20.9508 56.6152C21.4645 56.6486 21.7368 56.6435 23.4334 56.6409C24.8333 56.6409 26.2319 56.6409 27.6305 56.6409C31.152 56.6242 32.9141 56.6153 33.8979 56.6217C36.3381 56.6384 38.7911 56.6217 41.2377 56.6409C42.1638 56.655 43.0898 56.6005 44.0079 56.4778C45.016 56.3444 46.0096 56.1178 46.9759 55.801L47.1737 55.7342C48.6949 55.1927 50.1334 54.4424 51.4479 53.5047C52.3394 52.8332 53.147 52.0571 53.8534 51.1929C54.5084 50.4146 55.6951 48.9826 56.4297 46.8122C56.8346 45.6118 57.0449 44.3545 57.0526 43.0877C56.2512 43.1159 54.0897 43.0877 52.5999 41.7674C52.2108 41.4181 51.5185 41.1535 50.7377 37.8542Z" fill="#FFFEFF" stroke="black" strokeWidth="0.235419" strokeMiterlimit="10" />
@@ -118,7 +138,7 @@ export default function Navbar() {
               style={{
                 display: "none",
                 background: "none", border: "none", cursor: "pointer",
-                padding: 8, color: TEXT,
+                padding: 8, color: isMobile ? "#071a2c" : TEXT,
               }}
               aria-label="Toggle menu"
             >
@@ -137,9 +157,13 @@ export default function Navbar() {
           {/* Mobile dropdown menu */}
           {menuOpen && (
             <div className="navbar-mobile-menu" style={{
-              paddingBottom: 24,
-              borderTop: `1px solid ${BORDER}`,
+              paddingBottom: 16,
+              borderTop: "1px solid rgba(0,0,0,0.08)",
               marginTop: 0,
+              background: "#ffffff",
+              paddingLeft: 24,
+              paddingRight: 24,
+              borderRadius: "0 0 14px 14px",
             }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
                 {NAV_LINKS.map(({ href, label }) => (
@@ -148,10 +172,12 @@ export default function Navbar() {
                     href={href}
                     onClick={() => setMenuOpen(false)}
                     style={{
-                      ...navLink(href),
-                      padding: "14px 0",
+                      color: pathname === href ? "#071a2c" : "#64748b",
+                      textDecoration: "none",
                       fontSize: 16,
-                      borderBottom: `1px solid rgba(255,255,255,0.06)`,
+                      fontWeight: pathname === href ? 600 : 500,
+                      padding: "14px 0",
+                      borderBottom: "1px solid rgba(0,0,0,0.06)",
                     }}
                   >
                     {label}
@@ -168,9 +194,9 @@ export default function Navbar() {
                   <>
                     <Link href="/login" onClick={() => setMenuOpen(false)}
                       style={{
-                        color: TEXT, textDecoration: "none", fontSize: 15, fontWeight: 500,
+                        color: "#071a2c", textDecoration: "none", fontSize: 15, fontWeight: 500,
                         textAlign: "center", padding: "12px 0",
-                        border: `1px solid rgba(255,255,255,0.15)`,
+                        border: "1px solid rgba(0,0,0,0.12)",
                         borderRadius: 10,
                       }}>
                       Log In
@@ -192,6 +218,11 @@ export default function Navbar() {
           .navbar-desktop-links,
           .navbar-desktop-actions { display: none !important; }
           .navbar-hamburger { display: flex !important; }
+
+          /* Make "Nex" SVG text readable on white navbar */
+          .navbar-logo-wrap svg path[fill="white"] {
+            fill: #071a2c;
+          }
         }
       `}</style>
     </>
