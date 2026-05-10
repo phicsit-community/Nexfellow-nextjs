@@ -193,7 +193,7 @@ export default function TheProblem() {
                     paddingRight: 48,
                   }}>
                     {isLeftText ? (
-                      <div style={{ maxWidth: 360, textAlign: "right" }}>
+                      <div className="text-content" style={{ maxWidth: 360, textAlign: "right" }}>
                         <h3 style={{ color: TEXT, fontSize: 26, fontWeight: 700, lineHeight: 1.3, marginBottom: 16 }}>
                           {p.title}
                         </h3>
@@ -202,7 +202,7 @@ export default function TheProblem() {
                         </p>
                       </div>
                     ) : (
-                      <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
+                      <div className="mock-wrapper" style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
                         <p.Mock />
                       </div>
                     )}
@@ -238,7 +238,7 @@ export default function TheProblem() {
                     paddingLeft: 48,
                   }}>
                     {!isLeftText ? (
-                      <div style={{ maxWidth: 360, textAlign: "left" }}>
+                      <div className="text-content" style={{ maxWidth: 360, textAlign: "left" }}>
                         <h3 style={{ color: TEXT, fontSize: 26, fontWeight: 700, lineHeight: 1.3, marginBottom: 16 }}>
                           {p.title}
                         </h3>
@@ -247,7 +247,7 @@ export default function TheProblem() {
                         </p>
                       </div>
                     ) : (
-                      <div style={{ display: "flex", justifyContent: "flex-start", width: "100%" }}>
+                      <div className="mock-wrapper" style={{ display: "flex", justifyContent: "flex-start", width: "100%" }}>
                         <p.Mock />
                       </div>
                     )}
@@ -296,38 +296,58 @@ export default function TheProblem() {
 
     <style>{`
       @media (max-width: 768px) {
-        .the-problem-section { padding: 60px 16px !important; }
+        .the-problem-section { padding: 48px 6px !important; }
 
-        .problem-timeline { gap: 48px !important; }
-        .problem-timeline-line { display: none !important; }
+        .problem-timeline { gap: 28px !important; }
+
+        .problem-timeline-line { display: block !important; }
 
         .problem-row {
-          flex-direction: column !important;
-          align-items: flex-start !important;
-          gap: 20px !important;
+          flex-direction: row !important;
+          align-items: center !important;
         }
 
         .problem-node {
-          position: static !important;
-          transform: none !important;
-          margin-bottom: 4px !important;
-          flex-shrink: 0 !important;
+          position: absolute !important;
+          transform: translate(-50%, -50%) !important;
+          width: 20px !important;
+          height: 20px !important;
+          font-size: 7px !important;
+          z-index: 2 !important;
         }
 
-        .problem-side {
-          flex: unset !important;
-          width: 100% !important;
-          justify-content: flex-start !important;
-          padding: 0 !important;
+        /* Left side — inner (right) padding must exceed half the node width (10px) so text never overlaps */
+        .problem-side:first-child {
+          padding-right: 14px !important;
+          padding-left: 2px !important;
+          overflow: hidden !important;
         }
 
-        .problem-side > div {
+        /* Right side — inner (left) padding for same reason */
+        .problem-side:last-child {
+          padding-left: 14px !important;
+          padding-right: 2px !important;
+          overflow: hidden !important;
+        }
+
+        .text-content {
           max-width: 100% !important;
-          text-align: left !important;
-          width: 100% !important;
+        }
+        .text-content h3 {
+          font-size: 12px !important;
+          margin-bottom: 6px !important;
+          line-height: 1.3 !important;
+        }
+        .text-content p {
+          font-size: 10px !important;
+          line-height: 1.5 !important;
         }
 
-        .problem-side > div > h3 { font-size: 20px !important; }
+        /* zoom scales the mock card visually AND collapses its layout footprint */
+        .mock-wrapper {
+          zoom: 0.38 !important;
+          display: block !important;
+        }
       }
     `}</style>
     </>
