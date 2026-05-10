@@ -7,7 +7,8 @@ import { playfair } from "@/app/fonts";
 
 export default function CtaBanner() {
   return (
-    <section style={{ position: "relative", overflow: "hidden", padding: "80px 24px 100px"}}>
+    <>
+    <section className="cta-banner-section" style={{ position: "relative", overflow: "hidden", padding: "80px 24px 100px"}}>
 
       {/* Background image with oval vignette mask */}
       <div style={{
@@ -96,5 +97,12 @@ export default function CtaBanner() {
         </div>
       </FadeIn>
     </section>
+
+    <style>{`
+      @media (max-width: 768px) {
+        .cta-banner-section { padding: 48px 16px 60px !important; }
+      }
+    `}</style>
+    </>
   );
 }

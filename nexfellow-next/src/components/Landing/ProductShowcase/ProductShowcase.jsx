@@ -32,8 +32,15 @@ export default function ProductShowcase() {
   }, []);
 
   return (
+    <>
+    <style>{`
+      @media (max-width: 768px) {
+        .product-showcase-section { margin-top: 48px !important; }
+      }
+    `}</style>
     <section
       ref={sectionRef}
+      className="product-showcase-section"
       style={{ marginTop: 100, display: "flex", justifyContent: "center", overflow: "hidden" }}
     >
       <div style={{ position: "relative", width: "100%", maxWidth: 1348 }}>
@@ -62,5 +69,6 @@ export default function ProductShowcase() {
         />
       </div>
     </section>
+    </>
   );
 }

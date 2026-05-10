@@ -1,7 +1,7 @@
 "use client";
 
 import FadeIn from "../shared/FadeIn";
-import { T, BG, CARD, MUTED, TEXT, BORDER, BORDER2, DARKER } from "../shared/tokens";
+import { T, BG, MUTED, TEXT, DARKER } from "../shared/tokens";
 
 /* ── Mockup components ─────────────────────────────────────────────── */
 
@@ -141,7 +141,8 @@ const PROBLEMS = [
 
 export default function TheProblem() {
   return (
-    <section style={{ background: BG, padding: "100px 24px" }}>
+    <>
+    <section style={{ background: BG, padding: "100px 24px" }} className="the-problem-section">
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* Header */}
@@ -160,9 +161,9 @@ export default function TheProblem() {
         </FadeIn>
 
         {/* Problem rows — timeline layout */}
-        <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: 64, marginTop: 64, paddingBottom: 64 }}>
+        <div className="problem-timeline" style={{ position: "relative", display: "flex", flexDirection: "column", gap: 64, marginTop: 64, paddingBottom: 64 }}>
           {/* Vertical line down the middle */}
-          <div style={{
+          <div className="problem-timeline-line" style={{
             position: "absolute",
             top: 0,
             bottom: 0,
@@ -177,14 +178,15 @@ export default function TheProblem() {
             const isLeftText = !p.flip;
             return (
               <FadeIn key={i} delay={0.1 + i * 0.1}>
-                <div style={{
+                {/* Desktop: side-by-side | Mobile: stacked */}
+                <div className="problem-row" style={{
                   display: "flex",
                   alignItems: "center",
                   position: "relative",
                   width: "100%",
                 }}>
                   {/* Left Side */}
-                  <div style={{
+                  <div className="problem-side" style={{
                     flex: 1,
                     display: "flex",
                     justifyContent: "flex-end",
@@ -207,7 +209,7 @@ export default function TheProblem() {
                   </div>
 
                   {/* Center Node */}
-                  <div style={{
+                  <div className="problem-node" style={{
                     position: "absolute",
                     left: "50%",
                     top: "50%",
@@ -215,7 +217,7 @@ export default function TheProblem() {
                     width: 32,
                     height: 32,
                     borderRadius: 4,
-                    background: "#0b1c2e", // Match dark blue of mocks/boxes
+                    background: "#0b1c2e",
                     border: `1px solid rgba(255,255,255,0.1)`,
                     display: "flex",
                     alignItems: "center",
@@ -229,7 +231,7 @@ export default function TheProblem() {
                   </div>
 
                   {/* Right Side */}
-                  <div style={{
+                  <div className="problem-side" style={{
                     flex: 1,
                     display: "flex",
                     justifyContent: "flex-start",
@@ -291,5 +293,43 @@ export default function TheProblem() {
         </FadeIn>
       </div>
     </section>
+
+    <style>{`
+      @media (max-width: 768px) {
+        .the-problem-section { padding: 60px 16px !important; }
+
+        .problem-timeline { gap: 48px !important; }
+        .problem-timeline-line { display: none !important; }
+
+        .problem-row {
+          flex-direction: column !important;
+          align-items: flex-start !important;
+          gap: 20px !important;
+        }
+
+        .problem-node {
+          position: static !important;
+          transform: none !important;
+          margin-bottom: 4px !important;
+          flex-shrink: 0 !important;
+        }
+
+        .problem-side {
+          flex: unset !important;
+          width: 100% !important;
+          justify-content: flex-start !important;
+          padding: 0 !important;
+        }
+
+        .problem-side > div {
+          max-width: 100% !important;
+          text-align: left !important;
+          width: 100% !important;
+        }
+
+        .problem-side > div > h3 { font-size: 20px !important; }
+      }
+    `}</style>
+    </>
   );
 }

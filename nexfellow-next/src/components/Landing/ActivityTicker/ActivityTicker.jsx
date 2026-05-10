@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { T, MUTED, DARKER, BORDER2 } from "../shared/tokens";
+import { T, MUTED, BORDER2 } from "../shared/tokens";
 
 const ACTIVITIES = [
   "Vikash K.  submitted PricePilot for feedback · just now",
@@ -26,9 +26,9 @@ export default function ActivityTicker() {
     }}>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <div style={{
-          color: MUTED, fontSize: 15, fontWeight: 700,
-          padding: "48px 14px", whiteSpace: "nowrap", flexShrink: 0,
-          textTransform: "uppercase", letterSpacing: "0.8px",
+          color: MUTED, fontSize: 12, fontWeight: 700,
+          padding: "16px 14px 8px", whiteSpace: "nowrap", flexShrink: 0,
+          textTransform: "uppercase", letterSpacing: "1.5px",
         }}>
           RECENT ACTIVITY
         </div>

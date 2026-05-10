@@ -58,6 +58,7 @@ export default function LandingTestimonials() {
   }, []);
 
   return (
+    <>
     <section style={{ background: BG, padding: "100px 24px" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
@@ -78,7 +79,7 @@ export default function LandingTestimonials() {
           </div>
         </FadeIn>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+        <div className="testimonials-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
 
           {/* Featured card — ref measures its rendered height */}
           <FadeIn delay={0.1}>
@@ -166,5 +167,14 @@ export default function LandingTestimonials() {
         </div>
       </div>
     </section>
+
+    <style>{`
+      @media (max-width: 768px) {
+        .testimonials-grid {
+          grid-template-columns: 1fr !important;
+        }
+      }
+    `}</style>
+    </>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { T, DARKER, MUTED, TEXT, BORDER, BORDER2 } from "../shared/tokens";
+import { T, DARKER } from "../shared/tokens";
 
 const PRODUCT_LINKS = [["How it works", "#how-it-works", true], ["Features", "/"], ["Launches", "/launches"], ["Changelog", "/"]];
 const COMPANY_LINKS = [["Mission", "/mission"], ["About us", "/"], ["Success Stories", "/"], ["Contact us", "/contact"]];
@@ -59,9 +59,10 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
+    <>
     <footer style={{ background: DARKER, position: "relative", overflow: "hidden" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "80px 24px 0", position: "relative", zIndex: 10 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 48, marginBottom: 80 }}>
+        <div className="footer-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 48, marginBottom: 80 }}>
 
           {/* Brand */}
           <div style={{ paddingRight: 40 }}>
@@ -104,7 +105,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div style={{ borderTop: `1px solid rgba(255,255,255,0.1)`, paddingTop: 24, paddingBottom: 24, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="footer-bottom-bar" style={{ borderTop: `1px solid rgba(255,255,255,0.1)`, paddingTop: 24, paddingBottom: 24, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <p style={{ color: "rgba(255,255,255,0.9)", fontSize: 13, fontWeight: 600 }}>© {year} NexFellow</p>
           <div style={{ display: "flex", gap: 16 }}>
             <Link href="/terms" style={{ color: "rgba(255,255,255,0.9)", textDecoration: "none", fontSize: 13, fontWeight: 600 }}>Terms and Conditions</Link>
@@ -126,5 +127,20 @@ export default function Footer() {
         </div>
       </div>
     </footer>
+
+    <style>{`
+      @media (max-width: 768px) {
+        .footer-grid {
+          grid-template-columns: 1fr !important;
+          gap: 40px !important;
+        }
+        .footer-bottom-bar {
+          flex-direction: column !important;
+          gap: 12px !important;
+          text-align: center !important;
+        }
+      }
+    `}</style>
+    </>
   );
 }

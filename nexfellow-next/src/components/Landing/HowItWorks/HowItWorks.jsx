@@ -1,7 +1,7 @@
 "use client";
 
 import FadeIn from "../shared/FadeIn";
-import { T, BG, MUTED, TEXT, DARKER } from "../shared/tokens";
+import { T, BG, MUTED, TEXT } from "../shared/tokens";
 
 const STEPS = [
   {
@@ -116,69 +116,76 @@ const STEPS = [
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" style={{ background: BG, padding: "100px 24px" }}>
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+    <>
+      <section id="how-it-works" style={{ background: BG, padding: "100px 24px" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
-        {/* Header */}
-        <FadeIn>
-          <div style={{ marginBottom: 64, textAlign: "center" }}>
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-              <div style={{ width: 28, height: 2, background: T }} />
-              <span style={{ color: T, fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>THE FLOW</span>
-            </div>
-            <h2 style={{ fontSize: "clamp(32px, 4vw, 52px)", fontWeight: 800, color: TEXT, lineHeight: 1.15, letterSpacing: "-1px" }}>
-              Three Steps from Shipping To{" "}
-              <span style={{ color: T }}>Traction</span>
-            </h2>
-            <p style={{ color: MUTED, fontSize: 16, marginTop: 16, maxWidth: 520, margin: "16px auto 0" }}>
-              Simple, transparent process from submission to actionable feedback.
-            </p>
-          </div>
-        </FadeIn>
-
-        {/* Steps grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32, position: "relative" }}>
-
-          {/* Dashed connector — top = illustration container (170) + gap (24) + circle radius (24) = 218 */}
-          <div style={{
-            position: "absolute", top: 218, left: "20%", right: "20%",
-            borderTop: `2px dashed rgba(20,184,166,0.5)`,
-            pointerEvents: "none", zIndex: 0,
-          }} />
-
-          {STEPS.map((s, i) => (
-            <FadeIn key={i} delay={0.1 + i * 0.15}>
-              <div style={{ textAlign: "center" }}>
-
-                {/* Fixed-height illustration container — bottom-aligns all icons */}
-                <div style={{
-                  height: 170, display: "flex",
-                  alignItems: "flex-end", justifyContent: "center",
-                  marginBottom: 24,
-                }}>
-                  {s.icon}
-                </div>
-
-                {/* Number circle — outlined teal style, sits on top of the dashed line */}
-                <div style={{
-                  width: 48, height: 48, borderRadius: "50%",
-                  background: BG,
-                  border: `2px solid ${T}`,
-                  color: T,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontWeight: 800, fontSize: 20,
-                  margin: "0 auto 20px",
-                  position: "relative", zIndex: 1,
-                  boxShadow: `0 0 0 4px ${BG}, 0 0 16px rgba(20,184,166,0.3)`,
-                }}>{s.num}</div>
-
-                <h3 style={{ color: TEXT, fontSize: 18, fontWeight: 700, marginBottom: 12 }}>{s.title}</h3>
-                <p style={{ color: MUTED, fontSize: 14, lineHeight: 1.7 }}>{s.desc}</p>
+          {/* Header */}
+          <FadeIn>
+            <div style={{ marginBottom: 64, textAlign: "center" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+                <div style={{ width: 28, height: 2, background: T }} />
+                <span style={{ color: T, fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>THE FLOW</span>
               </div>
-            </FadeIn>
-          ))}
+              <h2 style={{ fontSize: "clamp(32px, 4vw, 52px)", fontWeight: 800, color: TEXT, lineHeight: 1.15, letterSpacing: "-1px" }}>
+                Three Steps from Shipping To{" "}
+                <span style={{ color: T }}>Traction</span>
+              </h2>
+              <p style={{ color: MUTED, fontSize: 16, marginTop: 16, maxWidth: 520, margin: "16px auto 0" }}>
+                Simple, transparent process from submission to actionable feedback.
+              </p>
+            </div>
+          </FadeIn>
+
+          {/* Steps grid */}
+          <div className="how-it-works-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32, position: "relative" }}>
+
+            {/* Dashed connector */}
+            <div className="how-it-works-connector" style={{
+              position: "absolute", top: 218, left: "20%", right: "20%",
+              borderTop: `2px dashed rgba(20,184,166,0.5)`,
+              pointerEvents: "none", zIndex: 0,
+            }} />
+
+            {STEPS.map((s, i) => (
+              <FadeIn key={i} delay={0.1 + i * 0.15}>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{
+                    height: 170, display: "flex",
+                    alignItems: "flex-end", justifyContent: "center",
+                    marginBottom: 24,
+                  }}>
+                    {s.icon}
+                  </div>
+                  <div style={{
+                    width: 48, height: 48, borderRadius: "50%",
+                    background: BG,
+                    border: `2px solid ${T}`,
+                    color: T,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontWeight: 800, fontSize: 20,
+                    margin: "0 auto 20px",
+                    position: "relative", zIndex: 1,
+                    boxShadow: `0 0 0 4px ${BG}, 0 0 16px rgba(20,184,166,0.3)`,
+                  }}>{s.num}</div>
+                  <h3 style={{ color: TEXT, fontSize: 18, fontWeight: 700, marginBottom: 12 }}>{s.title}</h3>
+                  <p style={{ color: MUTED, fontSize: 14, lineHeight: 1.7 }}>{s.desc}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .how-it-works-grid {
+            grid-template-columns: 1fr !important;
+            gap: 48px !important;
+          }
+          .how-it-works-connector { display: none !important; }
+        }
+      `}</style>
+    </>
   );
 }

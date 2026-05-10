@@ -119,142 +119,188 @@ function ScrollCard({ card, delay, scrollYProgress, side, index, posStyle }) {
 export default function Hero() {
   const heroRef = useRef(null);
 
-  /* scrollYProgress: 0 when hero top hits viewport top, 1 when hero bottom hits viewport top */
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
   });
 
   return (
-    <section
-      ref={heroRef}
-      style={{
-        position: "relative", minHeight: "100vh", background: BG,
-        display: "flex", flexDirection: "column", alignItems: "center",
-        justifyContent: "center", overflow: "hidden", paddingTop: 68,
-      }}
-    >
-      <DotGrid />
+    <>
+      <section
+        ref={heroRef}
+        style={{
+          position: "relative", minHeight: "100vh", background: BG,
+          display: "flex", flexDirection: "column", alignItems: "center",
+          justifyContent: "center", overflow: "hidden", paddingTop: 68,
+        }}
+      >
+        <DotGrid />
 
-      {/* Radial glow */}
-      <div style={{
-        position: "absolute", top: "50%", left: "50%",
-        transform: "translate(-50%, -60%)",
-        width: 700, height: 600,
-        background: `radial-gradient(ellipse at center, rgba(20,184,166,0.12) 0%, transparent 70%)`,
-        pointerEvents: "none",
-      }} />
+        {/* Radial glow */}
+        <div style={{
+          position: "absolute", top: "50%", left: "50%",
+          transform: "translate(-50%, -60%)",
+          width: 700, height: 600,
+          background: `radial-gradient(ellipse at center, rgba(20,184,166,0.12) 0%, transparent 70%)`,
+          pointerEvents: "none",
+        }} />
 
-      {/* Left testimonials — fly out left on scroll */}
-      {LEFT_CARDS.map((card, i) => (
-        <ScrollCard
-          key={i}
-          card={card}
-          delay={0.3 + i * 0.2}
-          scrollYProgress={scrollYProgress}
-          side="left"
-          index={i}
-          posStyle={{ left: LEFT_POS[i][0], top: `${LEFT_POS[i][1]}vh` }}
-        />
-      ))}
-
-      {/* Right testimonials — fly out right on scroll */}
-      {RIGHT_CARDS.map((card, i) => (
-        <ScrollCard
-          key={i}
-          card={card}
-          delay={0.4 + i * 0.2}
-          scrollYProgress={scrollYProgress}
-          side="right"
-          index={i}
-          posStyle={{ right: RIGHT_POS[i][0], top: `${RIGHT_POS[i][1]}vh` }}
-        />
-      ))}
-
-      {/* Center content */}
-      <div style={{ position: "relative", zIndex: 5, textAlign: "center", maxWidth: 800, padding: "0 24px" }}>
-
-        {/* Live badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          style={{
-            display: "inline-flex", alignItems: "center", gap: 8,
-            background: "rgba(13,32,53,0.8)", border: `1px solid ${BORDER}`,
-            borderRadius: 20, padding: "6px 16px", marginBottom: 28,
-            backdropFilter: "blur(8px)",
-          }}
-        >
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 8px #22c55e" }} />
-          <span style={{ color: TEXT, fontSize: 13, fontWeight: 500 }}>Live · 10,000+ builders already in</span>
-        </motion.div>
-
-        {/* Headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.7 }}
-          style={{
-             maxWidth: "100%", fontSize: "clamp(40px, 6vw, 72px)", fontWeight: 800, lineHeight: 1.1,
-            color: TEXT, marginBottom: 20, letterSpacing: "-1.5px",
-          }}
-        >
-          <span style={{ display: "block" }}>
-            Get{" "}
-            <span style={{ color: T, display: "inline-flex", verticalAlign: "middle" }}>
-              <TrueFocus
-                sentence="Real Feedback"
-                manualMode={false}
-                blurAmount={2}
-                borderColor={T}
-                glowColor={`rgba(20,184,166,0.6)`}
-                animationDuration={0.5}
-                pauseBetweenAnimations={1}
-              />
-            </span>
-            {" "}From
-          </span>
-          <span style={{ display: "block" }}>Builders Who Get it</span>
-        </motion.h1>
-
-        {/* Subtitle */}
-        <motion.p
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
-          style={{ color: MUTED, fontSize: 18, lineHeight: 1.6, maxWidth: 560, margin: "0 auto 36px" }}
-        >
-          NexFellow connects you with experienced builders who give honest, actionable product feedback. Launch faster with real user insights.
-        </motion.p>
-
-        {/* CTA */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-          <Link href="/signup" style={{
-            display: "inline-flex", alignItems: "center", gap: 8,
-            background: T, color: DARKER, padding: "14px 32px",
-            borderRadius: 100, fontWeight: 700, fontSize: 16, textDecoration: "none",
-            boxShadow: `0 0 32px rgba(20,184,166,0.35)`,
-          }}>
-            Get started free <span style={{ fontSize: 18 }}>→</span>
-          </Link>
-        </motion.div>
-
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
-          style={{
-            display: "flex", justifyContent: "center", alignItems: "center",
-            marginTop: 60, paddingTop: 32,
-          }}
-        >
-          {STATS.map((s, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 36px" }}>
-                <span style={{ color: TEXT, fontSize: 32, fontWeight: 800, letterSpacing: "-1px", whiteSpace: "nowrap" }}>{s.value}</span>
-                <span style={{ color: MUTED, fontSize: 12, lineHeight: 1.5, whiteSpace: "pre-line", textAlign: "left", minWidth: 110 }}>{s.label}</span>
-              </div>
-              {i < STATS.length - 1 && (
-                <div style={{ width: 2, height: 36, background: BORDER2, flexShrink: 0 }} />
-              )}
-            </div>
+        {/* Left testimonials — hidden on mobile */}
+        <div className="hero-testimonials-left">
+          {LEFT_CARDS.map((card, i) => (
+            <ScrollCard
+              key={i}
+              card={card}
+              delay={0.3 + i * 0.2}
+              scrollYProgress={scrollYProgress}
+              side="left"
+              index={i}
+              posStyle={{ left: LEFT_POS[i][0], top: `${LEFT_POS[i][1]}vh` }}
+            />
           ))}
-        </motion.div>
-      </div>
-    </section>
+        </div>
+
+        {/* Right testimonials — hidden on mobile */}
+        <div className="hero-testimonials-right">
+          {RIGHT_CARDS.map((card, i) => (
+            <ScrollCard
+              key={i}
+              card={card}
+              delay={0.4 + i * 0.2}
+              scrollYProgress={scrollYProgress}
+              side="right"
+              index={i}
+              posStyle={{ right: RIGHT_POS[i][0], top: `${RIGHT_POS[i][1]}vh` }}
+            />
+          ))}
+        </div>
+
+        {/* Center content */}
+        <div style={{ position: "relative", zIndex: 5, textAlign: "center", maxWidth: 800, padding: "0 20px" }}>
+
+          {/* Live badge */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              background: "rgba(13,32,53,0.8)", border: `1px solid ${BORDER}`,
+              borderRadius: 20, padding: "6px 16px", marginBottom: 28,
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 8px #22c55e" }} />
+            <span style={{ color: TEXT, fontSize: 13, fontWeight: 500 }}>Live · 10,000+ builders already in</span>
+          </motion.div>
+
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.7 }}
+            style={{
+              maxWidth: "100%", fontSize: "clamp(36px, 6vw, 72px)", fontWeight: 800, lineHeight: 1.1,
+              color: TEXT, marginBottom: 20, letterSpacing: "-1.5px",
+            }}
+          >
+            <span style={{ display: "block" }}>
+              Get{" "}
+              <span style={{ color: T, display: "inline-flex", verticalAlign: "middle" }}>
+                <TrueFocus
+                  sentence="Real Feedback"
+                  manualMode={false}
+                  blurAmount={2}
+                  borderColor={T}
+                  glowColor={`rgba(20,184,166,0.6)`}
+                  animationDuration={0.5}
+                  pauseBetweenAnimations={1}
+                />
+              </span>
+              {" "}From
+            </span>
+            <span style={{ display: "block" }}>Builders Who Get it</span>
+          </motion.h1>
+
+          {/* Subtitle */}
+          <motion.p
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
+            style={{ color: MUTED, fontSize: 18, lineHeight: 1.6, maxWidth: 560, margin: "0 auto 36px" }}
+            className="hero-subtitle"
+          >
+            NexFellow connects you with experienced builders who give honest, actionable product feedback. Launch faster with real user insights.
+          </motion.p>
+
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}
+          >
+            <Link href="/signup" style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              background: T, color: DARKER, padding: "14px 32px",
+              borderRadius: 100, fontWeight: 700, fontSize: 16, textDecoration: "none",
+              boxShadow: `0 0 32px rgba(20,184,166,0.35)`,
+            }}>
+              Join the community
+            </Link>
+            <Link href="#how-it-works" style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              background: "rgba(255,255,255,0.06)", color: TEXT,
+              border: "1px solid rgba(255,255,255,0.14)",
+              padding: "13px 32px", borderRadius: 100,
+              fontWeight: 600, fontSize: 15, textDecoration: "none",
+              backdropFilter: "blur(8px)",
+            }}>
+              See how it works
+            </Link>
+          </motion.div>
+
+          {/* Stats */}
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
+            className="hero-stats"
+            style={{
+              display: "flex", justifyContent: "center", alignItems: "center",
+              marginTop: 60, paddingTop: 32,
+            }}
+          >
+            {STATS.map((s, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 36px" }}>
+                  <span style={{ color: TEXT, fontSize: 32, fontWeight: 800, letterSpacing: "-1px", whiteSpace: "nowrap" }}>{s.value}</span>
+                  <span style={{ color: MUTED, fontSize: 12, lineHeight: 1.5, whiteSpace: "pre-line", textAlign: "left", minWidth: 110 }}>{s.label}</span>
+                </div>
+                {i < STATS.length - 1 && (
+                  <div style={{ width: 2, height: 36, background: BORDER2, flexShrink: 0 }} />
+                )}
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .hero-testimonials-left,
+          .hero-testimonials-right { display: none !important; }
+
+          .hero-subtitle { font-size: 16px !important; }
+
+          .hero-stats {
+            flex-wrap: wrap !important;
+            gap: 0 !important;
+            margin-top: 40px !important;
+          }
+          .hero-stats > div {
+            flex: 0 0 50% !important;
+            margin-bottom: 16px !important;
+          }
+          .hero-stats > div:last-child {
+            flex: 0 0 100% !important;
+            justify-content: center !important;
+          }
+          .hero-stats > div > div {
+            padding: 0 16px !important;
+          }
+        }
+      `}</style>
+    </>
   );
 }

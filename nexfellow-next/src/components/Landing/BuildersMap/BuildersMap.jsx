@@ -2,16 +2,7 @@
 
 import Link from "next/link";
 import FadeIn from "../shared/FadeIn";
-import { T, BG2, CARD, MUTED, TEXT, BORDER, BORDER2 } from "../shared/tokens";
-
-const MAP_DOTS = [
-  [37, 28], [44, 30], [22, 35], [47, 38], [55, 32],
-  [60, 42], [50, 50], [42, 48], [70, 38], [75, 45],
-  [30, 55], [25, 42], [65, 55], [80, 30], [15, 38],
-];
-const CONNECTIONS = [
-  [[37, 28], [47, 38]], [[47, 38], [60, 42]], [[44, 30], [55, 32]],
-];
+import { T, BG2, MUTED, TEXT } from "../shared/tokens";
 
 function WorldMap() {
   return (
@@ -84,7 +75,8 @@ const FEATURES = [
 
 export default function BuildersMap() {
   return (
-    <section style={{ background: BG2, padding: "100px 24px" }}>
+    <>
+    <section style={{ background: BG2, padding: "100px 24px" }} className="builders-map-section">
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* Header */}
@@ -114,7 +106,7 @@ export default function BuildersMap() {
 
         {/* Features */}
         <FadeIn delay={0.3}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
+          <div className="builders-features-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
             {FEATURES.map((f, i) => (
               <div key={i} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
                 <span>{f.icon}</span>
@@ -141,5 +133,13 @@ export default function BuildersMap() {
         </FadeIn>
       </div>
     </section>
+
+    <style>{`
+      @media (max-width: 768px) {
+        .builders-map-section { padding: 60px 16px !important; }
+        .builders-features-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
+      }
+    `}</style>
+    </>
   );
 }
