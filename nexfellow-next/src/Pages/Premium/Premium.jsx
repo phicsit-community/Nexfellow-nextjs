@@ -26,14 +26,6 @@ function XIcon({ size = 16 }) {
   );
 }
 
-function CoinIcon({ color = "#94a3b8" }) {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0 }}>
-      <circle cx="10" cy="10" r="9" fill={`${color}22`} stroke={color} strokeWidth="1.2" />
-      <text x="10" y="14" textAnchor="middle" fill={color} fontSize="10" fontWeight="700">✦</text>
-    </svg>
-  );
-}
 
 function SectionLabel({ children }) {
   return (
@@ -146,16 +138,37 @@ function PlanCard({ plan, isAnnual, accent, badge, badgeBg, featured }) {
       <div style={{
         display: "flex",
         alignItems: "center",
-        gap: 10,
+        gap: 12,
         background: plan.creditsBg,
         borderRadius: 10,
-        padding: "10px 14px",
+        padding: "12px 14px",
         marginBottom: 20,
       }}>
-        <CoinIcon color={plan.creditsColor} />
-        <span style={{ fontSize: 12.5, color: plan.creditsColor, fontWeight: 600 }}>
-          {plan.creditsText}
-        </span>
+        {/* Icon with solid colored circle background */}
+        <div style={{
+          width: 36,
+          height: 36,
+          borderRadius: "50%",
+          background: `${plan.creditsColor}22`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+        }}>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M9 1l2.09 5.26L17 7.27l-4 3.89.94 5.34L9 13.77l-4.94 2.73L5 11.16 1 7.27l5.91-.01L9 1z"
+              fill={plan.creditsColor} />
+          </svg>
+        </div>
+        {/* Amount + subtext stacked */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <span style={{ fontSize: 15, fontWeight: 700, color: plan.creditsColor, lineHeight: 1 }}>
+            {plan.creditsAmount}
+          </span>
+          <span style={{ fontSize: 11.5, color: plan.creditsColor, opacity: 0.75, lineHeight: 1.3 }}>
+            {plan.creditsSub}
+          </span>
+        </div>
       </div>
 
       {/* Features */}
@@ -205,7 +218,8 @@ const PLANS = [
     monthly: 0,
     annualMonthly: 0,
     annualTotal: 0,
-    creditsText: "30 credits per month · expires in 30 days",
+    creditsAmount: "30 credits",
+    creditsSub: "per month · expires in 30 days",
     creditsColor: "#94a3b8",
     creditsBg: "#f8fafc",
     checkColor: TEAL,
@@ -256,7 +270,8 @@ const PLANS = [
     monthly: 16,
     annualMonthly: 7,
     annualTotal: 86,
-    creditsText: "200 credits per month · rollover up to 100",
+    creditsAmount: "200 credits",
+    creditsSub: "per month · rollover up to 100",
     creditsColor: PURPLE,
     creditsBg: `${PURPLE}0d`,
     checkColor: TEAL,
@@ -308,7 +323,8 @@ const PLANS = [
     monthly: 29,
     annualMonthly: 23,
     annualTotal: 278,
-    creditsText: "600 credits per month · rollover up to 300",
+    creditsAmount: "600 credits",
+    creditsSub: "per month · rollover up to 300",
     creditsColor: AMBER,
     creditsBg: `${AMBER}12`,
     checkColor: AMBER,
@@ -424,12 +440,12 @@ const FAQ_ITEMS = [
   { q: "Is there a trial period for Pro?", a: "" },
 ];
 
-function FaqItem({ q, a, defaultOpen }) {
+function FaqItem({ q, a, defaultOpen, isLast }) {
   const [open, setOpen] = useState(!!defaultOpen);
   return (
     <div style={{
-      borderBottom: "1px solid #f1f5f9",
-      padding: "18px 0",
+      borderBottom: isLast ? "none" : "1px solid #e2e8f0",
+      padding: "20px 24px",
     }}>
       <button
         onClick={() => setOpen(o => !o)}
@@ -756,20 +772,24 @@ export default function Premium() {
         </section>
 
         {/* FAQ */}
-        <section style={{ maxWidth: 760, margin: "0 auto", padding: "0 24px 80px" }}>
+        <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px 80px" }}>
           <p style={{
             fontSize: 11,
             fontWeight: 700,
             letterSpacing: "0.1em",
             textTransform: "uppercase",
             color: "#94a3b8",
-            marginBottom: 4,
+            marginBottom: 20,
           }}>
             Frequently Asked
           </p>
-          <div>
+          <div style={{
+            border: "1px solid #e2e8f0",
+            borderRadius: 12,
+            overflow: "hidden",
+          }}>
             {FAQ_ITEMS.map((item, i) => (
-              <FaqItem key={i} q={item.q} a={item.a} defaultOpen={item.defaultOpen} />
+              <FaqItem key={i} q={item.q} a={item.a} defaultOpen={item.defaultOpen} isLast={i === FAQ_ITEMS.length - 1} />
             ))}
           </div>
         </section>
