@@ -626,6 +626,7 @@ export default function Premium() {
 
         {/* Value Props */}
         <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px 64px" }}>
+          <div style={{border:"1px solid #e2e8f0", padding:32, borderRadius:12}}>
           <h2 style={{
             fontSize: "clamp(16px, 2.5vw, 20px)",
             fontWeight: 700,
@@ -667,6 +668,7 @@ export default function Premium() {
                 <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.65 }}>{vp.body}</p>
               </div>
             ))}
+          </div>
           </div>
         </section>
 
