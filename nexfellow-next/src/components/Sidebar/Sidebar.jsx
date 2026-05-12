@@ -221,7 +221,7 @@ function Sidebar() {
         <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column' }}>
 
           <Link href="/my-products" className={style.ctaBanner}>
-            <svg width="199" height="93" viewBox="0 0 249 93" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+            <svg width="220" height="99" viewBox="0 0 249 93" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
               <g filter="url(#filter0_dd_4698_14074)">
                 <g clipPath="url(#clip0_4698_14074)">
                   <rect x="11.8828" y="1.98438" width="225" height="69" rx="12" fill="url(#paint0_linear_4698_14074)" />

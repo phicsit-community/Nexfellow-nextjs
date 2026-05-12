@@ -523,7 +523,8 @@
 .ctaBanner {
   border-radius: 12px;
   padding: 1px;
-  margin: 1px 10px;
+  margin: 1px auto;
+  align-self: center;
   display: flex;
   flex-direction: column;
   color: white;
