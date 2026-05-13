@@ -5,11 +5,16 @@ const Subscription = require("../models/subscriptionModel");
 const { PLANS, VALID_PLAN_IDS, VALID_INTERVALS } = require("../constants/plans");
 const MailSender = require("../utils/mailSender");
 
-const dodo = new DodoPayments({
-  bearerToken: process.env.DODO_PAYMENTS_API_KEY,
-  environment:
-    process.env.NODE_ENV === "production" ? "live_mode" : "test_mode",
-});
+let _dodo = null;
+const getDodo = () => {
+  if (!_dodo) {
+    _dodo = new DodoPayments({
+      bearerToken: process.env.DODO_PAYMENTS_API_KEY,
+      environment: process.env.NODE_ENV === "production" ? "live_mode" : "test_mode",
+    });
+  }
+  return _dodo;
+};
 
 // POST /payments/checkout
 // Creates a Dodo Payments hosted checkout session for a subscription plan.
@@ -45,7 +50,7 @@ module.exports.createCheckoutSession = async (req, res) => {
     checkoutPayload.customer = { customer_id: req.user.dodoCustomerId };
   }
 
-  const checkout = await dodo.checkoutSessions.create(checkoutPayload);
+  const checkout = await getDodo().checkoutSessions.create(checkoutPayload);
   return res.json({ checkoutUrl: checkout.url });
 };
 
