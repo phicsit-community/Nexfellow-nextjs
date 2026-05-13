@@ -818,6 +818,21 @@ function NewSubmissionModal({ onClose, onCreated }) {
 
   const STEPS = ['Basics', 'Focus', 'Links', 'Review'];
 
+  const uploadLogoIfPresent = async (productId) => {
+    if (!form.logo) return null;
+    const fd = new FormData();
+    fd.append('logo', form.logo);
+    try {
+      const res = await api.post(`/products/${productId}/logo`, fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return res.data.logo;
+    } catch (err) {
+      console.error('Logo upload failed', err);
+      return null;
+    }
+  };
+
   const handleSubmitForFeedback = async () => {
     setError('');
     if (!form.name || !form.tagline || !form.productUrl) {
@@ -840,7 +855,9 @@ function NewSubmissionModal({ onClose, onCreated }) {
       // Step 1: create as draft
       const createRes = await api.post('/products', payload);
       const productId = createRes.data._id;
-      // Step 2: submit for review (sets status → in_review and launchedAt)
+      // Step 2: upload logo if provided
+      await uploadLogoIfPresent(productId);
+      // Step 3: submit for review (sets status → in_review and launchedAt)
       const submitRes = await api.post(`/products/${productId}/submit`);
       onCreated?.(submitRes.data.product);
       onClose();
@@ -867,7 +884,9 @@ function NewSubmissionModal({ onClose, onCreated }) {
         status:           'draft',
       };
       const res = await api.post('/products', payload);
-      onCreated?.(res.data);
+      const productId = res.data._id;
+      await uploadLogoIfPresent(productId);
+      onCreated?.({ ...res.data });
       onClose();
     } catch (err) {
       console.error('Save draft failed', err);
