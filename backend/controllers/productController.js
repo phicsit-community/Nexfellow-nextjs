@@ -9,6 +9,7 @@ const { REVIEW_TAGS } = require("../models/productReviewModel");
 const NotificationService = require("../utils/notificationService");
 const User = require("../models/userModel");
 const CreditService = require("../services/creditService");
+const { getUserPlan } = require("../utils/planUtils");
 
 const getBunnyStoragePath = (cdnUrl) => {
   try {
@@ -443,8 +444,13 @@ const uploadScreenshots = async (req, res) => {
     throw new ExpressError("Forbidden", 403);
   if (!req.files || req.files.length === 0)
     throw new ExpressError("No files provided", 400);
-  if (product.screenshots.length + req.files.length > 5)
-    throw new ExpressError("Maximum 5 screenshots allowed", 400);
+
+  const plan = getUserPlan(req.user);
+  if (product.screenshots.length + req.files.length > plan.screenshotsPerProduct)
+    throw new ExpressError(
+      `Your ${req.user.subscriptionTier} plan allows a maximum of ${plan.screenshotsPerProduct} screenshot(s) per product.`,
+      403
+    );
 
   const uploadedResults = [];
   try {

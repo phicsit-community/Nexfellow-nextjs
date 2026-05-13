@@ -108,7 +108,30 @@ const userSchema = new schema(
     subscriptionTier: {
       type: String,
       default: "free",
-      enum: ["free", "bronze"],
+      enum: ["free", "builder_pro", "founder"],
+    },
+
+    subscriptionExpiresAt: {
+      type: Date,
+      default: null,
+    },
+
+    subscriptionInterval: {
+      type: String,
+      enum: ["monthly", "annual"],
+      default: null,
+    },
+
+    dodoCustomerId: {
+      type: String,
+      default: null,
+      select: false,
+    },
+
+    dodoSubscriptionId: {
+      type: String,
+      default: null,
+      select: false,
     },
 
     registeredQuizzes: [
