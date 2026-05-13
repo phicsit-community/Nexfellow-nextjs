@@ -556,12 +556,19 @@ function StepFocus({ form, setForm }) {
 
 function StepLinks({ form, setForm }) {
   const fileInputRef = React.useRef(null);
+  const logoInputRef = React.useRef(null);
 
   const addFiles = (files) => {
     const valid = Array.from(files).filter(
       f => f.type.startsWith('image/') && f.size <= 5 * 1024 * 1024
     );
     setForm(f => ({ ...f, screenshots: [...f.screenshots, ...valid].slice(0, 5) }));
+  };
+
+  const handleLogoFile = (file) => {
+    if (!file || !file.type.startsWith('image/') || file.size > 2 * 1024 * 1024) return;
+    const url = URL.createObjectURL(file);
+    setForm(f => ({ ...f, logo: file, logoPreview: url }));
   };
 
   const formatSize = (bytes) =>
@@ -573,6 +580,50 @@ function StepLinks({ form, setForm }) {
     <div className="mp-step">
       <h3 className="mp-step-title">Links & media</h3>
       <p className="mp-step-sub">At minimum, add your live URL. A demo video makes feedback 2.4× more specific.</p>
+
+      <div className="mp-form-group">
+        <label className="mp-label">PRODUCT LOGO <span className="mp-optional">(optional)</span></label>
+        <div className="mp-logo-upload-row">
+          <div
+            className="mp-logo-dropzone"
+            onClick={() => logoInputRef.current?.click()}
+            onDrop={e => { e.preventDefault(); handleLogoFile(e.dataTransfer.files[0]); }}
+            onDragOver={e => e.preventDefault()}
+          >
+            {form.logoPreview ? (
+              <img src={form.logoPreview} alt="Logo preview" className="mp-logo-preview-img" />
+            ) : (
+              <div className="mp-logo-placeholder">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="3" ry="3"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+              </div>
+            )}
+            <input
+              ref={logoInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/svg+xml,image/webp"
+              style={{ display: 'none' }}
+              onChange={e => { handleLogoFile(e.target.files[0]); e.target.value = ''; }}
+            />
+          </div>
+          <div className="mp-logo-info">
+            <p className="mp-logo-info-text">Upload your product logo</p>
+            <p className="mp-logo-info-hint">PNG, JPG, SVG or WebP · Max 2MB · Ideal: 256 × 256</p>
+            {form.logo && (
+              <div className="mp-logo-file-row">
+                <span className="mp-logo-file-name">{form.logo.name}</span>
+                <button
+                  className="mp-screenshot-remove"
+                  onClick={() => setForm(f => ({ ...f, logo: null, logoPreview: null }))}
+                >✕</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       <div className="mp-links-grid">
         <div className="mp-form-group">
@@ -709,6 +760,12 @@ function StepReview({ form, onEdit }) {
           <span className="mp-review-section-name">LINKS</span>
           <button className="mp-review-edit" onClick={() => onEdit(3)}>Edit</button>
         </div>
+        {form.logoPreview && (
+          <div className="mp-review-field">
+            <span className="mp-review-label">LOGO</span>
+            <img src={form.logoPreview} alt="Product logo" className="mp-review-logo" />
+          </div>
+        )}
         <div className="mp-review-field">
           <span className="mp-review-label">PRODUCT URL</span>
           <span className={`mp-review-val ${form.productUrl ? 'mp-link' : 'mp-not-set'}`}>
@@ -756,6 +813,7 @@ function NewSubmissionModal({ onClose, onCreated }) {
     name: '', tagline: '', description: '', category: '', buildStage: '',
     focusAreas: [], specificQuestion: '', reviewerType: '',
     productUrl: '', demoVideo: '', githubUrl: '', productHuntUrl: '', screenshots: [],
+    logo: null, logoPreview: null,
   });
 
   const STEPS = ['Basics', 'Focus', 'Links', 'Review'];
