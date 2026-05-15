@@ -10,6 +10,7 @@ const urlShortener = require("../utils/urlShortener");
 const Like = require("../models/likeModel");
 const { getIo } = require("../utils/websocket");
 const redis = require("../utils/redisClient");
+const { getUserPlan } = require("../utils/planUtils");
 
 // Helper to extract Bunny storage path from CDN URL
 const getBunnyStoragePath = (cdnUrl) => {
@@ -58,6 +59,23 @@ module.exports.createPost = async (req, res) => {
   try {
     const { title, content, community, private: isPrivate } = req.body;
     const isGeneralFeed = !community || community === "general";
+
+    // Plan-based limits — all checks are server-side only
+    const plan = getUserPlan(req.user);
+
+    if (content && content.length > plan.postCharLimit) {
+      return res.status(403).json({
+        error: `Post content exceeds the ${plan.postCharLimit}-character limit for your ${req.user.subscriptionTier} plan.`,
+        limit: plan.postCharLimit,
+      });
+    }
+
+    if (req.files && req.files.length > plan.imagesPerPost) {
+      return res.status(403).json({
+        error: `Your ${req.user.subscriptionTier} plan allows a maximum of ${plan.imagesPerPost} image(s) per post.`,
+        limit: plan.imagesPerPost,
+      });
+    }
 
     let authorId = req.userId;
     let postCommunity = null;
@@ -197,6 +215,14 @@ module.exports.updatePost = async (req, res) => {
     post.title = title || post.title;
 
     if (content) {
+      const plan = getUserPlan(req.user);
+      if (content.length > plan.postCharLimit) {
+        throw new ExpressError(
+          `Post content exceeds the ${plan.postCharLimit}-character limit for your ${req.user.subscriptionTier} plan.`,
+          403
+        );
+      }
+
       const { processedContent, shortenedUrls } =
         await urlShortener.processAndShortenUrls(
           content,

@@ -59,6 +59,11 @@ const inactivityPenaltyCron = require("./jobs/inactivityPenaltyCron");
 cron.schedule("0 2 * * *", inactivityPenaltyCron, { timezone: "UTC" });
 console.log("🔄 Inactivity penalty cron job scheduled (daily 02:00 UTC)");
 
+// Subscription expiry safety-net: runs daily at 03:00 UTC
+const subscriptionExpiryCron = require("./jobs/subscriptionExpiryCron");
+cron.schedule("0 3 * * *", subscriptionExpiryCron, { timezone: "UTC" });
+console.log("🔄 Subscription expiry cron job scheduled (daily 03:00 UTC)");
+
 // if debug
 // if (process.env.NODE_ENV === "development") {
 //   app.use(requestLogger);
@@ -150,6 +155,13 @@ app.use(
     credentials: true,
   })
 );
+// Dodo Payments webhook needs the raw body for HMAC-SHA256 verification.
+// This must be registered BEFORE express.json() so it intercepts the raw bytes first.
+app.use("/payments/webhook", express.raw({ type: "application/json" }), (req, res, next) => {
+  req.rawBody = req.body.toString("utf8");
+  next();
+});
+
 // Allow requests from the specified origin(s)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

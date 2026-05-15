@@ -17,6 +17,8 @@ function sanitizeUser(userDoc) {
         picture: user.picture || null,
         banner: user.banner || null,
         subscriptionTier: user.subscriptionTier,
+        subscriptionExpiresAt: user.subscriptionExpiresAt || null,
+        subscriptionInterval: user.subscriptionInterval || null,
         registeredQuizzes: user.registeredQuizzes,
         registeredCommunityQuizzes: user.registeredCommunityQuizzes,
         country: user.country,

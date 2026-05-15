@@ -243,7 +243,7 @@ const PLANS = [
       {
         label: "Posts",
         items: [
-          { text: "Post up to 150 words per post" },
+          { text: "Post up to 500 characters per post" },
           { text: "No image attachments", included: false, muted: true },
         ],
       },
@@ -296,7 +296,7 @@ const PLANS = [
       {
         label: "Posts",
         items: [
-          { text: "Post up to 500 words per post" },
+          { text: "Post up to 2,000 characters per post" },
           { text: "Up to 3 image attachments per post" },
         ],
       },
@@ -350,7 +350,7 @@ const PLANS = [
       {
         label: "Posts",
         items: [
-          { text: "Post up to 1,000 words per post" },
+          { text: "Post up to 5,000 characters per post" },
           { text: "Up to 10 image attachments per post" },
         ],
       },

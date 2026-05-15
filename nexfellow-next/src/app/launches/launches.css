@@ -102,7 +102,7 @@
 /* ════════════════════════ TWO-COLUMN GRID ════════════════════════ */
 .lp-grid {
   display: grid;
-  grid-template-columns: 1fr 272px;
+  grid-template-columns: 800fr 420fr;
   min-height: 100%;
   align-items: start;
 }
