@@ -81,7 +81,8 @@ export default function LandingTestimonials() {
 
         <div className="testimonials-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
 
-          {/* Featured card — ref measures its rendered height */}
+          {/* Featured card — ref measures its rendered height (desktop only) */}
+          <div className={styles.desktopMarquee}>
           <FadeIn delay={0.1}>
             <div
               ref={leftCardRef}
@@ -105,8 +106,10 @@ export default function LandingTestimonials() {
               </div>
             </div>
           </FadeIn>
+          </div>{/* end featured card desktopMarquee */}
 
-          {/* Right side — upward marquee, height locked to left card */}
+          {/* Right side — upward marquee, height locked to left card (desktop only) */}
+          <div className={styles.desktopMarquee}>
           <FadeIn delay={0.15} direction="left">
             <div style={{
               position: "relative",
@@ -163,8 +166,47 @@ export default function LandingTestimonials() {
               </div>
             </div>
           </FadeIn>
+          </div>{/* end desktopMarquee */}
 
+        </div>{/* end testimonials-grid */}
+
+        {/* Mobile horizontal marquee — left-to-right infinite scroll */}
+        <div className={styles.mobileMarqueeWrapper}>
+          <div
+            className={`${styles.mobileTrack}${paused ? ` ${styles.mobilePaused}` : ""}`}
+            onTouchStart={() => setPaused(true)}
+            onTouchEnd={() => setPaused(false)}
+          >
+            {LOOPED.map((t, i) => (
+              <div
+                key={i}
+                className={styles.mobileCard}
+                style={{
+                  background: CARD, border: `1px solid ${BORDER2}`,
+                  borderRadius: 16, padding: 20,
+                  transition: "border-color 0.2s",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+                  <div style={{
+                    width: 38, height: 38, borderRadius: "50%",
+                    background: t.grad,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontWeight: 700, fontSize: 12, color: "white", flexShrink: 0,
+                  }}>
+                    {t.avatar}
+                  </div>
+                  <div>
+                    <div style={{ color: TEXT, fontWeight: 600, fontSize: 14 }}>{t.name}</div>
+                    <div style={{ color: MUTED, fontSize: 12, marginBottom: 8 }}>{t.role}</div>
+                    <p style={{ color: "#cbd5e1", fontSize: 13, lineHeight: 1.6, margin: 0 }}>"{t.quote}"</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
+
       </div>
     </section>
 

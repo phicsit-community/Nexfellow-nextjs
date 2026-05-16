@@ -1,12 +1,12 @@
 "use client";
 
-import Blog from "@/Pages/Blog/Blog";
+import CommingSoon from "@/Pages/CommingSoon/CommingSoon";
 import PublicLayout from "@/layouts/PublicLayout";
 
 export default function BlogsPage() {
     return (
         <PublicLayout>
-            <Blog />
+            <CommingSoon />
         </PublicLayout>
     );
 }

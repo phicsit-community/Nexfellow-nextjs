@@ -30,10 +30,9 @@ export default function CtaBanner() {
       }} />
 
       <FadeIn>
-        <div style={{
+        <div className="cta-card" style={{
           maxWidth: 700, margin: "0 auto",
           position: "relative",
-          /* Glass card */
           background: "rgba(8, 24, 42, 0)",
           backdropFilter: "blur(13px)",
           WebkitBackdropFilter: "blur(24px)",
@@ -71,20 +70,20 @@ export default function CtaBanner() {
             }}>Silence</em>
           </h2>
 
-          <p style={{ color: MUTED, fontSize: 15, lineHeight: 1.7, marginBottom: 32 }}>
-            Join 3,000+ builders trading honest feedback every day.<br />
+          <p className="cta-desc" style={{ color: MUTED, fontSize: 15, lineHeight: 1.7, marginBottom: 32 }}>
+            Join 3,000+ builders trading honest feedback every day.<br className="cta-br" />
             Get started with 30 free credits. No card required.
           </p>
 
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/signup" style={{
+          <div className="cta-buttons" style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+            <Link href="/signup" className="cta-btn-primary" style={{
               background: T, color: DARKER, padding: "12px 28px",
               borderRadius: 100, fontWeight: 700, fontSize: 15, textDecoration: "none",
               display: "flex", alignItems: "center", gap: 6,
             }}>
               Start free →
             </Link>
-            <Link href="#how-it-works" style={{
+            <Link href="#how-it-works" className="cta-btn-secondary" style={{
               background: "rgba(255,255,255,0.06)",
               color: TEXT,
               border: "1px solid rgba(255,255,255,0.14)",
@@ -99,8 +98,14 @@ export default function CtaBanner() {
     </section>
 
     <style>{`
-      @media (max-width: 768px) {
-        .cta-banner-section { padding: 48px 16px 60px !important; }
+      @media (max-width: 480px) {
+        .cta-banner-section { padding: 40px 16px 56px !important; }
+        .cta-card { padding: 24px 18px !important; border-radius: 18px !important; }
+        .cta-br { display: none; }
+        .cta-desc { font-size: 13px !important; margin-bottom: 24px !important; }
+        .cta-buttons { gap: 8px !important; }
+        .cta-btn-primary { padding: 10px 18px !important; font-size: 13px !important; }
+        .cta-btn-secondary { padding: 10px 14px !important; font-size: 13px !important; }
       }
     `}</style>
     </>
