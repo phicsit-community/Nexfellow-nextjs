@@ -2,6 +2,7 @@
 
 import FadeIn from "../shared/FadeIn";
 import { T, BG, BG2, MUTED, TEXT, BORDER, BORDER2, CARD } from "../shared/tokens";
+import { useIsMobile } from "../shared/useIsMobile";
 
 const REVIEWS = [
   {
@@ -41,10 +42,12 @@ function StarRating({ score }) {
 }
 
 export default function FeedbackSection() {
-  return (
-    <section style={{ background: BG2, padding: "100px 24px", position: "relative", overflow: "hidden" }}>
+  const isMobile = useIsMobile();
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "center", position: "relative", zIndex: 1 }}>
+  return (
+    <section style={{ background: BG2, padding: isMobile ? "64px 20px" : "100px 24px", position: "relative", overflow: "hidden" }}>
+
+      <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 40, alignItems: "center", position: "relative", zIndex: 1 }}>
 
         {/* Left — feedback UI mockup */}
         <FadeIn>
@@ -226,10 +229,11 @@ export default function FeedbackSection() {
 
         {/* Right — text */}
         <FadeIn delay={0.2}>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", textAlign: "right" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: isMobile ? "flex-start" : "flex-end", textAlign: isMobile ? "left" : "right" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 24 }}>
+              {isMobile && <div style={{ width: 28, height: 2, background: T }} />}
               <span style={{ color: T, fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Feedback &amp; Validation</span>
-              <div style={{ width: 28, height: 2, background: T }} />
+              {!isMobile && <div style={{ width: 28, height: 2, background: T }} />}
             </div>
             <h2 style={{ fontSize: "clamp(34px, 4.2vw, 76px)", fontWeight: 800, color: TEXT, lineHeight: 1.02, letterSpacing: "-1px", marginBottom: 24 }}>
               <span style={{ color: "#a78bfa", display: "block" }}>10 real reviews</span>
@@ -239,8 +243,8 @@ export default function FeedbackSection() {
             <p style={{ color: MUTED, fontSize: 15, lineHeight: 1.75, marginBottom: 28, maxWidth: 520, marginLeft: 0 }}>
               Submit your product and get matched with builders in your niche. Not random users — people who've shipped something themselves and know what to look for. Every review is quality-weighted by the platform gets penalized. Substance gets rewarded.
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, alignItems: "flex-end" }}>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, alignItems: isMobile ? "flex-start" : "flex-end" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
                 <span style={{
                   background: "rgba(20,184,166,0.12)", color: T,
                   border: `1px solid ${BORDER}`, borderRadius: 20,
@@ -261,7 +265,7 @@ export default function FeedbackSection() {
                 background: "rgba(20,184,166,0.08)", color: MUTED,
                 border: `1px solid ${BORDER}`, borderRadius: 20,
                 fontSize: 12, fontWeight: 600, padding: "5px 14px",
-                alignSelf: "flex-end",
+                alignSelf: isMobile ? "flex-start" : "flex-end",
               }}>
                 Tagged by theme (UX, Pricing, Mobile...)
               </span>

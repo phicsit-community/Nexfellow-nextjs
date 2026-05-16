@@ -2,6 +2,7 @@
 
 import FadeIn from "../shared/FadeIn";
 import { T, BG, BG2, MUTED, TEXT, BORDER, BORDER2 } from "../shared/tokens";
+import { useIsMobile } from "../shared/useIsMobile";
 
 const ROWS = [
   { capability: "Structured feedback from verified builders", nexfellow: "check", producthunt: "cross", indiehackers: "partial" },
@@ -56,10 +57,12 @@ const NexFellowLogoSmall = () => (
 );
 
 export default function ComparisonTable() {
+  const isMobile = useIsMobile();
+
   return (
-    <section style={{ background: BG2, padding: "100px 24px" }}>
+    <section style={{ background: BG2, padding: isMobile ? "64px 0" : "100px 24px" }}>
       <FadeIn>
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", padding: isMobile ? "0 20px" : 0 }}>
 
           {/* Header */}
           <div style={{ textAlign: "center", marginBottom: 56 }}>
@@ -89,11 +92,20 @@ export default function ComparisonTable() {
             </p>
           </div>
 
+          {/* Swipe hint — mobile only */}
+          {isMobile && (
+            <div style={{ textAlign: "center", marginBottom: 12 }}>
+              <span style={{ color: MUTED, fontSize: 12, fontWeight: 500, letterSpacing: "0.5px" }}>← SWIPE TO COMPARE →</span>
+            </div>
+          )}
+
           {/* Table */}
+          <div style={{ overflowX: isMobile ? "auto" : "visible", WebkitOverflowScrolling: "touch", borderRadius: 20 }}>
           <div style={{
             background: "rgba(7,26,44,0.7)", border: `1px solid ${BORDER}`,
             borderRadius: 20, overflow: "hidden",
             boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
+            minWidth: isMobile ? 560 : "auto",
           }}>
             {/* Header row */}
             <div style={{
@@ -161,6 +173,7 @@ export default function ComparisonTable() {
                 </div>
               </div>
             ))}
+          </div>
           </div>
         </div>
       </FadeIn>
