@@ -2,6 +2,7 @@
 
 import FadeIn from "../../Landing/shared/FadeIn";
 import { T, MUTED, TEXT, BORDER } from "../../Landing/shared/tokens";
+import { useIsMobile } from "../../Landing/shared/useIsMobile";
 
 const PROBLEMS = [
   {
@@ -49,8 +50,10 @@ const PROBLEMS = [
 ];
 
 export default function ProblemSection() {
+  const isMobile = useIsMobile();
+
   return (
-    <section style={{ padding: "100px 24px", position: "relative" }}>
+    <section style={{ padding: isMobile ? "60px 20px" : "100px 24px", position: "relative" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* Section label */}
@@ -81,16 +84,16 @@ export default function ProblemSection() {
             Distribution is broken.
           </h2>
 
-          <p style={{ color: MUTED, fontSize: 16, lineHeight: 1.7, maxWidth: 740, marginBottom: 64 }}>
+          <p style={{ color: MUTED, fontSize: isMobile ? 15 : 16, lineHeight: 1.7, maxWidth: 740, marginBottom: isMobile ? 40 : 64 }}>
             Every week, thousands of talented builders ship products to near-zero traction. Not because the product is bad
             — because nobody told them about the pricing confusion, the broken mobile flow, or the onboarding drops.
           </p>
         </FadeIn>
 
-        {/* Two-column layout */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+        {/* Two-column layout → single column on mobile */}
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20 }}>
 
-          {/* Left: problem cards 2x2 */}
+          {/* Problem cards 2x2 */}
           <FadeIn direction="right" style={{ height: "100%" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, height: "100%", alignContent: "stretch" }}>
               {PROBLEMS.map((p, i) => (
@@ -98,7 +101,7 @@ export default function ProblemSection() {
                   background: "#0d2035",
                   border: "1px solid rgba(255,255,255,0.08)",
                   borderRadius: 14,
-                  padding: "22px 18px",
+                  padding: isMobile ? "18px 14px" : "22px 18px",
                   display: "flex",
                   flexDirection: "column",
                 }}>
@@ -113,8 +116,8 @@ export default function ProblemSection() {
                   }}>
                     {p.icon}
                   </div>
-                  <h3 style={{ color: TEXT, fontSize: 14, fontWeight: 700, marginBottom: 8, lineHeight: 1.3 }}>{p.title}</h3>
-                  <p style={{ color: MUTED, fontSize: 12.5, lineHeight: 1.6, margin: 0 }}>{p.body}</p>
+                  <h3 style={{ color: TEXT, fontSize: 13, fontWeight: 700, marginBottom: 8, lineHeight: 1.3 }}>{p.title}</h3>
+                  <p style={{ color: MUTED, fontSize: 12, lineHeight: 1.6, margin: 0 }}>{p.body}</p>
                 </div>
               ))}
             </div>
