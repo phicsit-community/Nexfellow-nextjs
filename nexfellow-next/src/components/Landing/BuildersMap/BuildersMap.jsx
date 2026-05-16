@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef } from "react";
 import Link from "next/link";
 import FadeIn from "../shared/FadeIn";
 import { T, BG2, MUTED, TEXT } from "../shared/tokens";
@@ -74,6 +75,20 @@ const FEATURES = [
 ];
 
 export default function BuildersMap() {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const touchStartX = useRef(null);
+
+  function onTouchStart(e) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+  function onTouchEnd(e) {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (dx < -50) setActiveIdx(i => Math.min(i + 1, FEATURES.length - 1));
+    if (dx > 50)  setActiveIdx(i => Math.max(i - 1, 0));
+    touchStartX.current = null;
+  }
+
   return (
     <>
     <section style={{ background: BG2, padding: "100px 24px" }} className="builders-map-section">
@@ -104,7 +119,7 @@ export default function BuildersMap() {
           </div>
         </FadeIn>
 
-        {/* Features */}
+        {/* Features — desktop grid */}
         <FadeIn delay={0.3}>
           <div className="builders-features-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
             {FEATURES.map((f, i) => (
@@ -118,6 +133,45 @@ export default function BuildersMap() {
             ))}
           </div>
         </FadeIn>
+
+        {/* Features — mobile swipe carousel */}
+        <div className="builders-features-carousel">
+          <div
+            style={{ overflow: "hidden" }}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+          >
+            <div style={{
+              display: "flex",
+              transform: `translateX(-${activeIdx * 100}%)`,
+              transition: "transform 0.3s ease",
+            }}>
+              {FEATURES.map((f, i) => (
+                <div key={i} style={{ minWidth: "100%", display: "flex", gap: 14, alignItems: "flex-start", padding: "4px 2px" }}>
+                  <span style={{ flexShrink: 0 }}>{f.icon}</span>
+                  <div>
+                    <div style={{ color: TEXT, fontWeight: 600, fontSize: 15, marginBottom: 6 }}>{f.title}</div>
+                    <div style={{ color: MUTED, fontSize: 13, lineHeight: 1.6 }}>{f.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Dot indicators */}
+          <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 20 }}>
+            {FEATURES.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveIdx(i)}
+                style={{
+                  width: 8, height: 8, borderRadius: "50%", border: "none", padding: 0, cursor: "pointer",
+                  background: i === activeIdx ? T : "rgba(255,255,255,0.3)",
+                  transition: "background 0.2s",
+                }}
+              />
+            ))}
+          </div>
+        </div>
 
         {/* CTA */}
         <FadeIn delay={0.4}>
@@ -135,9 +189,12 @@ export default function BuildersMap() {
     </section>
 
     <style>{`
+      .builders-features-carousel { display: none; }
+
       @media (max-width: 768px) {
         .builders-map-section { padding: 60px 16px !important; }
-        .builders-features-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
+        .builders-features-grid { display: none !important; }
+        .builders-features-carousel { display: block; }
       }
     `}</style>
     </>

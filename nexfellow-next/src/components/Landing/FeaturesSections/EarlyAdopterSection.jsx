@@ -4,11 +4,20 @@ import Image from "next/image";
 import Link from "next/link";
 import FadeIn from "../shared/FadeIn";
 import { T, BG, MUTED, TEXT } from "../shared/tokens";
+import { useIsMobile } from "../shared/useIsMobile";
 
 export default function EarlyAdopterSection() {
+  const isMobile = useIsMobile();
+
   return (
-    <section style={{ background: BG, padding: "120px 24px" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1.35fr", gap: 48, alignItems: "center" }}>
+    <section style={{ background: BG, padding: isMobile ? "64px 20px" : "120px 24px" }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto",
+        display: "grid",
+        gridTemplateColumns: isMobile ? "1fr" : "1fr 1.35fr",
+        gap: isMobile ? 36 : 48,
+        alignItems: "center",
+      }}>
 
         {/* Left — text */}
         <FadeIn>
@@ -17,7 +26,7 @@ export default function EarlyAdopterSection() {
               <div style={{ width: 28, height: 2, background: T }} />
               <span style={{ color: T, fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Visibility &amp; Distribution</span>
             </div>
-            <h2 style={{ fontSize: "clamp(28px, 3.5vw, 52px)", fontWeight: 800, color: TEXT, lineHeight: 1.12, letterSpacing: "-1px", marginBottom: 24 }}>
+            <h2 style={{ fontSize: isMobile ? "clamp(28px, 8vw, 42px)" : "clamp(28px, 3.5vw, 52px)", fontWeight: 800, color: TEXT, lineHeight: 1.12, letterSpacing: "-1px", marginBottom: 24 }}>
               Your product in front of{" "}
               <span style={{ color: "#CDF461" }}>builders
               <br />who truly care</span>
@@ -36,15 +45,20 @@ export default function EarlyAdopterSection() {
         </FadeIn>
 
         {/* Right — dashboard mockup */}
-        <FadeIn delay={0.2} direction="left">
+        <FadeIn delay={0.2} direction={isMobile ? "up" : "left"}>
           <Image
             src="/earlyAdopter.svg"
             alt="Early Adopter Board dashboard"
             width={820}
             height={574}
-            style={{ width: "130%", height: "auto", borderRadius: 16, mixBlendMode: "lighten", justifySelf: "end" }}
+            style={{
+              width: isMobile ? "100%" : "130%",
+              height: "auto",
+              borderRadius: 16,
+              mixBlendMode: "lighten",
+              justifySelf: isMobile ? "center" : "end",
+            }}
           />
-
         </FadeIn>
       </div>
     </section>

@@ -14,3 +14,71 @@
 .track.paused {
   animation-play-state: paused;
 }
+
+/* ── Desktop-only vertical marquee column ── */
+.desktopMarquee {
+  display: block;
+}
+
+/* ── Mobile horizontal marquee ── */
+.mobileMarqueeWrapper {
+  display: none;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  margin-top: 24px;
+}
+
+.mobileMarqueeWrapper::before,
+.mobileMarqueeWrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.mobileMarqueeWrapper::before {
+  left: 0;
+  background: linear-gradient(to right, #0c1a2e 0%, transparent 100%);
+}
+
+.mobileMarqueeWrapper::after {
+  right: 0;
+  background: linear-gradient(to left, #0c1a2e 0%, transparent 100%);
+}
+
+@keyframes scrollRight {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.mobileTrack {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  animation: scrollRight 28s linear infinite;
+  will-change: transform;
+  width: max-content;
+}
+
+.mobileTrack.mobilePaused {
+  animation-play-state: paused;
+}
+
+.mobileCard {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .desktopMarquee {
+    display: none;
+  }
+
+  .mobileMarqueeWrapper {
+    display: block;
+  }
+}

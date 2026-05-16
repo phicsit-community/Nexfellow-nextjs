@@ -260,14 +260,14 @@ export default function TheProblem() {
 
         {/* Bottom testimonial */}
         <FadeIn delay={0.4}>
-          <div style={{
+          <div className="problem-testimonial-outer" style={{
             position: "relative",
             margin: "72px auto 0",
             padding: "48px 40px",
             textAlign: "center",
             maxWidth: 800,
           }}>
-          <div style={{border:`2px solid ${T}`, padding:"40px 32px", maxWidth: 1000, margin:"0 auto", position: "relative"}}>
+          <div className="problem-testimonial-inner" style={{border:`2px solid ${T}`, padding:"40px 32px", maxWidth: 1000, margin:"0 auto", position: "relative"}}>
             {/* Corner brackets (moved inside border container, offset slightly outward) */}
             <div style={{ position: "absolute", top: -12, left: -12, width: 24, height: 24, borderTop: `2px solid ${T}`, borderLeft: `2px solid ${T}`, pointerEvents: "none" }} />
             <div style={{ position: "absolute", top: -12, right: -12, width: 24, height: 24, borderTop: `2px solid ${T}`, borderRight: `2px solid ${T}`, pointerEvents: "none" }} />
@@ -278,7 +278,7 @@ export default function TheProblem() {
                 <path d="M2.6077 16.9615L6.12982 10.8316C6.04327 10.8797 5.9423 10.9134 5.82691 10.9326C5.71152 10.9518 5.59612 10.9615 5.48073 10.9615C3.95574 10.9615 2.66104 10.4248 1.59662 9.3515C0.532207 8.27819 0 6.98793 0 5.48073C0 3.95574 0.532207 2.66104 1.59662 1.59662C2.66104 0.532207 3.95574 0 5.48073 0C6.98793 0 8.27819 0.532207 9.3515 1.59662C10.4248 2.66104 10.9615 3.95407 10.9615 5.47571C10.9615 6.00598 10.8975 6.49803 10.7696 6.95188C10.6418 7.40572 10.4547 7.83841 10.2086 8.24994L5.19225 16.9615H2.6077ZM15.9346 16.9615L19.4567 10.8316C19.3702 10.8797 19.2692 10.9134 19.1538 10.9326C19.0384 10.9518 18.923 10.9615 18.8076 10.9615C17.2827 10.9615 15.9879 10.4248 14.9235 9.3515C13.8591 8.27819 13.3269 6.98793 13.3269 5.48073C13.3269 3.94612 13.8591 2.64902 14.9235 1.58941C15.9879 0.529804 17.2827 0 18.8076 0C20.3148 0 21.6051 0.532207 22.6784 1.59662C23.7517 2.66104 24.2884 3.95407 24.2884 5.47571C24.2884 6.00598 24.2244 6.49803 24.0965 6.95188C23.9687 7.40572 23.7816 7.83841 23.5355 8.24994L18.5192 16.9615H15.9346ZM2.64453 2.5C3.41377 2.5 6.90383 7.98077 7.4423 7.4423C7.98077 6.90383 8.25 6.24997 8.25 5.48073C8.25 4.71149 8.78847 8.03847 8.25 7.5C7.71153 6.96153 6.24997 9 5.48073 9C4.71149 9 4.05763 2.9807 3.51917 3.51917C2.9807 4.05763 5.64453 8.58226 5.64453 9.3515C5.64453 10.1207 3.60606 6.46153 4.14453 7C4.683 7.53847 1.87529 2.5 2.64453 2.5ZM18.6445 4C19.4138 4 20.2307 7.98077 20.7692 7.4423C21.3077 6.90383 15.1445 6.26924 15.1445 5.5C15.1445 4.73076 20.683 5.03847 20.1445 4.5C19.6061 3.96153 22.4138 6 21.6445 6C20.8753 6 21.683 6.96153 21.1445 7.5C20.6061 8.03847 16.0384 4.71149 16.0384 5.48073C16.0384 6.24997 16.1061 4.96153 16.6445 5.5C17.183 6.03847 17.8753 4 18.6445 4Z" fill="#5AD9DA" />
               </svg>
             </div>
-            <p style={{ color: TEXT, fontSize: 18, lineHeight: 1.85, fontStyle: "italic", marginBottom: 32 }}>
+            <p className="problem-quote-text" style={{ color: TEXT, fontSize: 18, lineHeight: 1.85, fontStyle: "italic", marginBottom: 32 }}>
               I shipped four products before NexFellow. All four had the same story — months of building, then silence. It wasn't the tech. It was who I was building for. NexFellow broke that cycle.
             </p>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
@@ -347,6 +347,19 @@ export default function TheProblem() {
         .mock-wrapper {
           zoom: 0.38 !important;
           display: block !important;
+        }
+
+        .problem-testimonial-outer {
+          margin-top: 40px !important;
+          padding: 16px 12px !important;
+        }
+        .problem-testimonial-inner {
+          padding: 24px 20px !important;
+        }
+        .problem-quote-text {
+          font-size: 14px !important;
+          line-height: 1.7 !important;
+          margin-bottom: 20px !important;
         }
       }
     `}</style>

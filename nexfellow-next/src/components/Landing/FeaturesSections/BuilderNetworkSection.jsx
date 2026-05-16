@@ -3,6 +3,7 @@
 import Link from "next/link";
 import FadeIn from "../shared/FadeIn";
 import { T, BG, MUTED, TEXT, BORDER, BORDER2 } from "../shared/tokens";
+import { useIsMobile } from "../shared/useIsMobile";
 
 const BUILDER_NODES = [
   { id: "center", label: "YOU", x: 50, y: 50, size: 52, primary: true },
@@ -25,12 +26,14 @@ const PROFILE_CARDS = [
 ];
 
 export default function BuilderNetworkSection() {
+  const isMobile = useIsMobile();
+
   return (
-    <section style={{ background: BG, padding: "120px 24px" }}>
-      <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
+    <section style={{ background: BG, padding: isMobile ? "64px 20px" : "120px 24px" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, alignItems: "center" }}>
 
         {/* Left — text */}
-        <FadeIn>
+        <FadeIn style={{ order: isMobile ? 1 : undefined }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 24 }}>
               <div style={{ width: 28, height: 2, background: T }} />
@@ -55,21 +58,23 @@ export default function BuilderNetworkSection() {
                 </span>
               ))}
             </div>
-            <Link href="/signup" style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              background: T, color: "#051018",
-              padding: "12px 28px", borderRadius: 100, fontWeight: 700, fontSize: 15, textDecoration: "none",
-            }}>
-              Explore BuilderMap <span>→</span>
-            </Link>
+            {!isMobile && (
+              <Link href="/signup" style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                background: T, color: "#051018",
+                padding: "12px 28px", borderRadius: 100, fontWeight: 700, fontSize: 15, textDecoration: "none",
+              }}>
+                Explore BuilderMap <span>→</span>
+              </Link>
+            )}
           </div>
         </FadeIn>
 
         {/* Right — network diagram */}
-        <FadeIn delay={0.2} direction="left">
-          <div style={{ position: "relative", height: 420 }}>
+        <FadeIn delay={0.2} direction={isMobile ? "up" : "left"} style={{ order: isMobile ? 2 : undefined }}>
+          <div style={{ position: "relative", height: isMobile ? 300 : 420 }}>
 
-            <svg width="622" height="541" viewBox="0 0 622 541" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+            <svg width="100%" height="100%" viewBox="0 0 622 541" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" style={{ maxWidth: "100%" }}>
               <rect width="622" height="541" fill="url(#pattern0_4682_14407)" />
               <defs>
                 <pattern id="pattern0_4682_14407" patternContentUnits="objectBoundingBox" width="1" height="1">
@@ -81,6 +86,19 @@ export default function BuilderNetworkSection() {
 
           </div>
         </FadeIn>
+
+        {/* Mobile-only button — centered, after the image */}
+        {isMobile && (
+          <FadeIn delay={0.3} style={{ order: 3, display: "flex", justifyContent: "center" }}>
+            <Link href="/signup" style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              background: T, color: "#051018",
+              padding: "12px 28px", borderRadius: 100, fontWeight: 700, fontSize: 15, textDecoration: "none",
+            }}>
+              Explore BuilderMap <span>→</span>
+            </Link>
+          </FadeIn>
+        )}
       </div>
     </section>
   );

@@ -1,60 +1,40 @@
-import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
+"use client";
+
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './Comingsoon.module.css';
 
 const Comingsoon = () => {
     const router = useRouter();
+    const [userInitial, setUserInitial] = useState('');
 
-    const handleClick = () => {
-        router.push('/feed');
-    };
+    useEffect(() => {
+        const userData = typeof window !== 'undefined'
+            ? JSON.parse(localStorage.getItem('user'))
+            : null;
+        if (userData?.username) {
+            setUserInitial(userData.username.charAt(0).toUpperCase());
+        } else if (userData?.name) {
+            setUserInitial(userData.name.charAt(0).toUpperCase());
+        }
+    }, []);
 
     return (
         <div className={styles.comingsoon}>
             <div className={styles.content}>
-                <h1>We are Coming Soon!</h1>
+                <h1>
+                    We&apos;re <span className={styles.highlight}>Coming Soon!</span>
+                </h1>
                 <p>
-                    We’re working hard to launch this page.
-                    <br /> This page is currently under construction.
+                    We&apos;re working hard to launch this page. This page is currently
+                    under construction.
                 </p>
-                {/* <button className={styles.comingNotifyButton}>Notify Me</button>
-                <button className={styles.comingNotifyButton} onClick={handleClick}>
-                    Get back to Home
-                </button> */}
-                {/* <div className={styles.socialIcons}>
-                    <a
-                        href="https://www.facebook.com/PHICSIT"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.socialIcon}
-                    >
-                        <FaFacebookF />
-                    </a>
-                    <a
-                        href="https://x.com/phicsit"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.socialIcon}
-                    >
-                        <FaTwitter />
-                    </a>
-                    <a
-                        href="https://www.instagram.com/phicsit.in"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.socialIcon}
-                    >
-                        <FaInstagram />
-                    </a>
-                    <a
-                        href="https://www.linkedin.com/company/phicsit"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.socialIcon}
-                    >
-                        <FaLinkedinIn />
-                    </a>
-                </div> */}
+                <div className={styles.actions}>
+                    <button className={styles.notifyButton} onClick={() => router.push('/')}>Go Home</button>
+                    {userInitial && (
+                        <div className={styles.avatar}>{userInitial}</div>
+                    )}
+                </div>
             </div>
         </div>
     );

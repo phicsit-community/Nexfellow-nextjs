@@ -17,7 +17,7 @@ const Mission = () => {
       <ProblemSection />
       <ManifestoSection />
       <SixThingsSection />
-      <FounderSection />
+      {/* <FounderSection /> */}
       <CtaBanner />
       <Footer />
     </div>

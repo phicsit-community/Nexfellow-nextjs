@@ -2,6 +2,7 @@
 
 import FadeIn from "../shared/FadeIn";
 import { T, BG, BG2, MUTED, TEXT, BORDER, BORDER2 } from "../shared/tokens";
+import { useIsMobile } from "../shared/useIsMobile";
 
 const ROWS = [
   { capability: "Structured feedback from verified builders", nexfellow: "check", producthunt: "cross", indiehackers: "partial" },
@@ -56,15 +57,17 @@ const NexFellowLogoSmall = () => (
 );
 
 export default function ComparisonTable() {
+  const isMobile = useIsMobile();
+
   return (
-    <section style={{ background: BG2, padding: "100px 24px" }}>
+    <section style={{ background: BG2, padding: isMobile ? "64px 0" : "100px 24px" }}>
       <FadeIn>
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", padding: isMobile ? "0 20px" : 0 }}>
 
           {/* Header */}
           <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 20 }}>
-              <svg width="272" height="73" viewBox="0 0 272 73" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: isMobile ? 10 : 16, marginBottom: 20 }}>
+              <svg style={{ width: isMobile ? 150 : 272, height: "auto", flexShrink: 0 }} viewBox="0 0 272 73" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M59.9362 10.8342C56.8012 8.88005 47.3887 17.5297 46.387 16.5743C45.554 15.7786 52.3823 10.0982 51.0328 7.96492C49.8161 6.04211 42.1159 8.39038 26.7648 13.1661C19.7214 15.3606 16.0908 16.5698 12.9871 19.7033C11.9063 20.7961 8.46822 24.2715 7.89943 29.3622C7.84271 29.8593 7.82628 30.2728 7.82031 30.5564V50.4817C7.82031 58.9567 15.7176 65.8254 25.4585 65.8254H48.368C49.7698 65.8343 55.6517 65.7268 60.5856 61.5618C61.0693 61.1527 66.2406 56.6622 66.3481 50.419C66.3481 50.3294 66.3481 50.2548 66.3481 50.207C66.3481 44.4545 66.3481 38.702 66.3481 32.9495C66.3481 32.7793 66.3764 32.3718 66.3481 31.8284C66.2794 30.54 65.9823 29.4069 65.5061 28.1619C65.009 26.8631 64.3118 25.6554 62.9175 23.2354C62.2979 22.1621 61.4246 20.7125 61.2276 20.399C60.9439 19.9511 60.9379 19.9616 60.8334 19.7033C58.9285 15.0023 61.3873 11.7374 59.9362 10.8342Z" fill="#24B2B4" stroke="black" stroke-width="0.273649" stroke-miterlimit="10" />
                 <path d="M58.9741 43.9957C57.1438 36.2657 49.5332 37.0793 49.5332 37.0793C49.5332 37.0793 45.801 37.2286 43.4333 40.1008C42.1928 41.6071 41.8584 43.2881 41.6285 44.4705C40.7955 48.761 42.5645 50.7823 41.1552 52.3543C40.1938 53.4262 38.4979 53.4605 37.1245 53.4874C35.7511 53.5142 34.1716 53.5486 33.1729 52.5916C31.6546 51.1346 33.1326 49.0088 32.1204 44.4734C31.7994 43.0328 31.471 41.5056 30.317 40.1038C27.9479 37.2286 24.2172 37.0823 24.2172 37.0823C24.2172 37.0823 16.6036 36.2687 14.7763 43.9987C14.1627 46.5933 13.7522 47.1173 12.8356 48.0802C11.4457 49.5328 9.402 49.9657 7.85688 50.1001C7.81241 51.2961 7.9289 52.4926 8.20323 53.6576C8.68505 55.5519 9.53691 57.3323 10.7097 58.896C11.4666 59.9202 12.3415 60.8517 13.3163 61.6713C15.1282 63.1606 17.2222 64.2686 19.4729 64.9287C21.0596 65.4065 22.6961 65.7001 24.3501 65.8035C24.9472 65.8423 25.2637 65.8364 27.2358 65.8334C28.863 65.8334 30.4887 65.8334 32.1144 65.8334C36.2079 65.814 38.2561 65.8035 39.3996 65.811C42.2361 65.8304 45.0874 65.811 47.9313 65.8334C49.0079 65.8498 50.0842 65.7864 51.1515 65.6438C52.3233 65.4887 53.4782 65.2253 54.6015 64.857L54.8314 64.7794C56.5996 64.15 58.2717 63.2778 59.7996 62.1878C60.8359 61.4073 61.7747 60.5051 62.5958 59.5006C63.3571 58.596 64.7365 56.9314 65.5904 54.4085C66.0611 53.0132 66.3055 51.5516 66.3145 50.0792C65.3829 50.112 62.8704 50.0792 61.1387 48.5445C60.6864 48.1384 59.8817 47.8309 58.9741 43.9957Z" fill="#FFFEFF" stroke="black" stroke-width="0.273649" stroke-miterlimit="10" />
                 <path d="M23.9884 48.3519C26.2343 48.3519 28.055 46.5312 28.055 44.2853C28.055 42.0394 26.2343 40.2188 23.9884 40.2188C21.7425 40.2188 19.9219 42.0394 19.9219 44.2853C19.9219 46.5312 21.7425 48.3519 23.9884 48.3519Z" fill="black" />
@@ -82,29 +85,38 @@ export default function ComparisonTable() {
                 <path d="M267.884 33.5039L257.678 52.1946H251.194L249.436 42.0222L243.952 52.1946H237.533L234.371 33.5039H240.371L242.061 44.7467L248.234 33.5039H253.856L255.58 44.7467L261.753 33.5039H267.884Z" fill="#24B2B4" />
               </svg>
 
-              <span style={{ color: TEXT, fontSize: "clamp(24px, 3.5vw, 42px)", fontWeight: 800, letterSpacing: "-1px" }}>vs the rest</span>
+              <span style={{ color: TEXT, fontSize: isMobile ? 20 : "clamp(24px, 3.5vw, 42px)", fontWeight: 800, letterSpacing: "-1px", whiteSpace: "nowrap" }}>vs the rest</span>
             </div>
             <p style={{ color: MUTED, fontSize: 15, maxWidth: 500, margin: "0 auto", lineHeight: 1.7 }}>
               Product Hunt gives you one day. Indie Hackers gives you a thread. NexFellow gives you real feedback, real users, and a network every week.
             </p>
           </div>
 
+          {/* Swipe hint — mobile only */}
+          {isMobile && (
+            <div style={{ textAlign: "center", marginBottom: 12 }}>
+              <span style={{ color: MUTED, fontSize: 12, fontWeight: 500, letterSpacing: "0.5px" }}>← SWIPE TO COMPARE →</span>
+            </div>
+          )}
+
           {/* Table */}
+          <div style={{ overflowX: isMobile ? "auto" : "visible", WebkitOverflowScrolling: "touch", borderRadius: 20 }}>
           <div style={{
             background: "rgba(7,26,44,0.7)", border: `1px solid ${BORDER}`,
             borderRadius: 20, overflow: "hidden",
             boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
+            minWidth: isMobile ? 560 : "auto",
           }}>
             {/* Header row */}
             <div style={{
               display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr",
               borderBottom: `1px solid ${BORDER}`,
             }}>
-              <div style={{ padding: "20px 24px" }}>
+              <div style={{ padding: "20px 24px", minWidth: 0 }}>
                 <span style={{ color: MUTED, fontSize: 11, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>Capabilities</span>
               </div>
-              <div style={{ padding: "15px 10px", textAlign: "center", borderLeft: `1px solid ${BORDER}`, background: "rgba(20,184,166,0.04)" }}>
-                <svg width="147" height="40" viewBox="0 0 205 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <div style={{ padding: "15px 10px", textAlign: "center", borderLeft: `1px solid ${BORDER}`, background: "rgba(20,184,166,0.04)", overflow: "hidden", minWidth: 0 }}>
+                <svg style={{ display: "block", width: "100%", height: "auto" }} viewBox="0 0 205 55" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M45.1692 8.16113C42.8064 6.68833 35.7124 13.2074 34.9574 12.4873C34.3296 11.8876 39.476 7.60645 38.4588 5.99862C37.5419 4.54945 31.7384 6.31928 20.1686 9.9186C14.8602 11.5725 12.1239 12.4839 9.78472 14.8456C8.97013 15.6692 6.37893 18.2885 5.95026 22.1252C5.9075 22.4999 5.89513 22.8115 5.89062 23.0253V38.0425C5.89062 44.4299 11.8426 49.6067 19.1841 49.6067H36.4505C37.507 49.6134 41.94 49.5324 45.6586 46.3933C46.0231 46.085 49.9206 42.7006 50.0016 37.9953C50.0016 37.9278 50.0016 37.8715 50.0016 37.8355C50.0016 33.5 50.0016 29.1644 50.0016 24.8289C50.0016 24.7007 50.023 24.3935 50.0016 23.9839C49.9499 23.0129 49.726 22.159 49.367 21.2206C48.9924 20.2417 48.4669 19.3315 47.4161 17.5076C46.9491 16.6987 46.2909 15.6062 46.1424 15.3699C45.9286 15.0323 45.9241 15.0402 45.8454 14.8456C44.4097 11.3025 46.2628 8.84184 45.1692 8.16113Z" fill="#24B2B4" stroke="black" stroke-width="0.206243" stroke-miterlimit="10" />
                   <path d="M44.4429 33.1571C43.0635 27.3311 37.3276 27.9443 37.3276 27.9443C37.3276 27.9443 34.5147 28.0568 32.7303 30.2216C31.7953 31.3569 31.5432 32.6238 31.37 33.5149C30.7421 36.7485 32.0754 38.272 31.0133 39.4567C30.2887 40.2646 29.0106 40.2905 27.9754 40.3107C26.9403 40.331 25.7499 40.3568 24.9972 39.6356C23.8529 38.5375 24.9668 36.9353 24.204 33.5171C23.9621 32.4314 23.7145 31.2804 22.8448 30.2239C21.0592 28.0568 18.2475 27.9466 18.2475 27.9466C18.2475 27.9466 12.5093 27.3334 11.1321 33.1593C10.6697 35.1148 10.3603 35.5097 9.66944 36.2355C8.62194 37.3302 7.08163 37.6565 5.91711 37.7578C5.88359 38.6592 5.97139 39.561 6.17814 40.439C6.54128 41.8667 7.18331 43.2085 8.06725 44.3871C8.63769 45.159 9.29706 45.861 10.0317 46.4787C11.3973 47.6012 12.9756 48.4362 14.6718 48.9338C15.8677 49.2939 17.1011 49.5151 18.3476 49.5931C18.7977 49.6223 19.0362 49.6178 20.5225 49.6156C21.7489 49.6156 22.9742 49.6156 24.1995 49.6156C27.2846 49.601 28.8283 49.5931 29.6901 49.5987C31.8279 49.6133 33.9769 49.5987 36.1203 49.6156C36.9317 49.6279 37.7429 49.5802 38.5472 49.4727C39.4304 49.3558 40.3009 49.1573 41.1474 48.8798L41.3207 48.8212C42.6533 48.3469 43.9135 47.6895 45.0651 46.868C45.8462 46.2798 46.5537 45.5998 47.1725 44.8428C47.7463 44.1609 48.786 42.9064 49.4295 41.0049C49.7843 39.9533 49.9685 38.8518 49.9752 37.742C49.2731 37.7668 47.3795 37.742 46.0744 36.5854C45.7335 36.2793 45.127 36.0476 44.4429 33.1571Z" fill="#FFFEFF" stroke="black" stroke-width="0.206243" stroke-miterlimit="10" />
                   <path d="M18.0805 36.4422C19.7732 36.4422 21.1454 35.0701 21.1454 33.3774C21.1454 31.6847 19.7732 30.3125 18.0805 30.3125C16.3878 30.3125 15.0156 31.6847 15.0156 33.3774C15.0156 35.0701 16.3878 36.4422 18.0805 36.4422Z" fill="black" />
@@ -123,10 +135,10 @@ export default function ComparisonTable() {
                 </svg>
 
               </div>
-              <div style={{ padding: "20px 16px", textAlign: "center", borderLeft: `1px solid ${BORDER}` }}>
+              <div style={{ padding: "20px 16px", textAlign: "center", borderLeft: `1px solid ${BORDER}`, minWidth: 0 }}>
                 <span style={{ color: MUTED, fontSize: 13, fontWeight: 600 }}>Product Hunt</span>
               </div>
-              <div style={{ padding: "20px 16px", textAlign: "center", borderLeft: `1px solid ${BORDER}` }}>
+              <div style={{ padding: "20px 16px", textAlign: "center", borderLeft: `1px solid ${BORDER}`, minWidth: 0 }}>
                 <span style={{ color: MUTED, fontSize: 13, fontWeight: 600 }}>Indie Hackers</span>
               </div>
             </div>
@@ -161,6 +173,7 @@ export default function ComparisonTable() {
                 </div>
               </div>
             ))}
+          </div>
           </div>
         </div>
       </FadeIn>

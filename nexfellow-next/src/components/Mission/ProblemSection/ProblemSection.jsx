@@ -120,94 +120,89 @@ export default function ProblemSection() {
             </div>
           </FadeIn>
 
-          {/* Right: comparison visual + testimonial — two separate cards */}
+          {/* Right: comparison visual + testimonial — single card */}
           <FadeIn direction="left" delay={0.1}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{
+              background: "#0d2035",
+              border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: 14,
+              padding: "28px 24px",
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+            }}>
+              {/* Gap comparison */}
+              <p style={{ color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 32 }}>
+                The gap we&apos;re closing
+              </p>
 
-              {/* Gap comparison card */}
-              <div style={{
-                background: "#0d2035",
-                border: "1px solid rgba(255,255,255,0.08)",
-                borderRadius: 14,
-                padding: "28px 24px",
-              }}>
-                <p style={{ color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 32 }}>
-                  The gap we&apos;re closing
-                </p>
-
-                {/* Before NexFellow */}
-                <div style={{ marginBottom: 24 }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <div style={{
-                        width: 18, height: 18, borderRadius: 4,
-                        background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                      }}>
-                        <span style={{ color: "#ef4444", fontSize: 9, fontWeight: 900 }}>✕</span>
-                      </div>
-                      <span style={{ color: MUTED, fontSize: 13 }}>Before NexFellow</span>
+              {/* Before NexFellow */}
+              <div style={{ marginBottom: 24 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{
+                      width: 18, height: 18, borderRadius: 4,
+                      background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <span style={{ color: "#ef4444", fontSize: 9, fontWeight: 900 }}>✕</span>
                     </div>
-                    <span style={{ color: "#ef4444", fontSize: 11, fontWeight: 600 }}>Low visibility</span>
+                    <span style={{ color: MUTED, fontSize: 13 }}>Before NexFellow</span>
                   </div>
-                  <div style={{ height: 5, background: "rgba(255,255,255,0.05)", borderRadius: 99 }}>
-                    <div style={{ width: "18%", height: "100%", background: "#ef4444", borderRadius: 99 }} />
-                  </div>
+                  <span style={{ color: "#ef4444", fontSize: 11, fontWeight: 600 }}>Low visibility</span>
                 </div>
-
-                {/* With NexFellow */}
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <div style={{
-                        width: 18, height: 18, borderRadius: 4,
-                        background: "rgba(20,184,166,0.12)", border: `1px solid ${BORDER}`,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                      }}>
-                        <span style={{ color: T, fontSize: 9, fontWeight: 900 }}>✓</span>
-                      </div>
-                      <span style={{ color: MUTED, fontSize: 13 }}>With NexFellow</span>
-                    </div>
-                    <span style={{ color: T, fontSize: 11, fontWeight: 600 }}>Builders find you</span>
-                  </div>
-                  <div style={{ height: 5, background: "rgba(255,255,255,0.05)", borderRadius: 99 }}>
-                    <div style={{ width: "85%", height: "100%", background: T, borderRadius: 99 }} />
-                  </div>
+                <div style={{ height: 5, background: "rgba(255,255,255,0.05)", borderRadius: 99 }}>
+                  <div style={{ width: "18%", height: "100%", background: "#ef4444", borderRadius: 99 }} />
                 </div>
               </div>
 
-              {/* Testimonial card */}
+              {/* With NexFellow */}
+              <div style={{ marginBottom: 32 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{
+                      width: 18, height: 18, borderRadius: 4,
+                      background: "rgba(20,184,166,0.12)", border: `1px solid ${BORDER}`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <span style={{ color: T, fontSize: 9, fontWeight: 900 }}>✓</span>
+                    </div>
+                    <span style={{ color: MUTED, fontSize: 13 }}>With NexFellow</span>
+                  </div>
+                  <span style={{ color: T, fontSize: 11, fontWeight: 600 }}>Builders find you</span>
+                </div>
+                <div style={{ height: 5, background: "rgba(255,255,255,0.05)", borderRadius: 99 }}>
+                  <div style={{ width: "85%", height: "100%", background: T, borderRadius: 99 }} />
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div style={{ height: 1, background: "rgba(255,255,255,0.06)", marginBottom: 28 }} />
+
+              {/* Testimonial */}
               <div style={{
-                background: "#0d2035",
-                border: "1px solid rgba(255,255,255,0.08)",
-                borderRadius: 14,
-                padding: "28px 24px",
-              }}>
+                fontSize: 40, lineHeight: 1,
+                color: "rgba(255,255,255,0.2)",
+                fontFamily: "Georgia, serif",
+                marginBottom: 16,
+              }}>&ldquo;&rdquo;</div>
+              <p style={{ color: TEXT, fontSize: 14, lineHeight: 1.75, fontStyle: "italic", marginBottom: 24, flex: 1 }}>
+                I shipped my SaaS tool on a Tuesday. By Friday I had 8 detailed reviews, 3 warm intros, and my first paying{" "}
+                <em style={{ fontStyle: "normal", fontWeight: 700 }}>customer.</em>
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <div style={{
-                  fontSize: 40, lineHeight: 1,
-                  color: "rgba(255,255,255,0.2)",
-                  fontFamily: "Georgia, serif",
-                  marginBottom: 16,
-                }}>&ldquo;&rdquo;</div>
-                <p style={{ color: TEXT, fontSize: 14, lineHeight: 1.75, fontStyle: "italic", marginBottom: 24 }}>
-                  I shipped my SaaS tool on a Tuesday. By Friday I had 8 detailed reviews, 3 warm intros, and my first paying{" "}
-                  <em style={{ fontStyle: "normal", fontWeight: 700 }}>customer.</em>
-                </p>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{
-                    width: 32, height: 32, borderRadius: "50%",
-                    background: "rgba(20,184,166,0.15)",
-                    border: `1px solid ${BORDER}`,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    color: T, fontSize: 13, fontWeight: 700, flexShrink: 0,
-                  }}>R</div>
-                  <div>
-                    <p style={{ color: TEXT, fontSize: 13, fontWeight: 700, marginBottom: 1 }}>Rajan S.</p>
-                    <p style={{ color: MUTED, fontSize: 12 }}>Indie Builder</p>
-                  </div>
+                  width: 32, height: 32, borderRadius: "50%",
+                  background: "rgba(20,184,166,0.15)",
+                  border: `1px solid ${BORDER}`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: T, fontSize: 13, fontWeight: 700, flexShrink: 0,
+                }}>R</div>
+                <div>
+                  <p style={{ color: TEXT, fontSize: 13, fontWeight: 700, marginBottom: 1 }}>Rajan S.</p>
+                  <p style={{ color: MUTED, fontSize: 12 }}>Indie Builder</p>
                 </div>
               </div>
-
             </div>
           </FadeIn>
         </div>
