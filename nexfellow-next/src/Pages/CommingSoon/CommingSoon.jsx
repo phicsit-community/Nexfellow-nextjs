@@ -31,9 +31,6 @@ const Comingsoon = () => {
                 </p>
                 <div className={styles.actions}>
                     <button className={styles.notifyButton} onClick={() => router.push('/')}>Go Home</button>
-                    {userInitial && (
-                        <div className={styles.avatar}>{userInitial}</div>
-                    )}
                 </div>
             </div>
         </div>
