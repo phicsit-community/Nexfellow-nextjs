@@ -99,6 +99,73 @@
   padding: 0;
 }
 
+/* ── Builder Pins (HTML overlay) ─────────────────────────────────────────── */
+
+.pinsOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.builderPin {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 9.5px;
+  font-weight: 700;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border: 2.5px solid white;
+  user-select: none;
+  z-index: 5;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.builderPinSel {
+  border-color: #F97316;
+  box-shadow: 0 0 0 6px rgba(249, 115, 22, 0.15), 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.pinDot {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.pinDotGreen {
+  background: #22C55E;
+}
+
+.pinDotOrange {
+  background: #F97316;
+}
+
+.pinNameLabel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  color: #475569;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+
 /* ── Map Popup ───────────────────────────────────────────────────────────── */
 
 .popup {

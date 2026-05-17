@@ -187,56 +187,30 @@ export default function BuildersMap() {
                 </text>
               ))}
 
-              {/* Builder pins */}
+            </svg>
+
+            {/* Builder pins – HTML divs so they stay perfect circles */}
+            <div className={styles.pinsOverlay}>
               {BUILDERS.map((b) => {
                 const sel = selectedBuilder?.id === b.id;
                 return (
-                  <g key={b.id} onClick={() => handlePinClick(b)} style={{ cursor: "pointer" }}>
-                    {/* Selection glow + ring */}
-                    {sel && (
-                      <>
-                        <circle cx={b.svgX} cy={b.svgY} r="29" fill="rgba(249,115,22,0.10)" />
-                        <circle cx={b.svgX} cy={b.svgY} r="26" fill="none" stroke="#F97316" strokeWidth="2.5" />
-                      </>
-                    )}
-                    {/* Avatar circle */}
-                    <circle cx={b.svgX} cy={b.svgY} r="19" fill={b.color} />
-                    <text
-                      x={b.svgX}
-                      y={b.svgY + 4}
-                      textAnchor="middle"
-                      fill="white"
-                      fontSize="8.5"
-                      fontWeight="700"
-                      style={{ userSelect: "none", pointerEvents: "none" }}
-                    >
-                      {b.initials}
-                    </text>
-                    {/* Online dot */}
-                    {b.online && (
-                      <circle cx={b.svgX + 13} cy={b.svgY + 13} r="5" fill="#22C55E" stroke="white" strokeWidth="1.5" />
-                    )}
-                    {/* Activity dot for non-online builders */}
-                    {!b.online && (
-                      <circle cx={b.svgX + 13} cy={b.svgY + 13} r="4" fill="#F97316" stroke="white" strokeWidth="1.5" />
-                    )}
-                    {/* Name label */}
-                    {b.nameLabel && (
-                      <text
-                        x={b.svgX}
-                        y={b.svgY + 35}
-                        textAnchor="middle"
-                        fill="#475569"
-                        fontSize="9"
-                        style={{ userSelect: "none", pointerEvents: "none" }}
-                      >
-                        {b.nameLabel}
-                      </text>
-                    )}
-                  </g>
+                  <div
+                    key={b.id}
+                    className={`${styles.builderPin} ${sel ? styles.builderPinSel : ""}`}
+                    style={{
+                      left: `${(b.svgX / VB_W) * 100}%`,
+                      top: `${(b.svgY / VB_H) * 100}%`,
+                      background: b.color,
+                    }}
+                    onClick={() => handlePinClick(b)}
+                  >
+                    {b.initials}
+                    <span className={`${styles.pinDot} ${b.online ? styles.pinDotGreen : styles.pinDotOrange}`} />
+                    {b.nameLabel && <span className={styles.pinNameLabel}>{b.nameLabel}</span>}
+                  </div>
                 );
               })}
-            </svg>
+            </div>
 
             {/* Popup – HTML overlay aligned to SVG coords */}
             {selectedBuilder && (
