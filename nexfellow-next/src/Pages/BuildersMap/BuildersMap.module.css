@@ -1,967 +1,752 @@
-/* ── Page Shell ──────────────────────────────────────────────────────────── */
+/* ── Page Shell ─────────────────────────────────────────────────────────────── */
 
 .page {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 80px);
-  overflow: hidden;
-  background: #F1F5F9;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 80px);
+    overflow: hidden;
+    background: #f1f5f9;
 }
 
 .body {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
 }
 
-/* ── Map Area ────────────────────────────────────────────────────────────── */
+/* ── Loading ────────────────────────────────────────────────────────────────── */
+
+.loadingState {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* ── Map Area ───────────────────────────────────────────────────────────────── */
 
 .mapArea {
-  flex: 1;
-  min-width: 0;
-  position: relative;
-  background: #F1F5F9;
-  overflow: hidden;
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    overflow: hidden;
 }
 
-.mapCanvas {
-  position: absolute;
-  inset: 0;
+/* Leaflet fills the map area */
+.leafletMap {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
 }
 
-.mapSvg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-/* ── Connections Badge ───────────────────────────────────────────────────── */
+/* ── Connections Badge ──────────────────────────────────────────────────────── */
 
 .connBadge {
-  position: absolute;
-  top: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: white;
-  border: 1px solid #E2E8F0;
-  border-radius: 999px;
-  padding: 6px 14px 6px 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  white-space: nowrap;
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 400;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    padding: 6px 14px 6px 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
 }
 
 .avatarStack {
-  display: flex;
+    display: flex;
 }
 
 .stackAvatar {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 8px;
-  font-weight: 700;
-  color: white;
-  border: 2px solid white;
-  margin-left: -5px;
-  flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: 700;
+    color: white;
+    border: 2px solid white;
+    margin-left: -5px;
+    flex-shrink: 0;
 }
 
 .stackAvatar:first-child {
-  margin-left: 0;
+    margin-left: 0;
 }
 
 .connText {
-  font-size: 12px;
-  color: #374151;
-  font-weight: 500;
+    font-size: 12px;
+    color: #374151;
+    font-weight: 500;
 }
 
-.viewBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 12px;
-  color: #14B8A6;
-  font-weight: 600;
-  padding: 0;
-}
-
-/* ── Builder Pins (HTML overlay) ─────────────────────────────────────────── */
-
-.pinsOverlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.builderPin {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 9.5px;
-  font-weight: 700;
-  cursor: pointer;
-  pointer-events: auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  border: 2.5px solid white;
-  user-select: none;
-  z-index: 5;
-  transition: box-shadow 0.15s, border-color 0.15s;
-}
-
-.builderPinSel {
-  border-color: #F97316;
-  box-shadow: 0 0 0 6px rgba(249, 115, 22, 0.15), 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.pinDot {
-  position: absolute;
-  bottom: 0px;
-  right: 0px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 2px solid white;
-}
-
-.pinDotGreen {
-  background: #22C55E;
-}
-
-.pinDotOrange {
-  background: #F97316;
-}
-
-.pinNameLabel {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 9px;
-  color: #475569;
-  font-weight: 500;
-  white-space: nowrap;
-  pointer-events: none;
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 4px;
-  padding: 1px 4px;
-}
-
-/* ── Map Popup ───────────────────────────────────────────────────────────── */
+/* ── Builder Popup ──────────────────────────────────────────────────────────── */
 
 .popup {
-  position: absolute;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: white;
-  border-radius: 12px;
-  padding: 10px 14px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.14);
-  min-width: 155px;
-  pointer-events: none;
-  animation: popIn 0.18s ease;
+    position: absolute;
+    bottom: 70px;
+    left: 20px;
+    z-index: 400;
+    animation: popIn 0.18s ease;
 }
 
 @keyframes popIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to   { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.93) translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.popupCard {
+    background: white;
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.16);
+    min-width: 230px;
+    max-width: 280px;
+    position: relative;
+}
+
+.popupLoading {
+    background: white;
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.12);
+    color: #94a3b8;
+    font-size: 13px;
+    min-width: 160px;
+}
+
+.popupClose {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+}
+
+.popupClose:hover {
+    background: #e2e8f0;
+}
+
+.popupTop {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-right: 20px;
 }
 
 .popupAvatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-  color: white;
-  flex-shrink: 0;
-  border: 2.5px solid #F97316;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    border: 2.5px solid #f97316;
+}
+
+.popupAvatarImg {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2.5px solid #f97316;
 }
 
 .popupBody {
-  flex: 1;
-  min-width: 0;
+    flex: 1;
+    min-width: 0;
 }
 
 .popupName {
-  font-size: 13px;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 1px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .popupCity {
-  font-size: 11.5px;
-  color: #64748B;
-  margin-bottom: 4px;
+    font-size: 11.5px;
+    color: #64748b;
+    margin-bottom: 4px;
 }
 
 .popupMeta {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11.5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    flex-wrap: wrap;
 }
 
 .popupMatch {
-  color: #14B8A6;
-  font-weight: 700;
+    color: #14b8a6;
+    font-weight: 700;
 }
 
 .popupSep {
-  color: #D1D5DB;
+    color: #d1d5db;
 }
 
 .popupCat {
-  color: #64748B;
-}
-
-/* ── Map Controls ────────────────────────────────────────────────────────── */
-
-.mapControls {
-  position: absolute;
-  bottom: 18px;
-  right: 18px;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  background: white;
-  border: 1px solid #E2E8F0;
-  border-radius: 10px;
-  padding: 4px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-}
-
-.ctrlBtn {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  border-radius: 7px;
-  color: #475569;
-  transition: background 0.15s;
-}
-
-.ctrlBtn:hover {
-  background: #F1F5F9;
-}
-
-.ctrlDivider {
-  height: 1px;
-  background: #E2E8F0;
-  margin: 2px 4px;
-}
-
-/* ── Right Panel ─────────────────────────────────────────────────────────── */
-
-.rightPanel {
-  width: 248px;
-  flex-shrink: 0;
-  border-left: 1px solid #E2E8F0;
-  background: white;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.panelHdr {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px 10px;
-  flex-shrink: 0;
-}
-
-.panelTitle {
-  font-size: 13px;
-  font-weight: 700;
-  color: #111827;
-}
-
-.builderBadge {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: #14B8A6;
-}
-
-.tabBar {
-  display: flex;
-  border-bottom: 1px solid #E2E8F0;
-  flex-shrink: 0;
-  padding: 0 16px;
-}
-
-.tabBtn {
-  padding: 8px 18px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #64748B;
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  cursor: pointer;
-  margin-bottom: -1px;
-  transition: color 0.15s;
-}
-
-.tabBtnActive {
-  color: #111827;
-  font-weight: 600;
-  border-bottom-color: #111827;
-}
-
-.tabBody {
-  flex: 1;
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-
-.tabBody::-webkit-scrollbar {
-  display: none;
-}
-
-/* ── Matches Panel ───────────────────────────────────────────────────────── */
-
-.matchesPanel {
-  display: flex;
-  flex-direction: column;
-}
-
-.matchCard {
-  padding: 14px 16px;
-  border-bottom: 6px solid #F8FAFC;
-}
-
-.cardTop {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.avatarWrap {
-  position: relative;
-  flex-shrink: 0;
-}
-
-.bigAvatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: 700;
-  color: white;
-}
-
-.onlineGreen {
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #22C55E;
-  border: 2px solid white;
-}
-
-.cardName {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #111827;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-bottom: 2px;
-}
-
-.plusChip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background: #14B8A6;
-  color: white;
-  font-size: 10px;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.cardRole {
-  font-size: 11.5px;
-  color: #64748B;
+    color: #64748b;
 }
 
 .nowRow {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11.5px;
-  color: #64748B;
-  background: #F8FAFC;
-  border-radius: 7px;
-  padding: 5px 9px;
-  margin-bottom: 9px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: #64748b;
+    background: #f8fafc;
+    border-radius: 7px;
+    padding: 5px 9px;
+    margin-bottom: 9px;
 }
 
 .nowDot {
-  color: #22C55E;
-  font-size: 16px;
-  line-height: 1;
+    color: #22c55e;
+    font-size: 16px;
+    line-height: 1;
 }
 
 .tagsRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-bottom: 7px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 7px;
 }
 
 .tagChip {
-  font-size: 10.5px;
-  color: #64748B;
-  background: #F1F5F9;
-  border-radius: 5px;
-  padding: 2px 7px;
-  font-weight: 500;
+    font-size: 10.5px;
+    color: #64748b;
+    background: #f1f5f9;
+    border-radius: 5px;
+    padding: 2px 7px;
+    font-weight: 500;
 }
 
 .openBadge {
-  display: inline-block;
-  font-size: 10.5px;
-  color: #14B8A6;
-  background: #ECFDF5;
-  border: 1px solid #A7F3D0;
-  border-radius: 5px;
-  padding: 2px 8px;
-  font-weight: 600;
-  margin-bottom: 12px;
+    display: inline-block;
+    font-size: 10.5px;
+    color: #14b8a6;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 5px;
+    padding: 2px 8px;
+    font-weight: 600;
+    margin-bottom: 10px;
 }
-
-/* Compatibility bars */
-
-.compatBlock {
-  margin-bottom: 12px;
-}
-
-.compatHdr {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.compatTitle {
-  font-size: 9.5px;
-  font-weight: 700;
-  color: #94A3B8;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-}
-
-.compatScore {
-  font-size: 14px;
-  font-weight: 700;
-  color: #22C55E;
-}
-
-.barRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 5px;
-}
-
-.barLabel {
-  font-size: 11px;
-  color: #64748B;
-  flex: 1;
-  white-space: nowrap;
-}
-
-.barTrack {
-  flex: 1.8;
-  height: 5px;
-  background: #E2E8F0;
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.barFill {
-  height: 100%;
-  border-radius: 3px;
-}
-
-.barPct {
-  font-size: 11px;
-  color: #374151;
-  font-weight: 600;
-  width: 28px;
-  text-align: right;
-}
-
-/* Crossed paths */
-
-.crossedBlock {
-  background: #F8FAFC;
-  border-radius: 8px;
-  padding: 10px;
-  margin-bottom: 12px;
-}
-
-.crossedTitle {
-  font-size: 9.5px;
-  font-weight: 700;
-  color: #94A3B8;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  margin-bottom: 7px;
-}
-
-.crossedRow {
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  font-size: 11px;
-  color: #475569;
-  margin-bottom: 4px;
-}
-
-.crossedRow:last-child {
-  margin-bottom: 0;
-}
-
-.crossArrow {
-  color: #14B8A6;
-  font-size: 13px;
-  line-height: 1.2;
-  flex-shrink: 0;
-}
-
-/* Action buttons */
 
 .actionRow {
-  display: flex;
-  gap: 8px;
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
 }
 
 .connectBtn {
-  flex: 1;
-  padding: 9px;
-  background: #14B8A6;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 12.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
+    flex: 1;
+    padding: 8px;
+    background: #14b8a6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
 }
 
 .connectBtn:hover {
-  background: #0D9E96;
+    background: #0d9e96;
 }
 
 .messageBtn {
-  flex: 1;
-  padding: 9px;
-  background: white;
-  color: #374151;
-  border: 1px solid #E2E8F0;
-  border-radius: 8px;
-  font-size: 12.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
+    flex: 1;
+    padding: 8px;
+    background: white;
+    color: #374151;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
 }
 
 .messageBtn:hover {
-  background: #F8FAFC;
+    background: #f8fafc;
+}
+
+/* ── Map Controls ───────────────────────────────────────────────────────────── */
+
+.mapControls {
+    position: absolute;
+    bottom: 18px;
+    right: 18px;
+    z-index: 400;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.ctrlBtn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 7px;
+    color: #475569;
+    transition: background 0.15s;
+}
+
+.ctrlBtn:hover {
+    background: #f1f5f9;
+}
+
+.ctrlDivider {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 2px 4px;
+}
+
+/* ── Right Panel ────────────────────────────────────────────────────────────── */
+
+.rightPanel {
+    width: 260px;
+    flex-shrink: 0;
+    border-left: 1px solid #e2e8f0;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.panelHdr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 10px;
+    flex-shrink: 0;
+}
+
+.panelTitle {
+    font-size: 13px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.builderBadge {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #14b8a6;
+}
+
+.tabBar {
+    display: flex;
+    border-bottom: 1px solid #e2e8f0;
+    flex-shrink: 0;
+    padding: 0 16px;
+}
+
+.tabBtn {
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    margin-bottom: -1px;
+    transition: color 0.15s;
+}
+
+.tabBtnActive {
+    color: #111827;
+    font-weight: 600;
+    border-bottom-color: #111827;
+}
+
+.tabBody {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.tabBody::-webkit-scrollbar {
+    display: none;
+}
+
+/* ── Matches Panel ──────────────────────────────────────────────────────────── */
+
+.matchesPanel {
+    display: flex;
+    flex-direction: column;
+}
+
+.matchCard {
+    padding: 14px 16px;
+    border-bottom: 6px solid #f8fafc;
+}
+
+.cardTop {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.avatarWrap {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.bigAvatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+}
+
+.bigAvatarImg {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.cardName {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 2px;
+}
+
+.plusChip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #14b8a6;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.cardRole {
+    font-size: 11.5px;
+    color: #64748b;
 }
 
 /* Match list */
 
 .matchList {
-  padding: 12px 16px;
+    padding: 12px 16px;
 }
 
 .matchListHdr {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
 }
 
 .matchListTitle {
-  font-size: 9.5px;
-  font-weight: 700;
-  color: #94A3B8;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-}
-
-.scoresLink {
-  font-size: 11px;
-  color: #14B8A6;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-  padding: 0;
+    font-size: 9.5px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
 }
 
 .miniCard {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px 8px;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-bottom: 2px;
-  transition: background 0.15s;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 2px;
+    transition: background 0.15s;
 }
 
 .miniCard:hover {
-  background: #F8FAFC;
+    background: #f8fafc;
 }
 
 .miniCardSel {
-  background: #F0FDFA;
+    background: #f0fdfa;
 }
 
 .miniAvaWrap {
-  position: relative;
-  flex-shrink: 0;
+    position: relative;
+    flex-shrink: 0;
 }
 
 .miniAva {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11.5px;
-  font-weight: 700;
-  color: white;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: white;
 }
 
-.miniOnline {
-  position: absolute;
-  bottom: 1px;
-  right: 1px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #22C55E;
-  border: 1.5px solid white;
+.miniAvaImg {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .miniInfo {
-  flex: 1;
-  min-width: 0;
+    flex: 1;
+    min-width: 0;
 }
 
 .miniName {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: #111827;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 1px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .miniRole {
-  font-size: 10.5px;
-  color: #64748B;
-  margin-bottom: 2px;
-}
-
-.miniStatus {
-  font-size: 10px;
-  color: #94A3B8;
-  margin-bottom: 3px;
+    font-size: 10.5px;
+    color: #64748b;
+    margin-bottom: 3px;
 }
 
 .miniTagRow {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
 }
 
 .miniTag {
-  font-size: 10px;
-  color: #64748B;
-  background: #F1F5F9;
-  border-radius: 4px;
-  padding: 1px 5px;
+    font-size: 10px;
+    color: #64748b;
+    background: #f1f5f9;
+    border-radius: 4px;
+    padding: 1px 5px;
 }
 
 .miniScore {
-  font-size: 13px;
-  font-weight: 700;
-  flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
 }
 
-/* ── Nearby Panel ────────────────────────────────────────────────────────── */
+/* ── Nearby Panel ───────────────────────────────────────────────────────────── */
 
 .nearbyPanel {
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 }
 
 .locationRow {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
-  border-radius: 999px;
-  padding: 5px 12px;
-  margin-bottom: 10px;
-  align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    padding: 5px 12px;
+    margin-bottom: 10px;
+    align-self: flex-start;
 }
 
 .locationText {
-  font-size: 12px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.locationBullet {
-  font-size: 14px;
-  color: #94A3B8;
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
 }
 
 .nearbyCount {
-  font-size: 13px;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 3px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 3px;
 }
 
 .nearbySubtitle {
-  font-size: 11px;
-  color: #64748B;
-  margin-bottom: 14px;
-}
-
-.updateLink {
-  background: none;
-  border: none;
-  color: #14B8A6;
-  font-size: 11px;
-  cursor: pointer;
-  padding: 0;
-  font-weight: 500;
+    font-size: 11px;
+    color: #64748b;
+    margin-bottom: 14px;
 }
 
 .cityGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 18px;
 }
 
 .cityCard {
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
-  border-radius: 10px;
-  padding: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px;
 }
 
 .cityName {
-  font-size: 12px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 3px;
 }
 
 .cityCount {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 2px;
-  line-height: 1;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 2px;
+    line-height: 1;
 }
 
 .cityStatLabel {
-  font-size: 10px;
-  font-weight: 500;
+    font-size: 10px;
+    font-weight: 500;
 }
 
-/* Drop a pin section */
+/* ── Empty state ────────────────────────────────────────────────────────────── */
 
-.dropSection {
-  display: flex;
-  flex-direction: column;
+.emptyState {
+    padding: 28px 20px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 13px;
 }
 
-.dropTitle {
-  font-size: 9.5px;
-  font-weight: 700;
-  color: #94A3B8;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-
-.pinRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid #F1F5F9;
-  cursor: pointer;
-  gap: 10px;
-}
-
-.pinRow:last-child {
-  border-bottom: none;
-}
-
-.pinLabel {
-  font-size: 12px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 2px;
-}
-
-.pinDesc {
-  font-size: 10.5px;
-  color: #94A3B8;
-}
-
-/* Toggle switch */
-
-.toggle {
-  width: 38px;
-  height: 22px;
-  border-radius: 11px;
-  background: #E2E8F0;
-  position: relative;
-  flex-shrink: 0;
-  transition: background 0.2s;
-}
-
-.toggleOn {
-  background: #14B8A6;
-}
-
-.toggleThumb {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: white;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s;
-}
-
-.toggleOn .toggleThumb {
-  transform: translateX(16px);
-}
-
-/* ── Live Ticker ─────────────────────────────────────────────────────────── */
+/* ── Live Ticker ────────────────────────────────────────────────────────────── */
 
 .ticker {
-  display: flex;
-  align-items: center;
-  height: 40px;
-  flex-shrink: 0;
-  border-top: 1px solid #E2E8F0;
-  background: white;
-  overflow: hidden;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    flex-shrink: 0;
+    border-top: 1px solid #e2e8f0;
+    background: white;
+    overflow: hidden;
 }
 
 .tickerLive {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 16px;
-  font-size: 11px;
-  font-weight: 700;
-  color: #374151;
-  flex-shrink: 0;
-  border-right: 1px solid #E2E8F0;
-  height: 100%;
-  letter-spacing: 0.6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 16px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #374151;
+    flex-shrink: 0;
+    border-right: 1px solid #e2e8f0;
+    height: 100%;
+    letter-spacing: 0.6px;
 }
 
 .liveDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #22C55E;
-  flex-shrink: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    flex-shrink: 0;
 }
 
 .tickerScroll {
-  flex: 1;
-  overflow: hidden;
+    flex: 1;
+    overflow: hidden;
 }
 
 .tickerTrack {
-  display: flex;
-  align-items: center;
-  animation: scrollTicker 28s linear infinite;
-  white-space: nowrap;
+    display: flex;
+    align-items: center;
+    animation: scrollTicker 32s linear infinite;
+    white-space: nowrap;
 }
 
 @keyframes scrollTicker {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 .tickerItem {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 28px;
-  font-size: 12px;
-  color: #374151;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 28px;
+    font-size: 12px;
+    color: #374151;
 }
 
 .tickerDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
 }
