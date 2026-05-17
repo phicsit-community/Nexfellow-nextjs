@@ -7,11 +7,9 @@ import { T, BG, DARKER, MUTED, TEXT, BORDER, BORDER2 } from "../shared/tokens";
 import { useIsMobile } from "../shared/useIsMobile";
 
 const STATS = [
-  { value: "2.4x", label: "more signups with a demo video" },
   { value: "24hrs", label: "average time to 10 reviews" },
   { value: "89%", label: "say it improved their product" },
   { value: "3.1×", label: "faster first paying customer" },
-  { value: "10k", label: "reviews given on platform" },
 ];
 
 export default function FeaturesHero() {
@@ -91,10 +89,10 @@ export default function FeaturesHero() {
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}
         style={{
           position: "relative", zIndex: 5,
-          width: isMobile ? "calc(100% - 32px)" : "calc(100% - 48px)", maxWidth: 1000,
+          width: isMobile ? "calc(100% - 32px)" : "calc(100% - 48px)", maxWidth: 800,
           marginTop: isMobile ? 48 : 72,
           display: "grid",
-          gridTemplateColumns: isMobile ? "repeat(3, 1fr)" : "repeat(5, 1fr)",
+          gridTemplateColumns: "repeat(3, 1fr)",
           background: "rgba(13,32,53,0.65)",
           border: `1px solid ${BORDER2}`,
           borderRadius: 16,
@@ -103,16 +101,11 @@ export default function FeaturesHero() {
         }}
       >
         {STATS.map((s, i) => {
-          const isLastInMobileRow = isMobile && ((i + 1) % 3 === 0);
-          const isLast = i === STATS.length - 1;
-          const showBorder = isMobile
-            ? !isLastInMobileRow && !isLast
-            : i < STATS.length - 1;
+          const showBorder = i < STATS.length - 1;
           return (
             <div key={i} style={{
               padding: isMobile ? "18px 10px" : "26px 20px", textAlign: "center",
               borderRight: showBorder ? `1px solid ${BORDER2}` : "none",
-              borderBottom: isMobile && i < 3 ? `1px solid ${BORDER2}` : "none",
             }}>
               <div style={{ color: TEXT, fontSize: isMobile ? 18 : "clamp(20px, 2.5vw, 28px)", fontWeight: 800, letterSpacing: "-0.5px", marginBottom: 4 }}>{s.value}</div>
               <div style={{ color: MUTED, fontSize: 10, lineHeight: 1.45 }}>{s.label}</div>

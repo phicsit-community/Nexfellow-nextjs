@@ -85,8 +85,7 @@ export default function ProblemSection() {
           </h2>
 
           <p style={{ color: MUTED, fontSize: isMobile ? 15 : 16, lineHeight: 1.7, maxWidth: 740, marginBottom: isMobile ? 40 : 64 }}>
-            Every week, thousands of talented builders ship products to near-zero traction. Not because the product is bad
-            — because nobody told them about the pricing confusion, the broken mobile flow, or the onboarding drops.
+            Thousands of builders ship great products every week and still get zero traction. Most don’t fail because of the idea. They fail because nobody gives honest feedback. That’s why NexFellow exists.
           </p>
         </FadeIn>
 
@@ -234,8 +233,8 @@ export default function ProblemSection() {
                     color: T, fontSize: 13, fontWeight: 700, flexShrink: 0,
                   }}>R</div>
                   <div>
-                    <p style={{ color: TEXT, fontSize: 13, fontWeight: 700, marginBottom: 1 }}>Rajan S.</p>
-                    <p style={{ color: MUTED, fontSize: 12 }}>Indie Builder</p>
+                    <p style={{ color: TEXT, fontSize: 13, fontWeight: 700, marginBottom: 1 }}>Michael Torres</p>
+                    <p style={{ color: MUTED, fontSize: 12 }}>Indie Hacker</p>
                   </div>
                 </div>
               </div>

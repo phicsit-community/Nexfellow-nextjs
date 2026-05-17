@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 import { T, MUTED, BORDER2 } from "../shared/tokens";
 
 const ACTIVITIES = [
-  "Vikash K.  submitted PricePilot for feedback · just now",
-  "Sneha M.  earned +25 cr from a referral",
-  "ShipLog  featured in this week's digest — +340 views",
-  "Arjun R.  left a 5-star review for DevKit",
+  "James Harrison received 13 feedbacks on CloudStack today",
+  "Emma Richardson received 18 feedbacks on DraftAI today",
+  "Sophie Lambert received 7 feedbacks on PayShift today",
+  "Harry Gallagher got 9 new matches on BuilderMap",
   "Priya S.  joined NexFellow as a reviewer",
   "BuilderDAO  got 12 new feedback responses",
   "Rohan T.  launched FlowMetrics — 3 reviews in 1hr",

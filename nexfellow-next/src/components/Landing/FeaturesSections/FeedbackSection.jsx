@@ -237,7 +237,7 @@ export default function FeedbackSection() {
             </div>
             <h2 style={{ fontSize: "clamp(34px, 4.2vw, 76px)", fontWeight: 800, color: TEXT, lineHeight: 1.02, letterSpacing: "-1px", marginBottom: 24 }}>
               <span style={{ color: "#a78bfa", display: "block" }}>10 real reviews</span>
-              <span style={{ color: "#10B981", display: "block" }}>in 72 hours.</span>
+              <span style={{ color: "#10B981", display: "block" }}>in 24 hours.</span>
               <span style={{ color: TEXT, display: "block" }}>From builders.</span>
             </h2>
             <p style={{ color: MUTED, fontSize: 15, lineHeight: 1.75, marginBottom: 28, maxWidth: 520, marginLeft: 0 }}>
@@ -250,7 +250,7 @@ export default function FeedbackSection() {
                   border: `1px solid ${BORDER}`, borderRadius: 20,
                   fontSize: 12, fontWeight: 600, padding: "5px 14px",
                 }}>
-                  8-10 reviews in 72 hrs
+                  8-10 reviews in 24 hrs
                 </span>
                 <span style={{
                   background: "rgba(20,184,166,0.12)", color: T,

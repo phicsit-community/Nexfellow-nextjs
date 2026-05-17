@@ -239,18 +239,7 @@ export default function Hero() {
               boxShadow: `0 0 32px rgba(20,184,166,0.35)`,
               width: "100%",
             }}>
-              Join the community
-            </Link>
-            <Link href="#how-it-works" style={{
-              display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8,
-              background: "rgba(255,255,255,0.06)", color: TEXT,
-              border: "1px solid rgba(255,255,255,0.14)",
-              padding: "13px 32px", borderRadius: 100,
-              fontWeight: 600, fontSize: 15, textDecoration: "none",
-              backdropFilter: "blur(8px)",
-              width: "100%",
-            }}>
-              See how it works
+              Get started free →
             </Link>
           </motion.div>
 

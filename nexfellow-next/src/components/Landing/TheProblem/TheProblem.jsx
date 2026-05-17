@@ -279,7 +279,7 @@ export default function TheProblem() {
               </svg>
             </div>
             <p className="problem-quote-text" style={{ color: TEXT, fontSize: 18, lineHeight: 1.85, fontStyle: "italic", marginBottom: 32 }}>
-              I shipped four products before NexFellow. All four had the same story — months of building, then silence. It wasn't the tech. It was who I was building for. NexFellow broke that cycle.
+              "Before NexFellow, I shipped 4 products that quietly failed. The problem wasn’t the idea. It was building alone. Honest feedback from founders helped me get my first 40 paying users in 6 weeks."
             </p>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
               {/* Replace with image if you have one, using RP placeholder for now */}

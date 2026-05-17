@@ -7,9 +7,9 @@ import { T, MUTED, TEXT, BORDER } from "../../Landing/shared/tokens";
 import { useIsMobile } from "../../Landing/shared/useIsMobile";
 
 const STATS = [
-  { value: "89%", label: "Say it improved their product" },
-  { value: "3.1×", label: "Faster first paying customer" },
-  { value: "24hrs", label: "Average time to 10 reviews" },
+  { value: "10K+", label: "Builders on the platform" },
+  { value: "3K+", label: "Products launched" },
+  { value: "89%", label: "Say NexFellow improved their product" },
 ];
 
 export default function MissionHero() {
