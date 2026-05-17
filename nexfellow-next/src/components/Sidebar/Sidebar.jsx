@@ -83,12 +83,12 @@ function Sidebar() {
   const discoverItems = [
     { path: "/buildersmap", isStatic: true, iconComponent: Globe, label: "BuildersMap", badgeNew: "2 new", section: "discover", id: "buildersmap" },
     { path: "/launches", isStatic: true, iconComponent: Rocket, label: "Launches", section: "discover", id: "launches" },
-    { path: "/momentum", isStatic: true, iconComponent: Activity, label: "Momentum Board", section: "discover", id: "momentum" },
+    { path: "/coming-soon", isStatic: true, iconComponent: Activity, label: "Momentum Board", section: "discover", id: "momentum" },
   ];
 
   const communityItems = [
     {
-      path: "/communities",
+      path: "/coming-soon",
       icon: AnimatedCommunity?.src || AnimatedCommunity,
       label: "Community",
       staticIcon: staticCommuntiy?.src || staticCommuntiy,

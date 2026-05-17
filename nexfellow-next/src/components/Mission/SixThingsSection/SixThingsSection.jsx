@@ -2,6 +2,7 @@
 
 import FadeIn from "../../Landing/shared/FadeIn";
 import { T, MUTED, TEXT, CARD, BORDER } from "../../Landing/shared/tokens";
+import { useIsMobile } from "../../Landing/shared/useIsMobile";
 
 const VALUES = [
   {
@@ -76,8 +77,10 @@ const VALUES = [
 ];
 
 export default function SixThingsSection() {
+  const isMobile = useIsMobile();
+
   return (
-    <section style={{ padding: "100px 24px", position: "relative" }}>
+    <section style={{ padding: isMobile ? "60px 20px" : "100px 24px", position: "relative" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         <FadeIn>
@@ -92,7 +95,7 @@ export default function SixThingsSection() {
             color: TEXT,
             lineHeight: 1.1,
             letterSpacing: "-1.5px",
-            marginBottom: 64,
+            marginBottom: isMobile ? 40 : 64,
           }}>
             Six things we refuse to{" "}
             <em style={{ fontStyle: "normal", color: T }}>compromise on</em>
@@ -101,16 +104,16 @@ export default function SixThingsSection() {
 
         <div style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 20,
+          gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)",
+          gap: isMobile ? 16 : 20,
         }}>
           {VALUES.map((v, i) => (
-            <FadeIn key={i} delay={i * 0.07}>
+            <FadeIn key={i} delay={isMobile ? 0 : i * 0.07}>
               <div style={{
                 background: CARD,
                 border: `1px solid rgba(255,255,255,0.07)`,
                 borderRadius: 16,
-                padding: "24px",
+                padding: isMobile ? "20px" : "24px",
                 height: "100%",
                 position: "relative",
               }}>

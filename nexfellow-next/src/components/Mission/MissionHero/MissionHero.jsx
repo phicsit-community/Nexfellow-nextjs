@@ -4,15 +4,17 @@ import Link from "next/link";
 import FadeIn from "../../Landing/shared/FadeIn";
 import DotGrid from "../../Landing/shared/DotGrid";
 import { T, MUTED, TEXT, BORDER } from "../../Landing/shared/tokens";
+import { useIsMobile } from "../../Landing/shared/useIsMobile";
 
 const STATS = [
-  { value: "10K+", label: "builders on the platform" },
-  { value: "10k", label: "feedback reviews given" },
-  { value: "3k+", label: "products launched" },
-  { value: "89%", label: "say nexfellow improved their product" },
+  { value: "10K+", label: "Builders on the platform" },
+  { value: "3K+", label: "Products launched" },
+  { value: "89%", label: "Say NexFellow improved their product" },
 ];
 
 export default function MissionHero() {
+  const isMobile = useIsMobile();
+
   return (
     <section style={{
       position: "relative",
@@ -21,7 +23,7 @@ export default function MissionHero() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      padding: "120px 24px 80px",
+      padding: isMobile ? "90px 20px 60px" : "120px 24px 80px",
       textAlign: "center",
       overflow: "hidden",
     }}>
@@ -32,7 +34,7 @@ export default function MissionHero() {
         position: "absolute",
         top: "50%", left: "50%",
         transform: "translate(-50%, -50%)",
-        width: 600, height: 400,
+        width: isMobile ? 300 : 600, height: isMobile ? 200 : 400,
         background: "radial-gradient(ellipse, rgba(20,184,166,0.12) 0%, transparent 70%)",
         pointerEvents: "none",
       }} />
@@ -50,15 +52,15 @@ export default function MissionHero() {
         </div>
 
         <h1 style={{
-          fontSize: "clamp(42px, 7vw, 80px)",
+          fontSize: isMobile ? "clamp(36px, 10vw, 48px)" : "clamp(42px, 7vw, 80px)",
           fontWeight: 800,
           color: TEXT,
-          lineHeight: 1.1,
-          letterSpacing: "-2px",
+          lineHeight: 1.15,
+          letterSpacing: isMobile ? "-1px" : "-2px",
           marginBottom: 24,
-          maxWidth: 900,
+          maxWidth: isMobile ? "100%" : 900,
           margin: "0 auto 24px",
-          whiteSpace: "nowrap",
+          whiteSpace: isMobile ? "normal" : "nowrap",
         }}>
           Building is the easy part.<br />
           <span style={{ color: T }}>Getting noticed</span> isn&apos;t.
@@ -66,9 +68,9 @@ export default function MissionHero() {
 
         <p style={{
           color: MUTED,
-          fontSize: "clamp(15px, 2vw, 17px)",
+          fontSize: isMobile ? 15 : "clamp(15px, 2vw, 17px)",
           lineHeight: 1.7,
-          maxWidth: 620,
+          maxWidth: isMobile ? "100%" : 620,
           margin: "0 auto 40px",
         }}>
           NexFellow exists because thousands of brilliant builders ship great products into silence.
@@ -87,35 +89,35 @@ export default function MissionHero() {
       </FadeIn>
 
       {/* Stats bar */}
-      <FadeIn delay={0.2} style={{ position: "relative", zIndex: 5, width: "100%", display: "flex", justifyContent: "center", paddingTop: 64 }}>
+      <FadeIn delay={0.2} style={{ position: "relative", zIndex: 5, width: "100%", display: "flex", justifyContent: "center", paddingTop: isMobile ? 40 : 64 }}>
         <div style={{
           display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
+          gridTemplateColumns: isMobile ? "repeat(3, 1fr)" : "repeat(3, 1fr)",
           gap: 0,
           background: "#0d2035",
           border: `1px solid rgba(255,255,255,0.1)`,
           borderRadius: 16,
           overflow: "hidden",
-          width: "min(900px, 90vw)",
+          width: isMobile ? "100%" : "min(900px, 90vw)",
         }}>
           {STATS.map((s, i) => (
             <div key={i} style={{
-              padding: "24px 20px",
+              padding: isMobile ? "16px 12px" : "24px 20px",
               borderRight: i < STATS.length - 1 ? "1px solid rgba(255,255,255,0.08)" : "none",
               textAlign: "center",
             }}>
               <div style={{
-                fontSize: "clamp(20px, 3vw, 28px)",
+                fontSize: isMobile ? "clamp(18px, 5vw, 22px)" : "clamp(20px, 3vw, 28px)",
                 fontWeight: 800,
                 color: TEXT,
                 letterSpacing: "-1px",
                 marginBottom: 6,
               }}>{s.value}</div>
               <div style={{
-                fontSize: 11,
+                fontSize: isMobile ? 10 : 11,
                 color: MUTED,
                 lineHeight: 1.4,
-                maxWidth: 130,
+                maxWidth: isMobile ? "100%" : 130,
                 margin: "0 auto",
               }}>{s.label}</div>
             </div>

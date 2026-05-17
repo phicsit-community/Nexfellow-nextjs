@@ -39,11 +39,7 @@ const AuthSide = () => {
         </div>
       </div>
       <div className={styles.text}>
-        NexFellow connects creators, startups, and companies to build thriving
-        communities and grow projects. Create, manage, and scale your ideas in
-        one place. Collaborate with like-minded individuals, share knowledge,
-        and drive innovation. Unlock your potential and take your projects to
-        new heights with NexFellow.
+        Every week, NexFellow members ship products, collect honest reviews, and land their first paying users through the community. This is where builders actually grow.
       </div>
     </div>
   );

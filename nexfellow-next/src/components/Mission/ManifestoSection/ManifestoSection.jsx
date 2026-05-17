@@ -2,6 +2,7 @@
 
 import FadeIn from "../../Landing/shared/FadeIn";
 import { T, MUTED, TEXT } from "../../Landing/shared/tokens";
+import { useIsMobile } from "../../Landing/shared/useIsMobile";
 
 const ITEMS = [
   {
@@ -25,8 +26,10 @@ const ITEMS = [
 ];
 
 export default function ManifestoSection() {
+  const isMobile = useIsMobile();
+
   return (
-    <section style={{ padding: "100px 24px", position: "relative" }}>
+    <section style={{ padding: isMobile ? "60px 20px" : "100px 24px", position: "relative" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         <FadeIn>
@@ -41,20 +44,20 @@ export default function ManifestoSection() {
             color: TEXT,
             lineHeight: 1.1,
             letterSpacing: "-1.5px",
-            marginBottom: 64,
+            marginBottom: isMobile ? 40 : 64,
           }}>
             The <em style={{ fontStyle: "normal", color: T }}>NexFellow</em> Manifesto
           </h2>
         </FadeIn>
 
-        <div style={{ display: "flex", paddingLeft: 200, flexDirection: "column", gap: 0 }}>
+        <div style={{ display: "flex", paddingLeft: isMobile ? 0 : 200, flexDirection: "column", gap: 0 }}>
           {ITEMS.map((item, i) => (
             <FadeIn key={i} delay={i * 0.08}>
               <div style={{
                 display: "flex",
                 alignItems: "flex-start",
-                gap: 20,
-                padding: "28px 0",
+                gap: isMobile ? 14 : 20,
+                padding: isMobile ? "20px 0" : "28px 0",
                 borderBottom: i < ITEMS.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
               }}>
                 <span style={{
@@ -71,10 +74,11 @@ export default function ManifestoSection() {
                   <span style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.3)", display: "block" }} />
                 </span>
                 <p style={{
-                  fontSize: "clamp(17px, 2.5vw, 22px)",
+                  fontSize: isMobile ? "clamp(15px, 4vw, 17px)" : "clamp(17px, 2.5vw, 22px)",
                   fontWeight: 600,
                   color: TEXT,
                   lineHeight: 1.5,
+                  margin: 0,
                 }}>
                   {item.text}
                 </p>
