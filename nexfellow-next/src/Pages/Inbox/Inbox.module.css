@@ -2068,7 +2068,7 @@
 
   /* Tabs */
   .tabsContainer {
-    background: var(--color-card) !important;
+    background: transparent !important;
   }
 
   .tab {
@@ -2077,7 +2077,7 @@
   }
 
   .activeTab {
-    background: var(--color-sidebar-border) !important;
+    background: transparent !important;
     color: var(--color-primary) !important;
   }
 
@@ -2188,13 +2188,17 @@
   }
 
   .messageInputContainer input {
-    background: var(--color-input) !important;
+    background: transparent !important;
     color: var(--color-foreground) !important;
-    border: 1.5px solid var(--color-border) !important;
+    border: none !important;
   }
 
   .messageInputContainer input::placeholder {
     color: var(--color-muted-foreground) !important;
+  }
+
+  .inputWrapper {
+    background-color: var(--color-input) !important;
   }
 
   .sendButton {
@@ -2417,8 +2421,12 @@
   }
 
   .tabsContainer {
-    background: var(--color-card) !important;
-    border-radius: 10px;
+    background: transparent !important;
+    border-radius: 0;
+  }
+
+  .tabsHeaderContainer {
+    border-bottom: 2px solid var(--color-border) !important;
   }
 
   .tab {
@@ -2426,8 +2434,34 @@
   }
 
   .activeTab {
-    background: var(--color-sidebar-border) !important;
+    background: transparent !important;
     color: var(--color-primary) !important;
+  }
+
+  .filterButton {
+    color: var(--color-muted-foreground) !important;
+  }
+
+  .filterButton:hover {
+    color: var(--color-foreground) !important;
+  }
+
+  .attachButton,
+  .emojiButton {
+    color: var(--color-muted-foreground) !important;
+  }
+
+  .attachButton:hover,
+  .emojiButton:hover {
+    color: var(--color-foreground) !important;
+  }
+
+  .headerIconButton {
+    color: var(--color-muted-foreground) !important;
+  }
+
+  .headerIconButton:hover {
+    color: var(--color-foreground) !important;
   }
 
   /* Request list container and scrollbars */
