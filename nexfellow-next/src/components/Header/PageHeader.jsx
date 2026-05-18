@@ -32,11 +32,17 @@ const PAGE_TITLES = {
   "/inbox": "Inbox",
 };
 
+function getPageTitle(pathname) {
+  if (PAGE_TITLES[pathname]) return PAGE_TITLES[pathname];
+  if (pathname?.startsWith("/dashboard")) return "Dashboard";
+  return null;
+}
+
 function PageHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  const pageTitle = PAGE_TITLES[pathname] || null;
+  const pageTitle = getPageTitle(pathname);
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
