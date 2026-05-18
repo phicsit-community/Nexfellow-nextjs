@@ -1,5 +1,6 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import PrivateLayout from '../../layouts/PrivateLayout';
 import api from '@/lib/axios';
 import './my-products.css';
@@ -235,13 +236,16 @@ function FeedbackCard({ fb, productId, onReplyAdded }) {
   );
 }
 
-function ProductRow({ product, expanded, onToggle, onProductUpdate }) {
+function ProductRow({ product, expanded, onToggle, onProductUpdate, onDeleteRequest }) {
   const [activeTag,      setActiveTag]      = useState('All');
   const [reviews,        setReviews]        = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
   const [reviewsFetched, setReviewsFetched] = useState(false);
   const [actionLoading,  setActionLoading]  = useState(false);
   const [actionError,    setActionError]    = useState('');
+  const [menuOpen,       setMenuOpen]       = useState(false);
+  const [menuPos,        setMenuPos]        = useState({ top: 0, left: 0 });
+  const menuBtnRef = useRef(null);
 
   const stageBadge  = getStageBadge(product);
   const statusBadge = getStatusBadge(product.status);
@@ -303,6 +307,15 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate }) {
     setReviews(prev => prev.map(r => r._id === reviewId ? { ...r, replies: newReplies } : r));
   };
 
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e) => {
+      if (menuBtnRef.current && !menuBtnRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [menuOpen]);
+
   return (
     <>
       <tr
@@ -360,13 +373,47 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate }) {
                   <line x1="6"  y1="20" x2="6"  y2="14" />
                 </svg>
               </button>
-              <button className="mp-icon-btn" title="More options">
+              <button
+                ref={menuBtnRef}
+                className="mp-icon-btn"
+                title="More options"
+                onClick={e => {
+                  e.stopPropagation();
+                  const btn = menuBtnRef.current;
+                  let row = btn;
+                  while (row && row.tagName !== 'TR') row = row.parentElement;
+                  const rowRect = (row || btn).getBoundingClientRect();
+                  const btnRect = btn.getBoundingClientRect();
+                  setMenuPos({ top: rowRect.bottom + 2, right: window.innerWidth - btnRect.right });
+                  setMenuOpen(v => !v);
+                }}
+              >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <circle cx="12" cy="5"  r="1.5" />
                   <circle cx="12" cy="12" r="1.5" />
                   <circle cx="12" cy="19" r="1.5" />
                 </svg>
               </button>
+              {menuOpen && createPortal(
+                <div
+                  className="mp-more-menu"
+                  style={{ position: 'fixed', top: menuPos.top, right: menuPos.right, zIndex: 99999 }}
+                >
+                  <button
+                    className="mp-more-menu-item mp-more-menu-item--danger"
+                    onMouseDown={e => { e.stopPropagation(); setMenuOpen(false); onDeleteRequest?.(product); }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                      <path d="M10 11v6M14 11v6"/>
+                      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                    </svg>
+                    Delete
+                  </button>
+                </div>,
+                document.body
+              )}
             </div>
           </div>
         </td>
@@ -960,6 +1007,8 @@ export default function MyProductsPage() {
     alert: null, // { productName, unreadReviews, topThemeCount, topTheme }
   });
   const [loading,     setLoading]     = useState(true);
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -987,6 +1036,26 @@ export default function MyProductsPage() {
   const handleProductCreated = (newProduct) => {
     setProducts(prev => [newProduct, ...prev]);
     setStats(prev => ({ ...prev, totalProducts: prev.totalProducts + 1 }));
+  };
+
+  const handleProductDelete = (productId) => {
+    setProducts(prev => prev.filter(p => p._id !== productId));
+    setStats(prev => ({ ...prev, totalProducts: Math.max(0, prev.totalProducts - 1) }));
+    if (expandedId === productId) setExpandedId(null);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!pendingDelete) return;
+    setDeleteLoading(true);
+    try {
+      await api.delete(`/products/${pendingDelete._id}`);
+      handleProductDelete(pendingDelete._id);
+      setPendingDelete(null);
+    } catch (err) {
+      console.error('Delete failed', err);
+    } finally {
+      setDeleteLoading(false);
+    }
   };
 
   const counts = {
@@ -1124,6 +1193,7 @@ export default function MyProductsPage() {
                     expanded={expandedId === p._id}
                     onToggle={() => setExpandedId(expandedId === p._id ? null : p._id)}
                     onProductUpdate={handleProductUpdate}
+                    onDeleteRequest={setPendingDelete}
                   />
                 ))}
               </tbody>
@@ -1137,6 +1207,23 @@ export default function MyProductsPage() {
             onClose={() => setShowModal(false)}
             onCreated={handleProductCreated}
           />
+        )}
+
+        {pendingDelete && (
+          <div className="mp-delete-overlay" onClick={() => setPendingDelete(null)}>
+            <div className="mp-delete-dialog" onClick={e => e.stopPropagation()}>
+              <div className="mp-delete-dialog-title">Delete product?</div>
+              <div className="mp-delete-dialog-body">
+                <strong>{pendingDelete.name}</strong> and all its reviews will be permanently removed. This cannot be undone.
+              </div>
+              <div className="mp-delete-dialog-actions">
+                <button className="mp-delete-cancel" onClick={() => setPendingDelete(null)} disabled={deleteLoading}>Cancel</button>
+                <button className="mp-delete-confirm" onClick={handleDeleteConfirm} disabled={deleteLoading}>
+                  {deleteLoading ? 'Deleting…' : 'Delete'}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </PrivateLayout>
