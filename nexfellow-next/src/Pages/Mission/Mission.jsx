@@ -11,7 +11,7 @@ import { BG } from "../../components/Landing/shared/tokens";
 
 const Mission = () => {
   return (
-    <div style={{ background: BG, minHeight: "100vh" }}>
+    <div style={{ background: BG, minHeight: "100vh", overflowX: "hidden" }}>
       <Navbar />
       <MissionHero />
       <ProblemSection />

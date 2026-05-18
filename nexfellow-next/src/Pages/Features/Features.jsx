@@ -20,7 +20,7 @@ const Spinner = () => (
 
 export default function Features() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif", background: "#071a2c", minHeight: "100vh" }}>
+    <div style={{ fontFamily: "'Inter', sans-serif", background: "#071a2c", minHeight: "100vh", overflowX: "hidden" }}>
       <Navbar />
       <FeaturesHero />
       <EarlyAdopterSection />
