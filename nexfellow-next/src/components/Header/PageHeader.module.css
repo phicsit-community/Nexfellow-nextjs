@@ -41,13 +41,16 @@
   margin: 0;
 }
 
-/* Narrower search bar pushed to the right when a page title is shown on the left */
-.searchWrapperNarrow {
+/* On title pages (Launches, My products), push search to the right to match home page position.
+   Formula: (420fr / 1220fr) of container - searchHeader padding (72px) - ProfileDropdown (40px) - gap (12px) = calc(34.426% - 103px)
+   max-width caps the value for sidebar-less pages (e.g. BuildersMap) so they match normal-sidebar width. */
+.searchWrapperRight {
   flex: 0 0 auto;
-  width: 280px;
-  max-width: 320px;
+  width: calc(34.426% - 103px);
+  max-width: 305px;
   margin-left: auto;
 }
+
 
 .searchButton {
   display: flex;

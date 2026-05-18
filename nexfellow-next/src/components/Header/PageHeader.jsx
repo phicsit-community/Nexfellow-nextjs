@@ -28,6 +28,8 @@ import styles from "./PageHeader.module.css";
 const PAGE_TITLES = {
   "/my-products": "My products",
   "/launches": "Launches",
+  "/buildersmap": "Builders Map",
+  "/inbox": "Inbox",
 };
 
 function PageHeader() {
@@ -161,7 +163,7 @@ function PageHeader() {
       )}
 
       {/* Search bar */}
-      <div className={`${styles.searchWrapper} ${pageTitle ? styles.searchWrapperNarrow : ''}`}>
+      <div className={`${styles.searchWrapper} ${pageTitle ? styles.searchWrapperRight : ''}`}>
         <SearchCommand />
       </div>
 
