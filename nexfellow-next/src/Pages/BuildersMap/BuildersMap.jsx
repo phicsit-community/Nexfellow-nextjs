@@ -1,17 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import { MapPin, X, Plus, Minus, Settings2 } from "lucide-react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { Map as MapGL, MapClusterLayer, MapControls } from "@/components/ui/map";
+import { MapPin, X } from "lucide-react";
 import api from "@/lib/axios";
 import styles from "./BuildersMap.module.css";
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
+// All internal coords stored as [lat, lng] (matching geocode tables below)
 const INDIA_CENTER = [20.5937, 78.9629];
-const DEFAULT_ZOOM = 5;
+const DEFAULT_ZOOM = 4.5;
 
 const COLORS = [
     "#14B8A6", "#8B5CF6", "#F97316", "#EAB308",
@@ -53,10 +52,9 @@ const CITY_COORDS = {
     Guntur: [16.3067, 80.4365], Kota: [25.2138, 75.8648],
     Udaipur: [24.5854, 73.7125], Agra: [27.1767, 78.0081],
     Meerut: [28.9845, 77.7064], Bareilly: [28.367, 79.4304],
-    Moradabad: [28.8386, 78.7733], Jodhpur: [26.2389, 73.0243],
+    Moradabad: [28.8386, 78.7733],
 };
 
-// Indian states — used when city is empty/unknown
 const STATE_COORDS = {
     Maharashtra: [19.7515, 75.7139], Karnataka: [15.3173, 75.7139],
     "Tamil Nadu": [11.1271, 78.6569], Delhi: [28.7041, 77.1025],
@@ -69,13 +67,12 @@ const STATE_COORDS = {
     Jharkhand: [23.6102, 85.2799], "Himachal Pradesh": [31.1048, 77.1734],
     Uttarakhand: [30.0668, 79.0193], Chhattisgarh: [21.2787, 81.8661],
     Assam: [26.2006, 92.9376], Chandigarh: [30.7333, 76.7794],
-    Goa: [15.2993, 74.124], Jharkhand: [23.6102, 85.2799],
-    Manipur: [24.6637, 93.9063], Meghalaya: [25.467, 91.3662],
-    Sikkim: [27.533, 88.5122], Tripura: [23.9408, 91.9882],
-    Mizoram: [23.1645, 92.9376], Nagaland: [26.1584, 94.5624],
+    Goa: [15.2993, 74.124], Manipur: [24.6637, 93.9063],
+    Meghalaya: [25.467, 91.3662], Sikkim: [27.533, 88.5122],
+    Tripura: [23.9408, 91.9882], Mizoram: [23.1645, 92.9376],
+    Nagaland: [26.1584, 94.5624],
 };
 
-// Country-level fallback — places builder somewhere within country borders
 const COUNTRY_COORDS = {
     India: [20.5937, 78.9629], USA: [37.0902, -95.7129],
     "United States": [37.0902, -95.7129], UK: [55.3781, -3.436],
@@ -111,7 +108,6 @@ function getInitials(b) {
     return "??";
 }
 
-// Returns { coords, jitter } — jitter grows as precision falls (city→state→country→fallback)
 function geocode(city, state, country) {
     const lookup = (table, val) => {
         if (!val || !val.trim()) return null;
@@ -126,7 +122,6 @@ function geocode(city, state, country) {
     if (stateCoords) return { coords: stateCoords, jitter: 0.6 };
     const countryCoords = lookup(COUNTRY_COORDS, country);
     if (countryCoords) return { coords: countryCoords, jitter: 2.5 };
-    // Last resort: any builder with ANY location string gets placed on India map
     if ((city && city.trim()) || (state && state.trim()) || (country && country.trim())) {
         return { coords: INDIA_CENTER, jitter: 3.5 };
     }
@@ -145,30 +140,6 @@ function computeMatch(builder, myProfile) {
     return Math.min(score, 97);
 }
 
-function esc(str) {
-    return String(str || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-}
-
-function makeDivIcon(color, initials, selected) {
-    const border = selected ? "2.5px solid #F97316" : "2.5px solid white";
-    const shadow = selected
-        ? "0 0 0 6px rgba(249,115,22,0.18),0 2px 10px rgba(0,0,0,0.22)"
-        : "0 2px 8px rgba(0,0,0,0.2)";
-    return L.divIcon({
-        html: `<div style="
-      width:40px;height:40px;border-radius:50%;
-      background:${esc(color)};border:${border};box-shadow:${shadow};
-      display:flex;align-items:center;justify-content:center;
-      color:#fff;font-size:10px;font-weight:700;
-      position:relative;cursor:pointer;font-family:inherit;user-select:none;
-    ">${esc(initials)}</div>`,
-        className: "",
-        iconSize: [40, 40],
-        iconAnchor: [20, 20],
-    });
-}
-
-// Spread overlapping pins — jitterRange grows as geocode precision falls
 const jitterCache = new Map();
 function jittered(userId, coords, range = 0.08) {
     if (!jitterCache.has(userId)) {
@@ -180,19 +151,11 @@ function jittered(userId, coords, range = 0.08) {
     return jitterCache.get(userId);
 }
 
-// ─── Map re-center helper ─────────────────────────────────────────────────────
-
-function MapController({ target }) {
-    const map = useMap();
-    useEffect(() => {
-        if (target) map.setView(target, 7, { animate: true });
-    }, [target, map]);
-    return null;
-}
-
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function BuildersMap() {
+    const mapRef = useRef(null);
+
     const [enriched, setEnriched] = useState([]);
     const [myProfile, setMyProfile] = useState(null);
     const [myLocation, setMyLocation] = useState(null);
@@ -229,11 +192,6 @@ export default function BuildersMap() {
                 const rawActivity = activityRes.data.activity || [];
                 const rawNearby = nearbyRes.data.builders || [];
 
-                // Debug: log what came back so we can trace geocoding failures
-                console.log("[BuildersMap] raw builders:", rawBuilders.length, rawBuilders.map(b => ({
-                    name: b.name, city: b.city, state: b.state, country: b.country
-                })));
-
                 let myProf = null;
                 if (myUserId) {
                     try {
@@ -243,18 +201,16 @@ export default function BuildersMap() {
                 }
 
                 const enrichedBuilders = rawBuilders.map((b) => {
-                    // Always show the builder — fall back to a random spread across India
                     const geo = geocode(b.city, b.state, b.country) ?? { coords: INDIA_CENTER, jitter: 4.5 };
                     return {
                         ...b,
-                        coords: jittered(b.userId, geo.coords, geo.jitter),
+                        coords: jittered(b.userId, geo.coords, geo.jitter), // [lat, lng]
                         color: getColor(b.userId),
                         initials: getInitials(b),
                         match: computeMatch(b, myProf),
                     };
                 });
 
-                console.log("[BuildersMap] enriched (geocoded):", enrichedBuilders.length);
                 setEnriched(enrichedBuilders);
                 setActivity(rawActivity);
                 setNearby(rawNearby);
@@ -272,11 +228,47 @@ export default function BuildersMap() {
         load();
     }, []);
 
-    // ── Pin click ─────────────────────────────────────────────────────────────
+    // ── Fly to target when changed ────────────────────────────────────────────
 
-    const handlePinClick = useCallback(
-        async (builder) => {
-            if (selectedBuilder?.userId === builder.userId) {
+    useEffect(() => {
+        if (!mapTarget || !mapRef.current) return;
+        // coords are [lat, lng], MapLibre needs [lng, lat]
+        mapRef.current.flyTo({
+            center: [mapTarget[1], mapTarget[0]],
+            zoom: 7,
+            speed: 1.2,
+        });
+    }, [mapTarget]);
+
+    // ── Build GeoJSON from enriched builders ──────────────────────────────────
+
+    const geoJSON = useMemo(() => {
+        if (!enriched.length) return null;
+        return {
+            type: "FeatureCollection",
+            features: enriched.map((b) => ({
+                type: "Feature",
+                geometry: {
+                    type: "Point",
+                    // GeoJSON / MapLibre uses [lng, lat]
+                    coordinates: [b.coords[1], b.coords[0]],
+                },
+                properties: {
+                    userId: b.userId,
+                },
+            })),
+        };
+    }, [enriched]);
+
+    // ── Point click ───────────────────────────────────────────────────────────
+
+    const handlePointClick = useCallback(
+        async (feature) => {
+            const userId = feature.properties.userId;
+            const builder = enriched.find((b) => b.userId === userId);
+            if (!builder) return;
+
+            if (selectedBuilder?.userId === userId) {
                 setSelectedBuilder(null);
                 setBuilderDetail(null);
                 return;
@@ -286,12 +278,12 @@ export default function BuildersMap() {
             setDetailLoading(true);
             setMapTarget(builder.coords);
             try {
-                const res = await api.get(`/buildermap/builders/${builder.userId}`);
+                const res = await api.get(`/buildermap/builders/${userId}`);
                 setBuilderDetail(res.data);
             } catch (_) {}
             setDetailLoading(false);
         },
-        [selectedBuilder]
+        [selectedBuilder, enriched]
     );
 
     // ── Derived ───────────────────────────────────────────────────────────────
@@ -342,32 +334,26 @@ export default function BuildersMap() {
                         <span className={styles.connText}>{enriched.length} builders on map</span>
                     </div>
 
-                    {/* Leaflet Map */}
-                    <MapContainer
-                        center={INDIA_CENTER}
+                    {/* mapcn Map */}
+                    <MapGL
+                        ref={mapRef}
+                        center={[INDIA_CENTER[1], INDIA_CENTER[0]]}
                         zoom={DEFAULT_ZOOM}
-                        className={styles.leafletMap}
-                        zoomControl={false}
-                        scrollWheelZoom={true}
+                        className={styles.mapCanvas}
+                        theme="light"
                     >
-                        <TileLayer
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        />
-                        <MapController target={mapTarget} />
-                        {enriched.map((b) => (
-                            <Marker
-                                key={b.userId}
-                                position={b.coords}
-                                icon={makeDivIcon(
-                                    b.color,
-                                    b.initials,
-                                    selectedBuilder?.userId === b.userId
-                                )}
-                                eventHandlers={{ click: () => handlePinClick(b) }}
+                        {geoJSON && (
+                            <MapClusterLayer
+                                data={geoJSON}
+                                clusterRadius={50}
+                                clusterMaxZoom={14}
+                                clusterColors={["#14B8A6", "#F97316", "#EC4899"]}
+                                pointColor="#14B8A6"
+                                onPointClick={handlePointClick}
                             />
-                        ))}
-                    </MapContainer>
+                        )}
+                        <MapControls />
+                    </MapGL>
 
                     {/* Builder popup panel */}
                     {selectedBuilder && (
@@ -386,14 +372,6 @@ export default function BuildersMap() {
                             )}
                         </div>
                     )}
-
-                    {/* Map zoom controls */}
-                    <div className={styles.mapControls}>
-                        <button className={styles.ctrlBtn}><Plus size={15} /></button>
-                        <button className={styles.ctrlBtn}><Minus size={15} /></button>
-                        <div className={styles.ctrlDivider} />
-                        <button className={styles.ctrlBtn}><Settings2 size={13} /></button>
-                    </div>
                 </div>
 
                 {/* ── Right Panel ─────────────────────────────────────────────── */}
@@ -420,7 +398,10 @@ export default function BuildersMap() {
                             <MatchesPanel
                                 topMatches={topMatches}
                                 selectedMatch={selectedMatch}
-                                onSelect={setSelectedMatch}
+                                onSelect={(m) => {
+                                    setSelectedMatch(m);
+                                    setMapTarget(m.coords);
+                                }}
                             />
                         ) : (
                             <NearbyPanel
@@ -539,7 +520,6 @@ function MatchesPanel({ topMatches, selectedMatch, onSelect }) {
 
     return (
         <div className={styles.matchesPanel}>
-            {/* Featured match card */}
             {match && (
                 <div className={styles.matchCard}>
                     <div className={styles.cardTop}>
@@ -589,7 +569,6 @@ function MatchesPanel({ topMatches, selectedMatch, onSelect }) {
                 </div>
             )}
 
-            {/* List */}
             <div className={styles.matchList}>
                 <div className={styles.matchListHdr}>
                     <span className={styles.matchListTitle}>TOP MATCHES</span>
