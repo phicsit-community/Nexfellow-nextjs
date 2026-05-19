@@ -10,7 +10,7 @@ const BuildersMap = dynamic(
 
 export default function BuildersMapPage() {
     return (
-        <PrivateLayout>
+        <PrivateLayout hideSidebar>
             <BuildersMap />
         </PrivateLayout>
     );

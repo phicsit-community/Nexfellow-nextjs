@@ -66,15 +66,17 @@ const DashboardSidebar = ({
     </div>
   );
 
-  const renderSidebarItem = (path, icon, title, description) => {
-    const href = isLocked || !communityId ? "#" : `${path}/${communityId}`;
+  const renderSidebarItem = (path, icon, title, description, overrideHref) => {
+    const resolvedOverride = typeof overrideHref === "string" ? overrideHref : null;
+    const href = resolvedOverride ?? (isLocked || !communityId ? "#" : `${path}/${communityId}`);
+    const activeKey = resolvedOverride ?? `${path}/${communityId}`;
     return (
       <div className={styles.itemWrapper}>
         <Link
           href={href}
-          className={`${styles.item} ${isActive(`${path}/${communityId}`) ? styles.active : ""
+          className={`${styles.item} ${isActive(activeKey) ? styles.active : ""
             }`}
-          onClick={() => !isLocked && communityId && handleTabClick(`${path}/${communityId}`)}
+          onClick={() => !isLocked && communityId && handleTabClick(activeKey)}
         >
           <div className={styles.icon}>{icon}</div>
           <div>
@@ -91,13 +93,14 @@ const DashboardSidebar = ({
     );
   };
 
-  const renderMiniSidebarItem = (path, icon, title) => {
-    const href = isLocked || !communityId ? "#" : `${path}/${communityId}`;
+  const renderMiniSidebarItem = (path, icon, title, overrideHref) => {
+    const isOverride = overrideHref !== undefined;
+    const href = isOverride ? overrideHref : (isLocked || !communityId ? "#" : `${path}/${communityId}`);
     return (
       <Link
         href={href}
         className={styles.miniMobileItem}
-        onClick={() => !isLocked && communityId && handleTabClick(`${path}/${communityId}`)}
+        onClick={() => !isOverride && !isLocked && communityId && handleTabClick(`${path}/${communityId}`)}
       >
         {icon} {title}
         {isLocked && (
@@ -197,8 +200,9 @@ const DashboardSidebar = ({
             <FaTrophy />,
             "Challenges",
             "Spark page engagement with Challenges.",
-            !isCommunityAccount
+            "/coming-soon"
           )}
+          {/* Contests — temporarily hidden until feature is ready
           {renderSidebarItem(
             "/create/contests",
             <FaCrown />,
@@ -206,6 +210,7 @@ const DashboardSidebar = ({
             "Start a contest, boost engagement today.",
             !isCommunityAccount
           )}
+          */}
           {renderSidebarItem(
             "/create/events",
             <FaCalendarAlt />,
@@ -266,9 +271,12 @@ const DashboardSidebar = ({
           {renderMiniSidebarItem(
             "/create/challenges",
             <FaTrophy />,
-            "Challenges"
+            "Challenges",
+            "/coming-soon"
           )}
+          {/* Contests — temporarily hidden until feature is ready
           {renderMiniSidebarItem("/create/contests", <FaCrown />, "Contests")}
+          */}
           {renderMiniSidebarItem("/create/events", <FaCalendarAlt />, "Events")}
           {renderMiniSidebarItem(
             "/communication/broadcast",

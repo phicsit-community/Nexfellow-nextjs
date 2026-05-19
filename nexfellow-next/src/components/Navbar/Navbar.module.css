@@ -206,7 +206,7 @@
   }
 
   .navbarLogo img {
-    width: 160px;
+    width: 124px;
   }
 
   .navbarLinks {
@@ -306,6 +306,10 @@
 
   .navbarContent {
     padding: 16px 20px;
+  }
+
+  .navbarLogo img {
+    width: 104px;
   }
 
   .navbarLinks {

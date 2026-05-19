@@ -11,7 +11,7 @@ import style from "./PrivateLayout.module.css";
 // Pages where PageHeader should NOT appear
 const EXCLUDED_PATHS = ["/feed", "/notifications"];
 
-export default function PrivateLayout({ children }) {
+export default function PrivateLayout({ children, hideSidebar = false }) {
     const user = useSelector((state) => state.auth.user);
     const pathname = usePathname();
 
@@ -26,9 +26,11 @@ export default function PrivateLayout({ children }) {
     return (
         <div className={style.container}>
             <div className={style.main}>
-                <div className={style.sidebar}>
-                    <Sidebar />
-                </div>
+                {!hideSidebar && (
+                    <div className={style.sidebar}>
+                        <Sidebar />
+                    </div>
+                )}
                 <div className={style.content}>
                     {!EXCLUDED_PATHS.some(path => pathname === path || pathname?.startsWith(path + "/")) && (
                         <PageHeader />
