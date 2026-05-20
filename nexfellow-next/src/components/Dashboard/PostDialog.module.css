@@ -735,6 +735,11 @@
   color: #888;
 }
 
+.charCircle {
+  flex-shrink: 0;
+  display: block;
+}
+
 .newDraftBtn {
   background-color: var(--color-primary);
   color: white;
@@ -1731,6 +1736,10 @@
     padding: 0 5px 5px 0;
     font-size: 12px;
     color: var(--muted-foreground);
+  }
+
+  .charCircleTrack {
+    stroke: var(--color-border) !important;
   }
 
   .newDraftBtn {

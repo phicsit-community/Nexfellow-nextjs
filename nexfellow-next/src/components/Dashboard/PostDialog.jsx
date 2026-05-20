@@ -653,12 +653,6 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                   </AnimatePresence>
                 </div>
 
-                {content && (
-                  <div className={styles.characterCount}>
-                    {content.length}/1800
-                  </div>
-                )}
-
                 <div className={styles.footer}>
                   <div className={styles.attachmentsButton}>
                     <label
@@ -720,6 +714,50 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                       </button>
                     )}
 
+                    {content.length > 0 && (() => {
+                      const MAX = 1800;
+                      const pct = content.length / MAX;
+                      const r = 14;
+                      const circ = 2 * Math.PI * r;
+                      const offset = circ - pct * circ;
+                      const color = pct >= 1 ? '#ff4d4f' : pct >= 0.85 ? '#faad14' : 'var(--color-primary)';
+                      const showCount = pct >= 0.75;
+                      const remaining = MAX - content.length;
+                      return (
+                        <svg
+                          width="34"
+                          height="34"
+                          viewBox="0 0 34 34"
+                          className={styles.charCircle}
+                          aria-label={`${remaining} characters remaining`}
+                        >
+                          <circle cx="17" cy="17" r={r} fill="none" stroke="#e0e0e0" strokeWidth="2.5" className={styles.charCircleTrack} />
+                          <circle
+                            cx="17" cy="17" r={r}
+                            fill="none"
+                            stroke={color}
+                            strokeWidth="2.5"
+                            strokeDasharray={circ}
+                            strokeDashoffset={offset}
+                            strokeLinecap="round"
+                            transform="rotate(-90 17 17)"
+                            style={{ transition: 'stroke-dashoffset 0.15s ease, stroke 0.15s ease' }}
+                          />
+                          {showCount && (
+                            <text
+                              x="17" y="21"
+                              textAnchor="middle"
+                              fontSize="8"
+                              fontWeight="600"
+                              fill={color}
+                            >
+                              {remaining < 0 ? `-${Math.abs(remaining)}` : remaining}
+                            </text>
+                          )}
+                        </svg>
+                      );
+                    })()}
+
                     {isSubmitting && <div className={styles.spinner} />}
 
                     <button
@@ -728,7 +766,8 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                       disabled={
                         (!content.trim() && attachments.length === 0) ||
                         (!post && !selectedCommunityId) ||
-                        isSubmitting
+                        isSubmitting ||
+                        content.length > 1800
                       }
                     >
                       {post ? "Update" : "Post"}
