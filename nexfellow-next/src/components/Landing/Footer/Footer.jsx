@@ -4,8 +4,8 @@ import Link from "next/link";
 import { T, DARKER } from "../shared/tokens";
 
 const PRODUCT_LINKS = [["How it works", "#how-it-works", true], ["Features", "/"], ["Launches", "/launches"], ["Changelog", "/"]];
-const COMPANY_LINKS = [["Mission", "/mission"], ["About us", "/"], ["Success Stories", "/"], ["Contact us", "/contact"]];
-const SUPPORT_LINKS = [["How credits work", "/", true], ["Report a bug", "/"], ["Request a feature", "/"], ["API docs", "/docs", true]];
+const COMPANY_LINKS = [["Mission", "/mission"], ["About us", "/"], ["Success Stories", "/coming-soon"], ["Contact us", "/contact"]];
+const SUPPORT_LINKS = [["How credits work", "/coming-soon", true], ["Report a bug", "/"], ["Request a feature", "/"], ["API docs", "/coming-soon", true]];
 
 const TwitterIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
