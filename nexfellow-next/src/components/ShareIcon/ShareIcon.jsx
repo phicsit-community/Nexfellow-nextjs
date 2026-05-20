@@ -7,10 +7,10 @@ import {
   PiX,
 } from "react-icons/pi";
 import {
-  FacebookShareButton,
+  LinkedinShareButton,
   TwitterShareButton,
   WhatsappShareButton,
-  FacebookIcon,
+  LinkedinIcon,
   WhatsappIcon,
 } from "react-share";
 import { toast } from "sonner";
@@ -114,15 +114,14 @@ const ShareIcon = ({
   const ShareButtons = () => (
     <div className={styles.shareButtonsContainer}>
       <div className={styles.socialButtonWrapper}>
-        <FacebookShareButton
+        <LinkedinShareButton
           url={url}
-          quote="Check out this page!"
-          hashtag="#sharing"
+          title="Check out this page!"
           onShareWindowClose={incrementShareCount}
         >
-          <FacebookIcon size={42} round />
-        </FacebookShareButton>
-        <span className={styles.label}>Facebook</span>
+          <LinkedinIcon size={42} round />
+        </LinkedinShareButton>
+        <span className={styles.label}>LinkedIn</span>
       </div>
       <div className={styles.socialButtonWrapper}>
         <TwitterShareButton
@@ -175,15 +174,14 @@ const ShareIcon = ({
           <h3>Share</h3>
           <div className={styles.socialButtons}>
             <div className={styles.socialButtonWrapper}>
-              <FacebookShareButton
+              <LinkedinShareButton
                 url={url}
-                quote="Check out this page!"
-                hashtag="#sharing"
+                title="Check out this page!"
                 onShareWindowClose={incrementShareCount}
               >
-                <FacebookIcon size={36} round />
-              </FacebookShareButton>
-              <span className={styles.label}>Facebook</span>
+                <LinkedinIcon size={36} round />
+              </LinkedinShareButton>
+              <span className={styles.label}>LinkedIn</span>
             </div>
             <div className={styles.socialButtonWrapper}>
               <TwitterShareButton
