@@ -27,7 +27,7 @@ import staticCommuntiy from "./animated/staticCommuntiy.png";
 import AnimatedSettings from "./animated/settings.json";
 import { Package, Globe, Rocket, Activity, Settings, Star } from "lucide-react";
 
-function Sidebar() {
+function Sidebar({ isDrawerOpen = false, onClose }) {
   const pathname = usePathname();
   const router = useRouter();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -36,6 +36,7 @@ function Sidebar() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const isMobile = useMediaQuery({ maxWidth: 640 });
+  const showFull = !isMobile || isDrawerOpen;
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const { effectiveTheme } = useTheme();
 
@@ -145,6 +146,7 @@ function Sidebar() {
         } else {
           setActiveTab(item.path);
         }
+        if (isMobile && isDrawerOpen) onClose?.();
       }}
       style={{ textDecoration: "none" }}
     >
@@ -165,7 +167,7 @@ function Sidebar() {
             />
           )}
         </div>
-        {!isMobile && (
+        {showFull && (
           <div className={style.labelRow}>
             <span>{item.label}</span>
             {item.badge && <div className={style.badge}>{item.badge}</div>}
@@ -182,7 +184,7 @@ function Sidebar() {
   };
 
   return (
-    <div className={style.sidebar}>
+    <div className={`${style.sidebar}${isDrawerOpen ? ` ${style.drawerMode}` : ''}`}>
       {/* Logo at top of sidebar */}
       <div className={style.logoContainer}>
         <Link href="/feed" onClick={handleLogoClick}>
@@ -196,7 +198,7 @@ function Sidebar() {
       </div>
 
       <ul className={style.menuItems}>
-        {!isMobile ? (
+        {showFull ? (
           <>
             <div className={style.sectionContainer}>
               <div className={style.sectionHeader}>CORE</div>
@@ -218,7 +220,7 @@ function Sidebar() {
         )}
       </ul>
 
-      {!isMobile && (
+      {showFull && (
         <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column' }}>
 
           <Link href="/my-products" className={style.ctaBanner}>
