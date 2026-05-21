@@ -581,25 +581,23 @@ export default function LaunchesPage() {
             onBack={() => setSelectedProductId(null)}
           />
         ) : (
-          <>
-            {/* ── Tab bar ── */}
-            <div className="lp-tabbar">
-              {['Today', 'This Week', 'All Time'].map(tab => (
-                <button
-                  key={tab}
-                  className={`lp-tab${activeTab === tab ? ' active' : ''}`}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
+          <div className="lp-outer-grid">
 
-            {/* ── Scrollable body ── */}
-            <div className="lp-scroll">
-              <div className="lp-grid">
+            {/* ── Left: tab bar + scrollable list ── */}
+            <div className="lp-main-area">
+              <div className="lp-tabbar">
+                {['Today', 'This Week', 'All Time'].map(tab => (
+                  <button
+                    key={tab}
+                    className={`lp-tab${activeTab === tab ? ' active' : ''}`}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
 
-                {/* ══ Main product list ══ */}
+              <div className="lp-scroll">
                 <div className="lp-main-col">
                   {loading ? (
                     <div style={{ padding: '48px 0', textAlign: 'center', color: 'var(--tx2)' }}>
@@ -632,9 +630,11 @@ export default function LaunchesPage() {
                     ))
                   )}
                 </div>
+              </div>
+            </div>
 
-                {/* ══ Right sidebar ══ */}
-                <div className="lp-sidebar">
+            {/* ══ Right sidebar ══ */}
+            <div className="lp-sidebar">
 
                   {/* Product of the Day */}
                   <div className="lps-pod">
@@ -731,10 +731,8 @@ export default function LaunchesPage() {
                     </div>
                   </div>
 
-                </div>{/* /lp-sidebar */}
-              </div>{/* /lp-grid */}
-            </div>{/* /lp-scroll */}
-          </>
+            </div>
+          </div>
         )}
 
       </div>
