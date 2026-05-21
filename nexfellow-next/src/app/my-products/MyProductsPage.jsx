@@ -47,7 +47,7 @@ function getStageBadge(product) {
 
 function getStatusBadge(status) {
   if (status === 'in_review') return { text: 'IN REVIEW', color: 'orange' };
-  if (status === 'launched')  return { text: 'DONE',      color: 'blue'   };
+  if (status === 'launched')  return { text: 'LIVE',      color: 'teal'   };
   if (status === 'draft')     return { text: 'DRAFT',     color: 'gray'   };
   if (status === 'archived')  return { text: 'ARCHIVED',  color: 'gray'   };
   return { text: '—', color: 'gray' };
@@ -993,6 +993,240 @@ function NewSubmissionModal({ onClose, onCreated }) {
   );
 }
 
+// ── Mobile Product Card ───────────────────────────────────────────────────────
+
+function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDeleteRequest }) {
+  const [activeTag,      setActiveTag]      = useState('All');
+  const [reviews,        setReviews]        = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [reviewsFetched, setReviewsFetched] = useState(false);
+  const [actionLoading,  setActionLoading]  = useState(false);
+  const [actionError,    setActionError]    = useState('');
+  const [menuOpen,       setMenuOpen]       = useState(false);
+
+  const stageBadge  = getStageBadge(product);
+  const statusBadge = getStatusBadge(product.status);
+  const rating      = product.avgRating > 0 ? product.avgRating : null;
+  const imgSrc      = product.logoUrl
+    || (typeof product.logo === 'string' ? product.logo : product.logo?.url)
+    || null;
+
+  useEffect(() => {
+    if (!expanded || reviewsFetched) return;
+    setReviewsLoading(true);
+    api.get(`/products/${product._id}/reviews`)
+      .then(res => { setReviews(res.data.reviews || []); setReviewsFetched(true); })
+      .catch(() => setReviews([]))
+      .finally(() => setReviewsLoading(false));
+  }, [expanded, reviewsFetched, product._id]);
+
+  const handleTagChange = async (tag) => {
+    setActiveTag(tag);
+    setReviewsLoading(true);
+    try {
+      const qs = tag !== 'All' ? `?tag=${encodeURIComponent(tag)}` : '';
+      const res = await api.get(`/products/${product._id}/reviews${qs}`);
+      setReviews(res.data.reviews || []);
+    } catch {}
+    finally { setReviewsLoading(false); }
+  };
+
+  const handleSubmit = async (e) => {
+    e.stopPropagation();
+    setActionLoading(true); setActionError('');
+    try {
+      const res = await api.post(`/products/${product._id}/submit`);
+      onProductUpdate?.({ ...product, ...res.data.product });
+    } catch (err) {
+      setActionError(err?.response?.data?.message || 'Submit failed');
+    } finally { setActionLoading(false); }
+  };
+
+  const handleResubmit = async (e) => {
+    e.stopPropagation();
+    setActionLoading(true); setActionError('');
+    try {
+      const res = await api.post(`/products/${product._id}/submit`);
+      onProductUpdate?.({ ...product, ...res.data.product });
+    } catch (err) {
+      setActionError(err?.response?.data?.message || 'Re-submit failed');
+    } finally { setActionLoading(false); }
+  };
+
+  const handleReplyAdded = (reviewId, newReplies) => {
+    setReviews(prev => prev.map(r => r._id === reviewId ? { ...r, replies: newReplies } : r));
+  };
+
+  const topTheme = React.useMemo(() => {
+    if (!reviews.length) return null;
+    const counts = {};
+    reviews.forEach(r => r.tags?.forEach(t => { counts[t] = (counts[t] || 0) + 1; }));
+    return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+  }, [reviews]);
+
+  const newCount = reviews.filter(r => isRecent(r.createdAt)).length;
+
+  return (
+    <div className={`mp-mobile-card${expanded ? ' mp-mobile-card--expanded' : ''}`}>
+      {/* Top section: image + info + menu */}
+      <div className="mp-mobile-card-main" onClick={onToggle}>
+        <div className="mp-mobile-card-img-wrap">
+          {imgSrc ? (
+            <img src={imgSrc} alt={product.name} className="mp-mobile-card-img" />
+          ) : (
+            <div className="mp-mobile-card-img-placeholder">
+              {product.name.charAt(0).toUpperCase()}
+            </div>
+          )}
+        </div>
+        <div className="mp-mobile-card-info">
+          <div className="mp-mobile-card-title-row">
+            <span className="mp-mobile-card-name">{product.name}</span>
+            {product.round && (
+              <span className="mp-mobile-card-round-badge">Round {product.round}</span>
+            )}
+          </div>
+          <div className="mp-mobile-card-cat">{product.category}</div>
+          <div className="mp-mobile-card-badges">
+            <span className={`mp-stage-badge mp-stage-${stageBadge.color}`}>{stageBadge.text}</span>
+            {product.status !== 'draft' && product.status !== 'archived' && (
+              <span className={`mp-status-badge mp-status-${statusBadge.color}`}>{statusBadge.text}</span>
+            )}
+            {product.totalReviews > 0 && (
+              <span className="mp-mobile-card-count">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                {product.totalReviews}
+              </span>
+            )}
+            {rating && (
+              <span className="mp-mobile-card-star-rating">★ {rating.toFixed(1)}</span>
+            )}
+          </div>
+        </div>
+        <div className="mp-mobile-card-menu-wrap" onClick={e => e.stopPropagation()}>
+          <button
+            className="mp-icon-btn"
+            onClick={() => setMenuOpen(v => !v)}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="5"  r="1.5" />
+              <circle cx="12" cy="12" r="1.5" />
+              <circle cx="12" cy="19" r="1.5" />
+            </svg>
+          </button>
+          {menuOpen && (
+            <div className="mp-mobile-dropdown">
+              <button
+                className="mp-more-menu-item mp-more-menu-item--danger"
+                onMouseDown={() => { setMenuOpen(false); onDeleteRequest?.(product); }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                  <path d="M10 11v6M14 11v6"/>
+                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                </svg>
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Action buttons */}
+      {(product.status === 'draft' || product.status === 'in_review' || product.status === 'launched') && (
+        <div className="mp-mobile-card-actions" onClick={e => e.stopPropagation()}>
+          {(product.status === 'in_review' || product.status === 'launched') && (
+            <button className="mp-mobile-btn mp-mobile-btn--ghost" onClick={onToggle}>
+              Analytics
+            </button>
+          )}
+          {product.status === 'launched' && (
+            <button className="mp-mobile-btn mp-mobile-btn--ghost" onClick={handleResubmit} disabled={actionLoading}>
+              {actionLoading ? '…' : 'Re-submit'}
+            </button>
+          )}
+          {product.status === 'in_review' && (
+            <button className="mp-mobile-btn mp-mobile-btn--ghost" onClick={handleResubmit} disabled={actionLoading}>
+              {actionLoading ? '…' : 'Re-submit'}
+            </button>
+          )}
+          {product.status === 'draft' && (
+            <button className="mp-mobile-btn mp-mobile-btn--primary" onClick={handleSubmit} disabled={actionLoading}>
+              {actionLoading ? '…' : 'Submit'}
+            </button>
+          )}
+          {actionError && <span className="mp-action-error" style={{ fontSize: '11px' }}>{actionError}</span>}
+        </div>
+      )}
+
+      {/* Expanded feedback overview */}
+      {expanded && (
+        <div className="mp-mobile-feedback-panel">
+          <div className="mp-mobile-fb-head">
+            <span className="mp-mobile-fb-title">Feedback Overview</span>
+            {newCount > 0 && <span className="mp-mobile-fb-unread">{newCount} unread</span>}
+          </div>
+
+          <div className="mp-mobile-fb-stats-row">
+            <div className="mp-mobile-fb-stat">
+              <div className="mp-mobile-fb-stat-lbl">TOTAL REVIEWS</div>
+              <div className="mp-mobile-fb-stat-val">{product.totalReviews || 0}</div>
+            </div>
+            <div className="mp-mobile-fb-divider" />
+            <div className="mp-mobile-fb-stat">
+              <div className="mp-mobile-fb-stat-lbl">AVG RATING</div>
+              <div className="mp-mobile-fb-stat-val">
+                {product.avgRating > 0
+                  ? <>{product.avgRating.toFixed(1)} <span className="mp-mobile-fb-star">★</span></>
+                  : '—'}
+              </div>
+            </div>
+            <div className="mp-mobile-fb-divider" />
+            <div className="mp-mobile-fb-stat">
+              <div className="mp-mobile-fb-stat-lbl">TOP THEME</div>
+              <div className="mp-mobile-fb-stat-val">{topTheme || '—'}</div>
+            </div>
+          </div>
+
+          {reviewsLoading ? (
+            <div className="mp-feedback-empty"><span>Loading feedback…</span></div>
+          ) : reviews.length > 0 ? (
+            <>
+              <div className="mp-feedback-tags">
+                {FEEDBACK_TAGS.map(t => (
+                  <button
+                    key={t}
+                    className={`mp-filter-tag ${activeTag === t ? 'active' : ''}`}
+                    onClick={() => handleTagChange(t)}
+                  >{t}</button>
+                ))}
+              </div>
+              <div className="mp-feedback-list" style={{ marginTop: '12px' }}>
+                {reviews.map(fb => (
+                  <FeedbackCard
+                    key={fb._id}
+                    fb={fb}
+                    productId={product._id}
+                    onReplyAdded={handleReplyAdded}
+                  />
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="mp-feedback-empty">
+              <span className="mp-feedback-empty-icon">💬</span>
+              <span>No feedback yet for this product.</span>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function MyProductsPage() {
@@ -1126,7 +1360,7 @@ export default function MyProductsPage() {
               Export
             </button> */}
             <button className="mp-action-btn-primary" onClick={() => setShowModal(true)}>
-              + New submission
+              + New<span className="mp-btn-label-full"> submission</span>
             </button>
           </div>
         </div>
@@ -1200,6 +1434,27 @@ export default function MyProductsPage() {
             </table>
           )}
         </div>
+        </div>
+
+        {/* Mobile card list — visible only on small screens */}
+        <div className="mp-mobile-list">
+          {loading ? (
+            <div className="mp-loading">Loading your products…</div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="mp-feedback-empty" style={{ paddingTop: '20px' }}>
+              <span className="mp-feedback-empty-icon">📦</span>
+              <span>No products found.</span>
+            </div>
+          ) : filteredProducts.map(p => (
+            <MobileProductCard
+              key={p._id}
+              product={p}
+              expanded={expandedId === p._id}
+              onToggle={() => setExpandedId(expandedId === p._id ? null : p._id)}
+              onProductUpdate={handleProductUpdate}
+              onDeleteRequest={setPendingDelete}
+            />
+          ))}
         </div>
 
         {showModal && (

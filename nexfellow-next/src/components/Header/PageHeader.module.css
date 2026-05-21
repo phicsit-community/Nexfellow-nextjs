@@ -439,6 +439,32 @@
   color: #e11d48;
 }
 
+/* Hamburger button — hidden on desktop, shown on mobile */
+.hamburgerBtn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #374151;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  padding: 0;
+}
+.hamburgerBtn:hover {
+  background: #f3f4f6;
+}
+:global(.dark) .hamburgerBtn {
+  color: var(--color-foreground);
+}
+:global(.dark) .hamburgerBtn:hover {
+  background: rgba(255,255,255,0.08);
+}
+
 /* Mobile logo - hidden on desktop */
 .mobileLogo {
   display: none;
@@ -469,6 +495,10 @@
   .mobileLogo {
     display: flex;
     align-items: center;
+  }
+
+  .hamburgerBtn {
+    display: flex;
   }
 
   .pageHeader {

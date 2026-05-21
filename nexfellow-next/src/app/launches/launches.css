@@ -55,6 +55,22 @@
   font-family: var(--font-sans);
 }
 
+/* ════════════════════════ OUTER TWO-COLUMN GRID ════════════════════════ */
+.lp-outer-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 800fr 420fr;
+  overflow: hidden;
+}
+
+/* ════════════════════════ LEFT COLUMN (tabbar + list) ════════════════════════ */
+.lp-main-area {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: 1px solid var(--b);
+}
+
 /* ════════════════════════ TAB BAR ════════════════════════ */
 .lp-tabbar {
   display: flex;
@@ -108,12 +124,12 @@
 }
 
 .lp-main-col {
-  border-right: 1px solid var(--b);
   min-height: 100%;
 }
 
 .lp-sidebar {
   padding: 14px 14px 40px;
+  height: 100%;
   overflow-y: auto;
   scrollbar-width: none;
 }
@@ -517,17 +533,18 @@
 }
 
 .lps-card-title-icon {
-  color: var(--tx3);
-  font-size: 14px;
+  color: var(--G);
+  font-size: 13px;
 }
 
 /* Trending This Week */
 .lps-trending-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 0;
+  gap: 10px;
+  padding: 7px 0;
   border-bottom: 1px solid var(--b);
+  cursor: pointer;
 }
 
 .lps-trending-item:last-child {
@@ -535,40 +552,246 @@
   padding-bottom: 0;
 }
 
+.lps-trending-item:hover .lps-ti-name {
+  color: var(--G);
+}
+
 .lps-ti-rank {
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   color: var(--tx3);
-  width: 14px;
+  width: 16px;
   text-align: center;
   flex-shrink: 0;
 }
 
-.lps-ti-icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
+.lps-ti-info {
+  flex: 1;
+  min-width: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  flex-shrink: 0;
-  border: 1px solid var(--b);
+  flex-direction: column;
+  gap: 1px;
 }
 
 .lps-ti-name {
-  flex: 1;
-  font-size: 12.5px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--tx);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color 0.12s;
 }
 
 .lps-ti-votes {
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--tx3);
+}
+
+/* ── Promoted ad cards ── */
+.lps-promo-card {
+  border: 1px solid var(--b);
+  border-radius: var(--rl);
+  overflow: hidden;
+  margin-bottom: 10px;
+  background: var(--sur);
+}
+
+.lps-promo-banner {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.lps-promo-banner-analytics {
+  background: linear-gradient(145deg, #061210 0%, #0b2018 45%, #071a12 100%);
+}
+
+.lps-promo-banner-task {
+  background: linear-gradient(145deg, #14100a 0%, #261a08 50%, #1a1208 100%);
+}
+
+/* PROMOTED badge */
+.lps-promo-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  background: rgba(0, 0, 0, 0.42);
+  border-radius: 4px;
+  padding: 3px 7px;
+  z-index: 4;
+}
+
+/* analytics chart bars — fills right portion of banner */
+.lps-promo-bars {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 100%;
+  padding: 24px 16px 0;
+}
+
+.lps-promo-bar {
+  width: 11px;
+  background: linear-gradient(to top, #24b2b4 0%, rgba(36, 178, 180, 0.25) 100%);
+  border-radius: 3px 3px 0 0;
+}
+
+/* task checklist visual — centered in upper portion */
+.lps-promo-task-visual {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 24px;
+}
+
+.lps-promo-task-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.4;
+}
+
+.lps-promo-task-line.done {
+  opacity: 1;
+}
+
+.lps-promo-task-check {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1.5px solid rgba(245, 166, 35, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lps-promo-task-line.done .lps-promo-task-check {
+  background: rgba(245, 166, 35, 0.2);
+  border-color: #f5a623;
+}
+
+.lps-promo-task-dash {
+  display: block;
+  flex: 1;
+  height: 7px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.lps-promo-task-line.done .lps-promo-task-dash {
+  background: rgba(245, 166, 35, 0.4);
+}
+
+/* dark gradient overlay — bottom half of banner */
+.lps-promo-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 75%;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.85) 100%);
+  z-index: 1;
+}
+
+/* text content pinned to bottom of banner */
+.lps-promo-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 14px 14px;
+  z-index: 2;
+}
+
+.lps-promo-identity {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 5px;
+}
+
+/* logo icon inside the overlay */
+.lps-promo-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lps-promo-logo-analytics {
+  background: #fff;
+}
+
+.lps-promo-logo-task {
+  background: #22c55e;
+}
+
+.lps-promo-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.2px;
+}
+
+.lps-promo-desc {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.45;
+}
+
+/* CTA row — white background below the banner */
+.lps-promo-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 11px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--tx);
+  background: none;
+  border: none;
+  border-top: 1px solid var(--b);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+}
+
+.lps-promo-cta:hover {
+  background: var(--sur2);
+}
+
+.lps-promo-arrow {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid var(--G);
+  color: var(--G);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
   flex-shrink: 0;
 }
 

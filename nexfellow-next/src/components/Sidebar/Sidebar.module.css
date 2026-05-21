@@ -428,6 +428,72 @@
   .accountManagement {
     display: none;
   }
+
+  /* ── Drawer mode: restore full left-sidebar layout ── */
+  .drawerMode {
+    flex-direction: column !important;
+    height: 100vh !important;
+    width: 260px !important;
+    top: 0 !important;
+    bottom: auto !important;
+    left: 0 !important;
+    right: auto !important;
+    z-index: 1001 !important;
+    border-top: none !important;
+    border-right: 1px solid var(--color-sidebar-border) !important;
+    overflow-y: auto !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15) !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    animation: drawerSlideIn 0.22s cubic-bezier(0.32, 0, 0.67, 0) both;
+  }
+
+  @keyframes drawerSlideIn {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(0); }
+  }
+
+  .drawerMode .logoContainer {
+    display: flex !important;
+    padding: 22px 20px 28px !important;
+    justify-content: center !important;
+  }
+
+  .drawerMode .menuItems {
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+
+  .drawerMode .menuItems li {
+    flex-direction: row !important;
+    text-align: left !important;
+    width: calc(100% - 28px) !important;
+    margin: 0 14px 6px 14px !important;
+    padding: 0 10px !important;
+    height: 40px !important;
+    border-radius: 4px !important;
+    justify-content: flex-start !important;
+  }
+
+  .drawerMode .menuItems li:hover {
+    background: rgba(0, 0, 0, 0.08) !important;
+    border-left: 4px solid #000 !important;
+  }
+
+  .drawerMode .menuItems li.setTab {
+    background-color: var(--color-sidebar-accent) !important;
+    border-left: 4px solid var(--color-primary) !important;
+  }
+
+  .drawerMode .menuItems li.setTab::after {
+    display: none !important;
+  }
+
+  .drawerMode .accountManagement {
+    display: flex !important;
+  }
 }
 
 @media only screen and (min-width: 1471px) {

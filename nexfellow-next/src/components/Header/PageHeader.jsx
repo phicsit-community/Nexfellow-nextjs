@@ -38,7 +38,7 @@ function getPageTitle(pathname) {
   return null;
 }
 
-function PageHeader() {
+function PageHeader({ onMenuToggle }) {
   const router = useRouter();
   const pathname = usePathname();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -150,6 +150,17 @@ function PageHeader() {
 
   return (
     <div className={styles.pageHeader}>
+      {/* Hamburger — mobile only, opens sidebar drawer */}
+      {onMenuToggle && (
+        <button className={styles.hamburgerBtn} onClick={onMenuToggle} aria-label="Open menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="6"  x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+      )}
+
       {/* Page title (shown on specific pages) or mobile logo */}
       {pageTitle ? (
         <h1 className={styles.pageTitle}>{pageTitle}</h1>

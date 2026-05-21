@@ -82,6 +82,11 @@
     }
 }
 
+/* Drawer backdrop — hidden on desktop */
+.drawerBackdrop {
+    display: none;
+}
+
 @media (max-width: 640px) {
     .main {
         display: flex;
@@ -102,6 +107,20 @@
         z-index: 1000;
         width: 100%;
         height: 60px;
+    }
+
+    .drawerBackdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 1000;
+        animation: backdropIn 0.2s ease;
+    }
+
+    @keyframes backdropIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
     }
 
     .container {

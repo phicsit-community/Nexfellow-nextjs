@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { usePathname } from "next/navigation";
 import { initializeSocket } from "@/utils/socket";
@@ -14,6 +14,7 @@ const EXCLUDED_PATHS = ["/feed", "/notifications"];
 export default function PrivateLayout({ children, hideSidebar = false }) {
     const user = useSelector((state) => state.auth.user);
     const pathname = usePathname();
+    const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
     // Initialize socket connection on user presence
     useEffect(() => {
@@ -23,17 +24,33 @@ export default function PrivateLayout({ children, hideSidebar = false }) {
         }
     }, [user]);
 
+    // Close drawer on route change
+    useEffect(() => {
+        setMobileNavOpen(false);
+    }, [pathname]);
+
     return (
         <div className={style.container}>
             <div className={style.main}>
                 {!hideSidebar && (
-                    <div className={style.sidebar}>
-                        <Sidebar />
-                    </div>
+                    <>
+                        {mobileNavOpen && (
+                            <div
+                                className={style.drawerBackdrop}
+                                onClick={() => setMobileNavOpen(false)}
+                            />
+                        )}
+                        <div className={style.sidebar}>
+                            <Sidebar
+                                isDrawerOpen={mobileNavOpen}
+                                onClose={() => setMobileNavOpen(false)}
+                            />
+                        </div>
+                    </>
                 )}
                 <div className={style.content}>
                     {!EXCLUDED_PATHS.some(path => pathname === path || pathname?.startsWith(path + "/")) && (
-                        <PageHeader />
+                        <PageHeader onMenuToggle={() => setMobileNavOpen(v => !v)} />
                     )}
                     {children}
                 </div>
