@@ -84,6 +84,7 @@ function Sidebar() {
     { path: "/buildersmap", isStatic: true, iconComponent: Globe, label: "BuildersMap", badgeNew: "2 new", section: "discover", id: "buildersmap" },
     { path: "/launches", isStatic: true, iconComponent: Rocket, label: "Launches", section: "discover", id: "launches" },
     { path: "/coming-soon", isStatic: true, iconComponent: Activity, label: "Momentum Board", section: "discover", id: "momentum" },
+    { path: "/premium", isStatic: true, iconComponent: Star, label: "Premium", section: "discover", id: "premium" },
   ];
 
   const communityItems = [

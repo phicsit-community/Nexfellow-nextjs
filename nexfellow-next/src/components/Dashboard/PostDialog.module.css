@@ -9,9 +9,9 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  padding: 20px;
+  padding: 20px 20px 18vh 20px;
   overflow-y: auto;
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(4px);
 }
 
 .dialog {
@@ -19,7 +19,7 @@
   border-radius: 16px;
   padding: 16px 24px;
   width: 100%;
-  max-width: 600px;
+  max-width: 720px;
   max-height: 120vh;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -79,13 +79,12 @@
 .closeButton {
   background: none;
   border: none;
-  font-size: 36px;
+  font-size: 20px;
   cursor: pointer;
   color: #888;
-  transition: color 0.2s ease;
-  font-weight: 300;
-  height: 40px;
-  width: 40px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  height: 36px;
+  width: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -125,15 +124,73 @@
 
 .profileSection {
   display: flex;
-  align-items: center;
-  gap: 15px;
-  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 12px;
   padding: 0px 5px 15px 5px;
 }
 
-.profileSection label {
+.userAvatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarFallback {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.userName {
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+  line-height: 1;
+}
+
+.audienceBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 13px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background: #f7f7f7;
+  cursor: pointer;
+  color: #444;
   font-weight: 500;
-  color: #555;
+  transition: all 0.2s ease;
+  width: fit-content;
+}
+
+.audienceBtn:hover {
+  background: #efefef;
+  border-color: #bbb;
+}
+
+.audienceBtn svg {
+  font-size: 11px;
+  color: #666;
 }
 
 .dropdownContainer {
@@ -265,25 +322,23 @@
 
 .textarea {
   width: 100%;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 12px;
-  font-size: 18px;
+  padding: 5px 5px 15px 5px;
+  margin-bottom: 5px;
+  border-radius: 0;
+  font-size: 17px;
   outline: none;
   transition: all 0.2s ease;
-  height: 180px;
+  height: 160px;
   resize: none;
-  border: 1px solid transparent;
-  background-color: #f9f9f9;
+  border: none;
+  background-color: transparent;
   white-space: pre-wrap;
   overflow-wrap: break-word;
   color: #333;
 }
 
 .textarea:focus {
-  border-color: #e0e0e0;
-  background-color: #fff;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  background-color: transparent;
 }
 
 .textarea::placeholder {
@@ -680,6 +735,11 @@
   color: #888;
 }
 
+.charCircle {
+  flex-shrink: 0;
+  display: block;
+}
+
 .newDraftBtn {
   background-color: var(--color-primary);
   color: white;
@@ -922,7 +982,7 @@
 /* Large screens */
 @media (min-width: 1024px) {
   .dialog {
-    width: 600px;
+    width: 720px;
     max-height: 120vh;
     padding: 20px 25px;
   }
@@ -944,9 +1004,9 @@
 
 :global(.dark) {
   .overlay {
-    background: rgba(0, 0, 0, 0.7);
-    padding: 20px;
-    backdrop-filter: blur(12px);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px 20px 18vh 20px;
+    backdrop-filter: blur(4px);
     z-index: 1000;
   }
 
@@ -955,7 +1015,7 @@
     border-radius: 16px;
     padding: 16px 24px;
     width: 100%;
-    max-width: 600px;
+    max-width: 720px;
     max-height: 120vh;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.85);
     display: flex;
@@ -1011,12 +1071,11 @@
   .closeButton {
     background: none;
     border: none;
-    font-size: 36px;
+    font-size: 20px;
     cursor: pointer;
     color: var(--muted-foreground);
-    font-weight: 300;
-    height: 40px;
-    width: 40px;
+    height: 36px;
+    width: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1057,15 +1116,73 @@
 
   .profileSection {
     display: flex;
-    align-items: center;
-    gap: 15px;
-    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
     padding: 0px 5px 15px 5px;
     color: var(--foreground);
   }
 
-  .profileSection label {
+  .userAvatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatarImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .avatarFallback {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .userInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .userName {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--foreground);
+    line-height: 1;
+  }
+
+  .audienceBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 13px;
+    border-radius: 20px;
+    border: 1px solid var(--color-border);
+    background: var(--card);
+    cursor: pointer;
+    color: var(--foreground);
     font-weight: 500;
+    transition: all 0.2s ease;
+    width: fit-content;
+  }
+
+  .audienceBtn:hover {
+    background: var(--color-muted);
+    border-color: var(--color-primary);
+  }
+
+  .audienceBtn svg {
+    font-size: 11px;
     color: var(--muted-foreground);
   }
 
@@ -1200,25 +1317,23 @@
 
   .textarea {
     width: 100%;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 12px;
-    font-size: 18px;
+    padding: 5px 5px 15px 5px;
+    margin-bottom: 5px;
+    border-radius: 0;
+    font-size: 17px;
     outline: none;
     transition: all 0.2s ease;
-    height: 180px;
+    height: 160px;
     resize: none;
-    border: 1px solid transparent;
-    background-color: var(--card);
+    border: none;
+    background-color: transparent;
     white-space: pre-wrap;
     overflow-wrap: break-word;
     color: var(--foreground);
   }
 
   .textarea:focus {
-    border-color: var(--color-border);
-    background-color: var(--background);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    background-color: transparent;
   }
 
   .textarea::placeholder {
@@ -1623,6 +1738,10 @@
     color: var(--muted-foreground);
   }
 
+  .charCircleTrack {
+    stroke: var(--color-border) !important;
+  }
+
   .newDraftBtn {
     background-color: var(--color-primary);
     color: white;
@@ -1866,7 +1985,7 @@
   /* Large screens */
   @media (min-width: 1024px) {
     .dialog {
-      width: 600px;
+      width: 720px;
       max-height: 120vh;
       padding: 20px 25px;
     }

@@ -796,7 +796,7 @@ export default function Premium() {
           </div>
         </section>
       </div>
-      <Footer />
+      {/* <Footer /> */}
 
       <style>{`
         @media (max-width: 900px) {

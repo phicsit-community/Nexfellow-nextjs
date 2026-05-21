@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useSelector } from "react-redux";
 import Picker from "emoji-picker-react";
 import {
   FaRegSmile,
   FaUsers,
   FaNewspaper,
   FaChevronDown,
-  FaEdit,
   FaTrash,
   FaRegClock,
 } from "react-icons/fa";
-import { MdPhotoLibrary, MdOutlineNoteAdd } from "react-icons/md";
+import { MdPhotoLibrary, MdOutlineNoteAdd, MdVideoLibrary } from "react-icons/md";
+import { TbBox } from "react-icons/tb";
 import { IoClose, IoArrowBack } from "react-icons/io5";
 import styles from "./PostDialog.module.css";
 import { toast } from "sonner";
@@ -17,6 +18,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import api from "../../lib/axios";
 
 const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
+  const user = useSelector((state) => state.auth.user);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -527,13 +529,12 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
             >
               <div className={styles.header}>
                 <button onClick={onClose} className={styles.closeButton}>
-                  ×
+                  <IoClose />
                 </button>
                 <div
                   className={styles.drafts}
                   onClick={() => setShowDrafts(true)}
                 >
-                  <FaEdit />
                   <span>Drafts</span>
                   {drafts.length > 0 && (
                     <span className={styles.draftBadge}>{drafts.length}</span>
@@ -543,70 +544,76 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
               <div>
                 <div className={styles.body}>
                   <div className={styles.profileSection}>
-                    <label>Create post in</label>
-                    <div className={styles.dropdownContainer}>
-                      <div
-                        className={styles.selectedOption}
-                        onClick={() => !communitiesLoading && setIsOpenModal(true)}
-                      >
-                        {options.find((opt) => opt.value === selectedCommunityId)?.icon || null}
-                        {communitiesLoading ? "Loading..." : selectedOption} <FaChevronDown />
+                    <div className={styles.userAvatar}>
+                      {user?.picture ? (
+                        <img src={user.picture} alt={user.name} className={styles.avatarImage} />
+                      ) : (
+                        <span className={styles.avatarFallback}>{user?.name?.charAt(0) || "U"}</span>
+                      )}
+                    </div>
+                    <div className={styles.userInfo}>
+                      <span className={styles.userName}>{user?.name || "Your Name"}</span>
+                      <div className={styles.dropdownContainer}>
+                        <div
+                          className={styles.audienceBtn}
+                          onClick={() => !communitiesLoading && setIsOpenModal(true)}
+                        >
+                          {options.find((opt) => opt.value === selectedCommunityId)?.icon || null}
+                          <span>{communitiesLoading ? "Loading..." : selectedOption}</span>
+                          <FaChevronDown />
+                        </div>
                       </div>
-
-                      <AnimatePresence>
-                        {isOpenModal && (
-                          <motion.div
-                            className={styles.popupOverlay}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.15 }}
-                            onClick={() => setIsOpenModal(false)}
-                          >
-                            <motion.div
-                              className={styles.popup}
-                              initial={{ scale: 0.95, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              exit={{ scale: 0.95, opacity: 0 }}
-                              transition={{ duration: 0.15 }}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <div className={styles.popupHeader}>
-                                <span>Select Community</span>
-                                <button
-                                  className={styles.closeBtn}
-                                  onClick={closeModal}
-                                >
-                                  ×
-                                </button>
-                              </div>
-                              <div className={styles.popupOptions}>
-                                {options.length === 0 ? (
-                                  <div className={styles.option} style={{ color: "var(--muted)", cursor: "default" }}>
-                                    No communities found
-                                  </div>
-                                ) : (
-                                  options.map((option) => (
-                                    <div
-                                      key={option.value}
-                                      className={styles.option}
-                                      onClick={() => {
-                                        setSelectedOption(option.label);
-                                        setSelectedCommunityId(option.value);
-                                        setIsOpenModal(false);
-                                      }}
-                                    >
-                                      {option.icon} {option.label}
-                                    </div>
-                                  ))
-                                )}
-                              </div>
-                            </motion.div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
                     </div>
                   </div>
+                  <AnimatePresence>
+                    {isOpenModal && (
+                      <motion.div
+                        className={styles.popupOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                        onClick={() => setIsOpenModal(false)}
+                      >
+                        <motion.div
+                          className={styles.popup}
+                          initial={{ scale: 0.95, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0.95, opacity: 0 }}
+                          transition={{ duration: 0.15 }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className={styles.popupHeader}>
+                            <span>Select Community</span>
+                            <button className={styles.closeBtn} onClick={closeModal}>
+                              ×
+                            </button>
+                          </div>
+                          <div className={styles.popupOptions}>
+                            {options.length === 0 ? (
+                              <div className={styles.option} style={{ color: "var(--muted)", cursor: "default" }}>
+                                No communities found
+                              </div>
+                            ) : (
+                              options.map((option) => (
+                                <div
+                                  key={option.value}
+                                  className={styles.option}
+                                  onClick={() => {
+                                    setSelectedOption(option.label);
+                                    setSelectedCommunityId(option.value);
+                                    setIsOpenModal(false);
+                                  }}
+                                >
+                                  {option.icon} {option.label}
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        </motion.div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
                   <textarea
                     ref={textareaRef}
@@ -646,19 +653,38 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                   </AnimatePresence>
                 </div>
 
-                {content && (
-                  <div className={styles.characterCount}>
-                    {content.length}/1800
-                  </div>
-                )}
-
                 <div className={styles.footer}>
                   <div className={styles.attachmentsButton}>
+                    <label
+                      htmlFor="file-upload"
+                      className={styles.iconButton}
+                      aria-label="Add photos"
+                    >
+                      <MdPhotoLibrary />
+                    </label>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      multiple
+                      className={styles.fileInput}
+                      accept="image/*"
+                      onChange={handleAttachmentChange}
+                    />
+
+                    <button className={styles.iconButton} aria-label="Add video" type="button">
+                      <MdVideoLibrary />
+                    </button>
+
+                    <button className={styles.iconButton} aria-label="Add 3D" type="button">
+                      <TbBox />
+                    </button>
+
                     <div className={styles.emojiContainer}>
                       <button
                         className={styles.iconButton}
                         onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                         aria-label="Insert emoji"
+                        type="button"
                       >
                         <FaRegSmile />
                       </button>
@@ -676,22 +702,6 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                         )}
                       </AnimatePresence>
                     </div>
-
-                    <label
-                      htmlFor="file-upload"
-                      className={styles.iconButton}
-                      aria-label="Add photos"
-                    >
-                      <MdPhotoLibrary />
-                    </label>
-                    <input
-                      id="file-upload"
-                      type="file"
-                      multiple
-                      className={styles.fileInput}
-                      accept="image/*"
-                      onChange={handleAttachmentChange}
-                    />
                   </div>
 
                   <div className={styles.actionButtons}>
@@ -704,21 +714,63 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                       </button>
                     )}
 
+                    {content.length > 0 && (() => {
+                      const MAX = 1800;
+                      const pct = content.length / MAX;
+                      const r = 14;
+                      const circ = 2 * Math.PI * r;
+                      const offset = circ - pct * circ;
+                      const color = pct >= 1 ? '#ff4d4f' : pct >= 0.85 ? '#faad14' : 'var(--color-primary)';
+                      const showCount = pct >= 0.75;
+                      const remaining = MAX - content.length;
+                      return (
+                        <svg
+                          width="34"
+                          height="34"
+                          viewBox="0 0 34 34"
+                          className={styles.charCircle}
+                          aria-label={`${remaining} characters remaining`}
+                        >
+                          <circle cx="17" cy="17" r={r} fill="none" stroke="#e0e0e0" strokeWidth="2.5" className={styles.charCircleTrack} />
+                          <circle
+                            cx="17" cy="17" r={r}
+                            fill="none"
+                            stroke={color}
+                            strokeWidth="2.5"
+                            strokeDasharray={circ}
+                            strokeDashoffset={offset}
+                            strokeLinecap="round"
+                            transform="rotate(-90 17 17)"
+                            style={{ transition: 'stroke-dashoffset 0.15s ease, stroke 0.15s ease' }}
+                          />
+                          {showCount && (
+                            <text
+                              x="17" y="21"
+                              textAnchor="middle"
+                              fontSize="8"
+                              fontWeight="600"
+                              fill={color}
+                            >
+                              {remaining < 0 ? `-${Math.abs(remaining)}` : remaining}
+                            </text>
+                          )}
+                        </svg>
+                      );
+                    })()}
+
+                    {isSubmitting && <div className={styles.spinner} />}
+
                     <button
                       onClick={handleSubmit}
                       className={styles.postButton}
                       disabled={
                         (!content.trim() && attachments.length === 0) ||
-                        (!post && !selectedCommunityId)
+                        (!post && !selectedCommunityId) ||
+                        isSubmitting ||
+                        content.length > 1800
                       }
                     >
-                      {isSubmitting ? (
-                        <>{post ? "Updating..." : "Posting..."}</>
-                      ) : post ? (
-                        "Update"
-                      ) : (
-                        "Post"
-                      )}
+                      {post ? "Update" : "Post"}
                     </button>
                   </div>
                 </div>

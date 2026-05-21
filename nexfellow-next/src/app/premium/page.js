@@ -2,11 +2,14 @@
 
 import Premium from "@/Pages/Premium/Premium";
 import PublicLayout from "@/layouts/PublicLayout";
+import PrivateRoutes from "@/utils/PrivateRoutes";
 
 export default function PremiumPage() {
   return (
-    <PublicLayout>
-      <Premium />
-    </PublicLayout>
+    <PrivateRoutes>
+      <PublicLayout>
+        <Premium />
+      </PublicLayout>
+    </PrivateRoutes>
   );
 }

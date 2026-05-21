@@ -28,6 +28,7 @@ const PRIVATE_ROUTES = [
     "/contest-question",
     "/moderators",
     "/onboarding",
+    "/premium",
 ];
 
 // Routes that should redirect logged-in users
@@ -39,10 +40,9 @@ export function middleware(request) {
     // Check for auth cookie/token
     const isLoggedIn = request.cookies.get("isLoggedIn")?.value === "true";
 
-    // Check for OAuth redirect indicator (backend might set this)
+    // Only treat explicit auth tokens (not session cookies) as logged-in indicators
     const hasAuthToken = request.cookies.get("token")?.value ||
-        request.cookies.get("accessToken")?.value ||
-        request.cookies.get("connect.sid")?.value;
+        request.cookies.get("accessToken")?.value;
 
     // Check if current path is a private route
     const isPrivateRoute = PRIVATE_ROUTES.some((route) =>
@@ -54,10 +54,6 @@ export function middleware(request) {
         pathname.startsWith(route)
     );
 
-    // For private routes: Allow access if either:
-    // 1. isLoggedIn cookie is set, OR
-    // 2. There's an auth token (OAuth flow might not have set isLoggedIn yet)
-    // The page component will do the final auth check
     if (isPrivateRoute && !isLoggedIn && !hasAuthToken) {
         const loginUrl = new URL("/login", request.url);
         loginUrl.searchParams.set("redirect", pathname);
