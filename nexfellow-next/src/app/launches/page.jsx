@@ -636,100 +636,96 @@ export default function LaunchesPage() {
             {/* ══ Right sidebar ══ */}
             <div className="lp-sidebar">
 
-                  {/* Product of the Day */}
-                  <div className="lps-pod">
-                    <div className="lps-pod-eyebrow">PRODUCT OF THE DAY</div>
-                    {podProduct ? (
-                      <>
-                        <div className="lps-pod-product">
-                          <div className="lps-pod-icon">
-                            {isUrl(podProduct.logo) ? (
-                              <img
-                                src={podProduct.logo}
-                                alt=""
-                                style={{ width: 32, height: 32, objectFit: 'contain', borderRadius: 4 }}
-                              />
-                            ) : (
-                              CATEGORY_META[podProduct.category]?.icon || '⚡'
-                            )}
-                          </div>
-                          <div>
-                            <div className="lps-pod-name">{podProduct.name}</div>
-                            <div className="lps-pod-tagline">{podProduct.tagline}</div>
-                          </div>
-                        </div>
-                        <div className="lps-pod-stats">
-                          <span>▲ {podProduct.upvoteCount ?? 0}</span>
-                          <span>★ {podProduct.avgRating?.toFixed(1) ?? '0.0'}</span>
-                          <span>💬 {podProduct.totalReviews ?? 0}</span>
-                        </div>
-                        <button
-                          className="lps-pod-btn"
-                          onClick={() => setSelectedProductId(podProduct._id)}
-                        >
-                          View Product
-                        </button>
-                      </>
-                    ) : (
-                      <div style={{ color: 'var(--tx2)', fontSize: 13, padding: '8px 0' }}>
-                        No launches today yet.
+              {/* Promoted card 1 — AnalyticsFlow */}
+              <div className="lps-promo-card">
+                <div className="lps-promo-banner lps-promo-banner-analytics">
+                  <span className="lps-promo-badge">PROMOTED</span>
+                  <div className="lps-promo-bars">
+                    {[38, 55, 44, 70, 50, 82, 65, 90, 75, 60, 85, 95].map((h, i) => (
+                      <div key={i} className="lps-promo-bar" style={{ height: `${h}%` }} />
+                    ))}
+                  </div>
+                  <div className="lps-promo-overlay" />
+                  <div className="lps-promo-content">
+                    <div className="lps-promo-identity">
+                      <div className="lps-promo-logo lps-promo-logo-analytics">
+                        <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+                          <rect x="1" y="9" width="4" height="8" rx="1" fill="#4285F4"/>
+                          <rect x="7" y="5" width="4" height="12" rx="1" fill="#34A853"/>
+                          <rect x="13" y="1" width="4" height="16" rx="1" fill="#FBBC05"/>
+                        </svg>
                       </div>
-                    )}
-                  </div>
-
-                  {/* Launch Your Product */}
-                  <div className="lps-launch-card">
-                    <button className="lps-launch-toggle" onClick={() => setLaunchOpen(o => !o)}>
-                      <span className={`lps-launch-chevron${launchOpen ? '' : ' closed'}`}>∧</span>
-                    </button>
-                    {launchOpen && (
-                      <>
-                        <div className="lps-launch-title">Launch Your Product</div>
-                        <div className="lps-launch-desc">Get feedback from builders, makers, and early adopters</div>
-                        <button className="lps-submit-btn">Submit to Launches</button>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Trending This Week */}
-                  <div className="lps-card">
-                    <div className="lps-card-title">
-                      <span className="lps-card-title-icon">~</span> Trending This Week
+                      <span className="lps-promo-name">AnalyticsFlow</span>
                     </div>
-                    {trendingProducts.length === 0 ? (
-                      <div style={{ color: 'var(--tx2)', fontSize: 13, padding: '8px 0' }}>
-                        No trending launches yet.
-                      </div>
-                    ) : trendingProducts.map((p, i) => {
-                      const catMeta = CATEGORY_META[p.category] || { icon: '⚡', bg: '#e8e8e8' };
-                      return (
-                        <div
-                          key={p._id}
-                          className="lps-trending-item"
-                          onClick={() => setSelectedProductId(p._id)}
-                        >
-                          <span className="lps-ti-rank">{i + 1}</span>
-                          <div className="lps-ti-icon" style={{ background: catMeta.bg }}>
-                            {isUrl(p.logo) ? (
-                              <img src={p.logo} alt="" style={{ width: 16, height: 16, objectFit: 'contain', borderRadius: 2 }} />
-                            ) : catMeta.icon}
-                          </div>
-                          <span className="lps-ti-name">{p.name}</span>
-                          <span className="lps-ti-votes">▲ {p.upvoteCount ?? 0}</span>
-                        </div>
-                      );
-                    })}
+                    <div className="lps-promo-desc">Privacy-first web analytics that respects your visitors</div>
                   </div>
+                </div>
+                <button className="lps-promo-cta">
+                  <span>Learn more about analytics</span>
+                  <span className="lps-promo-arrow">→</span>
+                </button>
+              </div>
 
-                  {/* Daily Launch Digest */}
-                  <div className="lps-digest-card">
-                    <div className="lps-digest-title">Daily Launch Digest</div>
-                    <div className="lps-digest-desc">Get the best new products delivered to your Inbox every morning</div>
-                    <div className="lps-digest-form">
-                      <input className="lps-email-input" type="email" placeholder="your@email.com" />
-                      <button className="lps-subscribe-btn">Subscribe</button>
+              {/* Promoted card 2 — TaskMaster Pro */}
+              <div className="lps-promo-card">
+                <div className="lps-promo-banner lps-promo-banner-task">
+                  <span className="lps-promo-badge">PROMOTED</span>
+                  <div className="lps-promo-task-visual">
+                    {[1, 1, 1, 0, 0].map((done, i) => (
+                      <div key={i} className={`lps-promo-task-line${done ? ' done' : ''}`}>
+                        <span className="lps-promo-task-check">
+                          {done ? (
+                            <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+                              <path d="M1.5 4.5l2 2 4-4" stroke="#f5a623" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          ) : ''}
+                        </span>
+                        <span className="lps-promo-task-dash" />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="lps-promo-overlay" />
+                  <div className="lps-promo-content">
+                    <div className="lps-promo-identity">
+                      <div className="lps-promo-logo lps-promo-logo-task">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                          <path d="M3 8l3 3 7-7" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <span className="lps-promo-name">TaskMaster Pro</span>
+                    </div>
+                    <div className="lps-promo-desc">The task manager built for high-performance teams</div>
+                  </div>
+                </div>
+                <button className="lps-promo-cta">
+                  <span>Start organizing today</span>
+                  <span className="lps-promo-arrow">→</span>
+                </button>
+              </div>
+
+              {/* Trending This Week */}
+              <div className="lps-card">
+                <div className="lps-card-title">
+                  <span className="lps-card-title-icon">↑</span> Trending This Week
+                </div>
+                {trendingProducts.length === 0 ? (
+                  <div style={{ color: 'var(--tx2)', fontSize: 13, padding: '8px 0' }}>
+                    No trending launches yet.
+                  </div>
+                ) : trendingProducts.map((p, i) => (
+                  <div
+                    key={p._id}
+                    className="lps-trending-item"
+                    onClick={() => setSelectedProductId(p._id)}
+                  >
+                    <span className="lps-ti-rank">{i + 1}</span>
+                    <div className="lps-ti-info">
+                      <span className="lps-ti-name">{p.name}</span>
+                      <span className="lps-ti-votes">▲ {p.upvoteCount ?? 0}</span>
                     </div>
                   </div>
+                ))}
+              </div>
 
             </div>
           </div>
