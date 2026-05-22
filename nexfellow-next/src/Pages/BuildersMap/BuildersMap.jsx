@@ -340,7 +340,6 @@ export default function BuildersMap() {
                         center={[INDIA_CENTER[1], INDIA_CENTER[0]]}
                         zoom={DEFAULT_ZOOM}
                         className={styles.mapCanvas}
-                        theme="light"
                     >
                         {geoJSON && (
                             <MapClusterLayer
@@ -356,6 +355,7 @@ export default function BuildersMap() {
                             position="top-right"
                             showZoom
                             showFullscreen
+                            className={styles.mapControls}
                         />
                     </MapGL>
 
