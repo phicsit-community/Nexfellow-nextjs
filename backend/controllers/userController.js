@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const Community = require("../models/communityModel");
+const OnboardingProfile = require("../models/OnboardingProfile");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
@@ -642,7 +643,7 @@ module.exports.getProfileByUsername = async (req, res) => {
     location: op.location || "",
     city: op.city || "",
     state: op.state || "",
-    country: op.country || "",
+    country: op.country || user.country || "",
     cofounderAvailability: op.cofounderAvailability || "",
     cofounderLookingFor: op.cofounderLookingFor || [],
     reviewInterests: op.reviewInterests || [],
@@ -677,7 +678,7 @@ module.exports.getPublicProfileByUsername = async (req, res) => {
     location: op.location || "",
     city: op.city || "",
     state: op.state || "",
-    country: op.country || "",
+    country: op.country || user.country || "",
     cofounderAvailability: op.cofounderAvailability || "",
     cofounderLookingFor: op.cofounderLookingFor || [],
     reviewInterests: op.reviewInterests || [],
@@ -1014,6 +1015,69 @@ module.exports.updateProfile = async (req, res) => {
       }
     } else if (bannerUrl) {
       user.banner = bannerUrl;
+    }
+
+    // Update OnboardingProfile with extended fields sent from the edit profile form
+    const {
+      city,
+      state,
+      skills: rawSkills,
+      cofounderLookingFor: rawCFLF,
+      reviewInterests:     rawRI,
+      socialLinks:         rawSL,
+      cofounderAvailability,
+    } = req.body;
+
+    const VALID_COFOUND_AVAIL = [
+      "actively-looking",
+      "open-to-conversations",
+      "building-solo",
+      "advisor-mentor",
+    ];
+
+    // Parse JSON-stringified arrays/objects coming from multipart FormData
+    let parsedSkills, parsedCFLF, parsedRI, parsedSL;
+    try { parsedSkills = rawSkills ? JSON.parse(rawSkills) : undefined; } catch { parsedSkills = undefined; }
+    try { parsedCFLF  = rawCFLF  ? JSON.parse(rawCFLF)  : undefined; } catch { parsedCFLF  = undefined; }
+    try { parsedRI    = rawRI    ? JSON.parse(rawRI)    : undefined; } catch { parsedRI    = undefined; }
+    try { parsedSL    = rawSL    ? JSON.parse(rawSL)    : undefined; } catch { parsedSL    = undefined; }
+
+    const opUpdate = {};
+    if (city    !== undefined) opUpdate.city    = city;
+    if (state   !== undefined) opUpdate.state   = state;
+    if (country)               opUpdate.country = country;
+    if (city || state || country) {
+      opUpdate.location = [city, state, country].filter(Boolean).join(", ");
+    }
+    if (parsedSkills !== undefined && Array.isArray(parsedSkills))  opUpdate.skills              = parsedSkills;
+    if (parsedCFLF  !== undefined && Array.isArray(parsedCFLF))   opUpdate.cofounderLookingFor = parsedCFLF;
+    if (parsedRI    !== undefined && Array.isArray(parsedRI))      opUpdate.reviewInterests     = parsedRI;
+    if (parsedSL && typeof parsedSL === "object") opUpdate.socialLinks = parsedSL;
+    if (cofounderAvailability && VALID_COFOUND_AVAIL.includes(cofounderAvailability)) {
+      opUpdate.cofounderAvailability = cofounderAvailability;
+    }
+
+    if (Object.keys(opUpdate).length > 0) {
+      if (user.onboardingProfile) {
+        await OnboardingProfile.findByIdAndUpdate(
+          user.onboardingProfile,
+          opUpdate,
+          { new: true, runValidators: false }
+        );
+      } else {
+        // Build required fields from the user document as fallback
+        const nameParts = (user.name || "").split(" ");
+        const newOP = await OnboardingProfile.create({
+          userId:      user._id,
+          accountType: user.isCommunityAccount ? "community" : "individual",
+          firstName:   nameParts[0] || user.name || "",
+          lastName:    nameParts.slice(1).join(" ") || "",
+          username:    user.username,
+          email:       user.email,
+          ...opUpdate,
+        });
+        user.onboardingProfile = newOP._id;
+      }
     }
 
     await user.save();

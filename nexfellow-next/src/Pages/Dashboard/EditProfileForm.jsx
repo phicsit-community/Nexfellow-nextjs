@@ -6,7 +6,7 @@ import { useRouter, useParams } from "next/navigation";
 import api from "../../lib/axios";
 import styles from "./EditProfileForm.module.css";
 
-import countryCodeMap from "../../components/Constants/Country";
+import { Country, State, City } from "country-state-city";
 import BackButton from "../../components/BackButton/BackButton";
 import CameraIcon from "./assets/Camera.svg";
 
@@ -23,6 +23,33 @@ import "react-image-crop/dist/ReactCrop.css";
 
 dayjs.extend(customParseFormat);
 
+const AVAIL_MAP = {
+  "Yes — actively looking": "actively-looking",
+  "Maybe — open to conversations": "open-to-conversations",
+  "No — building solo": "building-solo",
+  "Advisor / mentor": "advisor-mentor",
+};
+const AVAIL_REVERSE_MAP = {
+  "actively-looking": "Yes — actively looking",
+  "open-to-conversations": "Maybe — open to conversations",
+  "building-solo": "No — building solo",
+  "advisor-mentor": "Advisor / mentor",
+};
+
+const SKILLS_OPTIONS = [
+  "Full-stack dev", "Frontend dev", "Backend dev", "Mobile dev",
+  "Product design", "UI/UX", "Product strategy", "Growth hacking",
+  "Marketing", "Sales", "AI / ML", "No-code / low-code", "Fundraising", "Operations",
+];
+const COFOUNDER_OPTIONS = [
+  "Technical co-founder", "Design co-founder", "Growth / marketing",
+  "Sales co-founder", "Business co-founder", "AI / ML expertise",
+];
+const INTEREST_OPTIONS = [
+  "SaaS / web apps", "Mobile apps", "AI tools", "Dev tools",
+  "E-commerce", "Fintech", "Edtech", "Health / wellness", "No-code tools", "Hardware / IoT",
+];
+
 const EditProfileForm = () => {
   const profileInputRef = useRef(null);
   const bannerInputRef = useRef(null);
@@ -31,6 +58,7 @@ const EditProfileForm = () => {
   const params = useParams();
   const username = params?.username;
   const [id, setId] = useState(null);
+  const [communityId, setCommunityId] = useState(null);
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -45,6 +73,18 @@ const EditProfileForm = () => {
     accountType: "",
   });
   const [loading, setLoading] = useState(true);
+
+  // Location state
+  const [countryIso, setCountryIso] = useState("");
+  const [stateIso, setStateIso] = useState("");
+  const [cityName, setCityName] = useState("");
+
+  // New profile fields
+  const [skills, setSkills] = useState([]);
+  const [cofounderAvailability, setCofounderAvailability] = useState("Maybe — open to conversations");
+  const [cofounderLookingFor, setCofounderLookingFor] = useState([]);
+  const [reviewInterests, setReviewInterests] = useState([]);
+  const [socialLinks, setSocialLinks] = useState({ twitter: "", github: "", linkedin: "", portfolio: "" });
 
   // Username validation state
   const [usernameStatus, setUsernameStatus] = useState({
@@ -106,7 +146,7 @@ const EditProfileForm = () => {
       label: "Country",
       type: "select",
       required: true,
-      options: Object.keys(countryCodeMap),
+      options: Country.getAllCountries().map((c) => c.name),
     },
     username: { label: "User Name", type: "text", required: true },
     email: { label: "Email", type: "email", required: true },
@@ -150,27 +190,54 @@ const EditProfileForm = () => {
         const userData = response.data;
         setUser(userData);
         setId(userData._id);
+        setCommunityId(userData.createdCommunity?._id || null);
         console.log("User Data:", userData);
         setWebsiteLink(
           userData.link ? userData.link.replace(/^https?:\/\//, "") : ""
         );
+        const isCommunity = userData.isCommunityAccount && userData.createdCommunity;
         setFormData((prevFormData) => ({
           ...prevFormData,
           name: userData.name || "",
           username: userData.username || "",
           email: userData.email || "",
-          description: userData.description
-            ? userData.description.slice(0, 150)
-            : userData.profile.bio,
+          description: isCommunity
+            ? (userData.createdCommunity?.description || "").slice(0, 150)
+            : (userData.description || userData.profile?.bio || userData.bio || "").slice(0, 150),
           country: userData.country || "",
-          category: userData.category || "",
+          category: userData.category || userData.createdCommunity?.category || "",
           dob: userData.dateOfBirth
             ? new Date(userData.dateOfBirth).toISOString().split("T")[0]
             : "",
           photo: userData.picture || null,
           banner: userData.banner || null,
-          accountType: userData.accountType || "",
+          accountType: userData.accountType || userData.createdCommunity?.accountType || "",
         }));
+
+        // Resolve country ISO code for state/city cascade
+        const countryObj = Country.getAllCountries().find(
+          (c) => c.name === (userData.country || "")
+        );
+        const iso = countryObj?.isoCode || "";
+        setCountryIso(iso);
+        if (iso && userData.state) {
+          const stateObj = State.getStatesOfCountry(iso).find(
+            (s) => s.name === userData.state
+          );
+          setStateIso(stateObj?.isoCode || "");
+        }
+        setCityName(userData.city || "");
+        setSkills(userData.skills || []);
+        setCofounderAvailability(
+          AVAIL_REVERSE_MAP[userData.cofounderAvailability] ||
+            "Maybe — open to conversations"
+        );
+        setCofounderLookingFor(userData.cofounderLookingFor || []);
+        setReviewInterests(userData.reviewInterests || []);
+        setSocialLinks(
+          userData.socialLinks || { twitter: "", github: "", linkedin: "", portfolio: "" }
+        );
+
         setLoading(false);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -227,6 +294,14 @@ const EditProfileForm = () => {
           ? value.slice(0, 20)
           : value,
     }));
+
+    // Sync country ISO for cascading state/city dropdowns
+    if (name === "country") {
+      const countryObj = Country.getAllCountries().find((c) => c.name === value);
+      setCountryIso(countryObj?.isoCode || "");
+      setStateIso("");
+      setCityName("");
+    }
 
     // Handle username validation with debouncing
     if (name === "username") {
@@ -300,13 +375,13 @@ const EditProfileForm = () => {
         return;
       }
 
-      if (isCommunityAccount) {
+      if (isCommunityAccount && communityId) {
         let formattedWebsiteLink = websiteLink.trim();
 
         if (!formattedWebsiteLink) {
           // Send empty string to remove link
           await api.put(
-            `/community/${id}/link`,
+            `/community/${communityId}/link`,
             { link: "" },
             { withCredentials: true }
           );
@@ -323,7 +398,7 @@ const EditProfileForm = () => {
           }
 
           await api.put(
-            `/community/${id}/link`,
+            `/community/${communityId}/link`,
             { link: formattedWebsiteLink },
             { withCredentials: true }
           );
@@ -338,6 +413,23 @@ const EditProfileForm = () => {
           data.append(key, value);
         }
       });
+
+      // Append location fields (always send so values can be cleared)
+      const stateName = stateIso
+        ? State.getStateByCodeAndCountry(stateIso, countryIso)?.name || ""
+        : "";
+      data.append("city", cityName);
+      data.append("state", stateName);
+
+      // Append array/object fields as JSON (always send so clearing is persisted)
+      data.append("skills", JSON.stringify(skills));
+      data.append("cofounderLookingFor", JSON.stringify(cofounderLookingFor));
+      data.append("reviewInterests", JSON.stringify(reviewInterests));
+      data.append("socialLinks", JSON.stringify(socialLinks));
+      data.append(
+        "cofounderAvailability",
+        AVAIL_MAP[cofounderAvailability] || "open-to-conversations"
+      );
 
       const response = await api.post("/user/updateprofile", data, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -765,6 +857,47 @@ const EditProfileForm = () => {
                     </div>
                   ))}
 
+                {/* State / Region — shown only when a country with states is selected */}
+                {countryIso && State.getStatesOfCountry(countryIso).length > 0 && (
+                  <div className={styles.formField}>
+                    <label className={styles.label}>State / Region</label>
+                    <select
+                      className={styles.select}
+                      value={stateIso}
+                      onChange={(e) => {
+                        setStateIso(e.target.value);
+                        setCityName("");
+                      }}
+                    >
+                      <option value="">Select</option>
+                      {State.getStatesOfCountry(countryIso).map((s) => (
+                        <option key={s.isoCode} value={s.isoCode}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* City — shown only when a state is selected */}
+                {stateIso && (
+                  <div className={styles.formField}>
+                    <label className={styles.label}>City</label>
+                    <select
+                      className={styles.select}
+                      value={cityName}
+                      onChange={(e) => setCityName(e.target.value)}
+                    >
+                      <option value="">Select</option>
+                      {City.getCitiesOfState(countryIso, stateIso).map((c) => (
+                        <option key={c.name} value={c.name}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 {isCommunityAccount && (
                   <div className={styles.formField}>
                     <label className={styles.label}>Website Link</label>
@@ -882,6 +1015,123 @@ const EditProfileForm = () => {
                     );
                   })}
               </div>
+            </div>
+          </div>
+
+          {/* ── Skills ── */}
+          <div className={styles.formSection}>
+            <h4 className={styles.sectionTitle}>Skills</h4>
+            <p className={styles.sectionSub}>Select all that apply</p>
+            <div className={styles.chipGrid}>
+              {SKILLS_OPTIONS.map((skill) => (
+                <button
+                  key={skill}
+                  type="button"
+                  className={`${styles.chip} ${skills.includes(skill) ? styles.chipSelected : ""}`}
+                  onClick={() =>
+                    setSkills((prev) =>
+                      prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill]
+                    )
+                  }
+                >
+                  {skill}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Social Links ── */}
+          <div className={styles.formSection}>
+            <h4 className={styles.sectionTitle}>Social Links</h4>
+            <div className={styles.socialLinksGrid}>
+              {[
+                { key: "twitter", label: "Twitter / X", placeholder: "https://twitter.com/username" },
+                { key: "github", label: "GitHub", placeholder: "https://github.com/username" },
+                { key: "linkedin", label: "LinkedIn", placeholder: "https://linkedin.com/in/username" },
+                { key: "portfolio", label: "Portfolio / Website", placeholder: "https://yourwebsite.com" },
+              ].map(({ key, label, placeholder }) => (
+                <div key={key} className={styles.formField}>
+                  <label className={styles.label}>{label}</label>
+                  <input
+                    className={`${styles.input} ${styles.socialInput}`}
+                    type="text"
+                    placeholder={placeholder}
+                    value={socialLinks[key] || ""}
+                    onChange={(e) =>
+                      setSocialLinks((prev) => ({ ...prev, [key]: e.target.value }))
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Co-founder Status (individual accounts only) ── */}
+          {!isCommunityAccount && (
+            <div className={styles.formSection}>
+              <h4 className={styles.sectionTitle}>Co-founder Status</h4>
+              <div className={styles.availCards}>
+                {[
+                  { val: "Yes — actively looking", dot: "#10b981", desc: "I'm open to meeting potential co-founders right now." },
+                  { val: "Maybe — open to conversations", dot: "#f59e0b", desc: "Not actively searching, but happy to connect if there's a fit." },
+                  { val: "No — building solo", dot: "#6b7280", desc: "I'm heads-down on my own product." },
+                  { val: "Advisor / mentor", dot: "#24b2b4", desc: "I want to advise early-stage builders, not co-found." },
+                ].map(({ val, dot, desc }) => (
+                  <div
+                    key={val}
+                    className={`${styles.availCard} ${cofounderAvailability === val ? styles.availCardSelected : ""}`}
+                    onClick={() => setCofounderAvailability(val)}
+                  >
+                    <div className={styles.availDot} style={{ background: dot }} />
+                    <div>
+                      <div className={styles.availTitle}>{val}</div>
+                      <div className={styles.availDesc}>{desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <label className={styles.label} style={{ marginTop: "16px", display: "block" }}>
+                What kind of co-founder are you looking for?
+              </label>
+              <div className={styles.chipGrid} style={{ marginTop: "8px" }}>
+                {COFOUNDER_OPTIONS.map((val) => (
+                  <button
+                    key={val}
+                    type="button"
+                    className={`${styles.chip} ${cofounderLookingFor.includes(val) ? styles.chipSelected : ""}`}
+                    onClick={() =>
+                      setCofounderLookingFor((prev) =>
+                        prev.includes(val) ? prev.filter((v) => v !== val) : [...prev, val]
+                      )
+                    }
+                  >
+                    {val}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── Review Interests ── */}
+          <div className={styles.formSection}>
+            <h4 className={styles.sectionTitle}>Review Interests</h4>
+            <p className={styles.sectionSub}>Types of products you want to review</p>
+            <div className={styles.chipGrid}>
+              {INTEREST_OPTIONS.map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  className={`${styles.chip} ${reviewInterests.includes(val) ? styles.chipSelected : ""}`}
+                  onClick={() =>
+                    setReviewInterests((prev) =>
+                      prev.includes(val) ? prev.filter((v) => v !== val) : [...prev, val]
+                    )
+                  }
+                >
+                  {val}
+                </button>
+              ))}
             </div>
           </div>
 
