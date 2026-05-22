@@ -113,6 +113,17 @@
     }
 }
 
+@keyframes popInCentered {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.93) translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) scale(1) translateY(0);
+    }
+}
+
 .popupCard {
     background: white;
     border-radius: 14px;
@@ -312,6 +323,26 @@
     background: #f8fafc;
 }
 
+
+/* ── Mobile-only elements (hidden on desktop) ───────────────────────────────── */
+
+.mobilePanelBtn {
+    display: none;
+}
+
+.mobileOverlay {
+    display: none;
+}
+
+.panelCloseBtn {
+    display: none;
+}
+
+.panelHdrRight {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
 /* ── Right Panel ────────────────────────────────────────────────────────────── */
 
@@ -933,4 +964,189 @@
 /* Empty state */
 :global(.dark) .emptyState {
     color: #475569;
+}
+
+/* ── Mobile (≤ 768px) ───────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .page {
+        height: calc(100dvh - 60px);
+    }
+
+    /* Map fills the full body */
+    .mapArea {
+        flex: 1;
+        height: 100%;
+    }
+
+    /* FAB button — bottom-right of the map */
+    .mobilePanelBtn {
+        display: flex;
+        position: absolute;
+        bottom: 24px;
+        right: 16px;
+        z-index: 400;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background: #14b8a6;
+        color: white;
+        border: none;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 16px rgba(20, 184, 166, 0.45);
+        transition: background 0.15s, transform 0.12s;
+    }
+
+    .mobilePanelBtn:active {
+        transform: scale(0.91);
+    }
+
+    /* Popup: above the FAB, centered */
+    .popup {
+        bottom: 82px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 64px);
+        max-width: 320px;
+        animation: popInCentered 0.18s ease;
+    }
+
+    .popupCard {
+        max-width: 100%;
+        min-width: 0;
+        width: 100%;
+    }
+
+    /* Backdrop behind the bottom sheet */
+    .mobileOverlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 490;
+    }
+
+    /* Right panel: fixed bottom sheet, off-screen by default */
+    .rightPanel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 85vh;
+        z-index: 500;
+        border-left: none;
+        border-top: none;
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.14);
+        transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    .rightPanelOpen {
+        transform: translateY(0);
+    }
+
+    /* Drag handle at top of sheet */
+    .rightPanel::before {
+        content: "";
+        display: block;
+        width: 36px;
+        height: 4px;
+        border-radius: 2px;
+        background: #e2e8f0;
+        margin: 10px auto 0;
+        flex-shrink: 0;
+    }
+
+    /* Panel header close button */
+    .panelCloseBtn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #f1f5f9;
+        border: none;
+        cursor: pointer;
+        color: #64748b;
+        flex-shrink: 0;
+    }
+
+    .panelCloseBtn:active {
+        background: #e2e8f0;
+    }
+
+    .panelHdr {
+        padding: 8px 16px 10px;
+    }
+
+    /* Compact match card */
+    .matchCard {
+        padding: 10px 14px;
+    }
+
+    .bigAvatar,
+    .bigAvatarImg {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* City grid: 4 columns */
+    .cityGrid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+    }
+
+    .cityCard {
+        padding: 8px 6px;
+    }
+
+    .cityCount {
+        font-size: 18px;
+    }
+
+    /* Hide ticker */
+    .ticker {
+        display: none;
+    }
+
+    /* Connections badge: slightly compact */
+    .connBadge {
+        padding: 5px 10px 5px 6px;
+        top: 10px;
+    }
+
+    /* Dark overrides */
+    :global(.dark) .rightPanel {
+        box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    :global(.dark) .rightPanel::before {
+        background: #2a2d3a;
+    }
+
+    :global(.dark) .mobilePanelBtn {
+        box-shadow: 0 4px 16px rgba(20, 184, 166, 0.25);
+    }
+
+    :global(.dark) .panelCloseBtn {
+        background: #252836;
+        color: #94a3b8;
+    }
+}
+
+/* ── Very small phones (≤ 400px) ────────────────────────────────────────────── */
+
+@media (max-width: 400px) {
+    .cityGrid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .connText {
+        font-size: 11px;
+    }
 }

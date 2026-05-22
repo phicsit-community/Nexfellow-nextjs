@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { Map as MapGL, MapClusterLayer, MapControls } from "@/components/ui/map";
-import { MapPin, X } from "lucide-react";
+import { MapPin, X, Menu } from "lucide-react";
 import api from "@/lib/axios";
 import styles from "./BuildersMap.module.css";
 
@@ -170,6 +170,7 @@ export default function BuildersMap() {
     const [activeTab, setActiveTab] = useState("matches");
     const [selectedMatch, setSelectedMatch] = useState(null);
     const [mapTarget, setMapTarget] = useState(null);
+    const [mobilePanelOpen, setMobilePanelOpen] = useState(false);
 
     // ── Data loading ──────────────────────────────────────────────────────────
 
@@ -376,13 +377,39 @@ export default function BuildersMap() {
                             )}
                         </div>
                     )}
+
+                    {/* FAB — mobile only */}
+                    <button
+                        className={styles.mobilePanelBtn}
+                        onClick={() => setMobilePanelOpen(true)}
+                        aria-label="Open matches panel"
+                    >
+                        <Menu size={18} />
+                    </button>
                 </div>
 
+                {/* Backdrop — mobile only */}
+                {mobilePanelOpen && (
+                    <div
+                        className={styles.mobileOverlay}
+                        onClick={() => setMobilePanelOpen(false)}
+                    />
+                )}
+
                 {/* ── Right Panel ─────────────────────────────────────────────── */}
-                <div className={styles.rightPanel}>
+                <div className={`${styles.rightPanel} ${mobilePanelOpen ? styles.rightPanelOpen : ""}`}>
                     <div className={styles.panelHdr}>
                         <span className={styles.panelTitle}>Top matches near you</span>
-                        <span className={styles.builderBadge}>{enriched.length} builders</span>
+                        <div className={styles.panelHdrRight}>
+                            <span className={styles.builderBadge}>{enriched.length} builders</span>
+                            <button
+                                className={styles.panelCloseBtn}
+                                onClick={() => setMobilePanelOpen(false)}
+                                aria-label="Close panel"
+                            >
+                                <X size={14} />
+                            </button>
+                        </div>
                     </div>
 
                     <div className={styles.tabBar}>

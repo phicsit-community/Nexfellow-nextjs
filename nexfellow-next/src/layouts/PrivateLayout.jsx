@@ -32,21 +32,24 @@ export default function PrivateLayout({ children, hideSidebar = false }) {
     return (
         <div className={style.container}>
             <div className={style.main}>
-                {!hideSidebar && (
-                    <>
-                        {mobileNavOpen && (
-                            <div
-                                className={style.drawerBackdrop}
-                                onClick={() => setMobileNavOpen(false)}
-                            />
-                        )}
-                        <div className={style.sidebar}>
-                            <Sidebar
-                                isDrawerOpen={mobileNavOpen}
-                                onClose={() => setMobileNavOpen(false)}
-                            />
-                        </div>
-                    </>
+                {mobileNavOpen && (
+                    <div
+                        className={style.drawerBackdrop}
+                        onClick={() => setMobileNavOpen(false)}
+                    />
+                )}
+                {!hideSidebar ? (
+                    <div className={style.sidebar}>
+                        <Sidebar
+                            isDrawerOpen={mobileNavOpen}
+                            onClose={() => setMobileNavOpen(false)}
+                        />
+                    </div>
+                ) : mobileNavOpen && (
+                    <Sidebar
+                        isDrawerOpen={mobileNavOpen}
+                        onClose={() => setMobileNavOpen(false)}
+                    />
                 )}
                 <div className={style.content}>
                     {!EXCLUDED_PATHS.some(path => pathname === path || pathname?.startsWith(path + "/")) && (
