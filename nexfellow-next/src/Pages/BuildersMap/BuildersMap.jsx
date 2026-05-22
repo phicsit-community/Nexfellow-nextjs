@@ -352,7 +352,11 @@ export default function BuildersMap() {
                                 onPointClick={handlePointClick}
                             />
                         )}
-                        <MapControls />
+                        <MapControls
+                            position="top-right"
+                            showZoom
+                            showFullscreen
+                        />
                     </MapGL>
 
                     {/* Builder popup panel */}
