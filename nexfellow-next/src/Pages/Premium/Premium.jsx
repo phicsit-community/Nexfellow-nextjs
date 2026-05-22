@@ -214,7 +214,7 @@ function PlanCard({ plan, isAnnual, accent, badge, badgeBg, featured }) {
 const PLANS = [
   {
     name: "Free",
-    subtitle: "Try NexFellow — no card, no catch, no expiry",
+    subtitle: "Try NexFellow. no card, no catch, no expiry",
     monthly: 0,
     annualMonthly: 0,
     annualTotal: 0,
@@ -244,7 +244,7 @@ const PLANS = [
         label: "Posts",
         items: [
           { text: "Post up to 500 characters per post" },
-          { text: "No image attachments", included: false, muted: true },
+          { text: "1 image attachments" },
         ],
       },
       {
@@ -297,7 +297,7 @@ const PLANS = [
         label: "Posts",
         items: [
           { text: "Post up to 2,000 characters per post" },
-          { text: "Up to 3 image attachments per post" },
+          { text: "Up to 2 image attachments per post" },
         ],
       },
       {
@@ -320,7 +320,7 @@ const PLANS = [
   {
     name: "Founder",
     subtitle: "For teams, accelerators & community builders",
-    monthly: 29,
+    monthly: 49,
     annualMonthly: 23,
     annualTotal: 278,
     creditsAmount: "600 credits",
@@ -351,14 +351,13 @@ const PLANS = [
         label: "Posts",
         items: [
           { text: "Post up to 5,000 characters per post" },
-          { text: "Up to 10 image attachments per post" },
+          { text: "Up to 4 image attachments per post" },
         ],
       },
       {
         label: "Badge",
         items: [
           { text: "Orange verified badge on profile & posts" },
-          { text: "Community org account + orange badge" },
           { text: "Spotlight on early adopter board" },
         ],
       },
@@ -385,9 +384,9 @@ const VALUE_PROPS = [
   {
     tag: "THE COFFEE TEST",
     accent: "#0f172a",
-    headline: "$0.30/day",
+    headline: "$0.53/day",
     headlineColor: "#0f172a",
-    body: "Builder Pro breaks down to 30 cents a day. The insight from one good feedback round can save months of building in the wrong direction.",
+    body: "Builder Pro breaks down to 53 cents a day. The insight from one good feedback round can save months of building in the wrong direction.",
   },
   {
     tag: "WHAT YOU'RE REALLY PAYING FOR",
@@ -402,28 +401,31 @@ const CREDIT_PACKS = [
   {
     name: "Starter pack",
     price: 5,
+    subtitle: "For when you've run dry mid-launch and need feedback fast. Never expires.",
     credits: 50,
     bonus: null,
     featured: false,
-    items: ["Instant · no expiry", "+ 2 feedback rounds"],
+    items: ["Instant · no expiry", "= 2 feedback rounds"],
     cta: "Buy Starter",
   },
   {
     name: "Growth pack",
-    price: 12,
-    credits: 150,
-    bonus: "+20 bonus",
+    price: 15,
+    subtitle: "Most popular top-up. Covers a full sprint of product launches.",
+    credits: 200,
+    bonus: "+25 bonus",
     featured: true,
-    items: ["Instant · no expiry", "+ 7 feedback rounds", "+ 1 free priority boost included"],
+    items: ["Instant · no expiry", "= 7 feedback rounds", "1 free priority boost included"],
     cta: "Buy Growth",
   },
   {
     name: "Scale pack",
-    price: 29,
-    credits: 400,
-    bonus: "+60 bonus",
+    price: 35,
+    subtitle: "For builders running multiple products or community sprints.",
+    credits: 500,
+    bonus: "+75 bonus",
     featured: false,
-    items: ["Instant · no expiry", "+ 20 feedback rounds", "+ 3 priority boosts + 1 board spotlight"],
+    items: ["Instant · no expiry", "= 20 feedback rounds", "3 priority boosts + 1 board spotlight"],
     cta: "Buy Scale",
   },
 ];
@@ -718,7 +720,10 @@ export default function Premium() {
                     Best value
                   </div>
                 )}
-                <p style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", marginBottom: 8 }}>{pack.name}</p>
+                <p style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", marginBottom: 4 }}>{pack.name}</p>
+                {pack.subtitle && (
+                  <p style={{ fontSize: 12, color: "#64748b", lineHeight: 1.5, marginBottom: 12 }}>{pack.subtitle}</p>
+                )}
                 <div style={{ marginBottom: 12 }}>
                   <span style={{ fontSize: 34, fontWeight: 800, color: "#0f172a" }}>${pack.price}</span>
                 </div>
