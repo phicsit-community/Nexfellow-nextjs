@@ -2,62 +2,84 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Footer from "@/components/Landing/Footer/Footer";
+import { useTheme } from "@/hooks/useTheme";
 
 const TEAL = "#14b8a6";
 const PURPLE = "#7c3aed";
 const AMBER = "#f59e0b";
 
+const LIGHT = {
+  bgPage: "#ffffff",
+  bgCard: "#ffffff",
+  bgCardAlt: "#f8fafc",
+  border: "#e2e8f0",
+  borderSubtle: "#f1f5f9",
+  textPrimary: "#0f172a",
+  textSecondary: "#64748b",
+  textMuted: "#94a3b8",
+  toggleBg: "#f1f5f9",
+  toggleActive: "#ffffff",
+  toggleActiveShadow: "0 1px 4px rgba(0,0,0,0.10)",
+  toggleActiveText: "#0f172a",
+  toggleInactiveText: "#64748b",
+  freeCreditsColor: "#94a3b8",
+  freeCreditsBg: "#f8fafc",
+  freeCreditsBorder: "#e2e8f0",
+  valuePropBg: "#f8fafc",
+  featureSectionBorder: "#f1f5f9",
+};
+
+const DARK = {
+  bgPage: "#0d0d0d",
+  bgCard: "#141414",
+  bgCardAlt: "#111111",
+  border: "#242424",
+  borderSubtle: "#181818",
+  textPrimary: "#f0f0f0",
+  textSecondary: "#888888",
+  textMuted: "#4a4a4a",
+  toggleBg: "#111111",
+  toggleActive: "#222222",
+  toggleActiveShadow: "0 1px 6px rgba(0,0,0,0.50)",
+  toggleActiveText: "#f0f0f0",
+  toggleInactiveText: "#666666",
+  freeCreditsColor: "#606060",
+  freeCreditsBg: "#111111",
+  freeCreditsBorder: "#242424",
+  valuePropBg: "#141414",
+  featureSectionBorder: "#222222",
+};
+
 function CheckIcon({ color = TEAL, size = 16 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-      <circle cx="8" cy="8" r="7.5" fill={`${color}18`} />
+      <circle cx="8" cy="8" r="7.5" fill={`${color}20`} />
       <path d="M5 8l2 2 4-4" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
-function XIcon({ size = 16 }) {
+function XIcon({ tk, size = 16 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-      <circle cx="8" cy="8" r="7.5" fill="#94a3b810" />
-      <path d="M10 6L6 10M6 6l4 4" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="8" cy="8" r="7.5" fill={`${tk.textMuted}18`} />
+      <path d="M10 6L6 10M6 6l4 4" stroke={tk.textMuted} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
-
-function SectionLabel({ children }) {
-  return (
-    <p style={{
-      fontSize: 11,
-      fontWeight: 700,
-      letterSpacing: "0.08em",
-      textTransform: "uppercase",
-      color: "#94a3b8",
-      marginBottom: 8,
-    }}>
-      {children}
-    </p>
-  );
-}
-
-function FeatureItem({ text, included = true, muted = false, color = TEAL }) {
+function FeatureItem({ text, included = true, muted = false, color = TEAL, tk }) {
   return (
     <div style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 6 }}>
-      {included ? <CheckIcon color={color} /> : <XIcon />}
-      <span style={{
-        fontSize: 13,
-        color: muted ? "#94a3b8" : "#334155",
-        lineHeight: 1.5,
-      }}>
+      {included ? <CheckIcon color={color} /> : <XIcon tk={tk} />}
+      <span style={{ fontSize: 13, color: muted ? tk.textMuted : tk.textSecondary, lineHeight: 1.5 }}>
         {text}
       </span>
     </div>
   );
 }
 
-function FeatureSection({ label, children }) {
+function FeatureSection({ label, children, tk }) {
   return (
     <div style={{ marginBottom: 16 }}>
       <p style={{
@@ -65,10 +87,10 @@ function FeatureSection({ label, children }) {
         fontWeight: 700,
         letterSpacing: "0.1em",
         textTransform: "uppercase",
-        color: "#94a3b8",
+        color: tk.textMuted,
         marginBottom: 8,
         paddingTop: 12,
-        borderTop: "1px solid #f1f5f9",
+        borderTop: `1px solid ${tk.featureSectionBorder}`,
       }}>
         {label}
       </p>
@@ -77,13 +99,20 @@ function FeatureSection({ label, children }) {
   );
 }
 
-function PlanCard({ plan, isAnnual, accent, badge, badgeBg, featured }) {
-  const borderColor = featured === "pro" ? `${PURPLE}55` : featured === "founder" ? `${AMBER}55` : "#e2e8f0";
-  const shadowStyle = featured ? `0 0 0 2px ${featured === "pro" ? PURPLE : AMBER}33, 0 8px 32px rgba(0,0,0,0.08)` : "0 1px 4px rgba(0,0,0,0.06)";
+function PlanCard({ plan, isAnnual, featured, tk }) {
+  const borderColor = featured === "pro"
+    ? `${PURPLE}55`
+    : featured === "founder"
+    ? `${AMBER}55`
+    : tk.border;
+
+  const shadowStyle = featured
+    ? `0 0 0 1px ${featured === "pro" ? PURPLE : AMBER}33, 0 8px 40px ${featured === "pro" ? PURPLE : AMBER}12`
+    : "none";
 
   return (
     <div style={{
-      background: "#fff",
+      background: tk.bgCard,
       border: `1.5px solid ${borderColor}`,
       borderRadius: 16,
       padding: "28px 24px",
@@ -92,13 +121,13 @@ function PlanCard({ plan, isAnnual, accent, badge, badgeBg, featured }) {
       flexDirection: "column",
       position: "relative",
     }}>
-      {badge && (
+      {plan.badge && (
         <div style={{
           position: "absolute",
           top: -12,
           left: "50%",
           transform: "translateX(-50%)",
-          background: badgeBg,
+          background: plan.badgeBg,
           color: "#fff",
           fontSize: 10,
           fontWeight: 700,
@@ -108,30 +137,25 @@ function PlanCard({ plan, isAnnual, accent, badge, badgeBg, featured }) {
           borderRadius: 20,
           whiteSpace: "nowrap",
         }}>
-          {badge}
+          {plan.badge}
         </div>
       )}
 
-      {/* Plan title & subtitle */}
-      <p style={{ fontSize: 18, fontWeight: 700, color: "#0f172a", marginBottom: 4 }}>{plan.name}</p>
-      <p style={{ fontSize: 13, color: "#64748b", marginBottom: 20, lineHeight: 1.4 }}>{plan.subtitle}</p>
+      <p style={{ fontSize: 18, fontWeight: 700, color: tk.textPrimary, marginBottom: 4 }}>{plan.name}</p>
+      <p style={{ fontSize: 13, color: tk.textSecondary, marginBottom: 20, lineHeight: 1.4 }}>{plan.subtitle}</p>
 
-      {/* Price */}
       <div style={{ marginBottom: 4 }}>
-        <span style={{ fontSize: 40, fontWeight: 800, color: "#0f172a", lineHeight: 1 }}>
+        <span style={{ fontSize: 40, fontWeight: 800, color: tk.textPrimary, lineHeight: 1 }}>
           ${isAnnual ? plan.annualMonthly ?? plan.monthly : plan.monthly}
         </span>
-        <span style={{ fontSize: 14, color: "#64748b", marginLeft: 2 }}>/mo</span>
+        <span style={{ fontSize: 14, color: tk.textSecondary, marginLeft: 2 }}>/mo</span>
       </div>
-      {plan.monthly !== 0 && (
-        <p style={{ fontSize: 12, color: "#94a3b8", marginBottom: 16 }}>
-          {isAnnual
-            ? `$${plan.annualTotal}/yr · save 2 months`
-            : `$${plan.annualTotal}/yr · save 2 months`}
+      {plan.monthly !== 0 ? (
+        <p style={{ fontSize: 12, color: tk.textMuted, marginBottom: 16 }}>
+          ${plan.annualTotal}/yr · save 2 months
         </p>
-      )}
-      {plan.monthly === 0 && (
-        <p style={{ fontSize: 12, color: "#94a3b8", marginBottom: 16 }}>forever free · no card required</p>
+      ) : (
+        <p style={{ fontSize: 12, color: tk.textMuted, marginBottom: 16 }}>forever free · no card required</p>
       )}
 
       {/* Credits widget */}
@@ -139,17 +163,17 @@ function PlanCard({ plan, isAnnual, accent, badge, badgeBg, featured }) {
         display: "flex",
         alignItems: "center",
         gap: 12,
-        background: plan.creditsBg,
+        background: plan.name === "Free" ? tk.freeCreditsBg : plan.creditsBg,
+        border: `1px solid ${plan.name === "Free" ? tk.freeCreditsBorder : plan.creditsBorder}`,
         borderRadius: 10,
         padding: "12px 14px",
         marginBottom: 20,
       }}>
-        {/* Icon with solid colored circle background */}
         <div style={{
           width: 36,
           height: 36,
           borderRadius: "50%",
-          background: `${plan.creditsColor}22`,
+          background: `${plan.name === "Free" ? tk.freeCreditsColor : plan.creditsColor}22`,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -157,15 +181,14 @@ function PlanCard({ plan, isAnnual, accent, badge, badgeBg, featured }) {
         }}>
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
             <path d="M9 1l2.09 5.26L17 7.27l-4 3.89.94 5.34L9 13.77l-4.94 2.73L5 11.16 1 7.27l5.91-.01L9 1z"
-              fill={plan.creditsColor} />
+              fill={plan.name === "Free" ? tk.freeCreditsColor : plan.creditsColor} />
           </svg>
         </div>
-        {/* Amount + subtext stacked */}
         <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <span style={{ fontSize: 15, fontWeight: 700, color: plan.creditsColor, lineHeight: 1 }}>
+          <span style={{ fontSize: 15, fontWeight: 700, color: plan.name === "Free" ? tk.freeCreditsColor : plan.creditsColor, lineHeight: 1 }}>
             {plan.creditsAmount}
           </span>
-          <span style={{ fontSize: 11.5, color: plan.creditsColor, opacity: 0.75, lineHeight: 1.3 }}>
+          <span style={{ fontSize: 11.5, color: plan.name === "Free" ? tk.freeCreditsColor : plan.creditsColor, opacity: 0.7, lineHeight: 1.3 }}>
             {plan.creditsSub}
           </span>
         </div>
@@ -174,7 +197,7 @@ function PlanCard({ plan, isAnnual, accent, badge, badgeBg, featured }) {
       {/* Features */}
       <div style={{ flex: 1 }}>
         {plan.sections.map((section, i) => (
-          <FeatureSection key={i} label={section.label}>
+          <FeatureSection key={i} label={section.label} tk={tk}>
             {section.items.map((item, j) => (
               <FeatureItem
                 key={j}
@@ -182,27 +205,28 @@ function PlanCard({ plan, isAnnual, accent, badge, badgeBg, featured }) {
                 included={item.included !== false}
                 muted={item.muted}
                 color={plan.checkColor}
+                tk={tk}
               />
             ))}
           </FeatureSection>
         ))}
       </div>
 
-      {/* CTA button */}
-      <button style={{
-        marginTop: 20,
-        width: "100%",
-        padding: "12px 0",
-        borderRadius: 10,
-        fontSize: 14,
-        fontWeight: 700,
-        cursor: "pointer",
-        border: plan.ctaBorder || "none",
-        background: plan.ctaBg,
-        color: plan.ctaColor,
-        transition: "opacity 0.2s",
-      }}
-        onMouseEnter={e => e.currentTarget.style.opacity = "0.88"}
+      <button
+        style={{
+          marginTop: 20,
+          width: "100%",
+          padding: "12px 0",
+          borderRadius: 10,
+          fontSize: 14,
+          fontWeight: 700,
+          cursor: "pointer",
+          border: plan.ctaBorder(tk) || "none",
+          background: plan.ctaBg,
+          color: plan.name === "Free" ? tk.textSecondary : plan.ctaColor,
+          transition: "opacity 0.2s",
+        }}
+        onMouseEnter={e => e.currentTarget.style.opacity = "0.82"}
         onMouseLeave={e => e.currentTarget.style.opacity = "1"}
       >
         {plan.cta}
@@ -220,25 +244,22 @@ const PLANS = [
     annualTotal: 0,
     creditsAmount: "30 credits",
     creditsSub: "per month · expires in 30 days",
-    creditsColor: "#94a3b8",
-    creditsBg: "#f8fafc",
+    creditsColor: null,
+    creditsBg: null,
+    creditsBorder: null,
     checkColor: TEAL,
     cta: "Get started free",
     ctaBg: "transparent",
-    ctaColor: "#334155",
-    ctaBorder: "1.5px solid #e2e8f0",
+    ctaColor: null,
+    ctaBorder: (tk) => `1.5px solid ${tk.border}`,
     sections: [
       {
         label: "Submissions",
-        items: [
-          { text: "Unlimited product submissions (credit gate)" },
-        ],
+        items: [{ text: "Unlimited product submissions (credit gate)" }],
       },
       {
         label: "Broadcasts",
-        items: [
-          { text: "No broadcast access", included: false, muted: true },
-        ],
+        items: [{ text: "No broadcast access", included: false, muted: true }],
       },
       {
         label: "Posts",
@@ -249,9 +270,7 @@ const PLANS = [
       },
       {
         label: "Badge",
-        items: [
-          { text: "No verified badge", included: false, muted: true },
-        ],
+        items: [{ text: "No verified badge", included: false, muted: true }],
       },
       {
         label: "Platform",
@@ -270,20 +289,22 @@ const PLANS = [
     monthly: 16,
     annualMonthly: 7,
     annualTotal: 86,
+    badge: "Most Popular",
+    badgeBg: PURPLE,
     creditsAmount: "200 credits",
     creditsSub: "per month · rollover up to 100",
     creditsColor: PURPLE,
-    creditsBg: `${PURPLE}0d`,
+    creditsBg: `${PURPLE}12`,
+    creditsBorder: `${PURPLE}22`,
     checkColor: TEAL,
     cta: "Upgrade to Pro →",
     ctaBg: TEAL,
     ctaColor: "#fff",
+    ctaBorder: () => "none",
     sections: [
       {
         label: "Submissions",
-        items: [
-          { text: "Unlimited product submissions (credit-eligible)" },
-        ],
+        items: [{ text: "Unlimited product submissions (credit-eligible)" }],
       },
       {
         label: "Broadcasts",
@@ -323,21 +344,22 @@ const PLANS = [
     monthly: 49,
     annualMonthly: 23,
     annualTotal: 278,
+    badge: "Teams & Orgs",
+    badgeBg: AMBER,
     creditsAmount: "600 credits",
     creditsSub: "per month · rollover up to 300",
     creditsColor: AMBER,
-    creditsBg: `${AMBER}12`,
+    creditsBg: `${AMBER}10`,
+    creditsBorder: `${AMBER}22`,
     checkColor: AMBER,
     cta: "Go Founder →",
     ctaBg: "transparent",
     ctaColor: AMBER,
-    ctaBorder: `1.5px solid ${AMBER}`,
+    ctaBorder: () => `1.5px solid ${AMBER}55`,
     sections: [
       {
         label: "Submissions",
-        items: [
-          { text: "Unlimited product submissions (credit gate)" },
-        ],
+        items: [{ text: "Unlimited product submissions (credit gate)" }],
       },
       {
         label: "Broadcasts",
@@ -376,21 +398,18 @@ const PLANS = [
 const VALUE_PROPS = [
   {
     tag: "BUILDER PRO VS. ALTERNATIVES",
-    accent: PURPLE,
     headline: "$9/mo",
     headlineColor: PURPLE,
     body: "A product consultant charges $150–$500 per session. One feedback round on NexFellow with 10 verified builders costs less than a coffee meeting.",
   },
   {
     tag: "THE COFFEE TEST",
-    accent: "#0f172a",
     headline: "$0.53/day",
-    headlineColor: "#0f172a",
+    headlineColor: null, // uses tk.textPrimary
     body: "Builder Pro breaks down to 53 cents a day. The insight from one good feedback round can save months of building in the wrong direction.",
   },
   {
     tag: "WHAT YOU'RE REALLY PAYING FOR",
-    accent: AMBER,
     headline: "Credibility",
     headlineColor: AMBER,
     body: "Your Fellow Score, verified badge, and public feedback track record signal to investors, accelerators, and co-founders. That's infrastructure, not a subscription.",
@@ -410,20 +429,20 @@ const CREDIT_PACKS = [
   },
   {
     name: "Growth pack",
-    price: 15,
+    price: 12,
     subtitle: "Most popular top-up. Covers a full sprint of product launches.",
-    credits: 200,
-    bonus: "+25 bonus",
+    credits: 150,
+    bonus: "+15 bonus",
     featured: true,
     items: ["Instant · no expiry", "= 7 feedback rounds", "1 free priority boost included"],
     cta: "Buy Growth",
   },
   {
     name: "Scale pack",
-    price: 35,
+    price: 29,
     subtitle: "For builders running multiple products or community sprints.",
-    credits: 500,
-    bonus: "+75 bonus",
+    credits: 400,
+    bonus: "+50 bonus",
     featured: false,
     items: ["Instant · no expiry", "= 20 feedback rounds", "3 priority boosts + 1 board spotlight"],
     cta: "Buy Scale",
@@ -442,11 +461,11 @@ const FAQ_ITEMS = [
   { q: "Is there a trial period for Pro?", a: "" },
 ];
 
-function FaqItem({ q, a, defaultOpen, isLast }) {
+function FaqItem({ q, a, defaultOpen, isLast, tk }) {
   const [open, setOpen] = useState(!!defaultOpen);
   return (
     <div style={{
-      borderBottom: isLast ? "none" : "1px solid #e2e8f0",
+      borderBottom: isLast ? "none" : `1px solid ${tk.border}`,
       padding: "20px 24px",
     }}>
       <button
@@ -464,7 +483,7 @@ function FaqItem({ q, a, defaultOpen, isLast }) {
           textAlign: "left",
         }}
       >
-        <span style={{ fontSize: 15, fontWeight: 600, color: "#0f172a" }}>{q}</span>
+        <span style={{ fontSize: 15, fontWeight: 600, color: tk.textPrimary }}>{q}</span>
         <svg
           width="18"
           height="18"
@@ -472,11 +491,11 @@ function FaqItem({ q, a, defaultOpen, isLast }) {
           fill="none"
           style={{ flexShrink: 0, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "none" }}
         >
-          <path d="M4.5 6.75L9 11.25L13.5 6.75" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M4.5 6.75L9 11.25L13.5 6.75" stroke={tk.textMuted} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
       {open && a && (
-        <p style={{ marginTop: 12, fontSize: 14, color: "#64748b", lineHeight: 1.7 }}>{a}</p>
+        <p style={{ marginTop: 12, fontSize: 14, color: tk.textSecondary, lineHeight: 1.7 }}>{a}</p>
       )}
     </div>
   );
@@ -484,13 +503,21 @@ function FaqItem({ q, a, defaultOpen, isLast }) {
 
 export default function Premium() {
   const [isAnnual, setIsAnnual] = useState(false);
+  const { effectiveTheme } = useTheme();
+  const tk = effectiveTheme === "dark" ? DARK : LIGHT;
 
   return (
     <>
-      <div style={{ background: "#ffffff", minHeight: "100vh" }}>
+      <div style={{ background: tk.bgPage, minHeight: "100vh" }}>
 
-        {/* Logo-only header */}
-        <header style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "10px 5px", borderBottom: "1px solid #f1f5f9" }}>
+        {/* Header */}
+        <header style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "10px 5px",
+          borderBottom: `1px solid ${tk.borderSubtle}`,
+        }}>
           <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
             <svg width="240" height="64" viewBox="0 0 234 63" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M51.5655 9.32775C48.8684 7.6466 40.7709 15.0879 39.9092 14.2659C39.1925 13.5814 45.0669 8.6946 43.9059 6.85933C42.8592 5.20515 36.2348 7.22535 23.0283 11.3338C16.9689 13.2218 13.8455 14.2621 11.1754 16.9578C10.2456 17.8979 7.28786 20.8878 6.79854 25.2672C6.74973 25.6949 6.73561 26.0507 6.73047 26.2947V43.4363C6.73047 50.7273 13.5244 56.6363 21.9045 56.6363H41.6134C42.8194 56.644 47.8795 56.5516 52.1242 52.9684C52.5403 52.6165 56.9891 48.7533 57.0816 43.3823C57.0816 43.3053 57.0816 43.2411 57.0816 43.2C57.0816 38.2511 57.0816 33.3023 57.0816 28.3534C57.0816 28.207 57.106 27.8564 57.0816 27.3889C57.0225 26.2806 56.7669 25.3058 56.3572 24.2347C55.9295 23.1173 55.3298 22.0783 54.1302 19.9965C53.5973 19.073 52.8459 17.826 52.6764 17.5563C52.4324 17.171 52.4272 17.18 52.3373 16.9578C50.6986 12.9135 52.8138 10.1048 51.5655 9.32775Z" fill="#24B2B4" stroke="black" strokeWidth="0.235419" strokeMiterlimit="10"/>
@@ -499,9 +526,11 @@ export default function Premium() {
               <path d="M43.1781 41.6023C45.1103 41.6023 46.6766 40.036 46.6766 38.1039C46.6766 36.1718 45.1103 34.6055 43.1781 34.6055C41.246 34.6055 39.6797 36.1718 39.6797 38.1039C39.6797 40.036 41.246 41.6023 43.1781 41.6023Z" fill="black"/>
               <path d="M31.908 50.2509C31.376 50.2507 30.8612 50.0629 30.4541 49.7205C28.7242 48.2692 27.2639 45.9369 26.5473 44.6757C26.3139 44.2688 26.2122 43.7996 26.2561 43.3326C26.3 42.8655 26.4874 42.4236 26.7926 42.0673C27.9984 40.6592 29.6154 39.6647 31.4161 39.2238C31.7432 39.1493 32.083 39.1493 32.4101 39.2238C34.2108 39.6647 35.8278 40.6592 37.0336 42.0673C37.3388 42.4236 37.526 42.8657 37.5697 43.3328C37.6134 43.7998 37.5114 44.269 37.2776 44.6757C36.561 45.9369 35.102 48.2718 33.3708 49.7205C32.9614 50.0649 32.443 50.2529 31.908 50.2509Z" fill="#FBCC18" stroke="black" strokeWidth="0.224343" strokeMiterlimit="10"/>
               <path d="M31.9076 44.5486C29.5149 44.1467 28.0547 43.3594 28.0547 43.3594C29.104 45.7212 31.9076 47.726 31.9076 47.726C31.9076 47.726 34.7177 45.7186 35.7682 43.3594C35.7682 43.3594 34.3015 44.1467 31.9076 44.5486Z" fill="black"/>
-              <path d="M88.3048 24.1445L84.1513 44.9117H79.3147L72.4616 33.5199L70.1781 44.9117H64.4219L68.5753 24.1445H73.4107L80.2946 35.5068L82.5485 24.1445H88.3048Z" fill="#071a2c"/>
-              <path d="M105.927 38.2563H94.1189C94.327 40.0364 95.5432 40.8673 97.7689 40.8673C99.1919 40.8673 100.587 40.4216 101.655 39.5612L103.999 43.0917C101.981 44.5751 99.5785 45.1684 97.1447 45.1684C91.9831 45.1684 88.6016 42.3211 88.6016 37.8402C88.6016 32.5001 92.5469 28.5547 98.3314 28.5547C103.227 28.5547 106.253 31.4033 106.253 35.6184C106.241 36.507 106.132 37.3916 105.927 38.2563ZM94.4451 35.2896H101.062C101.091 33.5686 99.8752 32.5604 98.0656 32.5604C96.1661 32.5604 94.9794 33.6868 94.4451 35.2896Z" fill="#071a2c"/>
-              <path d="M118.651 36.9256L123.011 44.9063H117.019L114.824 40.6937L110.938 44.9063H104.559L112.598 36.6585L108.36 28.8242H114.268L116.404 32.9186L120.231 28.8242H126.432L118.651 36.9256Z" fill="#071a2c"/>
+              {/* NEx — theme-aware fill */}
+              <path d="M88.3048 24.1445L84.1513 44.9117H79.3147L72.4616 33.5199L70.1781 44.9117H64.4219L68.5753 24.1445H73.4107L80.2946 35.5068L82.5485 24.1445H88.3048Z" fill={tk.textPrimary}/>
+              <path d="M105.927 38.2563H94.1189C94.327 40.0364 95.5432 40.8673 97.7689 40.8673C99.1919 40.8673 100.587 40.4216 101.655 39.5612L103.999 43.0917C101.981 44.5751 99.5785 45.1684 97.1447 45.1684C91.9831 45.1684 88.6016 42.3211 88.6016 37.8402C88.6016 32.5001 92.5469 28.5547 98.3314 28.5547C103.227 28.5547 106.253 31.4033 106.253 35.6184C106.241 36.507 106.132 37.3916 105.927 38.2563ZM94.4451 35.2896H101.062C101.091 33.5686 99.8752 32.5604 98.0656 32.5604C96.1661 32.5604 94.9794 33.6868 94.4451 35.2896Z" fill={tk.textPrimary}/>
+              <path d="M118.651 36.9256L123.011 44.9063H117.019L114.824 40.6937L110.938 44.9063H104.559L112.598 36.6585L108.36 28.8242H114.268L116.404 32.9186L120.231 28.8242H126.432L118.651 36.9256Z" fill={tk.textPrimary}/>
+              {/* Fellow — always teal */}
               <path d="M134.284 28.6781L133.364 33.2477H142.532L141.612 37.7864H132.474L131.05 44.9066H125.176L129.327 24.1445H145.585L144.665 28.6833L134.284 28.6781Z" fill="#24B2B4"/>
               <path d="M161.459 38.2563H149.651C149.86 40.0364 151.076 40.8673 153.3 40.8673C154.724 40.8673 156.119 40.4216 157.186 39.5612L159.53 43.0917C157.514 44.5751 155.11 45.1684 152.677 45.1684C147.516 45.1684 144.133 42.3211 144.133 37.8402C144.133 32.5001 148.079 28.5547 153.864 28.5547C158.76 28.5547 161.786 31.4033 161.786 35.6184C161.773 36.5069 161.664 37.3915 161.459 38.2563ZM149.978 35.2896H156.593C156.624 33.5686 155.406 32.5604 153.597 32.5604C151.699 32.5604 150.517 33.6868 149.978 35.2896Z" fill="#24B2B4"/>
               <path d="M166.922 22.8906H172.559L168.168 44.9036H162.531L166.922 22.8906Z" fill="#24B2B4"/>
@@ -518,8 +547,9 @@ export default function Premium() {
             display: "inline-flex",
             alignItems: "center",
             gap: 6,
-            background: `${PURPLE}12`,
+            background: `${PURPLE}14`,
             color: PURPLE,
+            border: `1px solid ${PURPLE}30`,
             fontSize: 11,
             fontWeight: 700,
             letterSpacing: "0.08em",
@@ -534,7 +564,7 @@ export default function Premium() {
           <h1 style={{
             fontSize: "clamp(28px, 5vw, 48px)",
             fontWeight: 800,
-            color: "#0f172a",
+            color: tk.textPrimary,
             lineHeight: 1.2,
             maxWidth: 780,
             margin: "0 auto 32px",
@@ -544,63 +574,52 @@ export default function Premium() {
           </h1>
 
           {/* Billing toggle */}
-          <div style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 0,
-            background: "#f1f5f9",
-            borderRadius: 24,
-            padding: 4,
-          }}>
-            <button
-              onClick={() => setIsAnnual(false)}
-              style={{
-                padding: "8px 20px",
-                borderRadius: 20,
-                border: "none",
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: "pointer",
-                background: !isAnnual ? "#fff" : "transparent",
-                color: !isAnnual ? "#0f172a" : "#64748b",
-                boxShadow: !isAnnual ? "0 1px 4px rgba(0,0,0,0.1)" : "none",
-                transition: "all 0.2s",
-              }}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setIsAnnual(true)}
-              style={{
-                padding: "8px 20px",
-                borderRadius: 20,
-                border: "none",
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: "pointer",
-                background: isAnnual ? "#fff" : "transparent",
-                color: isAnnual ? "#0f172a" : "#64748b",
-                boxShadow: isAnnual ? "0 1px 4px rgba(0,0,0,0.1)" : "none",
-                transition: "all 0.2s",
-              }}
-            >
-              Annual
-            </button>
-            
-          </div>
-          <span style={{
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+            <div style={{
+              display: "inline-flex",
+              alignItems: "center",
+              background: tk.toggleBg,
+              border: effectiveTheme === "dark" ? `1px solid ${tk.border}` : "none",
+              borderRadius: 24,
+              padding: 4,
+            }}>
+              {["Monthly", "Annual"].map((label) => {
+                const active = label === "Monthly" ? !isAnnual : isAnnual;
+                return (
+                  <button
+                    key={label}
+                    onClick={() => setIsAnnual(label === "Annual")}
+                    style={{
+                      padding: "8px 20px",
+                      borderRadius: 20,
+                      border: "none",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      background: active ? tk.toggleActive : "transparent",
+                      color: active ? tk.toggleActiveText : tk.toggleInactiveText,
+                      boxShadow: active ? tk.toggleActiveShadow : "none",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+            <span style={{
               fontSize: 11,
               fontWeight: 700,
-              border: `0.1px solid ${TEAL}55`,
+              border: `1px solid ${TEAL}40`,
               color: TEAL,
-              background: `${TEAL}18`,
-              padding: "10px 15px",
+              background: `${TEAL}14`,
+              padding: "8px 14px",
               borderRadius: 20,
-              marginLeft: 10,
               whiteSpace: "nowrap",
             }}>
               Save 2 months with annual
             </span>
+          </div>
         </section>
 
         {/* Plans */}
@@ -610,67 +629,54 @@ export default function Premium() {
             fontWeight: 700,
             letterSpacing: "0.1em",
             textTransform: "uppercase",
-            color: "#94a3b8",
+            color: tk.textMuted,
             marginBottom: 24,
           }}>
             Plans — Pricing & Credits
           </p>
-          <div className="premium-plans-grid" style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
-            gap: 20,
-          }}>
-            <PlanCard plan={PLANS[0]} isAnnual={isAnnual} />
-            <PlanCard plan={PLANS[1]} isAnnual={isAnnual} featured="pro" badge="Most Popular" badgeBg={PURPLE} />
-            <PlanCard plan={PLANS[2]} isAnnual={isAnnual} featured="founder" badge="Teams & Orgs" badgeBg={AMBER} />
+          <div className="premium-plans-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
+            <PlanCard plan={PLANS[0]} isAnnual={isAnnual} tk={tk} />
+            <PlanCard plan={PLANS[1]} isAnnual={isAnnual} featured="pro" tk={tk} />
+            <PlanCard plan={PLANS[2]} isAnnual={isAnnual} featured="founder" tk={tk} />
           </div>
         </section>
 
         {/* Value Props */}
         <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px 64px" }}>
-          <div style={{border:"1px solid #e2e8f0", padding:32, borderRadius:12}}>
-          <h2 style={{
-            fontSize: "clamp(16px, 2.5vw, 20px)",
-            fontWeight: 700,
-            color: "#0f172a",
-            marginBottom: 24,
-          }}>
-            Why this pricing is fair — and what makes it worth it
-          </h2>
-          <div className="premium-value-grid" style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
-            gap: 16,
-          }}>
-            {VALUE_PROPS.map((vp, i) => (
-              <div key={i} style={{
-                background: "#f8fafc",
-                border: "1px solid #f1f5f9",
-                borderRadius: 12,
-                padding: "20px 22px",
-              }}>
-                <p style={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                  color: "#94a3b8",
-                  marginBottom: 10,
+          <div style={{ border: `1px solid ${tk.border}`, padding: 32, borderRadius: 12 }}>
+            <h2 style={{
+              fontSize: "clamp(16px, 2.5vw, 20px)",
+              fontWeight: 700,
+              color: tk.textPrimary,
+              marginBottom: 24,
+            }}>
+              Why this pricing is fair — and what makes it worth it
+            </h2>
+            <div className="premium-value-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+              {VALUE_PROPS.map((vp, i) => (
+                <div key={i} style={{
+                  background: tk.valuePropBg,
+                  border: `1px solid ${tk.border}`,
+                  borderRadius: 12,
+                  padding: "20px 22px",
                 }}>
-                  {vp.tag}
-                </p>
-                <p style={{
-                  fontSize: 22,
-                  fontWeight: 800,
-                  color: vp.headlineColor,
-                  marginBottom: 10,
-                }}>
-                  {vp.headline}
-                </p>
-                <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.65 }}>{vp.body}</p>
-              </div>
-            ))}
-          </div>
+                  <p style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    color: tk.textMuted,
+                    marginBottom: 10,
+                  }}>
+                    {vp.tag}
+                  </p>
+                  <p style={{ fontSize: 22, fontWeight: 800, color: vp.headlineColor ?? tk.textPrimary, marginBottom: 10 }}>
+                    {vp.headline}
+                  </p>
+                  <p style={{ fontSize: 13, color: tk.textSecondary, lineHeight: 1.65 }}>{vp.body}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -681,24 +687,20 @@ export default function Premium() {
             fontWeight: 700,
             letterSpacing: "0.1em",
             textTransform: "uppercase",
-            color: "#94a3b8",
+            color: tk.textMuted,
             marginBottom: 24,
           }}>
             Buy Credits — Instant Top-Ups, Never Expire
           </p>
-          <div className="premium-credits-grid" style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
-            gap: 16,
-          }}>
+          <div className="premium-credits-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
             {CREDIT_PACKS.map((pack, i) => (
               <div key={i} style={{
-                background: "#fff",
-                border: pack.featured ? `1.5px solid ${PURPLE}55` : "1.5px solid #e2e8f0",
+                background: tk.bgCard,
+                border: pack.featured ? `1.5px solid ${PURPLE}55` : `1.5px solid ${tk.border}`,
                 borderRadius: 14,
                 padding: "24px 22px",
                 position: "relative",
-                boxShadow: pack.featured ? `0 0 0 2px ${PURPLE}22, 0 6px 24px rgba(0,0,0,0.07)` : "0 1px 4px rgba(0,0,0,0.05)",
+                boxShadow: pack.featured ? `0 0 0 1px ${PURPLE}18, 0 8px 32px ${PURPLE}10` : "none",
                 display: "flex",
                 flexDirection: "column",
               }}>
@@ -720,19 +722,15 @@ export default function Premium() {
                     Best value
                   </div>
                 )}
-                <p style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", marginBottom: 4 }}>{pack.name}</p>
+                <p style={{ fontSize: 16, fontWeight: 700, color: tk.textPrimary, marginBottom: 4 }}>{pack.name}</p>
                 {pack.subtitle && (
-                  <p style={{ fontSize: 12, color: "#64748b", lineHeight: 1.5, marginBottom: 12 }}>{pack.subtitle}</p>
+                  <p style={{ fontSize: 12, color: tk.textSecondary, lineHeight: 1.5, marginBottom: 12 }}>{pack.subtitle}</p>
                 )}
                 <div style={{ marginBottom: 12 }}>
-                  <span style={{ fontSize: 34, fontWeight: 800, color: "#0f172a" }}>${pack.price}</span>
+                  <span style={{ fontSize: 34, fontWeight: 800, color: tk.textPrimary }}>${pack.price}</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-                  <span style={{
-                    fontSize: 13,
-                    fontWeight: 700,
-                    color: pack.featured ? PURPLE : "#0f172a",
-                  }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: pack.featured ? PURPLE : tk.textPrimary }}>
                     ✦ {pack.credits} credits
                   </span>
                   {pack.bonus && (
@@ -741,6 +739,7 @@ export default function Premium() {
                       fontWeight: 700,
                       color: pack.featured ? PURPLE : TEAL,
                       background: pack.featured ? `${PURPLE}14` : `${TEAL}14`,
+                      border: `1px solid ${pack.featured ? `${PURPLE}28` : `${TEAL}28`}`,
                       padding: "2px 8px",
                       borderRadius: 10,
                     }}>
@@ -752,23 +751,24 @@ export default function Premium() {
                   {pack.items.map((item, j) => (
                     <div key={j} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 6 }}>
                       <CheckIcon color={pack.featured ? PURPLE : TEAL} />
-                      <span style={{ fontSize: 13, color: "#64748b" }}>{item}</span>
+                      <span style={{ fontSize: 13, color: tk.textSecondary }}>{item}</span>
                     </div>
                   ))}
                 </div>
-                <button style={{
-                  width: "100%",
-                  padding: "11px 0",
-                  borderRadius: 9,
-                  border: pack.featured ? "none" : "1.5px solid #e2e8f0",
-                  background: pack.featured ? TEAL : "transparent",
-                  color: pack.featured ? "#fff" : "#334155",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: "pointer",
-                  transition: "opacity 0.2s",
-                }}
-                  onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
+                <button
+                  style={{
+                    width: "100%",
+                    padding: "11px 0",
+                    borderRadius: 9,
+                    border: pack.featured ? "none" : `1.5px solid ${tk.border}`,
+                    background: pack.featured ? TEAL : "transparent",
+                    color: pack.featured ? "#fff" : tk.textSecondary,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    transition: "opacity 0.2s",
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.opacity = "0.82"}
                   onMouseLeave={e => e.currentTarget.style.opacity = "1"}
                 >
                   {pack.cta}
@@ -785,43 +785,35 @@ export default function Premium() {
             fontWeight: 700,
             letterSpacing: "0.1em",
             textTransform: "uppercase",
-            color: "#94a3b8",
+            color: tk.textMuted,
             marginBottom: 20,
           }}>
             Frequently Asked
           </p>
-          <div style={{
-            border: "1px solid #e2e8f0",
-            borderRadius: 12,
-            overflow: "hidden",
-          }}>
+          <div style={{ border: `1px solid ${tk.border}`, borderRadius: 12, overflow: "hidden" }}>
             {FAQ_ITEMS.map((item, i) => (
-              <FaqItem key={i} q={item.q} a={item.a} defaultOpen={item.defaultOpen} isLast={i === FAQ_ITEMS.length - 1} />
+              <FaqItem
+                key={i}
+                q={item.q}
+                a={item.a}
+                defaultOpen={item.defaultOpen}
+                isLast={i === FAQ_ITEMS.length - 1}
+                tk={tk}
+              />
             ))}
           </div>
         </section>
       </div>
-      {/* <Footer /> */}
 
       <style>{`
         @media (max-width: 900px) {
-          .premium-plans-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .premium-value-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .premium-credits-grid {
-            grid-template-columns: 1fr !important;
-          }
+          .premium-plans-grid { grid-template-columns: 1fr !important; }
+          .premium-value-grid { grid-template-columns: 1fr !important; }
+          .premium-credits-grid { grid-template-columns: 1fr !important; }
         }
         @media (min-width: 600px) and (max-width: 900px) {
-          .premium-value-grid {
-            grid-template-columns: 1fr 1fr !important;
-          }
-          .premium-credits-grid {
-            grid-template-columns: 1fr 1fr !important;
-          }
+          .premium-value-grid { grid-template-columns: 1fr 1fr !important; }
+          .premium-credits-grid { grid-template-columns: 1fr 1fr !important; }
         }
       `}</style>
     </>
