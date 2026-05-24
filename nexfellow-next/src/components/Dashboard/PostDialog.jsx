@@ -19,6 +19,17 @@ import api from "../../lib/axios";
 
 const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
   const user = useSelector((state) => state.auth.user);
+  const [isDark, setIsDark] = useState(
+    () => document.documentElement.classList.contains("dark")
+  );
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    });
+    observer.observe(document.documentElement, { attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -697,7 +708,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.15 }}
                           >
-                            <Picker onEmojiClick={handleEmojiClick} />
+                            <Picker onEmojiClick={handleEmojiClick} theme={isDark ? "dark" : "light"} />
                           </motion.div>
                         )}
                       </AnimatePresence>

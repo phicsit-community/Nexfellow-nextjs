@@ -436,7 +436,6 @@
   position: absolute;
   bottom: 40px;
   left: 0;
-  background-color: white;
   border-radius: 12px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 }
@@ -2014,6 +2013,19 @@
     100% {
       transform: rotate(360deg);
     }
+  }
+
+  .emojiPicker aside {
+    --epr-bg-color: #222222 !important;
+    --epr-search-input-bg-color: #333333 !important;
+    --epr-search-input-bg-color-active: #333333 !important;
+    --epr-picker-border-color: #151617 !important;
+    --epr-highlight-color: #c0c0c0 !important;
+    --epr-text-color: #c0c0c0 !important;
+    --epr-hover-bg-color: #363636 !important;
+    --epr-hover-bg-color-reduced-opacity: #36363680 !important;
+    --epr-focus-bg-color: #474747 !important;
+    --epr-category-label-bg-color: #222222e6 !important;
   }
 }
 
