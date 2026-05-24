@@ -134,6 +134,15 @@ router
   .post(isClient, catchAsync(postController.trackLinkClick));
 
 /**
+ * @route   GET /post/user/:userId
+ * @desc    Get all posts authored by a specific user
+ * @access  Private
+ */
+router
+  .route("/user/:userId")
+  .get(isClient, catchAsync(postController.getPostsByUser));
+
+/**
  * @route   GET /post/:postId
  * @desc    Get a specific post by ID
  * @route   DELETE /post/:postId

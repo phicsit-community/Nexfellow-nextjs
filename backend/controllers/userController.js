@@ -638,6 +638,9 @@ module.exports.getProfileByUsername = async (req, res) => {
   const userFullDetails = {
     ...user,
     ...(user.profile || {}),
+    // Restore user's own _id after profile spread (profile has its own _id which would overwrite)
+    _id: user._id,
+    id: user._id.toString(),
     bio: op.bio || user.profile?.bio || "",
     skills: op.skills || [],
     location: op.location || "",

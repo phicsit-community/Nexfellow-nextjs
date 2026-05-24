@@ -38,8 +38,8 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
   const [privacy, setPrivacy] = useState("Public");
   const [removedAttachments, setRemovedAttachments] = useState([]);
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("Select Channel");
-  const [selectedCommunityId, setSelectedCommunityId] = useState(null);
+  const [selectedOption, setSelectedOption] = useState("General Feed");
+  const [selectedCommunityId, setSelectedCommunityId] = useState("general");
   const [communities, setCommunities] = useState([]);
   const [communitiesLoading, setCommunitiesLoading] = useState(false);
   const [showDrafts, setShowDrafts] = useState(false);
@@ -191,8 +191,8 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
 
     // Reset community selection on close
     if (!isOpen) {
-      setSelectedCommunityId(null);
-      setSelectedOption("Select Channel");
+      setSelectedCommunityId("general");
+      setSelectedOption("General Feed");
     }
   }, [post, isOpen]);
 
