@@ -161,9 +161,9 @@ const DashboardBody = ({
         }
       }
 
-      // Fetch updated posts
-      const postsResponse = await api.get(`/post/community/${communityId}`);
-      setPosts(postsResponse.data.posts);
+      // Fetch updated posts — always by userId to include General Feed posts
+      const postsResponse = await api.get(`/post/user/${userId}`);
+      setPosts(postsResponse.data.posts || []);
 
       // Reset editing state
       setEditingPost(null);
@@ -230,8 +230,8 @@ const DashboardBody = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!communityId) {
-        setLoading(false); // Prevent further requests if no communityId
+      if (!communityId && !userId) {
+        setLoading(false);
         return;
       }
 
@@ -239,22 +239,29 @@ const DashboardBody = ({
       setError(null);
 
       try {
-        const [postsResponse, communityResponse, analyticsResponse] =
-          await Promise.all([
-            api.get(`/post/community/${communityId}`),
-            api.get(`/community/id/${communityId}`),
-            api.get(`/analytics/${communityId}?filter=${analyticsFilter}`), // Use current filter
-          ]);
+        // Always fetch all posts by this user (includes General Feed + community posts)
+        const postsPromise = api.get(`/post/user/${userId}`);
 
-        const fetchedPosts = postsResponse.data.posts || [];
-        console.log("Fetched Posts: ", fetchedPosts);
-        setPosts(fetchedPosts);
+        if (communityId) {
+          const [postsResponse, communityResponse, analyticsResponse] =
+            await Promise.all([
+              postsPromise,
+              api.get(`/community/id/${communityId}`),
+              api.get(`/analytics/${communityId}?filter=${analyticsFilter}`),
+            ]);
 
-        const pinned = fetchedPosts.find((post) => post.pinned);
-        setPinnedPostId(pinned ? pinned._id : null);
-        setCommunity(communityResponse.data.community || {});
-        setAnalytics(analyticsResponse.data);
-        console.log("Fetched Analytics Data: ", analyticsResponse.data);
+          const fetchedPosts = postsResponse.data.posts || [];
+          setPosts(fetchedPosts);
+
+          const pinned = fetchedPosts.find((post) => post.pinned);
+          setPinnedPostId(pinned ? pinned._id : null);
+          setCommunity(communityResponse.data.community || {});
+          setAnalytics(analyticsResponse.data);
+        } else {
+          const postsResponse = await postsPromise;
+          const fetchedPosts = postsResponse.data.posts || [];
+          setPosts(fetchedPosts);
+        }
       } catch (err) {
         setError("Error retrieving data: " + err.message);
       } finally {
@@ -263,7 +270,7 @@ const DashboardBody = ({
     };
 
     fetchData();
-  }, [communityId, analyticsFilter]); // Add analyticsFilter as dependency
+  }, [communityId, userId, analyticsFilter]);
 
   const handleVerifyClick = () => {
     router.push(`/verification/${username}`);

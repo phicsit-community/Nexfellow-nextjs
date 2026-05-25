@@ -158,6 +158,7 @@ export default function BuildersMap() {
 
     const [enriched, setEnriched] = useState([]);
     const [myProfile, setMyProfile] = useState(null);
+    const [myUserId, setMyUserId] = useState(null);
     const [myLocation, setMyLocation] = useState(null);
     const [activity, setActivity] = useState([]);
     const [nearby, setNearby] = useState([]);
@@ -181,7 +182,8 @@ export default function BuildersMap() {
                     typeof window !== "undefined"
                         ? JSON.parse(localStorage.getItem("user") || "{}")
                         : {};
-                const myUserId = userData?.id || userData?._id;
+                const resolvedMyUserId = userData?.id || userData?._id;
+                setMyUserId(resolvedMyUserId);
 
                 const [buildersRes, activityRes, nearbyRes] = await Promise.all([
                     api.get("/buildermap/builders", { params: { limit: 100 } }),
@@ -194,9 +196,9 @@ export default function BuildersMap() {
                 const rawNearby = nearbyRes.data.builders || [];
 
                 let myProf = null;
-                if (myUserId) {
+                if (resolvedMyUserId) {
                     try {
-                        const myRes = await api.get(`/buildermap/builders/${myUserId}`);
+                        const myRes = await api.get(`/buildermap/builders/${resolvedMyUserId}`);
                         myProf = myRes.data.profile;
                     } catch (_) {}
                 }
@@ -369,6 +371,7 @@ export default function BuildersMap() {
                                 <BuilderPopup
                                     builder={selectedBuilder}
                                     detail={builderDetail}
+                                    myUserId={myUserId}
                                     onClose={() => {
                                         setSelectedBuilder(null);
                                         setBuilderDetail(null);
@@ -429,6 +432,7 @@ export default function BuildersMap() {
                             <MatchesPanel
                                 topMatches={topMatches}
                                 selectedMatch={selectedMatch}
+                                myUserId={myUserId}
                                 onSelect={(m) => {
                                     setSelectedMatch(m);
                                     setMapTarget(m.coords);
@@ -477,11 +481,36 @@ export default function BuildersMap() {
 
 // ─── Builder Popup ────────────────────────────────────────────────────────────
 
-function BuilderPopup({ builder, detail, onClose }) {
+function BuilderPopup({ builder, detail, myUserId, onClose }) {
     const { profile, nowStatus, products } = detail;
     const displayName = profile.name || `${profile.firstName} ${profile.lastName}`;
     const badge = COFOUND_LABEL[profile.cofounderAvailability];
     const location = [profile.city, profile.state].filter(Boolean).join(", ");
+    const isSelf = myUserId && profile.userId && String(myUserId) === String(profile.userId);
+
+    const [isConnected, setIsConnected] = useState(false);
+    const [connectLoading, setConnectLoading] = useState(false);
+
+    useEffect(() => {
+        if (!profile.userId || isSelf) return;
+        api.get(`/user/followStatus/${profile.userId}`)
+            .then((res) => setIsConnected(res.data.isFollowing))
+            .catch(() => {});
+    }, [profile.userId]);
+
+    const handleConnect = async () => {
+        if (connectLoading || !profile.userId) return;
+        setConnectLoading(true);
+        try {
+            const action = isConnected ? "unfollow" : "follow";
+            await api.post(`/user/toggleFollow/${profile.userId}`, { action });
+            setIsConnected((prev) => !prev);
+        } catch (err) {
+            console.error("Connect error:", err);
+        } finally {
+            setConnectLoading(false);
+        }
+    };
 
     return (
         <div className={styles.popupCard}>
@@ -528,17 +557,26 @@ function BuilderPopup({ builder, detail, onClose }) {
 
             {badge && <span className={styles.openBadge}>{badge}</span>}
 
-            <div className={styles.actionRow}>
-                <button className={styles.connectBtn}>Connect</button>
-                <button className={styles.messageBtn}>Message</button>
-            </div>
+            {!isSelf && (
+                <div className={styles.actionRow}>
+                    <button
+                        className={styles.connectBtn}
+                        onClick={handleConnect}
+                        disabled={connectLoading}
+                        style={{ opacity: connectLoading ? 0.7 : 1 }}
+                    >
+                        {isConnected ? "Following" : "Connect"}
+                    </button>
+                    <button className={styles.messageBtn}>Message</button>
+                </div>
+            )}
         </div>
     );
 }
 
 // ─── Matches Panel ────────────────────────────────────────────────────────────
 
-function MatchesPanel({ topMatches, selectedMatch, onSelect }) {
+function MatchesPanel({ topMatches, selectedMatch, myUserId, onSelect }) {
     if (topMatches.length === 0) {
         return (
             <div className={styles.emptyState}>
@@ -548,6 +586,32 @@ function MatchesPanel({ topMatches, selectedMatch, onSelect }) {
     }
 
     const match = selectedMatch || topMatches[0];
+    const isSelf = myUserId && match?.userId && String(myUserId) === String(match.userId);
+
+    const [isConnected, setIsConnected] = useState(false);
+    const [connectLoading, setConnectLoading] = useState(false);
+
+    useEffect(() => {
+        if (!match?.userId || isSelf) return;
+        setIsConnected(false);
+        api.get(`/user/followStatus/${match.userId}`)
+            .then((res) => setIsConnected(res.data.isFollowing))
+            .catch(() => {});
+    }, [match?.userId]);
+
+    const handleConnect = async () => {
+        if (connectLoading || !match?.userId) return;
+        setConnectLoading(true);
+        try {
+            const action = isConnected ? "unfollow" : "follow";
+            await api.post(`/user/toggleFollow/${match.userId}`, { action });
+            setIsConnected((prev) => !prev);
+        } catch (err) {
+            console.error("Connect error:", err);
+        } finally {
+            setConnectLoading(false);
+        }
+    };
 
     return (
         <div className={styles.matchesPanel}>
@@ -593,10 +657,19 @@ function MatchesPanel({ topMatches, selectedMatch, onSelect }) {
                         </span>
                     )}
 
-                    <div className={styles.actionRow}>
-                        <button className={styles.connectBtn}>Connect</button>
-                        <button className={styles.messageBtn}>Message</button>
-                    </div>
+                    {!isSelf && (
+                        <div className={styles.actionRow}>
+                            <button
+                                className={styles.connectBtn}
+                                onClick={handleConnect}
+                                disabled={connectLoading}
+                                style={{ opacity: connectLoading ? 0.7 : 1 }}
+                            >
+                                {isConnected ? "Following" : "Connect"}
+                            </button>
+                            <button className={styles.messageBtn}>Message</button>
+                        </div>
+                    )}
                 </div>
             )}
 

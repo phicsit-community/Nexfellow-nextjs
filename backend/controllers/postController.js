@@ -931,7 +931,7 @@ module.exports.getTrendingPosts = async (req, res) => {
           as: "community",
         },
       },
-      { $unwind: { path: "$community", preserveNullAndEmptyArrays: false } },
+      { $unwind: { path: "$community", preserveNullAndEmptyArrays: true } },
       {
         $project: {
           "author.password": 0,
@@ -958,5 +958,28 @@ module.exports.getTrendingPosts = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error fetching trending posts: " + error.message });
+  }
+};
+
+module.exports.getPostsByUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const posts = await Post.find({ author: userId, isDeleted: false })
+      .populate("author", "-password -refreshToken -googleAccessToken -googleRefreshToken")
+      .populate("attachments")
+      .populate("community")
+      .sort({ createdAt: -1, _id: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Post.countDocuments({ author: userId, isDeleted: false });
+
+    res.status(200).json({ posts, total });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user posts: " + error.message });
   }
 };

@@ -62,7 +62,7 @@ export default function Navbar() {
     { href: "/features", label: "Features" },
     { href: "/mission", label: "Mission" },
     { href: "/blogs", label: "Blogs" },
-    { href: "/premium", label: "Premium" },
+    ...(isLoggedIn ? [{ href: "/premium", label: "Premium" }] : []),
   ];
 
   return (

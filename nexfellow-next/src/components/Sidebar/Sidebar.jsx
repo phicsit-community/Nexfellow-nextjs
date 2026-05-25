@@ -38,6 +38,7 @@ function Sidebar({ isDrawerOpen = false, onClose }) {
   const isMobile = useMediaQuery({ maxWidth: 640 });
   const showFull = !isMobile || isDrawerOpen;
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [totalComments, setTotalComments] = useState(null);
   const { effectiveTheme } = useTheme();
 
   const handleLogoClick = (e) => {
@@ -76,9 +77,19 @@ function Sidebar({ isDrawerOpen = false, onClose }) {
     fetchUserData();
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    api.get("/products/stats")
+      .then((res) => {
+        const count = res.data?.totalReviews ?? 0;
+        setTotalComments(count > 9 ? "9+" : count > 0 ? String(count) : null);
+      })
+      .catch(() => {});
+  }, [isLoggedIn]);
+
   const coreItems = [
     { path: "/feed", icon: AnimatedHome, label: "Home", section: "core", id: "home" },
-    { path: "/my-products", isStatic: true, iconComponent: Package, label: "My Products", badge: "3", section: "core", id: "my-products" },
+    { path: "/my-products", isStatic: true, iconComponent: Package, label: "My Products", badge: totalComments, section: "core", id: "my-products" },
   ];
 
   const discoverItems = [
