@@ -611,15 +611,20 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
               <div className="dpv-card-label">LINKS</div>
               <div className="dpv-links-list">
                 {isUrl(product.productUrl) ? (
-                  <div className="dpv-link-row">
-                    <span>Visit Website</span>
-                    <a
-                      href={product.productUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="dpv-link-arrow"
-                    >↗</a>
-                  </div>
+                  <a
+                    href={product.productUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="dpv-link-row"
+                  >
+                    <span className="dpv-link-icon">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    </span>
+                    <span className="dpv-link-label">Visit Website</span>
+                    <span className="dpv-link-arrow">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </span>
+                  </a>
                 ) : (
                   <div style={{ color: 'var(--tx3)', fontSize: 12, padding: '4px 0' }}>No links provided.</div>
                 )}
@@ -649,52 +654,59 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                 className={`dpv-action-btn${saved ? ' saved' : ''}`}
                 onClick={() => setSaved(s => !s)}
               >
-                {saved ? '🔖 Saved' : '🔖 Save for Later'}
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                {saved ? 'Saved' : 'Save for Later'}
               </button>
               <button className="dpv-action-btn" onClick={handleShare}>
-                🔗 {shareMsg || 'Share Product'}
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                {shareMsg || 'Share Product'}
               </button>
-              {isLoggedIn && !isOwner && (
+            </div>
+
+            {/* Report an Issue — outside the card */}
+            {isLoggedIn && !isOwner && (
+              <div className="dpv-report-outer">
                 <button
-                  className="dpv-action-btn dpv-action-danger"
+                  className="dpv-report-link-btn"
                   onClick={() => { setReportOpen(o => !o); setReportError(''); }}
                 >
-                  ⚑ Report an Issue
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                  Report an Issue
                 </button>
-              )}
-              {reportOpen && !reportDone && (
-                <div className="dpv-report-form">
-                  <select
-                    className="dpv-report-select"
-                    value={reportCategory}
-                    onChange={e => setReportCategory(e.target.value)}
-                  >
-                    <option value="">Select category…</option>
-                    {['Spam','Misinformation','Inappropriate Content','Copyright Violation','Other'].map(c => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                  <textarea
-                    className="dpv-report-textarea"
-                    placeholder="Additional details (optional)"
-                    rows={2}
-                    value={reportDesc}
-                    onChange={e => setReportDesc(e.target.value)}
-                  />
-                  {reportError && <div className="dpv-review-error">{reportError}</div>}
-                  <button
-                    className="dpv-submit-report-btn"
-                    onClick={handleSubmitReport}
-                    disabled={reportSubmitting}
-                  >
-                    {reportSubmitting ? 'Submitting…' : 'Submit Report'}
-                  </button>
-                </div>
-              )}
-              {reportDone && (
-                <div className="dpv-report-done">✅ Report submitted. Thank you.</div>
-              )}
-            </div>
+                {reportOpen && !reportDone && (
+                  <div className="dpv-report-form">
+                    <select
+                      className="dpv-report-select"
+                      value={reportCategory}
+                      onChange={e => setReportCategory(e.target.value)}
+                    >
+                      <option value="">Select category…</option>
+                      {['Spam','Misinformation','Inappropriate Content','Copyright Violation','Other'].map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                    <textarea
+                      className="dpv-report-textarea"
+                      placeholder="Additional details (optional)"
+                      rows={2}
+                      value={reportDesc}
+                      onChange={e => setReportDesc(e.target.value)}
+                    />
+                    {reportError && <div className="dpv-review-error">{reportError}</div>}
+                    <button
+                      className="dpv-submit-report-btn"
+                      onClick={handleSubmitReport}
+                      disabled={reportSubmitting}
+                    >
+                      {reportSubmitting ? 'Submitting…' : 'Submit Report'}
+                    </button>
+                  </div>
+                )}
+                {reportDone && (
+                  <div className="dpv-report-done">✅ Report submitted. Thank you.</div>
+                )}
+              </div>
+            )}
 
           </div>{/* /dpv-sidebar */}
         </div>{/* /dpv-layout */}
