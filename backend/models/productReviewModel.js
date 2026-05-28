@@ -18,6 +18,7 @@ const replySchema = new Schema({
     trim: true,
     maxlength: [1000, "Reply cannot exceed 1000 characters"],
   },
+  parentReplyId: { type: Schema.Types.ObjectId, default: null },
   createdAt: { type: Date, default: Date.now },
 });
 

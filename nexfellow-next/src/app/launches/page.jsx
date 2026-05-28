@@ -78,6 +78,30 @@ function groupByDate(products) {
   return order.map(key => ({ label: key, products: groups[key] }));
 }
 
+function buildReplyTree(replies) {
+  const map = {};
+  const roots = [];
+  replies.forEach(rep => { map[rep._id] = { ...rep, children: [] }; });
+  replies.forEach(rep => {
+    const pid = rep.parentReplyId;
+    if (pid && map[pid]) map[pid].children.push(map[rep._id]);
+    else roots.push(map[rep._id]);
+  });
+  return roots;
+}
+
+function timeAgo(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 30) return `${days}d ago`;
+  return new Date(dateStr).toLocaleDateString();
+}
+
 function formatLaunchDate(dateStr) {
   if (!dateStr) return '—';
   return new Date(dateStr).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
@@ -172,6 +196,17 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
   const [reportDone, setReportDone] = useState(false);
   const [reportError, setReportError] = useState('');
 
+  // Per-review interaction state
+  const [helpfulMap, setHelpfulMap] = useState({});
+  const [replyOpen, setReplyOpen] = useState({});
+  const [replyText, setReplyText] = useState({});
+  const [replySubmitting, setReplySubmitting] = useState({});
+  const [repliesMap, setRepliesMap] = useState({});
+  // Reply-to-reply state (keyed by reply._id)
+  const [subReplyOpen, setSubReplyOpen] = useState({});
+  const [subReplyText, setSubReplyText] = useState({});
+  const [subReplySubmitting, setSubReplySubmitting] = useState({});
+
   useEffect(() => {
     setLoading(true);
     setData(null);
@@ -197,6 +232,26 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
       .catch(() => setData(null))
       .finally(() => setLoading(false));
   }, [productId]);
+
+  // Initialize per-review state when reviews load
+  useEffect(() => {
+    if (!data?.reviews) return;
+    const userId = currentUser?._id || currentUser?.id;
+    const hMap = {};
+    const rMap = {};
+    data.reviews.forEach(r => {
+      hMap[r._id] = {
+        count: r.helpfulCount ?? 0,
+        marked: userId
+          ? (r.helpfulBy || []).some(id => (id?._id || id)?.toString() === userId?.toString())
+          : false,
+      };
+      rMap[r._id] = r.replies || [];
+    });
+    setHelpfulMap(hMap);
+    setRepliesMap(rMap);
+  }, [data, currentUser]);
+
 
   const handleFollowMaker = async () => {
     if (!isLoggedIn || followLoading) return;
@@ -229,6 +284,51 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
       await navigator.clipboard.writeText(url);
       setShareMsg('Link copied!');
       setTimeout(() => setShareMsg(''), 2000);
+    }
+  };
+
+  const handleHelpful = async (reviewId) => {
+    if (!isLoggedIn) return;
+    const prev = helpfulMap[reviewId] || { count: 0, marked: false };
+    setHelpfulMap(m => ({
+      ...m,
+      [reviewId]: { count: prev.marked ? prev.count - 1 : prev.count + 1, marked: !prev.marked },
+    }));
+    try {
+      const res = await api.post(`/products/${data.product._id}/reviews/${reviewId}/helpful`);
+      setHelpfulMap(m => ({ ...m, [reviewId]: { count: res.data.helpfulCount, marked: res.data.marked } }));
+    } catch {
+      setHelpfulMap(m => ({ ...m, [reviewId]: prev }));
+    }
+  };
+
+  const handleReplySubmit = async (reviewId) => {
+    const content = (replyText[reviewId] || '').trim();
+    if (!content) return;
+    setReplySubmitting(m => ({ ...m, [reviewId]: true }));
+    try {
+      const res = await api.post(`/products/${data.product._id}/reviews/${reviewId}/reply`, { content });
+      setRepliesMap(m => ({ ...m, [reviewId]: res.data.replies || [] }));
+      setReplyText(m => ({ ...m, [reviewId]: '' }));
+      setReplyOpen(m => ({ ...m, [reviewId]: false }));
+    } catch { /* silently ignore */ }
+    finally {
+      setReplySubmitting(m => ({ ...m, [reviewId]: false }));
+    }
+  };
+
+  const handleSubReplySubmit = async (reviewId, parentReplyId) => {
+    const content = (subReplyText[parentReplyId] || '').trim();
+    if (!content) return;
+    setSubReplySubmitting(m => ({ ...m, [parentReplyId]: true }));
+    try {
+      const res = await api.post(`/products/${data.product._id}/reviews/${reviewId}/reply`, { content, parentReplyId });
+      setRepliesMap(m => ({ ...m, [reviewId]: res.data.replies || [] }));
+      setSubReplyText(m => ({ ...m, [parentReplyId]: '' }));
+      setSubReplyOpen(m => ({ ...m, [parentReplyId]: false }));
+    } catch { /* silently ignore */ }
+    finally {
+      setSubReplySubmitting(m => ({ ...m, [parentReplyId]: false }));
     }
   };
 
@@ -498,6 +598,11 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                   const reviewerName = r.reviewer?.name || 'Reviewer';
                   const initials = reviewerName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
                   const stars = Math.round(r.rating);
+                  const helpful = helpfulMap[r._id] || { count: r.helpfulCount ?? 0, marked: false };
+                  const replies = repliesMap[r._id] || [];
+                  const isReplyOpen = replyOpen[r._id] || false;
+                  const currentUserId = currentUser?._id || currentUser?.id;
+                  const isOwnReview = currentUserId && r.reviewer?._id?.toString() === currentUserId?.toString();
                   return (
                     <div key={r._id} className="dpv-review-card">
                       <div className="dpv-review-top">
@@ -514,7 +619,12 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                           </div>
                         )}
                         <div className="dpv-review-user">
-                          <div className="dpv-review-name">{reviewerName}</div>
+                          <div className="dpv-review-name">
+                            {reviewerName}
+                            {r.reviewer?.username && (
+                              <span className="dpv-review-meta"> · {timeAgo(r.createdAt)}</span>
+                            )}
+                          </div>
                           <div className="dpv-review-email">
                             {r.reviewer?.username ? `@${r.reviewer.username}` : ''}
                           </div>
@@ -524,16 +634,163 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                         </div>
                       </div>
                       <div className="dpv-review-text">{r.content}</div>
-                      <div className="dpv-review-footer">
-                        <div className="dpv-review-tags">
+                      {(r.tags || []).length > 0 && (
+                        <div className="dpv-review-tags" style={{ marginBottom: 10 }}>
                           {(r.tags || []).map(t => (
                             <span key={t} className={`dpv-review-tag ${REVIEW_TAG_CLASS[t] || 'fbt-ux'}`}>{t}</span>
                           ))}
                         </div>
-                        <div className="dpv-review-actions">
-                          <button className="dpv-review-btn">👍 Helpful ({r.helpfulCount ?? 0})</button>
-                        </div>
+                      )}
+                      <div className="dpv-review-actions">
+                        <button
+                          className={`dpv-review-btn${helpful.marked ? ' marked' : ''}`}
+                          onClick={() => handleHelpful(r._id)}
+                          disabled={!isLoggedIn || isOwnReview}
+                          title={isOwnReview ? "Can't mark your own review helpful" : ''}
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill={helpful.marked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                          Helpful ({helpful.count})
+                        </button>
+                        {isLoggedIn && (
+                          <button
+                            className="dpv-review-btn"
+                            onClick={() => setReplyOpen(m => ({ ...m, [r._id]: !m[r._id] }))}
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            Reply
+                          </button>
+                        )}
                       </div>
+
+                      {/* Replies tree */}
+                      {replies.length > 0 && (
+                        <div className="dpv-replies-list">
+                          {buildReplyTree(replies).map(rootRep => {
+                            const rootName = rootRep.author?.name || 'User';
+                            const rootInitials = rootName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+                            const isThreadOpen = subReplyOpen[rootRep._id] || false;
+                            return (
+                              <div key={rootRep._id} className="dpv-reply-thread">
+                                {/* Root reply */}
+                                <div className="dpv-reply-item">
+                                  {isUrl(rootRep.author?.picture) ? (
+                                    <img src={rootRep.author.picture} alt="" className="dpv-reply-av" style={{ objectFit: 'cover', borderRadius: '50%' }} />
+                                  ) : (
+                                    <div className="dpv-reply-av" style={{ background: colorFromStr(rootName) }}>{rootInitials}</div>
+                                  )}
+                                  <div className="dpv-reply-body">
+                                    <div className="dpv-reply-name">
+                                      {rootName}
+                                      <span className="dpv-review-meta"> · {timeAgo(rootRep.createdAt)}</span>
+                                    </div>
+                                    <div className="dpv-reply-text">{rootRep.content}</div>
+                                    {isLoggedIn && (
+                                      <button
+                                        className="dpv-sub-reply-btn"
+                                        onClick={() => setSubReplyOpen(m => ({ ...m, [rootRep._id]: !m[rootRep._id] }))}
+                                      >
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                        Reply
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* Child replies */}
+                                {rootRep.children.length > 0 && (
+                                  <div className="dpv-reply-children">
+                                    {rootRep.children.map(child => {
+                                      const childName = child.author?.name || 'User';
+                                      const childInitials = childName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+                                      return (
+                                        <div key={child._id} className="dpv-reply-item dpv-reply-child">
+                                          {isUrl(child.author?.picture) ? (
+                                            <img src={child.author.picture} alt="" className="dpv-reply-av dpv-reply-av-sm" style={{ objectFit: 'cover', borderRadius: '50%' }} />
+                                          ) : (
+                                            <div className="dpv-reply-av dpv-reply-av-sm" style={{ background: colorFromStr(childName) }}>{childInitials}</div>
+                                          )}
+                                          <div className="dpv-reply-body">
+                                            <div className="dpv-reply-name">
+                                              {childName}
+                                              <span className="dpv-review-meta"> · {timeAgo(child.createdAt)}</span>
+                                            </div>
+                                            <div className="dpv-reply-text">{child.content}</div>
+                                            {isLoggedIn && (
+                                              <button
+                                                className="dpv-sub-reply-btn"
+                                                onClick={() => {
+                                                  setSubReplyOpen(m => ({ ...m, [rootRep._id]: true }));
+                                                  setSubReplyText(m => ({ ...m, [rootRep._id]: `@${childName} ` }));
+                                                }}
+                                              >
+                                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                                Reply
+                                              </button>
+                                            )}
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+
+                                {/* Thread reply form */}
+                                {isThreadOpen && (
+                                  <div className="dpv-sub-reply-form">
+                                    <textarea
+                                      className="dpv-reply-textarea"
+                                      placeholder={`Reply in thread…`}
+                                      rows={2}
+                                      value={subReplyText[rootRep._id] || ''}
+                                      onChange={e => setSubReplyText(m => ({ ...m, [rootRep._id]: e.target.value }))}
+                                      autoFocus
+                                    />
+                                    <div className="dpv-reply-form-actions">
+                                      <button
+                                        className="dpv-reply-cancel-btn"
+                                        onClick={() => setSubReplyOpen(m => ({ ...m, [rootRep._id]: false }))}
+                                      >Cancel</button>
+                                      <button
+                                        className="dpv-reply-submit-btn"
+                                        onClick={() => handleSubReplySubmit(r._id, rootRep._id)}
+                                        disabled={subReplySubmitting[rootRep._id] || !(subReplyText[rootRep._id] || '').trim()}
+                                      >
+                                        {subReplySubmitting[rootRep._id] ? 'Posting…' : 'Post Reply'}
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Reply input */}
+                      {isReplyOpen && (
+                        <div className="dpv-reply-form">
+                          <textarea
+                            className="dpv-reply-textarea"
+                            placeholder="Write a reply…"
+                            rows={2}
+                            value={replyText[r._id] || ''}
+                            onChange={e => setReplyText(m => ({ ...m, [r._id]: e.target.value }))}
+                          />
+                          <div className="dpv-reply-form-actions">
+                            <button
+                              className="dpv-reply-cancel-btn"
+                              onClick={() => setReplyOpen(m => ({ ...m, [r._id]: false }))}
+                            >Cancel</button>
+                            <button
+                              className="dpv-reply-submit-btn"
+                              onClick={() => handleReplySubmit(r._id)}
+                              disabled={replySubmitting[r._id] || !(replyText[r._id] || '').trim()}
+                            >
+                              {replySubmitting[r._id] ? 'Posting…' : 'Post Reply'}
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}

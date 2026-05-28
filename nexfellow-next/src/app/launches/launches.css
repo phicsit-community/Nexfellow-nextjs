@@ -1551,14 +1551,7 @@
   margin-bottom: 10px;
 }
 
-.dpv-review-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.dpv-review-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.dpv-review-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px; }
 .dpv-review-tag {
   font-size: 10.5px;
   padding: 2px 9px;
@@ -1566,20 +1559,160 @@
   font-weight: 500;
 }
 
-.dpv-review-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.dpv-review-meta { font-size: 11px; color: var(--tx3); font-weight: 400; }
+
+.dpv-review-actions { display: flex; gap: 6px; margin-top: 2px; }
 .dpv-review-btn {
   background: none;
-  border: 1px solid var(--b);
+  border: none;
   border-radius: 6px;
-  padding: 4px 10px;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: var(--tx3);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: color 0.12s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.dpv-review-btn:hover:not(:disabled) { color: var(--tx); }
+.dpv-review-btn.marked { color: var(--G); }
+.dpv-review-btn:disabled { cursor: default; opacity: 0.5; }
+
+/* Replies */
+/* ── Reply thread tree (Facebook-style) ── */
+.dpv-replies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 14px;
+  border-top: 1px solid var(--b);
+  padding-top: 4px;
+}
+
+.dpv-reply-thread {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0 4px;
+  border-bottom: 1px solid var(--b);
+}
+.dpv-reply-thread:last-child { border-bottom: none; }
+
+.dpv-reply-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+/* Children indented under root reply with a vertical guide line */
+.dpv-reply-children {
+  margin-left: 16px;
+  margin-top: 8px;
+  padding-left: 16px;
+  border-left: 2px solid var(--b);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dpv-reply-av {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #111;
+}
+.dpv-reply-av-sm {
+  width: 24px;
+  height: 24px;
+  font-size: 8px;
+}
+
+.dpv-reply-body { flex: 1; min-width: 0; }
+.dpv-reply-name { font-size: 12.5px; font-weight: 600; color: var(--tx); margin-bottom: 2px; }
+.dpv-reply-text { font-size: 12.5px; color: var(--tx2); line-height: 1.55; margin-bottom: 4px; }
+
+.dpv-sub-reply-btn {
+  background: none;
+  border: none;
+  padding: 0;
   font-size: 11.5px;
   color: var(--tx3);
   cursor: pointer;
   font-family: var(--font-sans);
-  transition: all 0.12s;
-  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.12s;
+  margin-top: 2px;
 }
-.dpv-review-btn:hover { border-color: var(--b2); color: var(--tx); background: var(--sur2); }
+.dpv-sub-reply-btn:hover { color: var(--tx); }
+
+/* Thread reply form — indented to align with children */
+.dpv-sub-reply-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+  margin-left: 40px;
+}
+
+/* Reply form */
+.dpv-reply-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+.dpv-reply-textarea {
+  width: 100%;
+  background: var(--sur2);
+  border: 1px solid var(--b);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  color: var(--tx);
+  font-family: var(--font-sans);
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+}
+.dpv-reply-textarea::placeholder { color: var(--tx3); }
+.dpv-reply-textarea:focus { border-color: var(--G); }
+.dpv-reply-form-actions { display: flex; gap: 6px; justify-content: flex-end; }
+.dpv-reply-cancel-btn {
+  background: none;
+  border: 1px solid var(--b);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 12px;
+  color: var(--tx3);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all 0.12s;
+}
+.dpv-reply-cancel-btn:hover { border-color: var(--b2); color: var(--tx); }
+.dpv-reply-submit-btn {
+  background: var(--G);
+  border: none;
+  border-radius: 6px;
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: opacity 0.12s;
+}
+.dpv-reply-submit-btn:hover:not(:disabled) { opacity: 0.88; }
+.dpv-reply-submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* ── Sidebar shared card ── */
 .dpv-card {
