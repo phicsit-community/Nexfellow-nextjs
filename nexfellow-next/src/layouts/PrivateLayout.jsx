@@ -29,6 +29,13 @@ export default function PrivateLayout({ children, hideSidebar = false }) {
         setMobileNavOpen(false);
     }, [pathname]);
 
+    // Allow any page to open the drawer via a custom event
+    useEffect(() => {
+        const handler = () => setMobileNavOpen(true);
+        window.addEventListener("open-mobile-sidebar", handler);
+        return () => window.removeEventListener("open-mobile-sidebar", handler);
+    }, []);
+
     return (
         <div className={style.container}>
             <div className={style.main}>
@@ -43,12 +50,14 @@ export default function PrivateLayout({ children, hideSidebar = false }) {
                         <Sidebar
                             isDrawerOpen={mobileNavOpen}
                             onClose={() => setMobileNavOpen(false)}
+                            onMenuOpen={() => setMobileNavOpen(true)}
                         />
                     </div>
                 ) : mobileNavOpen && (
                     <Sidebar
                         isDrawerOpen={mobileNavOpen}
                         onClose={() => setMobileNavOpen(false)}
+                        onMenuOpen={() => setMobileNavOpen(true)}
                     />
                 )}
                 <div className={style.content}>
