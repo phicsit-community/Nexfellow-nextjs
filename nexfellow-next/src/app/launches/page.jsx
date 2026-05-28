@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import './launches.css';
 import PrivateLayout from '../../layouts/PrivateLayout';
 import api from '@/lib/axios';
+import { useSelector } from 'react-redux';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -33,6 +34,8 @@ const REVIEW_TAG_CLASS = {
   'PERFORMANCE': 'fbt-perf',
   'FEATURE REQ': 'fbt-feature',
 };
+
+const REVIEW_TAGS = ['UX', 'PRICING', 'MOBILE', 'POSITIVE', 'PERFORMANCE', 'FEATURE REQ'];
 
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -146,6 +149,17 @@ function ProductDetail({ productId, onBack }) {
   const [loading, setLoading] = useState(true);
   const [activeThumb, setActiveThumb] = useState(0);
 
+  // Review form state
+  const currentUser = useSelector((state) => state.auth.user);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewHover, setReviewHover] = useState(0);
+  const [reviewText, setReviewText] = useState('');
+  const [reviewTags, setReviewTags] = useState([]);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewError, setReviewError] = useState('');
+  const [reviewSuccess, setReviewSuccess] = useState(false);
+
   useEffect(() => {
     setLoading(true);
     setData(null);
@@ -182,6 +196,40 @@ function ProductDetail({ productId, onBack }) {
   const catMeta = CATEGORY_META[product.category] || { icon: '⚡', bg: '#e8e8e8' };
   const ownerName = product.owner?.name || 'Builder';
   const hasScreenshots = product.screenshots?.length > 0;
+
+  const isOwner = currentUser && (product.owner?._id === currentUser._id || product.owner?._id === currentUser.id);
+  const alreadyReviewed = reviewSuccess || (currentUser && reviews.some(
+    r => r.reviewer?._id === currentUser._id || r.reviewer?._id === currentUser.id
+  ));
+
+  const toggleTag = (tag) => setReviewTags(prev =>
+    prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+  );
+
+  const handleSubmitReview = async () => {
+    if (reviewRating === 0) { setReviewError('Please select a star rating.'); return; }
+    if (reviewText.trim().length < 10) { setReviewError('Review must be at least 10 characters.'); return; }
+    setReviewError('');
+    setReviewSubmitting(true);
+    try {
+      await api.post(`/products/${product._id}/reviews`, {
+        rating: reviewRating,
+        content: reviewText.trim(),
+        tags: reviewTags,
+      });
+      setReviewSuccess(true);
+      setReviewText('');
+      setReviewRating(0);
+      setReviewTags([]);
+      // Refresh data to show the new review
+      const res = await api.get(`/launches/${productId}`);
+      setData(res.data);
+    } catch (err) {
+      setReviewError(err.response?.data?.message || 'Failed to submit review.');
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
 
   return (
     <div className="dpv-wrap">
@@ -283,6 +331,69 @@ function ProductDetail({ productId, onBack }) {
               <section className="dpv-section">
                 <div className="dpv-section-label">ABOUT</div>
                 <p className="dpv-about">{product.description}</p>
+              </section>
+            )}
+
+            {/* Write a Review */}
+            {isLoggedIn && !isOwner && (
+              <section className="dpv-section">
+                <div className="dpv-section-label">WRITE A REVIEW</div>
+                {alreadyReviewed ? (
+                  <div className="dpv-review-done">✅ You have already reviewed this product. Thanks for your feedback!</div>
+                ) : (
+                  <div className="dpv-write-review">
+                    {/* Star picker */}
+                    <div className="dpv-star-row">
+                      <span className="dpv-star-label">Your rating</span>
+                      <div className="dpv-stars-input">
+                        {[1,2,3,4,5].map(n => (
+                          <button
+                            key={n}
+                            type="button"
+                            className={`dpv-star-btn${(reviewHover || reviewRating) >= n ? ' active' : ''}`}
+                            onMouseEnter={() => setReviewHover(n)}
+                            onMouseLeave={() => setReviewHover(0)}
+                            onClick={() => setReviewRating(n)}
+                          >★</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Text */}
+                    <textarea
+                      className="dpv-review-textarea"
+                      placeholder="Share your experience — what works well, what could be improved? (min 10 chars)"
+                      value={reviewText}
+                      onChange={e => setReviewText(e.target.value)}
+                      rows={4}
+                    />
+
+                    {/* Tags */}
+                    <div className="dpv-tag-row">
+                      <span className="dpv-star-label">Tags (optional)</span>
+                      <div className="dpv-tag-picker">
+                        {REVIEW_TAGS.map(tag => (
+                          <button
+                            key={tag}
+                            type="button"
+                            className={`dpv-tag-pick${reviewTags.includes(tag) ? ' selected' : ''} ${REVIEW_TAG_CLASS[tag] || 'fbt-ux'}`}
+                            onClick={() => toggleTag(tag)}
+                          >{tag}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {reviewError && <div className="dpv-review-error">{reviewError}</div>}
+
+                    <button
+                      className="dpv-submit-review-btn"
+                      onClick={handleSubmitReview}
+                      disabled={reviewSubmitting}
+                    >
+                      {reviewSubmitting ? 'Submitting…' : 'Submit Review'}
+                    </button>
+                  </div>
+                )}
               </section>
             )}
 
