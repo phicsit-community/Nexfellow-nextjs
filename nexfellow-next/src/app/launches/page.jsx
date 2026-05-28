@@ -34,12 +34,6 @@ const REVIEW_TAG_CLASS = {
   'FEATURE REQ': 'fbt-feature',
 };
 
-const GALLERY_BG = [
-  'linear-gradient(135deg, #1a2e1a 0%, #2d5a2d 50%, #1a3a1a 100%)',
-  'linear-gradient(135deg, #0d1f3c 0%, #1a3a6e 50%, #0d2040 100%)',
-  'linear-gradient(135deg, #2a1a3e 0%, #4a2a6e 50%, #2a1a4a 100%)',
-  'linear-gradient(135deg, #1a2a3a 0%, #2a4a5a 50%, #1a2a3a 100%)',
-];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -188,7 +182,6 @@ function ProductDetail({ productId, onBack }) {
   const catMeta = CATEGORY_META[product.category] || { icon: '⚡', bg: '#e8e8e8' };
   const ownerName = product.owner?.name || 'Builder';
   const hasScreenshots = product.screenshots?.length > 0;
-  const galleryItems = hasScreenshots ? product.screenshots : GALLERY_BG;
 
   return (
     <div className="dpv-wrap">
@@ -247,50 +240,29 @@ function ProductDetail({ productId, onBack }) {
               </div>
             </div>
 
-            {/* Gallery */}
-            <section className="dpv-section">
-              <div className="dpv-section-label">PRODUCT GALLERY</div>
-              {hasScreenshots ? (
-                <>
-                  <div className="dpv-gallery-main" style={{ overflow: 'hidden' }}>
-                    <img
-                      src={galleryItems[activeThumb]}
-                      alt="screenshot"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            {/* Gallery — only shown when the product has uploaded screenshots */}
+            {hasScreenshots && (
+              <section className="dpv-section">
+                <div className="dpv-section-label">PRODUCT GALLERY</div>
+                <div className="dpv-gallery-main" style={{ overflow: 'hidden' }}>
+                  <img
+                    src={product.screenshots[activeThumb]}
+                    alt="screenshot"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </div>
+                <div className="dpv-gallery-thumbs">
+                  {product.screenshots.map((src, i) => (
+                    <div
+                      key={i}
+                      className={`dpv-thumb${activeThumb === i ? ' active' : ''}`}
+                      style={{ backgroundImage: `url(${src})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                      onClick={() => setActiveThumb(i)}
                     />
-                  </div>
-                  <div className="dpv-gallery-thumbs">
-                    {galleryItems.map((src, i) => (
-                      <div
-                        key={i}
-                        className={`dpv-thumb${activeThumb === i ? ' active' : ''}`}
-                        style={{ backgroundImage: `url(${src})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                        onClick={() => setActiveThumb(i)}
-                      />
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="dpv-gallery-main" style={{ background: GALLERY_BG[activeThumb] }}>
-                    <div className="dpv-gallery-inner">
-                      <div className="dpv-gallery-icon-lg">{catMeta.icon}</div>
-                      <div className="dpv-gallery-caption">{product.name} — Product Demo</div>
-                    </div>
-                  </div>
-                  <div className="dpv-gallery-thumbs">
-                    {GALLERY_BG.map((bg, i) => (
-                      <div
-                        key={i}
-                        className={`dpv-thumb${activeThumb === i ? ' active' : ''}`}
-                        style={{ background: bg }}
-                        onClick={() => setActiveThumb(i)}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
-            </section>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Stats */}
             <section className="dpv-section">
