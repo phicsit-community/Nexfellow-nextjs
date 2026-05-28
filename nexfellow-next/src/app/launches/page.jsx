@@ -189,7 +189,7 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
         const ownerId = res.data?.product?.owner?._id;
         if (ownerId) {
           try {
-            const fRes = await api.get(`/users/followStatus/${ownerId}`);
+            const fRes = await api.get(`/user/followStatus/${ownerId}`);
             setIsFollowing(fRes.data?.isFollowing ?? false);
           } catch { /* non-critical */ }
         }
@@ -203,12 +203,19 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
     const ownerId = data?.product?.owner?._id;
     if (!ownerId) return;
     setFollowLoading(true);
-    const action = isFollowing ? 'unfollow' : 'follow';
-    setIsFollowing(!isFollowing);
+    const prevFollowing = isFollowing;
+    const action = prevFollowing ? 'unfollow' : 'follow';
+    setIsFollowing(!prevFollowing);
     try {
-      await api.post(`/users/toggleFollow/${ownerId}`, { action });
-    } catch {
-      setIsFollowing(isFollowing); // revert on error
+      await api.post(`/user/toggleFollow/${ownerId}`, { action });
+    } catch (err) {
+      const msg = err?.response?.data?.message || '';
+      // "Already following" means the follow IS in the DB — keep state as following
+      if (msg.toLowerCase().includes('already following')) {
+        setIsFollowing(true);
+      } else {
+        setIsFollowing(prevFollowing);
+      }
     } finally {
       setFollowLoading(false);
     }

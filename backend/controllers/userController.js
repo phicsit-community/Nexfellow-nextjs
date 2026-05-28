@@ -1330,7 +1330,7 @@ module.exports.toggleFollowUser = async (req, res) => {
     let message;
 
     if (action === "follow") {
-      if (user.following.includes(targetUserId))
+      if (user.following.some((id) => id.toString() === targetUserId.toString()))
         throw new ExpressError("Already following this user.", 400);
 
       const updates = [];
@@ -1379,71 +1379,58 @@ module.exports.toggleFollowUser = async (req, res) => {
       await Promise.all(updates);
       await session.commitTransaction();
 
-      // Synchronize community members precisely with followers + owner
-      await syncCommunityMembersWithFollowers(targetUserId);
+      message = `Successfully followed ${userId === targetUserId ? "yourself" : "the user"}.`;
 
-      // Follower milestone logic
-      await targetUser.populate("followers");
-      for (const milestone of FOLLOWER_MILESTONES) {
-        if (
-          targetUser.followers.length >= milestone &&
-          (!targetUser.milestones ||
-            !targetUser.milestones.followers ||
-            !targetUser.milestones.followers.includes(milestone))
-        ) {
-          targetUser.milestones = targetUser.milestones || {};
-          targetUser.milestones.followers =
-            targetUser.milestones.followers || [];
-          targetUser.milestones.followers.push(milestone);
-          await targetUser.save();
+      // Post-commit side-effects — isolated so they cannot affect the HTTP response.
+      setImmediate(async () => {
+        try { await syncCommunityMembersWithFollowers(targetUserId); } catch (e) { console.error("syncCommunityMembers error:", e.message); }
 
-          // Get personalized milestone message
-          const milestoneData = MILESTONE_MESSAGES.followers[milestone];
+        try {
+          await targetUser.populate("followers");
+          for (const milestone of FOLLOWER_MILESTONES) {
+            if (
+              targetUser.followers.length >= milestone &&
+              (!targetUser.milestones?.followers?.includes(milestone))
+            ) {
+              targetUser.milestones = targetUser.milestones || {};
+              targetUser.milestones.followers = targetUser.milestones.followers || [];
+              targetUser.milestones.followers.push(milestone);
+              await targetUser.save();
+              const milestoneData = MILESTONE_MESSAGES.followers[milestone];
+              await NotificationService.createAndSendNotification({
+                title: milestoneData.title,
+                message: `${milestoneData.message} ${milestoneData.emoji} <a href="${process.env.SITE_URL}/user/${targetUser.username}" target="_blank" style="color: #007bff; text-decoration: underline;">View Profile</a>`,
+                senderId: null,
+                senderModel: "System",
+                recipients: [targetUserId],
+                type: "milestone",
+                priority: "high",
+              });
+            }
+          }
+        } catch (e) { console.error("Milestone error:", e.message); }
 
-          const milestoneNotification = {
-            title: milestoneData.title,
-            message: `${milestoneData.message} ${milestoneData.emoji} <a href="${process.env.SITE_URL}/user/${targetUser.username}" target="_blank" style="color: #007bff; text-decoration: underline;">View Profile</a>`,
-            senderId: null,
-            senderModel: "System",
-            recipients: [targetUserId],
-            type: "milestone",
-            priority: "high",
-          };
+        try { io.emit("followUser", { follower: userId, followed: targetUserId }); } catch (e) { console.error("Socket.IO follow error:", e.message); }
 
-          await NotificationService.createAndSendNotification(
-            milestoneNotification
-          );
+        if (userId !== targetUserId) {
+          try {
+            const profilePath = user.isCommunityAccount && user.createdCommunity
+              ? `${process.env.SITE_URL}/community/${user.username}`
+              : `${process.env.SITE_URL}/user/${user.username}`;
+            await NotificationService.createAndSendNotification({
+              title: "New Follower!",
+              message: `${user.username} started following you. <a href="${profilePath}" target="_blank" style="color: #007bff; text-decoration: underline;">View Profile</a>`,
+              senderId: userId,
+              senderModel: "User",
+              recipients: [targetUserId],
+              type: "system",
+              priority: "normal",
+            });
+          } catch (e) { console.error("Follow notification error:", e.message); }
         }
-      }
-
-      try {
-        io.emit("followUser", { follower: userId, followed: targetUserId });
-      } catch (e) {
-        console.error("Socket.IO follow error:", e.message);
-      }
-
-      // Notify target user if not self-follow
-      if (userId !== targetUserId) {
-        const profilePath =
-          user.isCommunityAccount && user.createdCommunity
-            ? `${process.env.SITE_URL}/community/${user.username}`
-            : `${process.env.SITE_URL}/user/${user.username}`;
-
-        await NotificationService.createAndSendNotification({
-          title: "New Follower!",
-          message: `${user.username} started following you. <a href="${profilePath}" target="_blank" style="color: #007bff; text-decoration: underline;">View Profile</a>`,
-          senderId: userId,
-          senderModel: "User",
-          recipients: [targetUserId],
-          type: "system",
-          priority: "normal",
-        });
-      }
-
-      message = `Successfully followed ${userId === targetUserId ? "yourself" : "the user"
-        }.`;
+      });
     } else if (action === "unfollow") {
-      if (!user.following.includes(targetUserId))
+      if (!user.following.some((id) => id.toString() === targetUserId.toString()))
         throw new ExpressError("You are not following this user.", 400);
 
       const updates = [];
@@ -1513,20 +1500,12 @@ module.exports.toggleFollowUser = async (req, res) => {
       await Promise.all(updates);
       await session.commitTransaction();
 
-      // Synchronize community members precisely with followers + owner
-      await syncCommunityMembersWithFollowers(targetUserId);
+      message = `Successfully unfollowed ${userId === targetUserId ? "yourself" : "the user"}.`;
 
-      try {
-        io.emit("unfollowUser", {
-          follower: userId,
-          unfollowed: targetUserId,
-        });
-      } catch (e) {
-        console.error("Socket.IO unfollow error:", e.message);
-      }
-
-      message = `Successfully unfollowed ${userId === targetUserId ? "yourself" : "the user"
-        }.`;
+      setImmediate(async () => {
+        try { await syncCommunityMembersWithFollowers(targetUserId); } catch (e) { console.error("syncCommunityMembers error:", e.message); }
+        try { io.emit("unfollowUser", { follower: userId, unfollowed: targetUserId }); } catch (e) { console.error("Socket.IO unfollow error:", e.message); }
+      });
     } else {
       throw new ExpressError("Invalid action.", 400);
     }
@@ -1551,14 +1530,16 @@ module.exports.syncCommunityMembersWithFollowers =
 module.exports.checkFollowStatus = async (req, res) => {
   try {
     const { userId } = req.params;
-    const currentUserId = req.user.id;
+    const currentUserId = req.userId;
 
     const targetUser = await User.findById(userId);
     if (!targetUser) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    const isFollowing = targetUser.followers.includes(currentUserId);
+    const isFollowing = targetUser.followers.some(
+      (id) => id.toString() === currentUserId.toString()
+    );
     return res.status(200).json({ isFollowing });
   } catch (error) {
     console.error(error);
