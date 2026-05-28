@@ -81,11 +81,32 @@ function groupByDate(products) {
 function buildReplyTree(replies) {
   const map = {};
   const roots = [];
-  replies.forEach(rep => { map[rep._id] = { ...rep, children: [] }; });
+  replies.forEach(rep => { map[String(rep._id)] = { ...rep, children: [] }; });
   replies.forEach(rep => {
-    const pid = rep.parentReplyId;
-    if (pid && map[pid]) map[pid].children.push(map[rep._id]);
-    else roots.push(map[rep._id]);
+    const pid = String(rep.parentReplyId || '');
+    // 1. Prefer explicit parentReplyId
+    if (pid && map[pid]) {
+      map[pid].children.push(map[String(rep._id)]);
+      return;
+    }
+    // 2. Fallback: detect @mention at start of content for old flat replies
+    const m = typeof rep.content === 'string' && rep.content.match(/^@(\S+)\s/);
+    if (m) {
+      const mentioned = m[1].toLowerCase();
+      const parent = replies.find(other =>
+        String(other._id) !== String(rep._id) &&
+        !other.parentReplyId &&
+        (
+          (other.author?.username || '').toLowerCase() === mentioned ||
+          (other.author?.name || '').toLowerCase().replace(/\s+/g, '') === mentioned
+        )
+      );
+      if (parent && map[String(parent._id)]) {
+        map[String(parent._id)].children.push(map[String(rep._id)]);
+        return;
+      }
+    }
+    roots.push(map[String(rep._id)]);
   });
   return roots;
 }
