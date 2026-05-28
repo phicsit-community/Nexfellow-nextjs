@@ -1,6 +1,6 @@
 /* ════════════════════════════ TOKENS ════════════════════════════ */
 :root {
-  --bg: #f7f7f5;
+  --bg: #ffffff;
   --sur: #ffffff;
   --sur2: #f5f4f0;
   --sur3: #eeece7;
@@ -1151,7 +1151,6 @@
   align-items: center;
   gap: 14px;
   padding: 0 24px;
-  border-bottom: 1px solid var(--b);
   background: var(--sur);
   flex-shrink: 0;
 }
@@ -1181,9 +1180,10 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--b);
+  padding: 16px 20px;
   background: var(--sur);
+  border: 1px solid var(--b);
+  border-radius: 12px;
 }
 
 .dpv-hero-left {
@@ -1256,21 +1256,27 @@
   align-items: flex-end;
   gap: 8px;
   flex-shrink: 0;
+  min-width: 140px;
 }
 
 .dpv-vote-badge {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 5px;
+  width: 100%;
   background: var(--sur2);
   border: 1.5px solid var(--b);
   border-radius: 9px;
   padding: 7px 12px;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background 0.15s, border-color 0.15s;
 }
-.dpv-vote-badge.voted,
 .dpv-vote-badge:hover {
+  background: var(--sur3);
+  border-color: var(--b2);
+}
+.dpv-vote-badge.voted {
   background: var(--Gbg);
   border-color: var(--G);
 }
@@ -1282,19 +1288,24 @@
 .dpv-vote-label { font-size: 11px; color: var(--tx3); border-left: 1px solid var(--b2); padding-left: 8px; margin-left: 3px; }
 
 .dpv-visit-btn {
+  width: 100%;
   background: var(--G);
   color: #fff;
-  border: none;
+  border: 1.5px solid var(--G);
   border-radius: 8px;
   padding: 8px 16px;
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
   font-family: var(--font-sans);
-  transition: opacity 0.13s;
+  text-align: center;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
   white-space: nowrap;
 }
-.dpv-visit-btn:hover { opacity: 0.88; }
+.dpv-visit-btn:hover {
+  background: transparent;
+  color: var(--G);
+}
 
 /* ── Scrollable body ── */
 .dpv-scroll {
@@ -1313,12 +1324,14 @@
 }
 
 .dpv-main {
-  padding: 0;
-  border-right: 1px solid var(--b);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .dpv-sidebar {
-  padding: 16px 14px 40px;
+  padding: 16px 14px 40px 10px;
   position: sticky;
   top: 0;
   max-height: 100vh;
@@ -1329,8 +1342,10 @@
 
 /* ── Section ── */
 .dpv-section {
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--b);
+  padding: 20px;
+  background: var(--sur);
+  border: 1px solid var(--b);
+  border-radius: 12px;
 }
 
 .dpv-section-label {
@@ -1616,7 +1631,11 @@
   font-family: var(--font-sans);
   transition: background 0.13s;
 }
-.dpv-cta-btn:hover { background: rgba(255,255,255,0.25); }
+.dpv-cta-btn:hover {
+  background: rgba(0,0,0,0.18);
+  border-color: rgba(255,255,255,0.6);
+  color: #fff;
+}
 
 /* Builder card */
 .dpv-builder-row {

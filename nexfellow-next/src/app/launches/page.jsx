@@ -185,15 +185,6 @@ function ProductDetail({ productId, onBack }) {
 
   return (
     <div className="dpv-wrap">
-      <div className="dpv-nav">
-        <button className="dpv-back" onClick={onBack}>← Back</button>
-        <div className="dpv-breadcrumb">
-          <span className="dpv-bc-parent">Launches</span>
-          <span className="dpv-bc-sep">/</span>
-          <span className="dpv-bc-current">{product.name}</span>
-        </div>
-      </div>
-
       <div className="dpv-scroll">
         <div className="dpv-layout">
 
