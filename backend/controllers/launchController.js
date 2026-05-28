@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Product = require("../models/productModel");
 const ProductReview = require("../models/productReviewModel");
+const Profile = require("../models/profileModel");
 const ExpressError = require("../utils/ExpressError");
 const { CATEGORIES } = require("../models/productModel");
 const { REVIEW_TAGS } = require("../models/productReviewModel");
@@ -233,6 +234,15 @@ const getLaunchById = async (req, res) => {
     ? (rawProduct.upvotes || []).some(id => id.toString() === req.userId.toString())
     : false;
   delete product.upvotes;
+
+  // Attach owner bio from the separate Profile document.
+  if (product.owner?._id) {
+    const ownerProfile = await Profile.findOne(
+      { userId: product.owner._id },
+      { bio: 1 }
+    ).lean();
+    if (ownerProfile?.bio) product.owner.bio = ownerProfile.bio;
+  }
 
   const page = Math.max(1, parseIntSafe(req.query.page, 1));
   const limit = Math.min(50, Math.max(1, parseIntSafe(req.query.limit, 10)));

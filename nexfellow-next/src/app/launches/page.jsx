@@ -160,20 +160,91 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
   const [reviewError, setReviewError] = useState('');
   const [reviewSuccess, setReviewSuccess] = useState(false);
 
+  // Sidebar action state
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [shareMsg, setShareMsg] = useState('');
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportCategory, setReportCategory] = useState('');
+  const [reportDesc, setReportDesc] = useState('');
+  const [reportSubmitting, setReportSubmitting] = useState(false);
+  const [reportDone, setReportDone] = useState(false);
+  const [reportError, setReportError] = useState('');
+
   useEffect(() => {
     setLoading(true);
     setData(null);
     setActiveThumb(0);
+    setIsFollowing(false);
+    setReportOpen(false);
+    setReportDone(false);
     api.get(`/launches/${productId}`)
-      .then(res => {
+      .then(async res => {
         setData(res.data);
         if (onVoteInit && res.data?.product) {
           onVoteInit(productId, res.data.product.userHasVoted, res.data.product.upvoteCount);
+        }
+        // Check follow status for the maker
+        const ownerId = res.data?.product?.owner?._id;
+        if (ownerId) {
+          try {
+            const fRes = await api.get(`/users/followStatus/${ownerId}`);
+            setIsFollowing(fRes.data?.isFollowing ?? false);
+          } catch { /* non-critical */ }
         }
       })
       .catch(() => setData(null))
       .finally(() => setLoading(false));
   }, [productId]);
+
+  const handleFollowMaker = async () => {
+    if (!isLoggedIn || followLoading) return;
+    const ownerId = data?.product?.owner?._id;
+    if (!ownerId) return;
+    setFollowLoading(true);
+    const action = isFollowing ? 'unfollow' : 'follow';
+    setIsFollowing(!isFollowing);
+    try {
+      await api.post(`/users/toggleFollow/${ownerId}`, { action });
+    } catch {
+      setIsFollowing(isFollowing); // revert on error
+    } finally {
+      setFollowLoading(false);
+    }
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try { await navigator.share({ title: data?.product?.name, url }); } catch { /* dismissed */ }
+    } else {
+      await navigator.clipboard.writeText(url);
+      setShareMsg('Link copied!');
+      setTimeout(() => setShareMsg(''), 2000);
+    }
+  };
+
+  const handleSubmitReport = async () => {
+    if (!reportCategory) { setReportError('Please select a category.'); return; }
+    const ownerId = data?.product?.owner?._id;
+    if (!ownerId) return;
+    setReportError('');
+    setReportSubmitting(true);
+    try {
+      await api.post('/reports/create', {
+        authorId: ownerId,
+        type: 'Account',
+        category: reportCategory,
+        description: reportDesc.trim() || undefined,
+      });
+      setReportDone(true);
+    } catch (err) {
+      setReportError(err.response?.data?.message || 'Failed to submit report.');
+    } finally {
+      setReportSubmitting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -467,7 +538,7 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
           {/* ══ Right sidebar ══ */}
           <div className="dpv-sidebar">
 
-            {/* CTA card */}
+            {/* Box 1 — CTA card */}
             <div className="dpv-cta-card">
               <div className="dpv-cta-title">Ready to try {product.name}?</div>
               {isUrl(product.productUrl) && (
@@ -475,7 +546,7 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                   href={product.productUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="dpv-cta-btn"
+                  className="dpv-cta-btn dpv-cta-btn-primary"
                   style={{ textAlign: 'center', textDecoration: 'none' }}
                 >
                   ↗ Get Started
@@ -486,7 +557,7 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                   href={product.demoVideo}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="dpv-cta-btn"
+                  className="dpv-cta-btn dpv-cta-btn-secondary"
                   style={{ textAlign: 'center', textDecoration: 'none' }}
                 >
                   ▶ Watch Demo
@@ -494,9 +565,9 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
               )}
             </div>
 
-            {/* Builder card */}
+            {/* Box 2 — Maker card */}
             <div className="dpv-card">
-              <div className="dpv-card-label">BUILDER</div>
+              <div className="dpv-card-label">MAKER</div>
               <div className="dpv-builder-row">
                 {isUrl(product.owner?.picture) ? (
                   <img
@@ -512,38 +583,110 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                 )}
                 <div className="dpv-builder-info">
                   <div className="dpv-builder-name">{ownerName}</div>
-                  <div className="dpv-builder-bio">{launchLabel(product.reviewRound)} on NexFellow.</div>
+                  <div className="dpv-builder-bio">
+                    {product.owner?.bio || `${launchLabel(product.reviewRound)} founder on NexFellow.`}
+                  </div>
                 </div>
               </div>
-              {isUrl(product.productUrl) && (
-                <div className="dpv-builder-links">
+              {isLoggedIn && !isOwner && (
+                <button
+                  className={`dpv-follow-btn${isFollowing ? ' following' : ''}`}
+                  onClick={handleFollowMaker}
+                  disabled={followLoading}
+                >
+                  {isFollowing ? 'Following' : 'Follow Maker'}
+                </button>
+              )}
+            </div>
+
+            {/* Box 3 — Links card */}
+            <div className="dpv-card">
+              <div className="dpv-card-label">LINKS</div>
+              <div className="dpv-links-list">
+                {isUrl(product.productUrl) ? (
                   <div className="dpv-link-row">
                     <span>Visit Website</span>
                     <a
                       href={product.productUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="dpv-link-val"
-                    >
-                      ↗
-                    </a>
+                      className="dpv-link-arrow"
+                    >↗</a>
                   </div>
-                </div>
-              )}
+                ) : (
+                  <div style={{ color: 'var(--tx3)', fontSize: 12, padding: '4px 0' }}>No links provided.</div>
+                )}
+              </div>
+            </div>
+
+            {/* Box 4 — Product Info card */}
+            <div className="dpv-card">
+              <div className="dpv-card-label">PRODUCT INFO</div>
+              <div className="dpv-info-row">
+                <div className="dpv-info-label">Build stage</div>
+                <div className="dpv-info-val">{product.buildStage || '—'}</div>
+              </div>
               <div className="dpv-launch-date-row">
                 <div>
-                  <div className="dpv-launch-date-label">Launch date</div>
+                  <div className="dpv-launch-date-label">Launch from</div>
                   <div className="dpv-launch-date-val">{formatLaunchDate(product.launchedAt)}</div>
                 </div>
                 <span className="dpv-launching-badge">LAUNCHED</span>
               </div>
             </div>
 
-            {/* Quick actions */}
+            {/* Box 5 — Quick actions card */}
             <div className="dpv-card dpv-actions-card">
               <div className="dpv-card-label">QUICK ACTIONS</div>
-              <button className="dpv-action-btn">🔗 Share Product</button>
-              <button className="dpv-action-btn dpv-action-danger">⚑ Report an Issue</button>
+              <button
+                className={`dpv-action-btn${saved ? ' saved' : ''}`}
+                onClick={() => setSaved(s => !s)}
+              >
+                {saved ? '🔖 Saved' : '🔖 Save for Later'}
+              </button>
+              <button className="dpv-action-btn" onClick={handleShare}>
+                🔗 {shareMsg || 'Share Product'}
+              </button>
+              {isLoggedIn && !isOwner && (
+                <button
+                  className="dpv-action-btn dpv-action-danger"
+                  onClick={() => { setReportOpen(o => !o); setReportError(''); }}
+                >
+                  ⚑ Report an Issue
+                </button>
+              )}
+              {reportOpen && !reportDone && (
+                <div className="dpv-report-form">
+                  <select
+                    className="dpv-report-select"
+                    value={reportCategory}
+                    onChange={e => setReportCategory(e.target.value)}
+                  >
+                    <option value="">Select category…</option>
+                    {['Spam','Misinformation','Inappropriate Content','Copyright Violation','Other'].map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <textarea
+                    className="dpv-report-textarea"
+                    placeholder="Additional details (optional)"
+                    rows={2}
+                    value={reportDesc}
+                    onChange={e => setReportDesc(e.target.value)}
+                  />
+                  {reportError && <div className="dpv-review-error">{reportError}</div>}
+                  <button
+                    className="dpv-submit-report-btn"
+                    onClick={handleSubmitReport}
+                    disabled={reportSubmitting}
+                  >
+                    {reportSubmitting ? 'Submitting…' : 'Submit Report'}
+                  </button>
+                </div>
+              )}
+              {reportDone && (
+                <div className="dpv-report-done">✅ Report submitted. Thank you.</div>
+              )}
             </div>
 
           </div>{/* /dpv-sidebar */}
