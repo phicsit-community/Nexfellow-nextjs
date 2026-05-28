@@ -31,6 +31,33 @@
   --rl: 14px;
 }
 
+.dark {
+  --bg: #111111;
+  --sur: #1a1a1a;
+  --sur2: #222222;
+  --sur3: #2a2a2a;
+  --b: #2e2e2e;
+  --b2: #3d3d3d;
+  --tx: #f0f0ee;
+  --tx2: #a0a09a;
+  --tx3: #5e5e58;
+
+  --Gbg: rgba(36, 178, 180, 0.15);
+  --Gb: rgba(36, 178, 180, 0.28);
+
+  --O: #e07a3a;
+  --Obg: rgba(192, 90, 24, 0.18);
+
+  --P: #7b6cd6;
+  --Pbg: rgba(85, 66, 168, 0.18);
+
+  --T: #2a9e88;
+  --Tbg: rgba(0, 110, 92, 0.18);
+
+  --R: #e04050;
+  --Rbg: rgba(192, 24, 44, 0.18);
+}
+
 *,
 *::before,
 *::after {
@@ -48,7 +75,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #fff;
+  background: var(--bg);
   color: var(--tx);
   font-size: 13.5px;
   -webkit-font-smoothing: antialiased;
@@ -150,7 +177,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 6px 22px;
-  background: #fff;
+  background: var(--sur);
   border-top: 1px solid var(--b);
   border-bottom: 1px solid var(--b);
 }
@@ -943,6 +970,10 @@
   gap: 12px;
   flex-shrink: 0;
 }
+
+.dark .dp-topbar {
+  background: rgba(26, 26, 26, 0.94);
+}
 .dp-back {
   display: flex; align-items: center; gap: 7px;
   background: none; border: 1px solid var(--b2); border-radius: 8px;
@@ -1104,7 +1135,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #fff;
+  background: var(--bg);
   animation: dpvIn 0.2s ease;
 }
 
@@ -1667,6 +1698,11 @@
   border-radius: 100px;
   padding: 4px 10px;
   white-space: nowrap;
+}
+
+.dark .dpv-launching-badge {
+  background: rgba(36, 178, 100, 0.18);
+  color: #4dba7a;
 }
 
 /* Quick actions */
