@@ -144,7 +144,7 @@ function DateSep({ label, count }) {
 
 // ─── Product Detail ───────────────────────────────────────────────────────────
 
-function ProductDetail({ productId, onBack }) {
+function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeThumb, setActiveThumb] = useState(0);
@@ -165,7 +165,12 @@ function ProductDetail({ productId, onBack }) {
     setData(null);
     setActiveThumb(0);
     api.get(`/launches/${productId}`)
-      .then(res => setData(res.data))
+      .then(res => {
+        setData(res.data);
+        if (onVoteInit && res.data?.product) {
+          onVoteInit(productId, res.data.product.userHasVoted, res.data.product.upvoteCount);
+        }
+      })
       .catch(() => setData(null))
       .finally(() => setLoading(false));
   }, [productId]);
@@ -261,14 +266,17 @@ function ProductDetail({ productId, onBack }) {
                     <span className="dpv-meta-dot">·</span>
                     <span>{totalReviews} reviews</span>
                     <span className="dpv-meta-dot">·</span>
-                    <span>{product.upvoteCount ?? 0} upvotes</span>
+                    <span>{votes ?? product.upvoteCount ?? 0} upvotes</span>
                   </div>
                 </div>
               </div>
               <div className="dpv-hero-right">
-                <div className="dpv-vote-badge">
+                <div
+                  className={`dpv-vote-badge${voted ? ' voted' : ''}`}
+                  onClick={() => onVote && onVote(product._id)}
+                >
                   <span className="dpv-vote-arr">▲</span>
-                  <span className="dpv-vote-count">{product.upvoteCount ?? 0}</span>
+                  <span className="dpv-vote-count">{votes ?? product.upvoteCount ?? 0}</span>
                   <span className="dpv-vote-label">Hot Product</span>
                 </div>
                 {isUrl(product.productUrl) && (
@@ -590,12 +598,19 @@ export default function LaunchesPage() {
     fetchSidebar();
   }, [fetchSidebar]);
 
-  // Sync vote counts when launches data arrives
+  // Sync vote counts and voted state when launches data arrives
   useEffect(() => {
     setVoteCounts(prev => {
       const next = { ...prev };
       for (const p of launches) {
         if (!(p._id in next)) next[p._id] = p.upvoteCount ?? 0;
+      }
+      return next;
+    });
+    setUpvotedIds(prev => {
+      const next = new Set(prev);
+      for (const p of launches) {
+        if (p.userHasVoted) next.add(p._id);
       }
       return next;
     });
@@ -653,6 +668,13 @@ export default function LaunchesPage() {
           <ProductDetail
             productId={selectedProductId}
             onBack={() => setSelectedProductId(null)}
+            onVote={handleVote}
+            voted={upvotedIds.has(selectedProductId)}
+            votes={voteCounts[selectedProductId]}
+            onVoteInit={(id, hasVoted, count) => {
+              setUpvotedIds(prev => { const n = new Set(prev); hasVoted ? n.add(id) : n.delete(id); return n; });
+              setVoteCounts(prev => ({ ...prev, [id]: count ?? prev[id] ?? 0 }));
+            }}
           />
         ) : (
           <div className="lp-outer-grid">
