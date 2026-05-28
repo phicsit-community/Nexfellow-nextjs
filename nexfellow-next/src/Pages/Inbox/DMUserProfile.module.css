@@ -604,6 +604,8 @@ button:focus-visible {
 ══════════════════════════════════════════ */
 :global(.dark) .panel  { background: var(--color-card); border-left-color: var(--color-border); }
 :global(.dark) .body   { background: var(--color-card); }
+:global(.dark) .body::-webkit-scrollbar-thumb { background: var(--color-border); }
+
 :global(.dark) .hero   {
     background: linear-gradient(
         180deg,
@@ -612,15 +614,60 @@ button:focus-visible {
         transparent 100%
     );
 }
-:global(.dark) .nameText     { color: var(--color-foreground); }
-:global(.dark) .shareBtn     { background: var(--color-input); border-color: var(--color-border); color: var(--color-foreground); }
-:global(.dark) .statCard     { background: var(--color-input); }
-:global(.dark) .statNum      { color: var(--color-foreground); }
-:global(.dark) .mutualCard   { background: var(--color-input); }
-:global(.dark) .mutualTitle  { color: var(--color-foreground); }
-:global(.dark) .settingTitle { color: var(--color-foreground); }
-:global(.dark) .settingRow:hover { background: var(--color-muted); }
-:global(.dark) .groupRow:hover   { background: var(--color-muted); }
+
+/* profile info */
+:global(.dark) .profileInfo   { border-bottom-color: var(--color-border); }
+:global(.dark) .nameText      { color: var(--color-foreground); }
+:global(.dark) .metaLine      { color: var(--color-muted-foreground); }
+:global(.dark) .metaIcon      { color: var(--color-muted-foreground); }
+:global(.dark) .shareBtn      { background: var(--color-input); border-color: var(--color-border); color: var(--color-foreground); }
+:global(.dark) .shareBtn:hover { background: var(--color-muted); }
+
+/* sections */
+:global(.dark) .section        { border-bottom-color: var(--color-border); }
+:global(.dark) .sectionLabel   { color: var(--color-foreground); }
+:global(.dark) .bioText        { color: var(--color-muted-foreground); }
+
+/* contact information */
+:global(.dark) .contactIcon        { background: color-mix(in oklab, #1ab99a 12%, var(--color-input)); }
+:global(.dark) .contactLabelText   { color: var(--color-muted-foreground); }
+:global(.dark) .contactValue       { color: var(--color-foreground); }
+
+/* stats */
+:global(.dark) .statsRow   { border-bottom-color: var(--color-border); }
+:global(.dark) .statCard   { background: var(--color-input); }
+:global(.dark) .statNum    { color: var(--color-foreground); }
+:global(.dark) .statLabel  { color: var(--color-muted-foreground); }
+
+/* mutual connections */
+:global(.dark) .mutualCard        { background: var(--color-input); }
+:global(.dark) .mutualTitle       { color: var(--color-foreground); }
+:global(.dark) .mutualIcon        { color: var(--color-muted-foreground); }
+:global(.dark) .mutualChevron     { color: var(--color-muted-foreground); }
+:global(.dark) .mutualAvatar      { border-color: var(--color-card); background: var(--color-muted); color: var(--color-foreground); }
+:global(.dark) .mutualCountText   { color: var(--color-muted-foreground); }
+
+/* common groups */
+:global(.dark) .groupRow:hover  { background: var(--color-muted); }
+:global(.dark) .groupName       { color: var(--color-foreground); }
+:global(.dark) .groupSub        { color: var(--color-muted-foreground); }
+:global(.dark) .rowChevron      { color: var(--color-muted-foreground); }
+
+/* shared media */
+:global(.dark) .mediaCell  { background: var(--color-input); }
+:global(.dark) .mediaChip  { color: var(--color-muted-foreground); }
+
+/* privacy & settings */
+:global(.dark) .settingCard         { background: var(--color-input); border-color: var(--color-border); }
+:global(.dark) .settingCard:hover   { background: var(--color-muted); }
+:global(.dark) .settingDivider      { background: var(--color-border); }
+:global(.dark) .plainRow:hover      { background: var(--color-muted); }
+:global(.dark) .settingTitle        { color: var(--color-foreground); }
+:global(.dark) .settingTitleMuted   { color: var(--color-muted-foreground); }
+:global(.dark) .settingHint         { color: var(--color-muted-foreground); }
+:global(.dark) .settingRow:hover    { background: var(--color-muted); }
+:global(.dark) .settingIcon         { background: var(--color-input); }
+:global(.dark) .plainIcon           { color: var(--color-muted-foreground); }
 
 /* ══════════════════════════════════════════
    MOBILE — full-screen overlay instead of side panel
