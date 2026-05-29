@@ -10,7 +10,7 @@ export default function EarlyAdopterSection() {
   const isMobile = useIsMobile();
 
   return (
-    <section style={{ background: BG, padding: isMobile ? "64px 20px" : "120px 24px" }}>
+    <section style={{ background: BG, padding: isMobile ? "64px 16px" : "120px 24px" }}>
       <div style={{
         maxWidth: 1200, margin: "0 auto",
         display: "grid",
