@@ -48,13 +48,23 @@ function FeedImageViewer({ images, startIndex = 0, onClose }) {
                         </svg>
                     </button>
                 )}
-                <img
-                    src={images[current].fileUrl}
-                    alt={`Image ${current + 1} of ${images.length}`}
-                    className={styles.image}
-                    loading="lazy"
-                    draggable={false}
-                />
+                {images[current].fileType?.startsWith("video/") ? (
+                    <video
+                        src={images[current].fileUrl}
+                        className={styles.image}
+                        controls
+                        autoPlay
+                        playsInline
+                    />
+                ) : (
+                    <img
+                        src={images[current].fileUrl}
+                        alt={`Image ${current + 1} of ${images.length}`}
+                        className={styles.image}
+                        loading="lazy"
+                        draggable={false}
+                    />
+                )}
                 {images.length > 1 && (
                     <button
                         className={`${styles.arrow} ${styles.right}`}
@@ -86,17 +96,32 @@ function FeedImageViewer({ images, startIndex = 0, onClose }) {
                 {images.length > 1 && (
                     <div className={styles.thumbnailStrip} role="list" aria-label="Image thumbnails">
                         {images.map((img, idx) => (
-                            <img
-                                key={idx}
-                                src={img.fileUrl}
-                                alt={`Thumbnail ${idx + 1}`}
-                                className={`${styles.thumbnail} ${idx === current ? styles.activeThumbnail : ""}`}
-                                onClick={() => setCurrent(idx)}
-                                draggable={false}
-                                role="listitem"
-                                tabIndex={0}
-                                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setCurrent(idx); }}
-                            />
+                            img.fileType?.startsWith("video/") ? (
+                                <div
+                                    key={idx}
+                                    className={`${styles.thumbnail} ${idx === current ? styles.activeThumbnail : ""}`}
+                                    onClick={() => setCurrent(idx)}
+                                    role="listitem"
+                                    tabIndex={0}
+                                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setCurrent(idx); }}
+                                    style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#000", cursor: "pointer" }}
+                                    aria-label={`Video thumbnail ${idx + 1}`}
+                                >
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+                                </div>
+                            ) : (
+                                <img
+                                    key={idx}
+                                    src={img.fileUrl}
+                                    alt={`Thumbnail ${idx + 1}`}
+                                    className={`${styles.thumbnail} ${idx === current ? styles.activeThumbnail : ""}`}
+                                    onClick={() => setCurrent(idx)}
+                                    draggable={false}
+                                    role="listitem"
+                                    tabIndex={0}
+                                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setCurrent(idx); }}
+                                />
+                            )
                         ))}
                     </div>
                 )}

@@ -9,9 +9,13 @@ function FeedImageGrid({ images }) {
     if (!images || images.length === 0) return null;
 
     const handleImageClick = (idx) => {
+        if (images[idx].fileType?.startsWith("video/")) return;
         setViewerIndex(idx);
         setViewerOpen(true);
     };
+
+    // Only pass image (non-video) attachments to the viewer
+    const imageOnlyAttachments = images.filter(img => !img.fileType?.startsWith("video/"));
 
     return (
         <>
@@ -26,14 +30,24 @@ function FeedImageGrid({ images }) {
                             e.stopPropagation();
                             handleImageClick(idx);
                         }}
-                        style={{ cursor: "pointer" }}
+                        style={{ cursor: img.fileType?.startsWith("video/") ? "default" : "pointer" }}
                     >
-                        <img
-                            src={img.fileUrl}
-                            alt={`Post image ${idx + 1}`}
-                            className={styles.image}
-                            draggable={false}
-                        />
+                        {img.fileType?.startsWith("video/") ? (
+                            <video
+                                src={img.fileUrl}
+                                className={styles.image}
+                                controls
+                                playsInline
+                                onClick={(e) => e.stopPropagation()}
+                            />
+                        ) : (
+                            <img
+                                src={img.fileUrl}
+                                alt={`Post image ${idx + 1}`}
+                                className={styles.image}
+                                draggable={false}
+                            />
+                        )}
                         {images.length > 4 && idx === 3 && (
                             <div className={styles.moreOverlay}>
                                 +{images.length - 4}
@@ -43,9 +57,9 @@ function FeedImageGrid({ images }) {
                 ))}
             </div>
 
-            {viewerOpen && (
+            {viewerOpen && imageOnlyAttachments.length > 0 && (
                 <FeedImageViewer
-                    images={images}
+                    images={imageOnlyAttachments}
                     startIndex={viewerIndex}
                     onClose={() => setViewerOpen(false)}
                 />
