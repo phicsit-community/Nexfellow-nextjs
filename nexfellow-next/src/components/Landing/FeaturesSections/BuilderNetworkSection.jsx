@@ -29,7 +29,7 @@ export default function BuilderNetworkSection() {
   const isMobile = useIsMobile();
 
   return (
-    <section style={{ background: BG, padding: isMobile ? "64px 20px" : "120px 24px" }}>
+    <section style={{ background: BG, padding: isMobile ? "64px 16px" : "120px 24px" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, alignItems: "center" }}>
 
         {/* Left — text */}

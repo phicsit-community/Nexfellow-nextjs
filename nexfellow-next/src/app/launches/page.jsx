@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import './launches.css';
 import PrivateLayout from '../../layouts/PrivateLayout';
 import api from '@/lib/axios';
+import { useSelector } from 'react-redux';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -34,12 +35,8 @@ const REVIEW_TAG_CLASS = {
   'FEATURE REQ': 'fbt-feature',
 };
 
-const GALLERY_BG = [
-  'linear-gradient(135deg, #1a2e1a 0%, #2d5a2d 50%, #1a3a1a 100%)',
-  'linear-gradient(135deg, #0d1f3c 0%, #1a3a6e 50%, #0d2040 100%)',
-  'linear-gradient(135deg, #2a1a3e 0%, #4a2a6e 50%, #2a1a4a 100%)',
-  'linear-gradient(135deg, #1a2a3a 0%, #2a4a5a 50%, #1a2a3a 100%)',
-];
+const REVIEW_TAGS = ['UX', 'PRICING', 'MOBILE', 'POSITIVE', 'PERFORMANCE', 'FEATURE REQ'];
+
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -79,6 +76,51 @@ function groupByDate(products) {
   }
 
   return order.map(key => ({ label: key, products: groups[key] }));
+}
+
+function buildReplyTree(replies) {
+  const map = {};
+  const roots = [];
+  replies.forEach(rep => { map[String(rep._id)] = { ...rep, children: [] }; });
+  replies.forEach(rep => {
+    const pid = String(rep.parentReplyId || '');
+    // 1. Prefer explicit parentReplyId
+    if (pid && map[pid]) {
+      map[pid].children.push(map[String(rep._id)]);
+      return;
+    }
+    // 2. Fallback: detect @mention at start of content for old flat replies
+    const m = typeof rep.content === 'string' && rep.content.match(/^@(\S+)\s/);
+    if (m) {
+      const mentioned = m[1].toLowerCase();
+      const parent = replies.find(other =>
+        String(other._id) !== String(rep._id) &&
+        !other.parentReplyId &&
+        (
+          (other.author?.username || '').toLowerCase() === mentioned ||
+          (other.author?.name || '').toLowerCase().replace(/\s+/g, '') === mentioned
+        )
+      );
+      if (parent && map[String(parent._id)]) {
+        map[String(parent._id)].children.push(map[String(rep._id)]);
+        return;
+      }
+    }
+    roots.push(map[String(rep._id)]);
+  });
+  return roots;
+}
+
+function timeAgo(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 30) return `${days}d ago`;
+  return new Date(dateStr).toLocaleDateString();
 }
 
 function formatLaunchDate(dateStr) {
@@ -147,20 +189,190 @@ function DateSep({ label, count }) {
 
 // ─── Product Detail ───────────────────────────────────────────────────────────
 
-function ProductDetail({ productId, onBack }) {
+function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeThumb, setActiveThumb] = useState(0);
+
+  // Review form state
+  const currentUser = useSelector((state) => state.auth.user);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewHover, setReviewHover] = useState(0);
+  const [reviewText, setReviewText] = useState('');
+  const [reviewTags, setReviewTags] = useState([]);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewError, setReviewError] = useState('');
+  const [reviewSuccess, setReviewSuccess] = useState(false);
+
+  // Sidebar action state
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [shareMsg, setShareMsg] = useState('');
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportCategory, setReportCategory] = useState('');
+  const [reportDesc, setReportDesc] = useState('');
+  const [reportSubmitting, setReportSubmitting] = useState(false);
+  const [reportDone, setReportDone] = useState(false);
+  const [reportError, setReportError] = useState('');
+
+  // Per-review interaction state
+  const [helpfulMap, setHelpfulMap] = useState({});
+  const [replyOpen, setReplyOpen] = useState({});
+  const [replyText, setReplyText] = useState({});
+  const [replySubmitting, setReplySubmitting] = useState({});
+  const [repliesMap, setRepliesMap] = useState({});
+  // Reply-to-reply state (keyed by reply._id)
+  const [subReplyOpen, setSubReplyOpen] = useState({});
+  const [subReplyText, setSubReplyText] = useState({});
+  const [subReplySubmitting, setSubReplySubmitting] = useState({});
 
   useEffect(() => {
     setLoading(true);
     setData(null);
     setActiveThumb(0);
+    setIsFollowing(false);
+    setReportOpen(false);
+    setReportDone(false);
     api.get(`/launches/${productId}`)
-      .then(res => setData(res.data))
+      .then(async res => {
+        setData(res.data);
+        if (onVoteInit && res.data?.product) {
+          onVoteInit(productId, res.data.product.userHasVoted, res.data.product.upvoteCount);
+        }
+        // Check follow status for the maker
+        const ownerId = res.data?.product?.owner?._id;
+        if (ownerId) {
+          try {
+            const fRes = await api.get(`/user/followStatus/${ownerId}`);
+            setIsFollowing(fRes.data?.isFollowing ?? false);
+          } catch { /* non-critical */ }
+        }
+      })
       .catch(() => setData(null))
       .finally(() => setLoading(false));
   }, [productId]);
+
+  // Initialize per-review state when reviews load
+  useEffect(() => {
+    if (!data?.reviews) return;
+    const userId = currentUser?._id || currentUser?.id;
+    const hMap = {};
+    const rMap = {};
+    data.reviews.forEach(r => {
+      hMap[r._id] = {
+        count: r.helpfulCount ?? 0,
+        marked: userId
+          ? (r.helpfulBy || []).some(id => (id?._id || id)?.toString() === userId?.toString())
+          : false,
+      };
+      rMap[r._id] = r.replies || [];
+    });
+    setHelpfulMap(hMap);
+    setRepliesMap(rMap);
+  }, [data, currentUser]);
+
+
+  const handleFollowMaker = async () => {
+    if (!isLoggedIn || followLoading) return;
+    const ownerId = data?.product?.owner?._id;
+    if (!ownerId) return;
+    setFollowLoading(true);
+    const prevFollowing = isFollowing;
+    const action = prevFollowing ? 'unfollow' : 'follow';
+    setIsFollowing(!prevFollowing);
+    try {
+      await api.post(`/user/toggleFollow/${ownerId}`, { action });
+    } catch (err) {
+      const msg = err?.response?.data?.message || '';
+      // "Already following" means the follow IS in the DB — keep state as following
+      if (msg.toLowerCase().includes('already following')) {
+        setIsFollowing(true);
+      } else {
+        setIsFollowing(prevFollowing);
+      }
+    } finally {
+      setFollowLoading(false);
+    }
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try { await navigator.share({ title: data?.product?.name, url }); } catch { /* dismissed */ }
+    } else {
+      await navigator.clipboard.writeText(url);
+      setShareMsg('Link copied!');
+      setTimeout(() => setShareMsg(''), 2000);
+    }
+  };
+
+  const handleHelpful = async (reviewId) => {
+    if (!isLoggedIn) return;
+    const prev = helpfulMap[reviewId] || { count: 0, marked: false };
+    setHelpfulMap(m => ({
+      ...m,
+      [reviewId]: { count: prev.marked ? prev.count - 1 : prev.count + 1, marked: !prev.marked },
+    }));
+    try {
+      const res = await api.post(`/products/${data.product._id}/reviews/${reviewId}/helpful`);
+      setHelpfulMap(m => ({ ...m, [reviewId]: { count: res.data.helpfulCount, marked: res.data.marked } }));
+    } catch {
+      setHelpfulMap(m => ({ ...m, [reviewId]: prev }));
+    }
+  };
+
+  const handleReplySubmit = async (reviewId) => {
+    const content = (replyText[reviewId] || '').trim();
+    if (!content) return;
+    setReplySubmitting(m => ({ ...m, [reviewId]: true }));
+    try {
+      const res = await api.post(`/products/${data.product._id}/reviews/${reviewId}/reply`, { content });
+      setRepliesMap(m => ({ ...m, [reviewId]: res.data.replies || [] }));
+      setReplyText(m => ({ ...m, [reviewId]: '' }));
+      setReplyOpen(m => ({ ...m, [reviewId]: false }));
+    } catch { /* silently ignore */ }
+    finally {
+      setReplySubmitting(m => ({ ...m, [reviewId]: false }));
+    }
+  };
+
+  const handleSubReplySubmit = async (reviewId, parentReplyId) => {
+    const content = (subReplyText[parentReplyId] || '').trim();
+    if (!content) return;
+    setSubReplySubmitting(m => ({ ...m, [parentReplyId]: true }));
+    try {
+      const res = await api.post(`/products/${data.product._id}/reviews/${reviewId}/reply`, { content, parentReplyId });
+      setRepliesMap(m => ({ ...m, [reviewId]: res.data.replies || [] }));
+      setSubReplyText(m => ({ ...m, [parentReplyId]: '' }));
+      setSubReplyOpen(m => ({ ...m, [parentReplyId]: false }));
+    } catch { /* silently ignore */ }
+    finally {
+      setSubReplySubmitting(m => ({ ...m, [parentReplyId]: false }));
+    }
+  };
+
+  const handleSubmitReport = async () => {
+    if (!reportCategory) { setReportError('Please select a category.'); return; }
+    const ownerId = data?.product?.owner?._id;
+    if (!ownerId) return;
+    setReportError('');
+    setReportSubmitting(true);
+    try {
+      await api.post('/reports/create', {
+        authorId: ownerId,
+        type: 'Account',
+        category: reportCategory,
+        description: reportDesc.trim() || undefined,
+      });
+      setReportDone(true);
+    } catch (err) {
+      setReportError(err.response?.data?.message || 'Failed to submit report.');
+    } finally {
+      setReportSubmitting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -188,19 +400,43 @@ function ProductDetail({ productId, onBack }) {
   const catMeta = CATEGORY_META[product.category] || { icon: '⚡', bg: '#e8e8e8' };
   const ownerName = product.owner?.name || 'Builder';
   const hasScreenshots = product.screenshots?.length > 0;
-  const galleryItems = hasScreenshots ? product.screenshots : GALLERY_BG;
+
+  const isOwner = currentUser && (product.owner?._id === currentUser._id || product.owner?._id === currentUser.id);
+  const alreadyReviewed = reviewSuccess || (currentUser && reviews.some(
+    r => r.reviewer?._id === currentUser._id || r.reviewer?._id === currentUser.id
+  ));
+
+  const toggleTag = (tag) => setReviewTags(prev =>
+    prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+  );
+
+  const handleSubmitReview = async () => {
+    if (reviewRating === 0) { setReviewError('Please select a star rating.'); return; }
+    if (reviewText.trim().length < 10) { setReviewError('Review must be at least 10 characters.'); return; }
+    setReviewError('');
+    setReviewSubmitting(true);
+    try {
+      await api.post(`/products/${product._id}/reviews`, {
+        rating: reviewRating,
+        content: reviewText.trim(),
+        tags: reviewTags,
+      });
+      setReviewSuccess(true);
+      setReviewText('');
+      setReviewRating(0);
+      setReviewTags([]);
+      // Refresh data to show the new review
+      const res = await api.get(`/launches/${productId}`);
+      setData(res.data);
+    } catch (err) {
+      setReviewError(err.response?.data?.message || 'Failed to submit review.');
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
 
   return (
     <div className="dpv-wrap">
-      <div className="dpv-nav">
-        <button className="dpv-back" onClick={onBack}>← Back</button>
-        <div className="dpv-breadcrumb">
-          <span className="dpv-bc-parent">Launches</span>
-          <span className="dpv-bc-sep">/</span>
-          <span className="dpv-bc-current">{product.name}</span>
-        </div>
-      </div>
-
       <div className="dpv-scroll">
         <div className="dpv-layout">
 
@@ -229,14 +465,17 @@ function ProductDetail({ productId, onBack }) {
                     <span className="dpv-meta-dot">·</span>
                     <span>{totalReviews} reviews</span>
                     <span className="dpv-meta-dot">·</span>
-                    <span>{product.upvoteCount ?? 0} upvotes</span>
+                    <span>{votes ?? product.upvoteCount ?? 0} upvotes</span>
                   </div>
                 </div>
               </div>
               <div className="dpv-hero-right">
-                <div className="dpv-vote-badge">
+                <div
+                  className={`dpv-vote-badge${voted ? ' voted' : ''}`}
+                  onClick={() => onVote && onVote(product._id)}
+                >
                   <span className="dpv-vote-arr">▲</span>
-                  <span className="dpv-vote-count">{product.upvoteCount ?? 0}</span>
+                  <span className="dpv-vote-count">{votes ?? product.upvoteCount ?? 0}</span>
                   <span className="dpv-vote-label">Hot Product</span>
                 </div>
                 {isUrl(product.productUrl) && (
@@ -247,50 +486,29 @@ function ProductDetail({ productId, onBack }) {
               </div>
             </div>
 
-            {/* Gallery */}
-            <section className="dpv-section">
-              <div className="dpv-section-label">PRODUCT GALLERY</div>
-              {hasScreenshots ? (
-                <>
-                  <div className="dpv-gallery-main" style={{ overflow: 'hidden' }}>
-                    <img
-                      src={galleryItems[activeThumb]}
-                      alt="screenshot"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            {/* Gallery — only shown when the product has uploaded screenshots */}
+            {hasScreenshots && (
+              <section className="dpv-section">
+                <div className="dpv-section-label">PRODUCT GALLERY</div>
+                <div className="dpv-gallery-main" style={{ overflow: 'hidden' }}>
+                  <img
+                    src={product.screenshots[activeThumb]}
+                    alt="screenshot"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </div>
+                <div className="dpv-gallery-thumbs">
+                  {product.screenshots.map((src, i) => (
+                    <div
+                      key={i}
+                      className={`dpv-thumb${activeThumb === i ? ' active' : ''}`}
+                      style={{ backgroundImage: `url(${src})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                      onClick={() => setActiveThumb(i)}
                     />
-                  </div>
-                  <div className="dpv-gallery-thumbs">
-                    {galleryItems.map((src, i) => (
-                      <div
-                        key={i}
-                        className={`dpv-thumb${activeThumb === i ? ' active' : ''}`}
-                        style={{ backgroundImage: `url(${src})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                        onClick={() => setActiveThumb(i)}
-                      />
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="dpv-gallery-main" style={{ background: GALLERY_BG[activeThumb] }}>
-                    <div className="dpv-gallery-inner">
-                      <div className="dpv-gallery-icon-lg">{catMeta.icon}</div>
-                      <div className="dpv-gallery-caption">{product.name} — Product Demo</div>
-                    </div>
-                  </div>
-                  <div className="dpv-gallery-thumbs">
-                    {GALLERY_BG.map((bg, i) => (
-                      <div
-                        key={i}
-                        className={`dpv-thumb${activeThumb === i ? ' active' : ''}`}
-                        style={{ background: bg }}
-                        onClick={() => setActiveThumb(i)}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
-            </section>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Stats */}
             <section className="dpv-section">
@@ -323,6 +541,69 @@ function ProductDetail({ productId, onBack }) {
               </section>
             )}
 
+            {/* Write a Review */}
+            {isLoggedIn && !isOwner && (
+              <section className="dpv-section">
+                <div className="dpv-section-label">WRITE A REVIEW</div>
+                {alreadyReviewed ? (
+                  <div className="dpv-review-done">✅ You have already reviewed this product. Thanks for your feedback!</div>
+                ) : (
+                  <div className="dpv-write-review">
+                    {/* Star picker */}
+                    <div className="dpv-star-row">
+                      <span className="dpv-star-label">Your rating</span>
+                      <div className="dpv-stars-input">
+                        {[1,2,3,4,5].map(n => (
+                          <button
+                            key={n}
+                            type="button"
+                            className={`dpv-star-btn${(reviewHover || reviewRating) >= n ? ' active' : ''}`}
+                            onMouseEnter={() => setReviewHover(n)}
+                            onMouseLeave={() => setReviewHover(0)}
+                            onClick={() => setReviewRating(n)}
+                          >★</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Text */}
+                    <textarea
+                      className="dpv-review-textarea"
+                      placeholder="Share your experience — what works well, what could be improved? (min 10 chars)"
+                      value={reviewText}
+                      onChange={e => setReviewText(e.target.value)}
+                      rows={4}
+                    />
+
+                    {/* Tags */}
+                    <div className="dpv-tag-row">
+                      <span className="dpv-star-label">Tags (optional)</span>
+                      <div className="dpv-tag-picker">
+                        {REVIEW_TAGS.map(tag => (
+                          <button
+                            key={tag}
+                            type="button"
+                            className={`dpv-tag-pick${reviewTags.includes(tag) ? ' selected' : ''} ${REVIEW_TAG_CLASS[tag] || 'fbt-ux'}`}
+                            onClick={() => toggleTag(tag)}
+                          >{tag}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {reviewError && <div className="dpv-review-error">{reviewError}</div>}
+
+                    <button
+                      className="dpv-submit-review-btn"
+                      onClick={handleSubmitReview}
+                      disabled={reviewSubmitting}
+                    >
+                      {reviewSubmitting ? 'Submitting…' : 'Submit Review'}
+                    </button>
+                  </div>
+                )}
+              </section>
+            )}
+
             {/* Reviews */}
             <section className="dpv-section">
               <div className="dpv-reviews-hdr">
@@ -338,6 +619,11 @@ function ProductDetail({ productId, onBack }) {
                   const reviewerName = r.reviewer?.name || 'Reviewer';
                   const initials = reviewerName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
                   const stars = Math.round(r.rating);
+                  const helpful = helpfulMap[r._id] || { count: r.helpfulCount ?? 0, marked: false };
+                  const replies = repliesMap[r._id] || [];
+                  const isReplyOpen = replyOpen[r._id] || false;
+                  const currentUserId = currentUser?._id || currentUser?.id;
+                  const isOwnReview = currentUserId && r.reviewer?._id?.toString() === currentUserId?.toString();
                   return (
                     <div key={r._id} className="dpv-review-card">
                       <div className="dpv-review-top">
@@ -354,7 +640,12 @@ function ProductDetail({ productId, onBack }) {
                           </div>
                         )}
                         <div className="dpv-review-user">
-                          <div className="dpv-review-name">{reviewerName}</div>
+                          <div className="dpv-review-name">
+                            {reviewerName}
+                            {r.reviewer?.username && (
+                              <span className="dpv-review-meta"> · {timeAgo(r.createdAt)}</span>
+                            )}
+                          </div>
                           <div className="dpv-review-email">
                             {r.reviewer?.username ? `@${r.reviewer.username}` : ''}
                           </div>
@@ -364,16 +655,163 @@ function ProductDetail({ productId, onBack }) {
                         </div>
                       </div>
                       <div className="dpv-review-text">{r.content}</div>
-                      <div className="dpv-review-footer">
-                        <div className="dpv-review-tags">
+                      {(r.tags || []).length > 0 && (
+                        <div className="dpv-review-tags" style={{ marginBottom: 10 }}>
                           {(r.tags || []).map(t => (
                             <span key={t} className={`dpv-review-tag ${REVIEW_TAG_CLASS[t] || 'fbt-ux'}`}>{t}</span>
                           ))}
                         </div>
-                        <div className="dpv-review-actions">
-                          <button className="dpv-review-btn">👍 Helpful ({r.helpfulCount ?? 0})</button>
-                        </div>
+                      )}
+                      <div className="dpv-review-actions">
+                        <button
+                          className={`dpv-review-btn${helpful.marked ? ' marked' : ''}`}
+                          onClick={() => handleHelpful(r._id)}
+                          disabled={!isLoggedIn || isOwnReview}
+                          title={isOwnReview ? "Can't mark your own review helpful" : ''}
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill={helpful.marked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                          Helpful ({helpful.count})
+                        </button>
+                        {isLoggedIn && (
+                          <button
+                            className="dpv-review-btn"
+                            onClick={() => setReplyOpen(m => ({ ...m, [r._id]: !m[r._id] }))}
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            Reply
+                          </button>
+                        )}
                       </div>
+
+                      {/* Replies tree */}
+                      {replies.length > 0 && (
+                        <div className="dpv-replies-list">
+                          {buildReplyTree(replies).map(rootRep => {
+                            const rootName = rootRep.author?.name || 'User';
+                            const rootInitials = rootName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+                            const isThreadOpen = subReplyOpen[rootRep._id] || false;
+                            return (
+                              <div key={rootRep._id} className="dpv-reply-thread">
+                                {/* Root reply */}
+                                <div className="dpv-reply-item">
+                                  {isUrl(rootRep.author?.picture) ? (
+                                    <img src={rootRep.author.picture} alt="" className="dpv-reply-av" style={{ objectFit: 'cover', borderRadius: '50%' }} />
+                                  ) : (
+                                    <div className="dpv-reply-av" style={{ background: colorFromStr(rootName) }}>{rootInitials}</div>
+                                  )}
+                                  <div className="dpv-reply-body">
+                                    <div className="dpv-reply-name">
+                                      {rootName}
+                                      <span className="dpv-review-meta"> · {timeAgo(rootRep.createdAt)}</span>
+                                    </div>
+                                    <div className="dpv-reply-text">{rootRep.content}</div>
+                                    {isLoggedIn && (
+                                      <button
+                                        className="dpv-sub-reply-btn"
+                                        onClick={() => setSubReplyOpen(m => ({ ...m, [rootRep._id]: !m[rootRep._id] }))}
+                                      >
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                        Reply
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* Child replies */}
+                                {rootRep.children.length > 0 && (
+                                  <div className="dpv-reply-children">
+                                    {rootRep.children.map(child => {
+                                      const childName = child.author?.name || 'User';
+                                      const childInitials = childName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+                                      return (
+                                        <div key={child._id} className="dpv-reply-item dpv-reply-child">
+                                          {isUrl(child.author?.picture) ? (
+                                            <img src={child.author.picture} alt="" className="dpv-reply-av dpv-reply-av-sm" style={{ objectFit: 'cover', borderRadius: '50%' }} />
+                                          ) : (
+                                            <div className="dpv-reply-av dpv-reply-av-sm" style={{ background: colorFromStr(childName) }}>{childInitials}</div>
+                                          )}
+                                          <div className="dpv-reply-body">
+                                            <div className="dpv-reply-name">
+                                              {childName}
+                                              <span className="dpv-review-meta"> · {timeAgo(child.createdAt)}</span>
+                                            </div>
+                                            <div className="dpv-reply-text">{child.content}</div>
+                                            {isLoggedIn && (
+                                              <button
+                                                className="dpv-sub-reply-btn"
+                                                onClick={() => {
+                                                  setSubReplyOpen(m => ({ ...m, [rootRep._id]: true }));
+                                                  setSubReplyText(m => ({ ...m, [rootRep._id]: `@${childName} ` }));
+                                                }}
+                                              >
+                                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                                Reply
+                                              </button>
+                                            )}
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+
+                                {/* Thread reply form */}
+                                {isThreadOpen && (
+                                  <div className="dpv-sub-reply-form">
+                                    <textarea
+                                      className="dpv-reply-textarea"
+                                      placeholder={`Reply in thread…`}
+                                      rows={2}
+                                      value={subReplyText[rootRep._id] || ''}
+                                      onChange={e => setSubReplyText(m => ({ ...m, [rootRep._id]: e.target.value }))}
+                                      autoFocus
+                                    />
+                                    <div className="dpv-reply-form-actions">
+                                      <button
+                                        className="dpv-reply-cancel-btn"
+                                        onClick={() => setSubReplyOpen(m => ({ ...m, [rootRep._id]: false }))}
+                                      >Cancel</button>
+                                      <button
+                                        className="dpv-reply-submit-btn"
+                                        onClick={() => handleSubReplySubmit(r._id, rootRep._id)}
+                                        disabled={subReplySubmitting[rootRep._id] || !(subReplyText[rootRep._id] || '').trim()}
+                                      >
+                                        {subReplySubmitting[rootRep._id] ? 'Posting…' : 'Post Reply'}
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Reply input */}
+                      {isReplyOpen && (
+                        <div className="dpv-reply-form">
+                          <textarea
+                            className="dpv-reply-textarea"
+                            placeholder="Write a reply…"
+                            rows={2}
+                            value={replyText[r._id] || ''}
+                            onChange={e => setReplyText(m => ({ ...m, [r._id]: e.target.value }))}
+                          />
+                          <div className="dpv-reply-form-actions">
+                            <button
+                              className="dpv-reply-cancel-btn"
+                              onClick={() => setReplyOpen(m => ({ ...m, [r._id]: false }))}
+                            >Cancel</button>
+                            <button
+                              className="dpv-reply-submit-btn"
+                              onClick={() => handleReplySubmit(r._id)}
+                              disabled={replySubmitting[r._id] || !(replyText[r._id] || '').trim()}
+                            >
+                              {replySubmitting[r._id] ? 'Posting…' : 'Post Reply'}
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -385,7 +823,7 @@ function ProductDetail({ productId, onBack }) {
           {/* ══ Right sidebar ══ */}
           <div className="dpv-sidebar">
 
-            {/* CTA card */}
+            {/* Box 1 — CTA card */}
             <div className="dpv-cta-card">
               <div className="dpv-cta-title">Ready to try {product.name}?</div>
               {isUrl(product.productUrl) && (
@@ -393,7 +831,7 @@ function ProductDetail({ productId, onBack }) {
                   href={product.productUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="dpv-cta-btn"
+                  className="dpv-cta-btn dpv-cta-btn-primary"
                   style={{ textAlign: 'center', textDecoration: 'none' }}
                 >
                   ↗ Get Started
@@ -404,7 +842,7 @@ function ProductDetail({ productId, onBack }) {
                   href={product.demoVideo}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="dpv-cta-btn"
+                  className="dpv-cta-btn dpv-cta-btn-secondary"
                   style={{ textAlign: 'center', textDecoration: 'none' }}
                 >
                   ▶ Watch Demo
@@ -412,9 +850,9 @@ function ProductDetail({ productId, onBack }) {
               )}
             </div>
 
-            {/* Builder card */}
+            {/* Box 2 — Maker card */}
             <div className="dpv-card">
-              <div className="dpv-card-label">BUILDER</div>
+              <div className="dpv-card-label">MAKER</div>
               <div className="dpv-builder-row">
                 {isUrl(product.owner?.picture) ? (
                   <img
@@ -430,39 +868,123 @@ function ProductDetail({ productId, onBack }) {
                 )}
                 <div className="dpv-builder-info">
                   <div className="dpv-builder-name">{ownerName}</div>
-                  <div className="dpv-builder-bio">{launchLabel(product.reviewRound)} on NexFellow.</div>
-                </div>
-              </div>
-              {isUrl(product.productUrl) && (
-                <div className="dpv-builder-links">
-                  <div className="dpv-link-row">
-                    <span>Visit Website</span>
-                    <a
-                      href={product.productUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="dpv-link-val"
-                    >
-                      ↗
-                    </a>
+                  <div className="dpv-builder-bio">
+                    {product.owner?.bio || `${launchLabel(product.reviewRound)} founder on NexFellow.`}
                   </div>
                 </div>
+              </div>
+              {isLoggedIn && !isOwner && (
+                <button
+                  className={`dpv-follow-btn${isFollowing ? ' following' : ''}`}
+                  onClick={handleFollowMaker}
+                  disabled={followLoading}
+                >
+                  {isFollowing ? 'Following' : 'Follow Maker'}
+                </button>
               )}
+            </div>
+
+            {/* Box 3 — Links card */}
+            <div className="dpv-card">
+              <div className="dpv-card-label">LINKS</div>
+              <div className="dpv-links-list">
+                {isUrl(product.productUrl) ? (
+                  <a
+                    href={product.productUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="dpv-link-row"
+                  >
+                    <span className="dpv-link-icon">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    </span>
+                    <span className="dpv-link-label">Visit Website</span>
+                    <span className="dpv-link-arrow">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </span>
+                  </a>
+                ) : (
+                  <div style={{ color: 'var(--tx3)', fontSize: 12, padding: '4px 0' }}>No links provided.</div>
+                )}
+              </div>
+            </div>
+
+            {/* Box 4 — Product Info card */}
+            <div className="dpv-card">
+              <div className="dpv-card-label">PRODUCT INFO</div>
+              <div className="dpv-info-row">
+                <div className="dpv-info-label">Build stage</div>
+                <div className="dpv-info-val">{product.buildStage || '—'}</div>
+              </div>
               <div className="dpv-launch-date-row">
                 <div>
-                  <div className="dpv-launch-date-label">Launch date</div>
+                  <div className="dpv-launch-date-label">Launch from</div>
                   <div className="dpv-launch-date-val">{formatLaunchDate(product.launchedAt)}</div>
                 </div>
                 <span className="dpv-launching-badge">LAUNCHED</span>
               </div>
             </div>
 
-            {/* Quick actions */}
+            {/* Box 5 — Quick actions card */}
             <div className="dpv-card dpv-actions-card">
               <div className="dpv-card-label">QUICK ACTIONS</div>
-              <button className="dpv-action-btn">🔗 Share Product</button>
-              <button className="dpv-action-btn dpv-action-danger">⚑ Report an Issue</button>
+              <button
+                className={`dpv-action-btn${saved ? ' saved' : ''}`}
+                onClick={() => setSaved(s => !s)}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                {saved ? 'Saved' : 'Save for Later'}
+              </button>
+              <button className="dpv-action-btn" onClick={handleShare}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                {shareMsg || 'Share Product'}
+              </button>
             </div>
+
+            {/* Report an Issue — outside the card */}
+            {isLoggedIn && !isOwner && (
+              <div className="dpv-report-outer">
+                <button
+                  className="dpv-report-link-btn"
+                  onClick={() => { setReportOpen(o => !o); setReportError(''); }}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                  Report an Issue
+                </button>
+                {reportOpen && !reportDone && (
+                  <div className="dpv-report-form">
+                    <select
+                      className="dpv-report-select"
+                      value={reportCategory}
+                      onChange={e => setReportCategory(e.target.value)}
+                    >
+                      <option value="">Select category…</option>
+                      {['Spam','Misinformation','Inappropriate Content','Copyright Violation','Other'].map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                    <textarea
+                      className="dpv-report-textarea"
+                      placeholder="Additional details (optional)"
+                      rows={2}
+                      value={reportDesc}
+                      onChange={e => setReportDesc(e.target.value)}
+                    />
+                    {reportError && <div className="dpv-review-error">{reportError}</div>}
+                    <button
+                      className="dpv-submit-report-btn"
+                      onClick={handleSubmitReport}
+                      disabled={reportSubmitting}
+                    >
+                      {reportSubmitting ? 'Submitting…' : 'Submit Report'}
+                    </button>
+                  </div>
+                )}
+                {reportDone && (
+                  <div className="dpv-report-done">✅ Report submitted. Thank you.</div>
+                )}
+              </div>
+            )}
 
           </div>{/* /dpv-sidebar */}
         </div>{/* /dpv-layout */}
@@ -516,12 +1038,19 @@ export default function LaunchesPage() {
     fetchSidebar();
   }, [fetchSidebar]);
 
-  // Sync vote counts when launches data arrives
+  // Sync vote counts and voted state when launches data arrives
   useEffect(() => {
     setVoteCounts(prev => {
       const next = { ...prev };
       for (const p of launches) {
         if (!(p._id in next)) next[p._id] = p.upvoteCount ?? 0;
+      }
+      return next;
+    });
+    setUpvotedIds(prev => {
+      const next = new Set(prev);
+      for (const p of launches) {
+        if (p.userHasVoted) next.add(p._id);
       }
       return next;
     });
@@ -579,6 +1108,13 @@ export default function LaunchesPage() {
           <ProductDetail
             productId={selectedProductId}
             onBack={() => setSelectedProductId(null)}
+            onVote={handleVote}
+            voted={upvotedIds.has(selectedProductId)}
+            votes={voteCounts[selectedProductId]}
+            onVoteInit={(id, hasVoted, count) => {
+              setUpvotedIds(prev => { const n = new Set(prev); hasVoted ? n.add(id) : n.delete(id); return n; });
+              setVoteCounts(prev => ({ ...prev, [id]: count ?? prev[id] ?? 0 }));
+            }}
           />
         ) : (
           <div className="lp-outer-grid">

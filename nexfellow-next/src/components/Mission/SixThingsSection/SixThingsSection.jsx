@@ -80,7 +80,7 @@ export default function SixThingsSection() {
   const isMobile = useIsMobile();
 
   return (
-    <section style={{ padding: isMobile ? "60px 20px" : "100px 24px", position: "relative" }}>
+    <section style={{ padding: isMobile ? "60px 16px" : "100px 24px", position: "relative" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         <FadeIn>

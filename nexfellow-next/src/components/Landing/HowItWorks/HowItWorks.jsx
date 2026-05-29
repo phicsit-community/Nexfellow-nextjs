@@ -184,10 +184,15 @@ export default function HowItWorks() {
       <style>{`
         @media (max-width: 768px) {
           .how-it-works-section {
-            padding: 56px 20px !important;
+            padding: 56px 16px !important;
           }
           .how-it-works-header {
             margin-bottom: 36px !important;
+            text-align: left !important;
+          }
+          .how-it-works-header p {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
           }
           .how-it-works-connector { display: none !important; }
 

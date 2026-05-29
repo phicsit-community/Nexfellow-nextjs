@@ -23,7 +23,7 @@ export default function MissionHero() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      padding: isMobile ? "90px 20px 60px" : "120px 24px 80px",
+      padding: isMobile ? "90px 16px 60px" : "120px 24px 80px",
       textAlign: "center",
       overflow: "hidden",
     }}>

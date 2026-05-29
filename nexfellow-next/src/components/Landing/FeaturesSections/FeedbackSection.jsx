@@ -45,7 +45,7 @@ export default function FeedbackSection() {
   const isMobile = useIsMobile();
 
   return (
-    <section style={{ background: BG2, padding: isMobile ? "64px 20px" : "100px 24px", position: "relative", overflow: "hidden" }}>
+    <section style={{ background: BG2, padding: isMobile ? "64px 16px" : "100px 24px", position: "relative", overflow: "hidden" }}>
 
       <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 40, alignItems: "center", position: "relative", zIndex: 1 }}>
 

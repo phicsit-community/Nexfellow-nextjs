@@ -96,7 +96,7 @@ export default function BuildersMap() {
 
         {/* Header */}
         <FadeIn>
-          <div style={{ marginBottom: 40, textAlign: "center" }}>
+          <div className="builders-map-header" style={{ marginBottom: 40, textAlign: "center" }}>
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
               <div style={{ width: 28, height: 2, background: T }} />
               <span style={{ color: T, fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>BUILDERS MAP</span>
@@ -195,6 +195,9 @@ export default function BuildersMap() {
         .builders-map-section { padding: 60px 16px !important; }
         .builders-features-grid { display: none !important; }
         .builders-features-carousel { display: block; }
+        .builders-map-header { text-align: left !important; }
+        .builders-map-header h2 { margin-left: 0 !important; margin-right: 0 !important; }
+        .builders-map-header p { margin-left: 0 !important; margin-right: 0 !important; }
       }
     `}</style>
     </>

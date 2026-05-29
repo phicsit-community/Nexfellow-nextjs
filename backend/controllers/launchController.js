@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Product = require("../models/productModel");
 const ProductReview = require("../models/productReviewModel");
+const Profile = require("../models/profileModel");
 const ExpressError = require("../utils/ExpressError");
 const { CATEGORIES } = require("../models/productModel");
 const { REVIEW_TAGS } = require("../models/productReviewModel");
@@ -127,6 +128,17 @@ const getLaunches = async (req, res) => {
     Product.countDocuments(match),
   ]);
 
+  // If the request is authenticated, mark which products the user has already upvoted.
+  if (req.userId && products.length > 0) {
+    const productIds = products.map(p => p._id);
+    const votedDocs = await Product.find(
+      { _id: { $in: productIds }, upvotes: req.userId },
+      { _id: 1 }
+    ).lean();
+    const votedSet = new Set(votedDocs.map(d => d._id.toString()));
+    products.forEach(p => { p.userHasVoted = votedSet.has(p._id.toString()); });
+  }
+
   res.status(200).json({
     launches: products,
     total,
@@ -210,12 +222,27 @@ const getLaunchStats = async (_req, res) => {
 const getLaunchById = async (req, res) => {
   assertValidId(req.params.id);
 
-  const product = await Product.findOne(
-    { _id: req.params.id, status: { $in: ["in_review", "launched"] } },
-    { upvotes: 0 } // never send voter IDs to clients
+  const rawProduct = await Product.findOne(
+    { _id: req.params.id, status: { $in: ["in_review", "launched"] } }
   ).populate("owner", "name username picture");
 
-  if (!product) throw new ExpressError("Launch not found", 404);
+  if (!rawProduct) throw new ExpressError("Launch not found", 404);
+
+  const product = rawProduct.toObject();
+  // Add voted status for the requesting user, then strip the full voter array.
+  product.userHasVoted = req.userId
+    ? (rawProduct.upvotes || []).some(id => id.toString() === req.userId.toString())
+    : false;
+  delete product.upvotes;
+
+  // Attach owner bio from the separate Profile document.
+  if (product.owner?._id) {
+    const ownerProfile = await Profile.findOne(
+      { userId: product.owner._id },
+      { bio: 1 }
+    ).lean();
+    if (ownerProfile?.bio) product.owner.bio = ownerProfile.bio;
+  }
 
   const page = Math.max(1, parseIntSafe(req.query.page, 1));
   const limit = Math.min(50, Math.max(1, parseIntSafe(req.query.limit, 10)));

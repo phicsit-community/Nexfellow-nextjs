@@ -59,7 +59,7 @@ export default function LandingTestimonials() {
 
   return (
     <>
-    <section style={{ background: BG, padding: "100px 24px" }}>
+    <section className="testimonials-section" style={{ background: BG, padding: "100px 24px" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* Header */}
@@ -212,6 +212,7 @@ export default function LandingTestimonials() {
 
     <style>{`
       @media (max-width: 768px) {
+        .testimonials-section { padding-left: 16px !important; padding-right: 16px !important; }
         .testimonials-grid {
           grid-template-columns: 1fr !important;
         }

@@ -46,9 +46,11 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
   const [drafts, setDrafts] = useState([]);
   const [searchDraft, setSearchDraft] = useState("");
   const textareaRef = useRef(null);
+  const videoInputRef = useRef(null);
   const autosaveTimeoutRef = useRef(null);
   const lastSavedContentRef = useRef("");
   const MAX_FILE_SIZE = 3 * 1024 * 1024;
+  const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
 
   useEffect(() => {
     const savedDrafts = localStorage.getItem("postDrafts");
@@ -216,27 +218,23 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
     const files = Array.from(e.target.files);
     const imageFiles = files.filter((file) => file.type.startsWith("image/"));
 
-    // Filter out files that are too large and show an error for each
     const validFiles = [];
     imageFiles.forEach((file) => {
       if (file.size > MAX_FILE_SIZE) {
-        toast.error(
-          `"${file.name}" is too big. Please keep each image under 3 MB.`
-        );
+        toast.error(`"${file.name}" is too big. Please keep each image under 3 MB.`);
       } else {
         validFiles.push(file);
       }
     });
 
-    // Enforce max 4 attachments (including already attached)
-    const availableSlots = 4 - attachments.length;
+    const existingImages = attachments.filter((a) => a.type === "image");
+    const availableSlots = 4 - existingImages.length;
     if (availableSlots <= 0) {
       toast("You can upload up to 4 images only.");
       return;
     }
 
     const filesToAttach = validFiles.slice(0, availableSlots);
-
     if (filesToAttach.length < validFiles.length) {
       toast("You can upload up to 4 images only.");
     }
@@ -244,9 +242,41 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
     const imagePreviews = filesToAttach.map((file) => ({
       file,
       url: URL.createObjectURL(file),
+      type: "image",
     }));
 
     setAttachments((prev) => [...prev, ...imagePreviews]);
+    e.target.value = "";
+  };
+
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("video/")) {
+      toast.error("Please select a valid video file.");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_VIDEO_SIZE) {
+      toast.error(`"${file.name}" is too large. Please keep videos under 50 MB.`);
+      e.target.value = "";
+      return;
+    }
+
+    const hasVideo = attachments.some((a) => a.type === "video");
+    if (hasVideo) {
+      toast("You can only attach one video per post.");
+      e.target.value = "";
+      return;
+    }
+
+    setAttachments((prev) => [
+      ...prev,
+      { file, url: URL.createObjectURL(file), type: "video" },
+    ]);
+    e.target.value = "";
   };
 
   const handleRemoveAttachment = (index) => {
@@ -644,13 +674,22 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
                       >
-                        {attachments.map((image, index) => (
+                        {attachments.map((attachment, index) => (
                           <div key={index} className={styles.imagePreview}>
-                            <img
-                              src={image.url}
-                              alt="Preview"
-                              className={styles.previewImage}
-                            />
+                            {attachment.type === "video" ? (
+                              <video
+                                src={attachment.url}
+                                className={styles.previewImage}
+                                controls
+                                muted
+                              />
+                            ) : (
+                              <img
+                                src={attachment.url}
+                                alt="Preview"
+                                className={styles.previewImage}
+                              />
+                            )}
                             <button
                               className={styles.removeButton}
                               onClick={() => handleRemoveAttachment(index)}
@@ -682,9 +721,21 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                       onChange={handleAttachmentChange}
                     />
 
-                    <button className={styles.iconButton} aria-label="Add video" type="button">
+                    <label
+                      htmlFor="video-upload"
+                      className={styles.iconButton}
+                      aria-label="Add video"
+                    >
                       <MdVideoLibrary />
-                    </button>
+                    </label>
+                    <input
+                      id="video-upload"
+                      ref={videoInputRef}
+                      type="file"
+                      className={styles.fileInput}
+                      accept="video/*"
+                      onChange={handleVideoChange}
+                    />
 
                     <button className={styles.iconButton} aria-label="Add 3D" type="button">
                       <TbBox />

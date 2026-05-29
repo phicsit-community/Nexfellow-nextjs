@@ -11,7 +11,7 @@
   z-index: 1000;
   padding: 20px 20px 18vh 20px;
   overflow-y: auto;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(1px);
 }
 
 .dialog {
@@ -1005,7 +1005,7 @@
   .overlay {
     background: rgba(0, 0, 0, 0.5);
     padding: 20px 20px 18vh 20px;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(1px);
     z-index: 1000;
   }
 

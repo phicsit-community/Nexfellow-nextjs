@@ -567,8 +567,6 @@ const replyToReview = async (req, res) => {
 
   const product = await Product.findById(req.params.id);
   if (!product) throw new ExpressError("Product not found", 404);
-  if (product.owner.toString() !== req.userId)
-    throw new ExpressError("Only the product owner can reply", 403);
 
   const review = await ProductReview.findOne({
     _id: req.params.reviewId,
@@ -576,11 +574,15 @@ const replyToReview = async (req, res) => {
   });
   if (!review) throw new ExpressError("Review not found", 404);
 
-  const { content } = req.body;
+  const { content, parentReplyId } = req.body;
   if (!content || typeof content !== "string" || !content.trim())
     throw new ExpressError("Reply content is required", 400);
 
-  review.replies.push({ author: req.userId, content: content.trim() });
+  const newReply = { author: req.userId, content: content.trim() };
+  if (parentReplyId && mongoose.Types.ObjectId.isValid(parentReplyId)) {
+    newReply.parentReplyId = parentReplyId;
+  }
+  review.replies.push(newReply);
   await review.save();
   await review.populate("replies.author", "name username picture");
   res.status(200).json(review);

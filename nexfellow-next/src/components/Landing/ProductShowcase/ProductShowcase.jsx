@@ -35,7 +35,7 @@ export default function ProductShowcase() {
     <>
     <style>{`
       @media (max-width: 768px) {
-        .product-showcase-section { margin-top: 48px !important; }
+        .product-showcase-section { margin-top: 48px !important; padding-left: 16px !important; padding-right: 16px !important; }
       }
     `}</style>
     <section

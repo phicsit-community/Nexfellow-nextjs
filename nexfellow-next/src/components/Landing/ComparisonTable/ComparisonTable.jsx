@@ -62,7 +62,7 @@ export default function ComparisonTable() {
   return (
     <section style={{ background: BG2, padding: isMobile ? "64px 0" : "100px 24px" }}>
       <FadeIn>
-        <div style={{ maxWidth: 900, margin: "0 auto", padding: isMobile ? "0 20px" : 0 }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", padding: isMobile ? "0 16px" : 0 }}>
 
           {/* Header */}
           <div style={{ textAlign: "center", marginBottom: 56 }}>
