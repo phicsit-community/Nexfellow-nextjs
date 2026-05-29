@@ -652,6 +652,61 @@ const markHelpful = async (req, res) => {
   throw new ExpressError("Review not found", 404);
 };
 
+// DELETE /products/:id/reviews/:reviewId
+const deleteReview = async (req, res) => {
+  assertValidId(req.params.id);
+  assertValidId(req.params.reviewId);
+
+  const product = await Product.findById(req.params.id);
+  if (!product) throw new ExpressError("Product not found", 404);
+
+  const review = await ProductReview.findOne({
+    _id: req.params.reviewId,
+    product: req.params.id,
+  });
+  if (!review) throw new ExpressError("Review not found", 404);
+
+  const isReviewer = review.reviewer.toString() === req.userId;
+  const isOwner = product.owner.toString() === req.userId;
+  if (!isReviewer && !isOwner)
+    throw new ExpressError("Not authorized to delete this review", 403);
+
+  await ProductReview.findByIdAndDelete(review._id);
+  res.status(200).json({ deleted: true });
+};
+
+// DELETE /products/:id/reviews/:reviewId/replies/:replyId
+const deleteReply = async (req, res) => {
+  assertValidId(req.params.id);
+  assertValidId(req.params.reviewId);
+  assertValidId(req.params.replyId);
+
+  const product = await Product.findById(req.params.id);
+  if (!product) throw new ExpressError("Product not found", 404);
+
+  const review = await ProductReview.findOne({
+    _id: req.params.reviewId,
+    product: req.params.id,
+  });
+  if (!review) throw new ExpressError("Review not found", 404);
+
+  const reply = review.replies.id(req.params.replyId);
+  if (!reply) throw new ExpressError("Reply not found", 404);
+
+  const isAuthor = reply.author.toString() === req.userId;
+  const isOwner = product.owner.toString() === req.userId;
+  if (!isAuthor && !isOwner)
+    throw new ExpressError("Not authorized to delete this reply", 403);
+
+  // Also remove any child replies that reference this reply as parent
+  review.replies = review.replies.filter(
+    r => r._id.toString() !== req.params.replyId && r.parentReplyId?.toString() !== req.params.replyId
+  );
+  await review.save();
+  await review.populate("replies.author", "name username picture");
+  res.status(200).json({ replies: review.replies });
+};
+
 // PUT /products/:id/reviews/:reviewId/resolve
 const resolveReview = async (req, res) => {
   assertValidId(req.params.id);
@@ -689,4 +744,6 @@ module.exports = {
   replyToReview,
   markHelpful,
   resolveReview,
+  deleteReview,
+  deleteReply,
 };

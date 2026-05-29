@@ -296,6 +296,9 @@ const builderMapRoutes = require("./routes/builderMapRoutes");
 app.use("/buildermap", builderMapRoutes);
 
 app.use((err, req, res, next) => {
+  if (err.code === "LIMIT_FILE_SIZE") {
+    return res.status(413).json({ message: "File too large. Images must be under 3 MB and videos under 50 MB." });
+  }
   const { statusCode = 500 } = err;
   if (!err.message) err.message = "Something went wrong!";
   console.log(err);

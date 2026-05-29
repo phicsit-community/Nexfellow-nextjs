@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 3 * 1024 * 1024 }, // 3 MB
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB — videos allowed up to 50 MB
 });
 
 const router = express.Router();

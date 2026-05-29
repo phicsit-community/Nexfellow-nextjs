@@ -21,6 +21,8 @@ const {
   replyToReview,
   markHelpful,
   resolveReview,
+  deleteReview,
+  deleteReply,
 } = require("../controllers/productController");
 
 const imageStorage = multer.diskStorage({
@@ -101,6 +103,16 @@ router.put(
   "/:id/reviews/:reviewId/resolve",
   isAuthenticated,
   catchAsync(resolveReview)
+);
+router.delete(
+  "/:id/reviews/:reviewId",
+  isAuthenticated,
+  catchAsync(deleteReview)
+);
+router.delete(
+  "/:id/reviews/:reviewId/replies/:replyId",
+  isAuthenticated,
+  catchAsync(deleteReply)
 );
 
 module.exports = router;

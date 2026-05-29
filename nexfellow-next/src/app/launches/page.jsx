@@ -227,6 +227,20 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
   const [subReplyOpen, setSubReplyOpen] = useState({});
   const [subReplyText, setSubReplyText] = useState({});
   const [subReplySubmitting, setSubReplySubmitting] = useState({});
+  // 3-dot menu state
+  const [reviewMenuOpen, setReviewMenuOpen] = useState({});
+  const [replyMenuOpen, setReplyMenuOpen] = useState({});
+
+  useEffect(() => {
+    const close = (e) => {
+      if (!e.target.closest?.('.dpv-more-wrap')) {
+        setReviewMenuOpen({});
+        setReplyMenuOpen({});
+      }
+    };
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -351,6 +365,27 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
     finally {
       setSubReplySubmitting(m => ({ ...m, [parentReplyId]: false }));
     }
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    setReviewMenuOpen(m => ({ ...m, [reviewId]: false }));
+    try {
+      await api.delete(`/products/${data.product._id}/reviews/${reviewId}`);
+      setRepliesMap(m => { const n = { ...m }; delete n[reviewId]; return n; });
+      setData(prev => ({
+        ...prev,
+        reviews: prev.reviews.filter(r => r._id !== reviewId),
+        totalReviews: Math.max(0, (prev.totalReviews ?? prev.reviews.length) - 1),
+      }));
+    } catch { /* silently ignore */ }
+  };
+
+  const handleDeleteReply = async (reviewId, replyId) => {
+    setReplyMenuOpen(m => ({ ...m, [replyId]: false }));
+    try {
+      const res = await api.delete(`/products/${data.product._id}/reviews/${reviewId}/replies/${replyId}`);
+      setRepliesMap(m => ({ ...m, [reviewId]: res.data.replies || [] }));
+    } catch { /* silently ignore */ }
   };
 
   const handleSubmitReport = async () => {
@@ -624,6 +659,8 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                   const isReplyOpen = replyOpen[r._id] || false;
                   const currentUserId = currentUser?._id || currentUser?.id;
                   const isOwnReview = currentUserId && r.reviewer?._id?.toString() === currentUserId?.toString();
+                  const isProductOwner = currentUserId && data?.product?.owner?._id?.toString() === currentUserId?.toString();
+                  const canDeleteReview = isLoggedIn && (isOwnReview || isProductOwner);
                   return (
                     <div key={r._id} className="dpv-review-card">
                       <div className="dpv-review-top">
@@ -653,6 +690,22 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                         <div className="dpv-review-stars">
                           {'★'.repeat(stars)}{'☆'.repeat(5 - stars)}
                         </div>
+                        {canDeleteReview && (
+                          <div className="dpv-more-wrap">
+                            <button
+                              className="dpv-more-btn"
+                              onClick={() => setReviewMenuOpen(m => ({ ...m, [r._id]: !m[r._id] }))}
+                            >⋯</button>
+                            {reviewMenuOpen[r._id] && (
+                              <div className="dpv-more-menu">
+                                <button
+                                  className="dpv-more-menu-item dpv-more-delete"
+                                  onClick={() => handleDeleteReview(r._id)}
+                                >Delete</button>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                       <div className="dpv-review-text">{r.content}</div>
                       {(r.tags || []).length > 0 && (
@@ -715,6 +768,22 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                                       </button>
                                     )}
                                   </div>
+                                  {isLoggedIn && (rootRep.author?._id?.toString() === currentUserId?.toString() || isProductOwner) && (
+                                    <div className="dpv-more-wrap">
+                                      <button
+                                        className="dpv-more-btn"
+                                        onClick={() => setReplyMenuOpen(m => ({ ...m, [rootRep._id]: !m[rootRep._id] }))}
+                                      >⋯</button>
+                                      {replyMenuOpen[rootRep._id] && (
+                                        <div className="dpv-more-menu">
+                                          <button
+                                            className="dpv-more-menu-item dpv-more-delete"
+                                            onClick={() => handleDeleteReply(r._id, rootRep._id)}
+                                          >Delete</button>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
                                 </div>
 
                                 {/* Child replies */}
@@ -749,6 +818,22 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                                               </button>
                                             )}
                                           </div>
+                                          {isLoggedIn && (child.author?._id?.toString() === currentUserId?.toString() || isProductOwner) && (
+                                            <div className="dpv-more-wrap">
+                                              <button
+                                                className="dpv-more-btn"
+                                                onClick={() => setReplyMenuOpen(m => ({ ...m, [child._id]: !m[child._id] }))}
+                                              >⋯</button>
+                                              {replyMenuOpen[child._id] && (
+                                                <div className="dpv-more-menu">
+                                                  <button
+                                                    className="dpv-more-menu-item dpv-more-delete"
+                                                    onClick={() => handleDeleteReply(r._id, child._id)}
+                                                  >Delete</button>
+                                                </div>
+                                              )}
+                                            </div>
+                                          )}
                                         </div>
                                       );
                                     })}
