@@ -296,7 +296,7 @@ export default function TheProblem() {
 
     <style>{`
       @media (max-width: 768px) {
-        .the-problem-section { padding: 48px 6px !important; }
+        .the-problem-section { padding: 48px 16px !important; }
 
         .problem-timeline { gap: 28px !important; }
 
