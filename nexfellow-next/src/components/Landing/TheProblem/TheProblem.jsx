@@ -298,16 +298,14 @@ export default function TheProblem() {
       @media (max-width: 768px) {
         .the-problem-section { padding: 48px 16px !important; }
 
-        /* large gap + row padding makes each stage occupy ~300px so only 2 fit in view */
-        .problem-timeline { gap: 64px !important; }
+        .problem-timeline { gap: 24px !important; }
 
         .problem-timeline-line { display: block !important; }
 
-        /* keep the original side-by-side alternating layout, just taller */
         .problem-row {
           flex-direction: row !important;
           align-items: center !important;
-          padding: 56px 0 !important;
+          padding: 20px 0 !important;
         }
 
         .problem-node {
