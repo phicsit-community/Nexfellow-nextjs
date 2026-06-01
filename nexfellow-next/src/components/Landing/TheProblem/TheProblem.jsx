@@ -298,54 +298,57 @@ export default function TheProblem() {
       @media (max-width: 768px) {
         .the-problem-section { padding: 48px 16px !important; }
 
-        .problem-timeline { gap: 28px !important; }
+        /* large gap + row padding makes each stage occupy ~300px so only 2 fit in view */
+        .problem-timeline { gap: 64px !important; }
 
         .problem-timeline-line { display: block !important; }
 
+        /* keep the original side-by-side alternating layout, just taller */
         .problem-row {
           flex-direction: row !important;
           align-items: center !important;
+          padding: 56px 0 !important;
         }
 
         .problem-node {
           position: absolute !important;
           transform: translate(-50%, -50%) !important;
-          width: 20px !important;
-          height: 20px !important;
-          font-size: 7px !important;
+          width: 28px !important;
+          height: 28px !important;
+          font-size: 10px !important;
           z-index: 2 !important;
         }
 
-        /* Left side — inner (right) padding must exceed half the node width (10px) so text never overlaps */
         .problem-side:first-child {
-          padding-right: 14px !important;
-          padding-left: 2px !important;
+          padding-right: 18px !important;
+          padding-left: 0 !important;
           overflow: hidden !important;
         }
 
-        /* Right side — inner (left) padding for same reason */
         .problem-side:last-child {
-          padding-left: 14px !important;
-          padding-right: 2px !important;
+          padding-left: 18px !important;
+          padding-right: 0 !important;
           overflow: hidden !important;
         }
 
         .text-content {
           max-width: 100% !important;
         }
+
         .text-content h3 {
-          font-size: 12px !important;
-          margin-bottom: 6px !important;
+          font-size: 16px !important;
+          margin-bottom: 10px !important;
           line-height: 1.3 !important;
         }
+
         .text-content p {
-          font-size: 10px !important;
-          line-height: 1.5 !important;
+          font-size: 12px !important;
+          line-height: 1.55 !important;
         }
 
-        /* zoom scales the mock card visually AND collapses its layout footprint */
+        /* 0.48 zoom: 360px mock → 173px wide, fits in each half of a 412px screen */
         .mock-wrapper {
-          zoom: 0.38 !important;
+          zoom: 0.48 !important;
           display: block !important;
         }
 

@@ -161,7 +161,7 @@ function ProductRow({ product, rank, voted, votes, onVote, onClick }) {
             <span>{ownerName} · {launchLabel(product.reviewRound)}</span>
           </div>
           <span className="lp-row-rating">★ {product.avgRating?.toFixed(1) ?? '0.0'}</span>
-          <span className="lp-row-fb">💬 {product.totalReviews ?? 0} feedbacks</span>
+          <span className="lp-row-fb">💬 {product.totalReviews ?? 0}</span>
           <div className="lp-row-cats">
             {product.category && <span className="lp-cat">{product.category}</span>}
           </div>
@@ -1213,7 +1213,12 @@ export default function LaunchesPage() {
                     className={`lp-tab${activeTab === tab ? ' active' : ''}`}
                     onClick={() => setActiveTab(tab)}
                   >
-                    {tab}
+                    {tab === 'This Week' ? (
+                      <>
+                        <span className="lp-tab-desktop-label">This Week</span>
+                        <span className="lp-tab-mobile-label">Week</span>
+                      </>
+                    ) : tab}
                   </button>
                 ))}
               </div>
@@ -1229,24 +1234,22 @@ export default function LaunchesPage() {
                       No launches yet.
                     </div>
                   ) : (
-                    rankedGroups.map((group, gi) => (
+                    rankedGroups.map((group) => (
                       <React.Fragment key={group.label}>
-                        {gi === 0 ? (
-                          <div className="lp-section-label">{group.label}</div>
-                        ) : (
-                          <DateSep label={group.label} count={group.products.length} />
-                        )}
-                        {group.products.map(product => (
-                          <ProductRow
-                            key={product._id}
-                            product={product}
-                            rank={product._rank}
-                            voted={upvotedIds.has(product._id)}
-                            votes={voteCounts[product._id] ?? product.upvoteCount ?? 0}
-                            onVote={handleVote}
-                            onClick={() => setSelectedProductId(product._id)}
-                          />
-                        ))}
+                        <div className="lp-section-label">{group.label}</div>
+                        <div className="lp-group-card">
+                          {group.products.map(product => (
+                            <ProductRow
+                              key={product._id}
+                              product={product}
+                              rank={product._rank}
+                              voted={upvotedIds.has(product._id)}
+                              votes={voteCounts[product._id] ?? product.upvoteCount ?? 0}
+                              onVote={handleVote}
+                              onClick={() => setSelectedProductId(product._id)}
+                            />
+                          ))}
+                        </div>
                       </React.Fragment>
                     ))
                   )}
