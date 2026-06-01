@@ -25,7 +25,7 @@ import PlayOnce from "../animatedIcon/PlayOnce";
 import AnimatedAccount from "./animated/account.json";
 import staticCommuntiy from "./animated/staticCommuntiy.png";
 import AnimatedSettings from "./animated/settings.json";
-import { Package, Globe, Rocket, Activity, Settings, Star, User, MoreHorizontal } from "lucide-react";
+import { Package, Globe, Rocket, Activity, Settings, Star, User, Home, MessageCircle } from "lucide-react";
 
 function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
   const pathname = usePathname();
@@ -117,11 +117,10 @@ function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
   const allItems = [...coreItems, ...discoverItems, ...communityItems];
 
   const mobileBottomItems = [
-    { path: "/feed", icon: AnimatedHome, label: "Home", section: "core", id: "home" },
-    { path: "/my-products", isStatic: true, iconComponent: Package, label: "My Products", badge: totalComments, section: "core", id: "my-products" },
+    { path: "/feed", isStatic: true, iconComponent: Home, label: "Home", section: "core", id: "home" },
     { path: "/buildersmap", isStatic: true, iconComponent: Globe, label: "BuildersMap", section: "discover", id: "buildersmap" },
     { path: "/launches", isStatic: true, iconComponent: Rocket, label: "Launches", section: "discover", id: "launches" },
-    { path: "/inbox", icon: AnimatedMessenger, label: "Inbox", section: "community", id: "inbox" },
+    { path: "/inbox", isStatic: true, iconComponent: MessageCircle, label: "Inbox", section: "community", id: "inbox" },
     { path: user?.username ? `/dashboard/${user.username}` : "/feed", isStatic: true, iconComponent: User, label: "Profile", section: "core", id: "profile" },
   ];
 
@@ -238,13 +237,6 @@ function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
         ) : (
           <>
             {mobileBottomItems.map(renderItem)}
-            {!isDrawerOpen && (
-              <li className={style.moreBtn} onClick={onMenuOpen} aria-label="Open menu">
-                <div className={style.iconContainer}>
-                  <MoreHorizontal size={20} strokeWidth={2} />
-                </div>
-              </li>
-            )}
           </>
         )}
       </ul>
