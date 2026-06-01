@@ -722,12 +722,26 @@
 .mp-fb-resolved:hover { color: var(--mp-text); }
 
 /* reply box */
-.mp-fb-reply-box { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
-.mp-fb-reply-input {
-  width: 100%;
-  padding: 9px 12px;
+.mp-fb-reply-box { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+.mp-fb-reply-compose-row { display: flex; gap: 10px; align-items: flex-start; }
+.mp-fb-reply-me-avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--mp-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.mp-fb-reply-textarea {
+  flex: 1;
+  padding: 10px 12px;
   border: 1px solid var(--mp-border);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 13px;
   background: var(--mp-bg);
   color: var(--mp-text);
@@ -735,9 +749,12 @@
   font-family: inherit;
   transition: border-color 0.15s;
   box-sizing: border-box;
+  resize: none;
+  line-height: 1.5;
+  min-height: 72px;
 }
-.mp-fb-reply-input:focus { border-color: var(--mp-primary); }
-.mp-fb-reply-btns { display: flex; gap: 8px; justify-content: flex-end; }
+.mp-fb-reply-textarea:focus { border-color: var(--mp-primary); }
+.mp-fb-reply-btns { display: flex; gap: 8px; justify-content: flex-end; align-items: center; }
 
 /* ── Common buttons ── */
 .mp-btn-ghost {
@@ -753,6 +770,8 @@
 }
 .mp-btn-ghost:hover { background: var(--mp-bg2); }
 .mp-btn-primary {
+  display: inline-flex;
+  align-items: center;
   padding: 8px 18px;
   border: none;
   border-radius: 6px;
