@@ -60,9 +60,9 @@
 
 /* ════════════════════════ DARK MODE OVERRIDES ════════════════════════ */
 
-/* Section labels ("Today") — use tx2 so they're clearly readable */
+/* Section labels ("Today") — keep full contrast in dark mode */
 .dark .lp-section-label {
-  color: var(--tx2);
+  color: var(--tx);
 }
 
 /* Date separators — darker bg creates contrast against rows */
@@ -237,11 +237,28 @@
 
 /* ════════════════════════ SECTION LABEL ════════════════════════ */
 .lp-section-label {
-  padding: 10px 22px 6px;
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--tx3);
-  letter-spacing: 0.2px;
+  padding: 16px 14px 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--tx);
+  letter-spacing: -0.1px;
+}
+
+/* ════════════════════════ GROUP CARD ════════════════════════ */
+.lp-group-card {
+  background: var(--sur);
+  border: 1px solid var(--b);
+  border-radius: 14px;
+  overflow: hidden;
+  margin: 0 14px 20px;
+}
+
+/* divider between rows — not after the last one */
+.lp-group-card .lp-row:not(:last-child) {
+  border-bottom: 1px solid var(--b);
+}
+.lp-group-card .lp-row:last-child {
+  border-bottom: none;
 }
 
 /* ════════════════════════ DATE SEPARATOR ════════════════════════ */
@@ -270,8 +287,7 @@
 .lp-row {
   display: flex;
   align-items: center;
-  padding: 12px 22px;
-  border-bottom: 1px solid var(--b);
+  padding: 12px 18px;
   cursor: pointer;
   transition: background 0.12s;
   background: var(--sur);
@@ -2280,4 +2296,175 @@
   border-radius: 8px;
   padding: 12px 14px;
   font-weight: 500;
+}
+
+/* ════════════════════════ TAB LABEL HELPERS ════════════════════════ */
+.lp-tab-mobile-label  { display: none; }
+.lp-tab-desktop-label { display: inline; }
+
+/* ════════════════════════ MOBILE — 768px ════════════════════════ */
+@media (max-width: 768px) {
+  /* Collapse outer two-column grid to single column; hide sidebar */
+  .lp-outer-grid {
+    grid-template-columns: 1fr;
+  }
+  .lp-sidebar {
+    display: none;
+  }
+
+  /* Tab bar */
+  .lp-tabbar {
+    padding: 8px 12px;
+    gap: 4px;
+    justify-content: center;
+  }
+  .lp-tab {
+    font-size: 12.5px;
+    padding: 5px 13px;
+  }
+
+  /* Product row */
+  .lp-row {
+    padding: 11px 14px;
+  }
+  .lp-row-rank {
+    width: 18px;
+    font-size: 12px;
+    margin-right: 2px;
+  }
+  .lp-row-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+    margin: 0 10px 0 2px;
+  }
+  .lp-row-desc {
+    max-width: 100%;
+    white-space: normal;
+  }
+  .lp-row-meta {
+    gap: 6px;
+  }
+  .lp-row-author,
+  .lp-row-rating,
+  .lp-row-fb {
+    font-size: 11px;
+  }
+  .lp-vote-btn {
+    width: 42px;
+    min-width: 42px;
+    margin-left: 8px;
+  }
+  .lp-section-label {
+    padding: 14px 12px 6px;
+    font-size: 14px;
+  }
+  .lp-group-card {
+    margin: 0 10px 16px;
+    border-radius: 12px;
+  }
+
+  /* Detail view: collapse to single column */
+  .dpv-layout {
+    grid-template-columns: 1fr;
+  }
+  .dpv-sidebar {
+    display: none;
+  }
+  .dpv-main {
+    padding: 12px 14px;
+  }
+  .dpv-hero-section {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .dpv-hero-right {
+    flex-direction: row;
+    min-width: auto;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+  .dpv-vote-badge {
+    width: auto;
+    flex: 0 0 auto;
+  }
+  .dpv-visit-btn {
+    width: auto;
+    flex: 1;
+  }
+  .dpv-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ════════════════════════ MOBILE — 480px ════════════════════════ */
+@media (max-width: 480px) {
+  /* Swap "This Week" → "Week" on very small screens */
+  .lp-tab-desktop-label { display: none; }
+  .lp-tab-mobile-label  { display: inline; }
+
+  .lp-tabbar {
+    padding: 7px 10px;
+  }
+  .lp-tab {
+    font-size: 12px;
+    padding: 5px 11px;
+  }
+
+  .lp-row {
+    padding: 10px 12px;
+  }
+  .lp-row-rank {
+    width: 16px;
+    font-size: 11.5px;
+  }
+  .lp-row-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
+    margin: 0 9px 0 1px;
+    border-radius: 8px;
+  }
+  .lp-row-name {
+    font-size: 13.5px;
+  }
+  .lp-row-desc {
+    font-size: 11.5px;
+    margin-bottom: 4px;
+  }
+  .lp-vote-btn {
+    width: 38px;
+    min-width: 38px;
+    margin-left: 6px;
+    padding: 5px 4px;
+  }
+  .lp-vote-num {
+    font-size: 12px;
+  }
+  .lp-vote-arr {
+    font-size: 10px;
+  }
+  /* Hide category pill — not enough room on very small screens */
+  .lp-row-cats {
+    display: none;
+  }
+  .lp-section-label {
+    padding: 12px 10px 5px;
+    font-size: 13.5px;
+  }
+  .lp-group-card {
+    margin: 0 8px 14px;
+    border-radius: 10px;
+  }
+  .dpv-main {
+    padding: 10px 12px;
+  }
+  .dpv-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .dpv-stat-n {
+    font-size: 22px;
+  }
 }

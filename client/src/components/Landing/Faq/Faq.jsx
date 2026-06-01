@@ -38,7 +38,7 @@ const FAQ = () => {
             <div className={styles.content}>
                 <div className={styles.illustrationContainer}>
                     <h1 className={styles.illustrationTitle}>
-                        Frequently Asked <br />
+                        Frequently Asked Questions<br />
                         <span className={styles.highlight}>Questions</span>
                     </h1>
                     <img src={faqIllustration} alt="FAQ Illustration" className={styles.illustration} />

@@ -218,16 +218,27 @@ function FeedbackCard({ fb, productId, onReplyAdded }) {
 
       {replyOpen && (
         <div className="mp-fb-reply-box">
-          <input
-            value={replyText}
-            onChange={e => setReplyText(e.target.value)}
-            placeholder="Write a reply..."
-            className="mp-fb-reply-input"
-          />
+          <div className="mp-fb-reply-compose-row">
+            <div className="mp-fb-reply-me-avatar">ME</div>
+            <textarea
+              value={replyText}
+              onChange={e => setReplyText(e.target.value)}
+              placeholder="Write a reply..."
+              className="mp-fb-reply-textarea"
+              rows={3}
+            />
+          </div>
           <div className="mp-fb-reply-btns">
             <button className="mp-btn-ghost" onClick={() => setReplyOpen(false)}>Cancel</button>
             <button className="mp-btn-primary" onClick={handleReply} disabled={submitting}>
-              {submitting ? 'Sending…' : '✈ Send reply'}
+              {submitting ? 'Sending…' : (
+                <>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
+                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                  </svg>
+                  Send reply
+                </>
+              )}
             </button>
           </div>
         </div>
