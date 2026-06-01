@@ -391,9 +391,7 @@
   }
 
   .menuItems a:hover {
-    background-color: var(--color-sidebar-accent);
-    border-radius: 5px;
-    transition: all 0.3s ease;
+    background-color: transparent;
   }
 
   .menuItems li img {
@@ -402,27 +400,29 @@
     height: 24px;
   }
 
+  .menuItems li {
+    transition: none !important;
+  }
+
   .menuItems li:hover {
-    background-color: transparent;
-    border-left: none;
+    background-color: transparent !important;
+    border-left: none !important;
   }
 
   .menuItems li.setTab {
     background-color: transparent !important;
     border-left: none !important;
     position: relative;
+    color: var(--color-primary) !important;
+  }
+
+  .menuItems li.setTab .iconContainer,
+  :global(.dark) .menuItems li.setTab .iconContainer {
+    color: var(--color-primary) !important;
   }
 
   .menuItems li.setTab::after {
-    content: "";
-    position: absolute;
-    bottom: -0px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
-    background-color: var(--color-primary);
-    border-radius: 50%;
+    content: none;
   }
 
   .accountManagement {
