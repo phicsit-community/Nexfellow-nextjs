@@ -7,10 +7,7 @@ import ProfileDropdown from "../../components/ProfileDropdown/ProfileDropdown";
 import TrendingFeed from "./TrendingFeed";
 import PostDialog from "../../components/Dashboard/PostDialog";
 import api from "../../lib/axios";
-import photoIcon from "../../assets/Icons-Feed/photo.png";
-import pollIcon from "../../assets/Icons-Feed/poll.png";
-import linkIcon from "../../assets/Icons-Feed/link.png";
-import documentIcon from "../../assets/Icons-Feed/document.png";
+import { Image, Video, Package, Smile } from "lucide-react";
 import fireIcon from "../../assets/Icons/fire.png";
 import trendingIcon from "../../assets/Icons/trending.png";
 import followingIcon from "../../assets/Icons/following.png";
@@ -159,16 +156,16 @@ const FeedPage = () => {
             </div>
             <div className={styles.postActions}>
               <button className={styles.actionBtn} onClick={handleCreatePostClick} title="Add Photo">
-                <img src={photoIcon.src || photoIcon} alt="Photo" className={styles.actionIcon} />
+                <Image size={20} strokeWidth={1.5} />
               </button>
-              <button className={styles.actionBtn} onClick={handleCreatePostClick} title="Polls">
-                <img src={pollIcon.src || pollIcon} alt="Poll" className={styles.actionIcon} />
+              <button className={styles.actionBtn} onClick={handleCreatePostClick} title="Video">
+                <Video size={20} strokeWidth={1.5} />
               </button>
-              <button className={styles.actionBtn} onClick={handleCreatePostClick} title="Links">
-                <img src={linkIcon.src || linkIcon} alt="Link" className={styles.actionIcon} />
+              <button className={styles.actionBtn} onClick={handleCreatePostClick} title="3D / Model">
+                <Package size={20} strokeWidth={1.5} />
               </button>
-              <button className={styles.actionBtn} onClick={handleCreatePostClick} title="Documents">
-                <img src={documentIcon.src || documentIcon} alt="Document" className={styles.actionIcon} />
+              <button className={styles.actionBtn} onClick={handleCreatePostClick} title="Emoji">
+                <Smile size={20} strokeWidth={1.5} />
               </button>
               <button className={styles.postBtn} onClick={handleCreatePostClick}>Post</button>
             </div>

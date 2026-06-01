@@ -32,15 +32,15 @@
 }
 
 .dark {
-  --bg: #111111;
-  --sur: #1a1a1a;
-  --sur2: #222222;
-  --sur3: #2a2a2a;
+  --bg: #0f0f0f;
+  --sur: #181818;
+  --sur2: #202020;
+  --sur3: #282828;
   --b: #2e2e2e;
-  --b2: #3d3d3d;
+  --b2: #404040;
   --tx: #f0f0ee;
-  --tx2: #a0a09a;
-  --tx3: #5e5e58;
+  --tx2: #a8a8a2;
+  --tx3: #686864;
 
   --Gbg: rgba(36, 178, 180, 0.15);
   --Gb: rgba(36, 178, 180, 0.28);
@@ -56,6 +56,79 @@
 
   --R: #e04050;
   --Rbg: rgba(192, 24, 44, 0.18);
+}
+
+/* ════════════════════════ DARK MODE OVERRIDES ════════════════════════ */
+
+/* Section labels ("Today") — use tx2 so they're clearly readable */
+.dark .lp-section-label {
+  color: var(--tx2);
+}
+
+/* Date separators — darker bg creates contrast against rows */
+.dark .lp-date-sep {
+  background: var(--bg);
+  border-top-color: var(--b);
+  border-bottom-color: var(--b);
+}
+
+/* Category pill tags — text needs to be tx2, not tx3 */
+.dark .lp-cat {
+  color: var(--tx2);
+  background: var(--sur2);
+  border-color: var(--b2);
+}
+
+/* Vote button — bolder border so it stands out from the row */
+.dark .lp-vote-btn {
+  border-color: var(--b2);
+  background: var(--sur2);
+}
+.dark .lp-vote-btn:hover,
+.dark .lp-vote-btn.voted {
+  border-color: var(--G);
+  background: var(--Gbg);
+}
+
+/* Feedback count — slightly brighter so it reads */
+.dark .lp-row-fb {
+  color: var(--tx3);
+}
+
+/* Promo card CTA footer — text should be tx not tx3 in dark */
+.dark .lps-promo-cta {
+  color: var(--tx);
+  border-top-color: var(--b);
+}
+.dark .lps-promo-cta:hover {
+  background: var(--sur2);
+}
+
+/* Generic sidebar cards */
+.dark .lps-card {
+  background: var(--sur);
+  border-color: var(--b);
+}
+
+/* Trending items separator line */
+.dark .lps-trending-item {
+  border-bottom-color: var(--b);
+}
+
+/* Tab bar */
+.dark .lp-tabbar {
+  background: var(--sur);
+  border-bottom-color: var(--b);
+}
+
+/* Row hover */
+.dark .lp-row:hover {
+  background: var(--sur2);
+}
+
+/* Promo card border */
+.dark .lps-promo-card {
+  border-color: var(--b);
 }
 
 *,

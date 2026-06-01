@@ -546,8 +546,8 @@
 /* ── Feedback panel ── */
 .mp-feedback-cell { padding: 0 !important; }
 .mp-feedback-panel {
-  border-top: 2px solid color-mix(in srgb, #24b2b4 20%, transparent);
-  background: color-mix(in srgb, #24b2b4 4%, var(--mp-bg));
+  border-top: 1px solid var(--mp-border);
+  background: var(--mp-bg);
   padding: 16px 28px 20px;
 }
 .mp-feedback-panel-header {
@@ -577,11 +577,36 @@
 .mp-feedback-list { display: flex; flex-direction: column; gap: 14px; }
 .mp-feedback-empty {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 20px 0 6px;
+  justify-content: center;
+  gap: 10px;
+  padding: 48px 24px;
+  text-align: center;
+}
+.mp-feedback-empty-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  color: #aaa;
+  margin-bottom: 4px;
+}
+.mp-feedback-empty-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mp-text-1);
+  margin: 0;
+}
+.mp-feedback-empty-sub {
   font-size: 13px;
   color: var(--mp-text-3);
+  margin: 0;
+  max-width: 380px;
+  line-height: 1.5;
 }
 
 /* feedback card */
@@ -1328,8 +1353,8 @@
 
 /* Feedback panel inside mobile card */
 .mp-mobile-feedback-panel {
-  border-top: 2px solid color-mix(in srgb, #24b2b4 20%, transparent);
-  background: color-mix(in srgb, #24b2b4 4%, var(--mp-bg));
+  border-top: 1px solid var(--mp-border);
+  background: var(--mp-bg);
   padding: 16px;
   border-radius: 0 0 12px 12px;
   overflow: hidden;
