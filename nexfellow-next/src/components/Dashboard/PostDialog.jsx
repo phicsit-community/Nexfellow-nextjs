@@ -45,6 +45,11 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
   const [showDrafts, setShowDrafts] = useState(false);
   const [drafts, setDrafts] = useState([]);
   const [searchDraft, setSearchDraft] = useState("");
+  const [showProductPicker, setShowProductPicker] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [attachedProduct, setAttachedProduct] = useState(null);
+  const [productSearch, setProductSearch] = useState("");
   const textareaRef = useRef(null);
   const videoInputRef = useRef(null);
   const autosaveTimeoutRef = useRef(null);
@@ -147,6 +152,8 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
       if (e.key === "Escape") {
         if (showDrafts) {
           setShowDrafts(false);
+        } else if (showProductPicker) {
+          setShowProductPicker(false);
         } else if (isOpenModal) {
           setIsOpenModal(false);
         } else {
@@ -157,7 +164,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
 
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
-  }, [showDrafts, isOpenModal, onClose]);
+  }, [showDrafts, showProductPicker, isOpenModal, onClose]);
   useEffect(() => {
     if (post) {
       setTitle(post.title || "");
@@ -195,6 +202,9 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
     if (!isOpen) {
       setSelectedCommunityId("general");
       setSelectedOption("General Feed");
+      setAttachedProduct(null);
+      setShowProductPicker(false);
+      setProductSearch("");
     }
   }, [post, isOpen]);
 
@@ -316,6 +326,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
       private: privacy === "Only me",
       removeAttachments: [...new Set(removedAttachments)],
       communityId: selectedCommunityId,
+      ...(attachedProduct && { productId: attachedProduct._id }),
     };
 
     if (!post) {
@@ -327,6 +338,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
       onSubmit(postData);
       setAttachments([]);
       setRemovedAttachments([]);
+      setAttachedProduct(null);
       onClose();
     }, 1500);
   };
@@ -432,6 +444,20 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
 
   const closeModal = () => {
     setIsOpenModal(false);
+  };
+
+  const handleOpenProductPicker = async () => {
+    setShowProductPicker(true);
+    if (products.length > 0) return;
+    setProductsLoading(true);
+    try {
+      const res = await api.get("/products/my");
+      setProducts(res.data.products || res.data || []);
+    } catch {
+      setProducts([]);
+    } finally {
+      setProductsLoading(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -656,6 +682,102 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                     )}
                   </AnimatePresence>
 
+                  <AnimatePresence>
+                    {showProductPicker && (
+                      <motion.div
+                        className={styles.productPickerPanel}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 8 }}
+                        transition={{ duration: 0.18 }}
+                      >
+                        <div className={styles.productPickerHeader}>
+                          <div className={styles.productPickerTitleRow}>
+                            <TbBox size={17} />
+                            <span>Attach a Product</span>
+                          </div>
+                          <button
+                            className={styles.productPickerClose}
+                            onClick={() => { setShowProductPicker(false); setProductSearch(""); }}
+                            type="button"
+                          >
+                            <IoClose />
+                          </button>
+                        </div>
+
+                        {!productsLoading && products.length > 3 && (
+                          <div className={styles.productPickerSearch}>
+                            <input
+                              type="text"
+                              placeholder="Search products…"
+                              value={productSearch}
+                              onChange={(e) => setProductSearch(e.target.value)}
+                              autoFocus
+                            />
+                          </div>
+                        )}
+
+                        <div className={styles.productPickerList}>
+                          {productsLoading ? (
+                            <div className={styles.productPickerEmpty}>
+                              <div className={styles.productPickerSpinner} />
+                              <span>Loading products…</span>
+                            </div>
+                          ) : products.length === 0 ? (
+                            <div className={styles.productPickerEmpty}>
+                              <TbBox size={32} />
+                              <span>No products yet. Add one in My Products.</span>
+                            </div>
+                          ) : (() => {
+                            const filtered = products.filter((p) =>
+                              !productSearch || p.name.toLowerCase().includes(productSearch.toLowerCase()) || (p.tagline || "").toLowerCase().includes(productSearch.toLowerCase())
+                            );
+                            return filtered.length === 0 ? (
+                              <div className={styles.productPickerEmpty}>
+                                <span>No products match "{productSearch}"</span>
+                              </div>
+                            ) : filtered.map((product) => {
+                              const logoSrc = product.logoUrl
+                                || (typeof product.logo === "string" ? product.logo : product.logo?.url)
+                                || null;
+                              const isSelected = attachedProduct?._id === product._id;
+                              return (
+                                <div
+                                  key={product._id}
+                                  className={`${styles.productItem} ${isSelected ? styles.productItemSelected : ""}`}
+                                  onClick={() => {
+                                    setAttachedProduct(isSelected ? null : product);
+                                    setShowProductPicker(false);
+                                    setProductSearch("");
+                                  }}
+                                >
+                                  <div className={styles.productItemLogo}>
+                                    {logoSrc ? (
+                                      <img src={logoSrc} alt={product.name} />
+                                    ) : (
+                                      <TbBox size={18} />
+                                    )}
+                                  </div>
+                                  <div className={styles.productItemInfo}>
+                                    <span className={styles.productItemName}>{product.name}</span>
+                                    {product.tagline && (
+                                      <span className={styles.productItemTagline}>{product.tagline}</span>
+                                    )}
+                                  </div>
+                                  {isSelected ? (
+                                    <span className={styles.productItemCheck}>✓</span>
+                                  ) : (
+                                    <span className={styles.productItemAttachHint}>Attach</span>
+                                  )}
+                                </div>
+                              );
+                            });
+                          })()}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   <textarea
                     ref={textareaRef}
                     placeholder="What do you want to share?"
@@ -701,6 +823,49 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                       </motion.div>
                     )}
                   </AnimatePresence>
+                  <AnimatePresence>
+                    {attachedProduct && (
+                      <motion.div
+                        className={styles.attachedProductCard}
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 6 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {(() => {
+                          const logoSrc = attachedProduct.logoUrl
+                            || (typeof attachedProduct.logo === "string" ? attachedProduct.logo : attachedProduct.logo?.url)
+                            || null;
+                          return (
+                            <>
+                              <div className={styles.attachedProductLogo}>
+                                {logoSrc ? (
+                                  <img src={logoSrc} alt={attachedProduct.name} />
+                                ) : (
+                                  <TbBox size={22} />
+                                )}
+                              </div>
+                              <div className={styles.attachedProductInfo}>
+                                <span className={styles.attachedProductLabel}>Attached product</span>
+                                <span className={styles.attachedProductName}>{attachedProduct.name}</span>
+                                {attachedProduct.tagline && (
+                                  <span className={styles.attachedProductTagline}>{attachedProduct.tagline}</span>
+                                )}
+                              </div>
+                              <button
+                                className={styles.attachedProductRemove}
+                                onClick={() => setAttachedProduct(null)}
+                                aria-label="Remove attached product"
+                                type="button"
+                              >
+                                <IoClose />
+                              </button>
+                            </>
+                          );
+                        })()}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 <div className={styles.footer}>
@@ -737,7 +902,12 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                       onChange={handleVideoChange}
                     />
 
-                    <button className={styles.iconButton} aria-label="Add 3D" type="button">
+                    <button
+                      className={`${styles.iconButton} ${attachedProduct ? styles.iconButtonActive : ""}`}
+                      aria-label="Attach product"
+                      type="button"
+                      onClick={handleOpenProductPicker}
+                    >
                       <TbBox />
                     </button>
 
