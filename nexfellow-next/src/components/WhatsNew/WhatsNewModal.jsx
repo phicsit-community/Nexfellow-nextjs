@@ -16,58 +16,69 @@ const WhatsNewModal = ({ closeModal }) => {
 
   // Hardcoded What's New data
   const whatsNewData = [
-    {
+     {
       id: 1,
       category: "NEW FEATURE",
       icon: <Sparkles />,
-      title: "AI-Powered Matching Engine",
+      title: "Introducing BuilderMap",
       description:
-        "Experience smarter networking with NexFellow’s AI-Powered Matching Engine that connects you with the right people, mentors, and opportunities effortlessly.",
-      datetime: "10/15/2025", // Oct 15, 2025
+        "Discover and connect with builders from around the world. BuilderMap helps you find who is building what, learn about their journey, and reach out directly. Whether you're looking for feedback, collaboration, co founders, or new opportunities, BuilderMap makes meaningful connections easier than ever.",
+      datetime: "5 April 2026", // Oct 15, 2025
       isNew: true,
       priority: "High Priority",
     },
     {
       id: 2,
+      category: "NEW FEATURE",
+      icon: <Sparkles />,
+      title: "AI-Powered Matching Engine",
+      description:
+        "Experience smarter networking with NexFellow’s AI-Powered Matching Engine that connects you with the right people, mentors, and opportunities effortlessly.",
+      datetime: "13 April 2026", // Oct 15, 2025
+      isNew: true,
+      priority: "High Priority",
+    },
+    {
+      id: 3,
       category: "FEATURE",
       icon: <Gift />,
       title: "Introducing Reputation Points",
       description:
         "Build your professional identity with Reputation Points that highlight your skills, engagement, and trust within the network.",
-      datetime: "07/10/2025", // July 10, 2025
-      isNew: true,
-      priority: null,
-    },
-    {
-      id: 3,
-      category: "FEATURE",
-      icon: <Users />,
-      title: "Introducing Inbox",
-      description:
-        "Stay connected with professionals through the Inbox Feature, built for real and productive conversations.",
-      datetime: "07/20/2025", // July 20, 2025
+      datetime: "18 April 2026", // July 10, 2025
       isNew: true,
       priority: null,
     },
     {
       id: 4,
+      category: "FEATURE",
+      icon: <Users />,
+      title: "Introducing Inbox",
+      description:
+        "Stay connected with professionals through the Inbox Feature, built for real and productive conversations.",
+      datetime: "5 May 2026", // July 20, 2025
+      isNew: true,
+      priority: null,
+    },
+    {
+      id: 5,
       category: "UPDATE",
       icon: <Trophy />,
       title: "Launching Challenges",
       description:
         "Challenges motivate members to stay consistent and grow through fun, goal-based streaks.",
-      datetime: "11/15/2025", // 15 Nov, 2025
+      datetime: "18 May 2026", // 15 Nov, 2025
       isNew: true,
       priority: "High Priority",
     },
     {
-      id: 5,
+      id: 6,
       category: "FEATURE",
       icon: <Zap />,
       title: "Introducing Broadcast",
       description:
         "Use Broadcast to make announcements, share ideas, and engage your whole network instantly.",
-      datetime: "08/10/2025", // 10 August, 2025
+      datetime: "06/03/2026", // 10 August, 2025
       isNew: true,
       priority: null,
     },
