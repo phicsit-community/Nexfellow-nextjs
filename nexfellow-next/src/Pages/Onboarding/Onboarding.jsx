@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSelector } from 'react-redux';
 import api from '../../lib/axios';
 import styles from './Onboarding.module.css';
 import { Country, State, City } from 'country-state-city';
@@ -27,6 +28,7 @@ const AVAIL_MAP = {
 
 export default function Onboarding() {
   const router = useRouter();
+  const user = useSelector(state => state.auth.user);
 
   const [currentScreen, setCurrentScreen] = useState(0);
   const [accountType, setAccountType]     = useState('individual');
@@ -48,6 +50,15 @@ export default function Onboarding() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError]   = useState('');
   const [screenError, setScreenError]   = useState('');
+
+  // Pre-fill email for email/password and Google users (email is known at login)
+  const emailDisabled = (user?.provider === 'email' || user?.provider === 'google') && !!user?.email;
+
+  useEffect(() => {
+    if (emailDisabled && user?.email) {
+      setProfile(prev => ({ ...prev, email: user.email }));
+    }
+  }, [emailDisabled, user?.email]);
 
   // TODO: re-enable redirect after design review
   // useEffect(() => {
@@ -331,7 +342,14 @@ export default function Onboarding() {
               </div>
               <div className={styles["field"]}>
                 <label>Email address</label>
-                <input type="email" placeholder="rahul@nexfellow.com" value={profile.email} onChange={e => setProfile({...profile, email: e.target.value})} />
+                <input
+                  type="email"
+                  placeholder="rahul@nexfellow.com"
+                  value={profile.email}
+                  onChange={e => !emailDisabled && setProfile({...profile, email: e.target.value})}
+                  disabled={emailDisabled}
+                  style={emailDisabled ? { opacity: 0.6, cursor: 'not-allowed' } : undefined}
+                />
               </div>
               <div className={`${styles["field"]} ${styles["field-row"]}`}>
                 <div>

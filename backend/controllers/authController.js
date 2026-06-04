@@ -43,13 +43,14 @@ const getBackendDomain = () => {
 };
 
 // Helper function to generate and store a temporary auth code
-const generateOAuthCode = (userId, accessToken, refreshToken, isAdmin = false) => {
+const generateOAuthCode = (userId, accessToken, refreshToken, isAdmin = false, provider = 'email') => {
   const code = crypto.randomBytes(32).toString('hex');
   oauthAuthCodes.set(code, {
     userId,
     accessToken,
     refreshToken,
     isAdmin,
+    provider,
     expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
   });
 
@@ -127,6 +128,7 @@ module.exports.exchangeOAuthCode = async (req, res) => {
       verificationBadge: user.verificationBadge,
       isCommunityAccount: user.isCommunityAccount,
       isOnboarded: user.isOnboarded,
+      provider: authData.provider || 'email',
     };
   }
 
@@ -354,7 +356,9 @@ module.exports.googleCallback = async (req, res) => {
   const authCode = generateOAuthCode(
     existingUser._id,
     accessToken,
-    refreshToken
+    refreshToken,
+    false,
+    'google'
   );
 
   // Redirect to frontend with auth code
@@ -413,7 +417,7 @@ module.exports.githubCallback = async (req, res) => {
   await tokenUtils.storeRefreshToken(existingUser._id, refreshToken);
 
   // Generate a temporary auth code for cross-domain auth
-  const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken);
+  const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken, false, 'github');
 
   // Redirect to frontend with auth code
   const redirectUrl = `${SITE_URL}/auth/callback?code=${authCode}`;
@@ -483,7 +487,7 @@ module.exports.facebookCallback = async (req, res) => {
   await tokenUtils.storeRefreshToken(existingUser._id, refreshToken);
 
   // Generate a temporary auth code for cross-domain auth
-  const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken);
+  const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken, false, 'facebook');
 
   // Redirect to frontend with auth code
   const redirectUrl = `${SITE_URL}/auth/callback?code=${authCode}`;
@@ -510,6 +514,7 @@ exports.getUserDetails = async (req, res) => {
       verified: user.verified,
       verificationBadge: user.verificationBadge,
       isCommunityAccount: user.isCommunityAccount,
+      provider: 'email',
     };
 
     // Calculate token expiration times
@@ -712,7 +717,7 @@ exports.linkedinCallback = async (req, res) => {
     await tokenUtils.storeRefreshToken(existingUser._id, refreshToken);
 
     // Generate a temporary auth code for cross-domain auth
-    const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken);
+    const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken, false, 'linkedin');
 
     // Redirect to frontend with auth code
     const redirectUrl = `${SITE_URL}/auth/callback?code=${authCode}`;
