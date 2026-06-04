@@ -45,10 +45,16 @@ router.get(
 
 router.get(
   "/github/callback",
-  passport.authenticate("github", {
-    failureRedirect: `${SITE_URL}/login`,
-    session: false,
-  }),
+  (req, res, next) => {
+    // If the state matches a connect code, bypass passport and handle as account-linking
+    if (authController.isConnectState(req.query.state)) {
+      return catchAsync(authController.githubConnectCallback)(req, res, next);
+    }
+    passport.authenticate("github", {
+      failureRedirect: `${SITE_URL}/login`,
+      session: false,
+    })(req, res, next);
+  },
   catchAsync(authController.githubCallback)
 );
 
@@ -56,10 +62,16 @@ router.get("/linkedin", authController.linkedinAuth);
 
 router.get(
   "/linkedin/callback",
-  passport.authenticate("linkedin", {
-    failureRedirect: `${SITE_URL}/login`,
-    session: false,
-  }),
+  (req, res, next) => {
+    // If the state matches a connect code, bypass passport and handle as account-linking
+    if (authController.isConnectState(req.query.state)) {
+      return catchAsync(authController.linkedinConnectCallback)(req, res, next);
+    }
+    passport.authenticate("linkedin", {
+      failureRedirect: `${SITE_URL}/login`,
+      session: false,
+    })(req, res, next);
+  },
   catchAsync(authController.linkedinCallback)
 );
 
@@ -80,6 +92,11 @@ router.post("/refresh-token", catchAsync(authController.refreshToken));
 
 // Exchange OAuth code for cookies (for cross-domain auth)
 router.post("/exchange-code", catchAsync(authController.exchangeOAuthCode));
+
+// Account connect routes (link additional OAuth platforms to an existing account)
+// GitHub and LinkedIn reuse their login callbacks (detected via state param); Twitter has its own callback
+router.post("/connect/init", isClient, catchAsync(authController.initiateConnect));
+router.get("/connect/twitter/callback", catchAsync(authController.twitterConnectCallback));
 
 router.get("/logout", authController.logout);
 

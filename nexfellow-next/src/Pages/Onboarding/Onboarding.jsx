@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useSelector } from 'react-redux';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useSelector, useDispatch } from 'react-redux';
+import { setUser } from '../../store/slices/authSlice';
 import api from '../../lib/axios';
 import styles from './Onboarding.module.css';
 import { Country, State, City } from 'country-state-city';
@@ -26,9 +27,14 @@ const AVAIL_MAP = {
   "Advisor / mentor":              "advisor-mentor",
 };
 
+// Set NEXT_PUBLIC_TWITTER_ENABLED=true in .env.local once Twitter API keys are configured
+const TWITTER_ENABLED = process.env.NEXT_PUBLIC_TWITTER_ENABLED === 'true';
+
 export default function Onboarding() {
-  const router = useRouter();
-  const user = useSelector(state => state.auth.user);
+  const router       = useRouter();
+  const searchParams = useSearchParams();
+  const user         = useSelector(state => state.auth.user);
+  const dispatch     = useDispatch();
 
   const [currentScreen, setCurrentScreen] = useState(0);
   const [accountType, setAccountType]     = useState('individual');
@@ -36,7 +42,11 @@ export default function Onboarding() {
   const [skills, setSkills]               = useState([]);
   const [cofounder, setCofounder]         = useState(['Design co-founder', 'AI / ML expertise']);
   const [interests, setInterests]         = useState(['SaaS / web apps', 'Mobile apps', 'Edtech']);
-  const [socialState, setSocialState]     = useState({ twitter: false, github: true, linkedin: false, portfolio: false });
+  const [socialState, setSocialState]     = useState({ twitter: false, github: false, linkedin: false, portfolio: false });
+  const [socialHandles, setSocialHandles] = useState({ github: '', linkedin: '', twitter: '' });
+  const [portfolioUrl, setPortfolioUrl]   = useState('');
+  const [connectingPlatform, setConnectingPlatform] = useState(null);
+  const [connectError, setConnectError]   = useState('');
   const [profile, setProfile]             = useState({ fname: '', lname: '', handle: '', email: '', bio: '' });
   const [countryIso, setCountryIso]       = useState('');
   const [stateIso, setStateIso]           = useState('');
@@ -59,6 +69,90 @@ export default function Onboarding() {
       setProfile(prev => ({ ...prev, email: user.email }));
     }
   }, [emailDisabled, user?.email]);
+
+  // Initialise social connect state from the logged-in user's data
+  useEffect(() => {
+    if (!user) return;
+    const newState   = { twitter: false, github: false, linkedin: false, portfolio: false };
+    const newHandles = { github: '', linkedin: '', twitter: '' };
+
+    // Auto-connect whichever OAuth provider the user logged in with
+    if (user.provider === 'github') {
+      newState.github    = true;
+      newHandles.github  = user.socialUsername || '';
+    } else if (user.provider === 'linkedin') {
+      newState.linkedin  = true;
+      newHandles.linkedin = user.socialUsername || '';
+    } else if (user.provider === 'twitter') {
+      newState.twitter   = true;
+      newHandles.twitter = user.socialUsername || '';
+    }
+
+    // Also reflect any previously linked accounts stored in user.connectedAccounts
+    if (user.connectedAccounts?.github?.connected) {
+      newState.github   = true;
+      newHandles.github = user.connectedAccounts.github.handle || newHandles.github;
+    }
+    if (user.connectedAccounts?.linkedin?.connected) {
+      newState.linkedin   = true;
+      newHandles.linkedin = user.connectedAccounts.linkedin.handle || newHandles.linkedin;
+    }
+    if (user.connectedAccounts?.twitter?.connected) {
+      newState.twitter   = true;
+      newHandles.twitter = user.connectedAccounts.twitter.handle || newHandles.twitter;
+    }
+
+    setSocialState(newState);
+    setSocialHandles(newHandles);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
+
+  // Handle return from OAuth connect redirect (?connected=github&handle=xxx)
+  useEffect(() => {
+    const connected   = searchParams.get('connected');
+    const handle      = searchParams.get('handle');
+    const connectErr  = searchParams.get('connect_error');
+
+    if (connectErr) {
+      setConnectError('Could not connect account. Please try again.');
+      window.history.replaceState({}, '', '/onboarding');
+      return;
+    }
+
+    if (connected && handle) {
+      const decodedHandle = decodeURIComponent(handle);
+      setSocialState(prev  => ({ ...prev, [connected]: true }));
+      setSocialHandles(prev => ({ ...prev, [connected]: decodedHandle }));
+
+      // Persist the new connection into Redux so it survives navigation
+      if (user) {
+        dispatch(setUser({
+          ...user,
+          connectedAccounts: {
+            ...user.connectedAccounts,
+            [connected]: { connected: true, handle: decodedHandle },
+          },
+        }));
+      }
+
+      goTo(6);
+      window.history.replaceState({}, '', '/onboarding');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  // Initiate platform OAuth connect flow
+  const connectPlatform = async (platform) => {
+    setConnectError('');
+    setConnectingPlatform(platform);
+    try {
+      const { data } = await api.post('/auth/connect/init', { platform });
+      window.location.href = data.oauthUrl;
+    } catch {
+      setConnectError(`Failed to start ${platform} connection. Please try again.`);
+      setConnectingPlatform(null);
+    }
+  };
 
   // TODO: re-enable redirect after design review
   // useEffect(() => {
@@ -126,7 +220,6 @@ export default function Onboarding() {
     if (group === 'cofounder') setCofounder(toggle(cofounder));
     if (group === 'interests') setInterests(toggle(interests));
   };
-  const toggleSocial = (platform) => setSocialState(prev => ({ ...prev, [platform]: !prev[platform] }));
 
   const getProgressWidth = () =>
     Math.round((currentScreen / (STEPS_CONFIG.length - 1)) * 100) + '%';
@@ -556,34 +649,133 @@ export default function Onboarding() {
               <div className={styles["screen-title"]}>Almost there!<br />Connect your accounts</div>
               <div className={styles["screen-sub"]}>Link your social profiles to strengthen your builder identity. This boosts your Fellow Score and helps others trust your reviews.</div>
 
-              <div className={styles["social-row"]} style={{ marginBottom: "24px" }}>
-                <div className={`${styles["social-item"]} ${socialState.twitter ? styles["connected"] : ""}`} onClick={() => toggleSocial("twitter")}>
-                  <div className={styles["si-icon"]} style={{ background: "#111827", borderRadius: "10px" }}>
-                    <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M2 3h4l3 4.5L13 3h3L11 9.5 16 16h-4l-3.5-5L4 16H1l5.5-7L2 3z" fill="#ffffff"/></svg>
-                  </div>
-                  <div><div className={styles["si-name"]}>Twitter / X</div><div className={styles["si-handle"]}>{socialState.twitter ? `@${profile.handle.replace(/^@/, '')}` : "Not connected"}</div></div>
-                  <button className={`${styles["si-btn"]} ${socialState.twitter ? styles["done"] : styles["connect"]}`}>{socialState.twitter ? "Connected ✓" : "Connect"}</button>
+              {connectError && (
+                <div style={{ color: 'var(--coral)', fontSize: '13px', marginBottom: '14px', padding: '10px 14px', background: 'rgba(225,112,85,0.08)', borderRadius: '8px', border: '1px solid rgba(225,112,85,0.2)' }}>
+                  {connectError}
                 </div>
-                <div className={`${styles["social-item"]} ${socialState.github ? styles["connected"] : ""}`} onClick={() => toggleSocial("github")}>
+              )}
+
+              <div className={styles["social-row"]} style={{ marginBottom: "24px" }}>
+                {/* ── GitHub ── */}
+                <div className={`${styles["social-item"]} ${socialState.github ? styles["connected"] : ""}`}>
                   <div className={styles["si-icon"]} style={{ background: "#24292e", borderRadius: "10px" }}>
                     <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 2a7 7 0 00-2.21 13.64c.35.06.48-.15.48-.34v-1.2c-1.94.42-2.35-.94-2.35-.94-.32-.81-.78-1.02-.78-1.02-.64-.43.05-.43.05-.43.7.05 1.07.72 1.07.72.63 1.07 1.64.76 2.04.58.06-.45.24-.76.44-.94-1.55-.18-3.18-.78-3.18-3.46 0-.76.27-1.39.72-1.87-.07-.18-.31-.89.07-1.85 0 0 .59-.19 1.92.72a6.7 6.7 0 013.5 0c1.33-.91 1.92-.72 1.92-.72.38.96.14 1.67.07 1.85.45.48.72 1.11.72 1.87 0 2.69-1.64 3.28-3.2 3.45.25.22.48.65.48 1.3v1.94c0 .19.13.4.48.34A7 7 0 009 2z" fill="#ffffff"/></svg>
                   </div>
-                  <div><div className={styles["si-name"]}>GitHub</div><div className={styles["si-handle"]}>{socialState.github ? `@${profile.handle.replace(/^@/, '') || 'rahulkumar'}` : "Not connected"}</div></div>
-                  <button className={`${styles["si-btn"]} ${socialState.github ? styles["done"] : styles["connect"]}`}>{socialState.github ? "Connected ✓" : "Connect"}</button>
+                  <div>
+                    <div className={styles["si-name"]}>GitHub</div>
+                    <div className={styles["si-handle"]}>
+                      {socialState.github ? `@${socialHandles.github || profile.handle.replace(/^@/, '') || 'connected'}` : "Not connected"}
+                    </div>
+                  </div>
+                  {socialState.github ? (
+                    <button className={`${styles["si-btn"]} ${styles["done"]}`}>Connected ✓</button>
+                  ) : (
+                    <button
+                      className={`${styles["si-btn"]} ${styles["connect"]}`}
+                      onClick={() => connectPlatform('github')}
+                      disabled={connectingPlatform === 'github'}
+                    >
+                      {connectingPlatform === 'github' ? '…' : 'Connect'}
+                    </button>
+                  )}
                 </div>
-                <div className={`${styles["social-item"]} ${socialState.linkedin ? styles["connected"] : ""}`} onClick={() => toggleSocial("linkedin")}>
+
+                {/* ── LinkedIn ── */}
+                <div className={`${styles["social-item"]} ${socialState.linkedin ? styles["connected"] : ""}`}>
                   <div className={styles["si-icon"]} style={{ background: "#0a66c2", borderRadius: "10px" }}>
                     <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><rect x="2" y="6" width="2.5" height="9" fill="#fff"/><circle cx="3.25" cy="3.5" r="1.5" fill="#fff"/><path d="M8 6v9M8 9.5a3 3 0 016 0V15" stroke="#fff" strokeWidth="2" strokeLinecap="round"/></svg>
                   </div>
-                  <div><div className={styles["si-name"]}>LinkedIn</div><div className={styles["si-handle"]}>{socialState.linkedin ? `@${profile.handle.replace(/^@/, '')}` : "Not connected"}</div></div>
-                  <button className={`${styles["si-btn"]} ${socialState.linkedin ? styles["done"] : styles["connect"]}`}>{socialState.linkedin ? "Connected ✓" : "Connect"}</button>
+                  <div>
+                    <div className={styles["si-name"]}>LinkedIn</div>
+                    <div className={styles["si-handle"]}>
+                      {socialState.linkedin ? (socialHandles.linkedin || "Connected") : "Not connected"}
+                    </div>
+                  </div>
+                  {socialState.linkedin ? (
+                    <button className={`${styles["si-btn"]} ${styles["done"]}`}>Connected ✓</button>
+                  ) : (
+                    <button
+                      className={`${styles["si-btn"]} ${styles["connect"]}`}
+                      onClick={() => connectPlatform('linkedin')}
+                      disabled={connectingPlatform === 'linkedin'}
+                    >
+                      {connectingPlatform === 'linkedin' ? '…' : 'Connect'}
+                    </button>
+                  )}
                 </div>
-                <div className={`${styles["social-item"]} ${socialState.portfolio ? styles["connected"] : ""}`} onClick={() => toggleSocial("portfolio")}>
+
+                {/* ── Twitter / X ── */}
+                <div className={`${styles["social-item"]} ${socialState.twitter ? styles["connected"] : ""}`}>
+                  <div className={styles["si-icon"]} style={{ background: "#111827", borderRadius: "10px" }}>
+                    <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M2 3h4l3 4.5L13 3h3L11 9.5 16 16h-4l-3.5-5L4 16H1l5.5-7L2 3z" fill="#ffffff"/></svg>
+                  </div>
+                  <div>
+                    <div className={styles["si-name"]}>Twitter / X</div>
+                    <div className={styles["si-handle"]}>
+                      {socialState.twitter ? `@${socialHandles.twitter}` : "Not connected"}
+                    </div>
+                  </div>
+                  {socialState.twitter ? (
+                    <button className={`${styles["si-btn"]} ${styles["done"]}`}>Connected ✓</button>
+                  ) : TWITTER_ENABLED ? (
+                    <button
+                      className={`${styles["si-btn"]} ${styles["connect"]}`}
+                      onClick={() => connectPlatform('twitter')}
+                      disabled={connectingPlatform === 'twitter'}
+                    >
+                      {connectingPlatform === 'twitter' ? '…' : 'Connect'}
+                    </button>
+                  ) : (
+                    <button
+                      className={`${styles["si-btn"]} ${styles["connect"]}`}
+                      disabled
+                      style={{ opacity: 0.4, cursor: 'not-allowed' }}
+                      title="Twitter/X connect coming soon"
+                    >
+                      Soon
+                    </button>
+                  )}
+                </div>
+
+                {/* ── Portfolio / website ── */}
+                <div className={`${styles["social-item"]} ${socialState.portfolio ? styles["connected"] : ""}`} style={{ flexWrap: 'wrap', gap: '8px' }}>
                   <div className={styles["si-icon"]} style={{ background: "#374151", borderRadius: "10px" }}>
                     <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.5" stroke="#fff" strokeWidth="1.3"/><path d="M9 2.5C7 5 6 7 6 9s1 4 3 6.5M9 2.5C11 5 12 7 12 9s-1 4-3 6.5M2.5 9h13" stroke="#fff" strokeWidth="1.3"/></svg>
                   </div>
-                  <div><div className={styles["si-name"]}>Portfolio / website</div><div className={styles["si-handle"]}>{socialState.portfolio ? "Added" : "Not added"}</div></div>
-                  <button className={`${styles["si-btn"]} ${socialState.portfolio ? styles["done"] : styles["connect"]}`}>{socialState.portfolio ? "Connected ✓" : "Add"}</button>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div className={styles["si-name"]}>Portfolio / website</div>
+                    <div className={styles["si-handle"]}>{socialState.portfolio ? portfolioUrl : "Not added"}</div>
+                  </div>
+                  {socialState.portfolio ? (
+                    <button
+                      className={`${styles["si-btn"]} ${styles["done"]}`}
+                      onClick={() => { setSocialState(prev => ({ ...prev, portfolio: false })); setPortfolioUrl(''); }}
+                    >
+                      Added ✓
+                    </button>
+                  ) : (
+                    <button className={`${styles["si-btn"]} ${styles["connect"]}`} onClick={() => setSocialState(prev => ({ ...prev, portfolio: 'editing' }))}>
+                      Add
+                    </button>
+                  )}
+                  {socialState.portfolio === 'editing' && (
+                    <div style={{ width: '100%', display: 'flex', gap: '8px', marginTop: '4px' }}>
+                      <input
+                        type="url"
+                        placeholder="https://yoursite.com"
+                        value={portfolioUrl}
+                        onChange={e => setPortfolioUrl(e.target.value)}
+                        style={{ flex: 1, fontSize: '13px', padding: '7px 10px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }}
+                        autoFocus
+                      />
+                      <button
+                        className={`${styles["si-btn"]} ${styles["connect"]}`}
+                        onClick={() => { if (portfolioUrl.trim()) setSocialState(prev => ({ ...prev, portfolio: true })); }}
+                      >
+                        Save
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 
