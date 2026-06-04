@@ -46,7 +46,42 @@ const userSchema = new schema(
       select: false,
     },
 
+    linkedinName: {
+      type: String,
+      select: false,
+    },
+
     linkedinRefreshToken: {
+      type: String,
+      select: false,
+    },
+
+    githubId: {
+      type: String,
+      select: false,
+    },
+
+    githubUsername: {
+      type: String,
+      select: false,
+    },
+
+    githubAccessToken: {
+      type: String,
+      select: false,
+    },
+
+    twitterId: {
+      type: String,
+      select: false,
+    },
+
+    twitterHandle: {
+      type: String,
+      select: false,
+    },
+
+    twitterAccessToken: {
       type: String,
       select: false,
     },

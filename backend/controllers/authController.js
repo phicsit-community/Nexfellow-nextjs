@@ -20,6 +20,23 @@ const defaultBanner =
 // Temporary storage for OAuth auth codes (in production, use Redis)
 const oauthAuthCodes = new Map();
 
+// Temporary storage for account-connect state codes
+const connectStateCodes = new Map();
+
+const generateConnectCode = (userId, extras = {}) => {
+  const code = crypto.randomBytes(16).toString('hex');
+  connectStateCodes.set(code, { userId, ...extras, expiresAt: Date.now() + 10 * 60 * 1000 });
+  setTimeout(() => connectStateCodes.delete(code), 10 * 60 * 1000);
+  return code;
+};
+
+// Twitter OAuth 2.0 PKCE helpers
+const generatePKCE = () => {
+  const verifier   = crypto.randomBytes(32).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+  const challenge  = crypto.createHash('sha256').update(verifier).digest('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+  return { verifier, challenge };
+};
+
 // Helper to get production-safe URLs
 const getSiteUrl = () => {
   if (process.env.SITE_URL && process.env.SITE_URL !== "http://localhost:3000") {
@@ -43,13 +60,15 @@ const getBackendDomain = () => {
 };
 
 // Helper function to generate and store a temporary auth code
-const generateOAuthCode = (userId, accessToken, refreshToken, isAdmin = false) => {
+const generateOAuthCode = (userId, accessToken, refreshToken, isAdmin = false, provider = 'email', socialUsername = null) => {
   const code = crypto.randomBytes(32).toString('hex');
   oauthAuthCodes.set(code, {
     userId,
     accessToken,
     refreshToken,
     isAdmin,
+    provider,
+    socialUsername,
     expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
   });
 
@@ -112,8 +131,8 @@ module.exports.exchangeOAuthCode = async (req, res) => {
       isAdmin: true,
     };
   } else {
-    // Get user details
-    const user = await User.findById(authData.userId);
+    // Get user details (select social fields for connected accounts)
+    const user = await User.findById(authData.userId).select('+githubId +githubUsername +linkedinId +linkedinName +twitterId +twitterHandle');
 
     payload = {
       id: user._id,
@@ -127,6 +146,13 @@ module.exports.exchangeOAuthCode = async (req, res) => {
       verificationBadge: user.verificationBadge,
       isCommunityAccount: user.isCommunityAccount,
       isOnboarded: user.isOnboarded,
+      provider: authData.provider || 'email',
+      socialUsername: authData.socialUsername || null,
+      connectedAccounts: {
+        github:   user.githubId   ? { connected: true, handle: user.githubUsername  || null } : { connected: false },
+        linkedin: user.linkedinId ? { connected: true, handle: user.linkedinName    || null } : { connected: false },
+        twitter:  user.twitterId  ? { connected: true, handle: user.twitterHandle   || null } : { connected: false },
+      },
     };
   }
 
@@ -354,7 +380,10 @@ module.exports.googleCallback = async (req, res) => {
   const authCode = generateOAuthCode(
     existingUser._id,
     accessToken,
-    refreshToken
+    refreshToken,
+    false,
+    'google',
+    req.user._json.name || req.user._json.email
   );
 
   // Redirect to frontend with auth code
@@ -375,9 +404,9 @@ module.exports.githubCallback = async (req, res) => {
 
   if (existingUser) {
     if (!existingUser.githubId) {
-      existingUser.githubId = req.user.id;
+      existingUser.githubId = String(req.user.id);
     }
-
+    existingUser.githubUsername = req.user.username;
     existingUser.githubAccessToken = githubAccessToken;
     await existingUser.save();
   } else {
@@ -391,7 +420,8 @@ module.exports.githubCallback = async (req, res) => {
       email,
       picture: defaultProfilePicture,
       banner: defaultBanner,
-      githubId: req.user.id,
+      githubId: String(req.user.id),
+      githubUsername: req.user.username,
       githubAccessToken,
       verified: true,
       username: username,
@@ -413,7 +443,7 @@ module.exports.githubCallback = async (req, res) => {
   await tokenUtils.storeRefreshToken(existingUser._id, refreshToken);
 
   // Generate a temporary auth code for cross-domain auth
-  const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken);
+  const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken, false, 'github', req.user.username);
 
   // Redirect to frontend with auth code
   const redirectUrl = `${SITE_URL}/auth/callback?code=${authCode}`;
@@ -483,7 +513,7 @@ module.exports.facebookCallback = async (req, res) => {
   await tokenUtils.storeRefreshToken(existingUser._id, refreshToken);
 
   // Generate a temporary auth code for cross-domain auth
-  const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken);
+  const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken, false, 'facebook');
 
   // Redirect to frontend with auth code
   const redirectUrl = `${SITE_URL}/auth/callback?code=${authCode}`;
@@ -492,7 +522,7 @@ module.exports.facebookCallback = async (req, res) => {
 
 exports.getUserDetails = async (req, res) => {
   try {
-    const user = await User.findById(req.userId);
+    const user = await User.findById(req.userId).select('+githubId +githubUsername +linkedinId +linkedinName +twitterId +twitterHandle +googleId');
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -510,6 +540,12 @@ exports.getUserDetails = async (req, res) => {
       verified: user.verified,
       verificationBadge: user.verificationBadge,
       isCommunityAccount: user.isCommunityAccount,
+      provider: 'email',
+      connectedAccounts: {
+        github:   user.githubId   ? { connected: true, handle: user.githubUsername  || null } : { connected: false },
+        linkedin: user.linkedinId ? { connected: true, handle: user.linkedinName    || null } : { connected: false },
+        twitter:  user.twitterId  ? { connected: true, handle: user.twitterHandle   || null } : { connected: false },
+      },
     };
 
     // Calculate token expiration times
@@ -676,6 +712,7 @@ exports.linkedinCallback = async (req, res) => {
       if (!existingUser.linkedinId) {
         existingUser.linkedinId = linkedinId;
       }
+      existingUser.linkedinName = name;
       existingUser.linkedinAccessToken = access_token;
       await existingUser.save();
     } else {
@@ -688,6 +725,7 @@ exports.linkedinCallback = async (req, res) => {
         picture: profile.picture || defaultProfilePicture,
         banner: defaultBanner,
         linkedinId,
+        linkedinName: name,
         linkedinAccessToken: access_token,
         verified: true,
         username,
@@ -712,7 +750,7 @@ exports.linkedinCallback = async (req, res) => {
     await tokenUtils.storeRefreshToken(existingUser._id, refreshToken);
 
     // Generate a temporary auth code for cross-domain auth
-    const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken);
+    const authCode = generateOAuthCode(existingUser._id, accessToken, refreshToken, false, 'linkedin', name);
 
     // Redirect to frontend with auth code
     const redirectUrl = `${SITE_URL}/auth/callback?code=${authCode}`;
@@ -770,3 +808,194 @@ exports.refreshAccessToken = async (refreshToken) => {
     throw new Error("Unable to refresh access token");
   }
 };
+
+// ─── Account Connect (link additional OAuth accounts to an existing user) ───
+
+// POST /auth/connect/init  — called via AJAX, returns the OAuth URL for a platform
+module.exports.initiateConnect = (req, res) => {
+  const { platform } = req.body;
+
+  let oauthUrl;
+
+  if (platform === 'github') {
+    const state = generateConnectCode(req.userId);
+    // Reuse the same callback URL registered in the GitHub OAuth App
+    oauthUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(`${BACKEND_DOMAIN}/auth/github/callback`)}&scope=user:email&state=${state}`;
+
+  } else if (platform === 'linkedin') {
+    const state = generateConnectCode(req.userId);
+    // Reuse the same callback URL registered in the LinkedIn OAuth App
+    oauthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(`${BACKEND_DOMAIN}/auth/linkedin/callback`)}&scope=openid%20profile%20email&state=${state}`;
+
+  } else if (platform === 'twitter') {
+    if (!process.env.TWITTER_CLIENT_ID || process.env.TWITTER_CLIENT_ID === 'your_twitter_client_id_here') {
+      return res.status(503).json({ message: 'Twitter integration not configured yet.' });
+    }
+    const { verifier, challenge } = generatePKCE();
+    const state = generateConnectCode(req.userId, { codeVerifier: verifier });
+    oauthUrl = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${process.env.TWITTER_CLIENT_ID}&redirect_uri=${encodeURIComponent(`${BACKEND_DOMAIN}/auth/connect/twitter/callback`)}&scope=tweet.read%20users.read&state=${state}&code_challenge=${challenge}&code_challenge_method=S256`;
+
+  } else {
+    return res.status(400).json({ message: 'Unsupported platform' });
+  }
+
+  res.json({ oauthUrl });
+};
+
+// GET /auth/connect/github/callback  — GitHub redirects here after user authorises
+module.exports.githubConnectCallback = async (req, res) => {
+  const { code, state } = req.query;
+
+  const connectData = connectStateCodes.get(state);
+  if (!connectData || connectData.expiresAt < Date.now()) {
+    connectStateCodes.delete(state);
+    return res.redirect(`${SITE_URL}/onboarding?connect_error=expired`);
+  }
+  connectStateCodes.delete(state);
+
+  try {
+    const tokenRes = await axios.post(
+      'https://github.com/login/oauth/access_token',
+      {
+        client_id: process.env.GITHUB_CLIENT_ID,
+        client_secret: process.env.GITHUB_CLIENT_SECRET,
+        code,
+        redirect_uri: `${BACKEND_DOMAIN}/auth/github/callback`,
+      },
+      { headers: { Accept: 'application/json' } }
+    );
+
+    const { access_token } = tokenRes.data;
+    if (!access_token) {
+      return res.redirect(`${SITE_URL}/onboarding?connect_error=github_token_failed`);
+    }
+
+    const profileRes = await axios.get('https://api.github.com/user', {
+      headers: { Authorization: `Bearer ${access_token}`, 'User-Agent': 'NexFellow' },
+    });
+    const githubProfile = profileRes.data;
+
+    await User.findByIdAndUpdate(connectData.userId, {
+      githubId: String(githubProfile.id),
+      githubUsername: githubProfile.login,
+      githubAccessToken: access_token,
+    });
+
+    return res.redirect(`${SITE_URL}/onboarding?connected=github&handle=${encodeURIComponent(githubProfile.login)}`);
+  } catch (err) {
+    console.error('GitHub connect callback error:', err.message);
+    return res.redirect(`${SITE_URL}/onboarding?connect_error=github_failed`);
+  }
+};
+
+// GET /auth/connect/linkedin/callback  — LinkedIn redirects here after user authorises
+module.exports.linkedinConnectCallback = async (req, res) => {
+  const { code, state } = req.query;
+
+  const connectData = connectStateCodes.get(state);
+  if (!connectData || connectData.expiresAt < Date.now()) {
+    connectStateCodes.delete(state);
+    return res.redirect(`${SITE_URL}/onboarding?connect_error=expired`);
+  }
+  connectStateCodes.delete(state);
+
+  try {
+    const tokenRes = await axios.post(
+      'https://www.linkedin.com/oauth/v2/accessToken',
+      querystring.stringify({
+        grant_type: 'authorization_code',
+        code,
+        client_id: LINKEDIN_CLIENT_ID,
+        client_secret: LINKEDIN_CLIENT_SECRET,
+        redirect_uri: `${BACKEND_DOMAIN}/auth/linkedin/callback`,
+      }),
+      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+    );
+
+    const { access_token } = tokenRes.data;
+    if (!access_token) {
+      return res.redirect(`${SITE_URL}/onboarding?connect_error=linkedin_token_failed`);
+    }
+
+    const profileRes = await axios.get('https://api.linkedin.com/v2/userinfo', {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
+    const profile = profileRes.data;
+    const displayName = profile.name || profile.given_name || profile.email || 'LinkedIn';
+
+    await User.findByIdAndUpdate(connectData.userId, {
+      linkedinId: profile.sub,
+      linkedinName: displayName,
+      linkedinAccessToken: access_token,
+    });
+
+    return res.redirect(`${SITE_URL}/onboarding?connected=linkedin&handle=${encodeURIComponent(displayName)}`);
+  } catch (err) {
+    console.error('LinkedIn connect callback error:', err.message);
+    return res.redirect(`${SITE_URL}/onboarding?connect_error=linkedin_failed`);
+  }
+};
+
+// GET /auth/connect/twitter/callback  — Twitter redirects here after user authorises
+module.exports.twitterConnectCallback = async (req, res) => {
+  const { code, state } = req.query;
+
+  const connectData = connectStateCodes.get(state);
+  if (!connectData || connectData.expiresAt < Date.now()) {
+    connectStateCodes.delete(state);
+    return res.redirect(`${SITE_URL}/onboarding?connect_error=expired`);
+  }
+  connectStateCodes.delete(state);
+
+  const { userId, codeVerifier } = connectData;
+
+  try {
+    // Exchange authorisation code for access token (PKCE — no client secret in body for public clients,
+    // but confidential clients send it via Basic Auth)
+    const tokenRes = await axios.post(
+      'https://api.twitter.com/2/oauth2/token',
+      new URLSearchParams({
+        grant_type:    'authorization_code',
+        code,
+        redirect_uri:  `${BACKEND_DOMAIN}/auth/connect/twitter/callback`,
+        client_id:     process.env.TWITTER_CLIENT_ID,
+        code_verifier: codeVerifier,
+      }).toString(),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          // Confidential app: send Basic Auth
+          Authorization: `Basic ${Buffer.from(`${process.env.TWITTER_CLIENT_ID}:${process.env.TWITTER_CLIENT_SECRET}`).toString('base64')}`,
+        },
+      }
+    );
+
+    const { access_token } = tokenRes.data;
+    if (!access_token) {
+      return res.redirect(`${SITE_URL}/onboarding?connect_error=twitter_token_failed`);
+    }
+
+    // Fetch the authenticated user's Twitter profile
+    const profileRes = await axios.get('https://api.twitter.com/2/users/me?user.fields=id,name,username', {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
+    const twitterUser = profileRes.data?.data;
+    if (!twitterUser) {
+      return res.redirect(`${SITE_URL}/onboarding?connect_error=twitter_profile_failed`);
+    }
+
+    await User.findByIdAndUpdate(userId, {
+      twitterId:           twitterUser.id,
+      twitterHandle:       twitterUser.username,
+      twitterAccessToken:  access_token,
+    });
+
+    return res.redirect(`${SITE_URL}/onboarding?connected=twitter&handle=${encodeURIComponent(twitterUser.username)}`);
+  } catch (err) {
+    console.error('Twitter connect callback error:', err.response?.data || err.message);
+    return res.redirect(`${SITE_URL}/onboarding?connect_error=twitter_failed`);
+  }
+};
+
+// Used by authRoutes to detect connect flows before passport runs
+module.exports.isConnectState = (state) => !!state && connectStateCodes.has(state);

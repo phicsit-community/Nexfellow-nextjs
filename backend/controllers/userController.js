@@ -131,7 +131,8 @@ module.exports.login = async (req, res) => {
     owner: user?.createdCommunity,
     verified: user.verified,
     verificationBadge: user.verificationBadge,
-    isCommunityAccount: user.isCommunityAccount
+    isCommunityAccount: user.isCommunityAccount,
+    provider: 'email',
   };
 
   res.cookie("isOnboarded", user.isOnboarded ? "true" : "false", {
@@ -231,6 +232,7 @@ module.exports.verifyOtp = async (req, res) => {
     verified: user.verified,
     verificationBadge: user.verificationBadge,
     isCommunityAccount: user.isCommunityAccount,
+    provider: 'email',
   };
 
   res.cookie("isOnboarded", user.isOnboarded ? "true" : "false", {
