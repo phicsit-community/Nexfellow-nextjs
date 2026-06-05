@@ -7,6 +7,7 @@ import { setUser } from '../../store/slices/authSlice';
 import api from '../../lib/axios';
 import styles from './Onboarding.module.css';
 import { Country, State, City } from 'country-state-city';
+import nexfellowLogo from '@/assets/NexFellowLogo.svg';
 
 const STEPS_CONFIG = [
   { name: "Welcome",        desc: "Get started",              icon: "🏠" },
@@ -280,7 +281,7 @@ export default function Onboarding() {
           <div className={styles["left-deco2"]}></div>
 
           <div className={styles["logo"]}>
-            <img src="/NexFellowLogo.svg" alt="NexFellow" className={styles["logo-img"]} />
+            <img src={nexfellowLogo.src || nexfellowLogo} alt="NexFellow" className={styles["logo-img"]} />
           </div>
 
           <div className={styles["steps"]} id="steps-nav">
@@ -322,7 +323,7 @@ export default function Onboarding() {
         <div className={styles["right"]}>
           {/* Mobile-only sticky header (logo + step indicator) */}
           <div className={styles["mobile-header"]}>
-            <img src="/NexFellowLogo.svg" alt="NexFellow" className={styles["mobile-header-logo"]} />
+            <img src={nexfellowLogo.src || nexfellowLogo} alt="NexFellow" className={styles["mobile-header-logo"]} />
             {currentScreen > 0 && currentScreen < STEPS_CONFIG.length - 1 && (
               <span className={styles["mobile-step-badge"]}>
                 {currentScreen} / {STEPS_CONFIG.length - 2}
