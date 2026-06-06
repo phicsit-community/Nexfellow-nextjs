@@ -30,6 +30,7 @@ export default function ClientInitializer() {
                     window.location.pathname === "/privacy" ||
                     window.location.pathname === "/terms" ||
                     window.location.pathname === "/help" ||
+                    window.location.pathname.startsWith("/auth/") ||
                     window.location.pathname.startsWith("/blogs") ||
                     window.location.pathname.startsWith("/community/"));
 

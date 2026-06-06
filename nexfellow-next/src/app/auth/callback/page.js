@@ -76,13 +76,13 @@ export default function AuthCallback() {
                         localStorage.setItem("expiresIn", new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString());
                     }
 
-                    // Set isOnboarded cookie on the frontend domain so Next.js middleware can read it
+                    // Set cookies on the frontend domain so Next.js middleware can read them.
+                    // isLoggedIn is set here explicitly (the login() action also sets it, but
+                    // ClientInitializer could clear it in a race; setting it last wins).
                     const isOnboarded = response.data.payload?.isOnboarded;
-                    const onboardedExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
-                    document.cookie = `isOnboarded=${isOnboarded ? "true" : "false"};expires=${onboardedExpiry};path=/;SameSite=Lax`;
-
-                    // Final wait to ensure everything is synced
-                    await new Promise(resolve => setTimeout(resolve, 200));
+                    const cookieExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
+                    document.cookie = `isLoggedIn=true;expires=${cookieExpiry};path=/;SameSite=Lax`;
+                    document.cookie = `isOnboarded=${isOnboarded ? "true" : "false"};expires=${cookieExpiry};path=/;SameSite=Lax`;
 
                     // Route based on onboarding status
                     const destination = response.data.redirect || (isOnboarded ? "/feed" : "/onboarding");
