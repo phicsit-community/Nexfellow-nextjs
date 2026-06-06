@@ -17,7 +17,7 @@ import PlayOnce from "../../components/animatedIcon/PlayOnce";
 import WhatsNewModal from "../../components/WhatsNew/WhatsNewModal";
 
 const FeedPage = () => {
-  const [activeTab, setActiveTab] = useState("trending");
+  const [activeTab, setActiveTab] = useState("newest");
   const [isWhatsNewOpen, setIsWhatsNewOpen] = useState(false);
   const [isAnnouncementHovered, setIsAnnouncementHovered] = useState(false);
   const [isPostDialogOpen, setIsPostDialogOpen] = useState(false);
