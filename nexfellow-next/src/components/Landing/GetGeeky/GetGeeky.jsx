@@ -8,7 +8,7 @@ const GetGeeky = () => {
         <section className={styles.getGeeky}>
             <div className={styles.container}>
                 <img
-                    src={illustration1}
+                    src={illustration1?.src || illustration1}
                     alt="Hand Illustration Left"
                     className={styles.illustrationLeft}
                 />
@@ -23,7 +23,7 @@ const GetGeeky = () => {
                     </div>
                 </div>
                 <img
-                    src={illustration2}
+                    src={illustration2?.src || illustration2}
                     alt="Hand Illustration Right"
                     className={styles.illustrationRight}
                 />

@@ -22,7 +22,7 @@ const NoJoinedCommunityPage = () => {
     <div className={styles.container}>
       <div className={`${styles.content} ${animate ? styles.animate : ""}`}>
         <img
-          src={illustration}
+          src={illustration?.src || illustration}
           alt="No Community Illustration"
           className={styles.illustration}
         />

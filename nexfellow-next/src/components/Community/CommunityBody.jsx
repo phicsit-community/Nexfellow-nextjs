@@ -413,7 +413,7 @@ const CommunityBody = ({ communityId, ownerId, messageIdToScroll }) => {
               <div className={styles.noPostsContainer}>
                 <img
                   className={styles.noPostsImage}
-                  src={no_posts}
+                  src={no_posts?.src || no_posts}
                   alt="No posts"
                 />
                 <p className={styles.noPostsHead}>
@@ -447,9 +447,9 @@ const CommunityBody = ({ communityId, ownerId, messageIdToScroll }) => {
                   : community.owner.followers.slice(0, 30)
                 ).map((follower) => {
                   const badgeSrc = follower?.communityBadge
-                    ? communityBadge
+                    ? communityBadge?.src || communityBadge
                     : follower?.verificationBadge
-                      ? verificationBadge
+                      ? verificationBadge?.src || verificationBadge
                       : null;
 
                   return (

@@ -557,7 +557,7 @@ const CommunityContests = () => {
         <div className={styles.noQuizContainer}>
           <img
             className={styles.noQuizImage}
-            src={no_contests}
+            src={no_contests?.src || no_contests}
             alt="No contests available"
           />
           <p className={styles.noQuizHead}>No Quizzes Available!</p>

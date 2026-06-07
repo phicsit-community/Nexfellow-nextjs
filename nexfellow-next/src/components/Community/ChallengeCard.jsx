@@ -99,7 +99,7 @@ const ChallengeCard = ({
           <div className={styles.detailRow}>
             <div className={styles.participantsLabel}>
               <img
-                src={parti}
+                src={parti?.src || parti}
                 alt="Participants"
                 className={styles.participantsIcon}
               />

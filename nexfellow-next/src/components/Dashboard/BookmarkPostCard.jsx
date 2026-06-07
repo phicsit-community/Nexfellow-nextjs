@@ -77,20 +77,20 @@ const BookmarkPostCard = ({ data, bookmark, path = "post" }) => {
                                     {data.author?.isCommunityAccount && data.author?.createdCommunity ? (
                                         data.author?.communityBadge ? (
                                             <img
-                                                src={communityBadge}
+                                                src={communityBadge?.src || communityBadge}
                                                 alt="Community Badge"
                                                 className={styles.badge}
                                             />
                                         ) : data.author?.verificationBadge ? (
                                             <img
-                                                src={verify}
+                                                src={verify?.src || verify}
                                                 alt="Verification Badge"
                                                 className={styles.badge}
                                             />
                                         ) : null
                                     ) : data.author?.verificationBadge ? (
                                         <img
-                                            src={verify}
+                                            src={verify?.src || verify}
                                             alt="Verification Badge"
                                             className={styles.verified}
                                         />
