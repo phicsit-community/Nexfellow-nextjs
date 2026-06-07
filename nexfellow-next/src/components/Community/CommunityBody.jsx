@@ -27,7 +27,7 @@ import Discussion from "../Discussion/Discussion";
 import communityBadge from "./assets/badge3.svg";
 import verificationBadge from "./assets/badge2.svg";
 
-const CommunityBody = ({ communityId, messageIdToScroll }) => {
+const CommunityBody = ({ communityId, ownerId, messageIdToScroll }) => {
   const [activeTab, setActiveTab] = useState(() => {
     return messageIdToScroll ? "Discussion" : "Feed";
   });
@@ -78,8 +78,12 @@ const CommunityBody = ({ communityId, messageIdToScroll }) => {
       setError(null);
 
       try {
+        const postEndpoint = ownerId
+          ? `/post/user/${ownerId}`
+          : `/post/community/${communityId}`;
+
         const [postsResponse, communityResponse] = await Promise.all([
-          api.get(`/post/community/${communityId}`),
+          api.get(postEndpoint),
           api.get(`/community/id/${communityId}`),
         ]);
 
@@ -122,7 +126,7 @@ const CommunityBody = ({ communityId, messageIdToScroll }) => {
     };
 
     fetchData();
-  }, [communityId]);
+  }, [communityId, ownerId]);
 
   useEffect(() => {
     const checkUserPermissions = async () => {

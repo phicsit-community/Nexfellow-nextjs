@@ -502,6 +502,7 @@ const Community = () => {
 
           <CommunityBody
             communityId={communityId}
+            ownerId={communityOwnerId}
             posts={community?.posts}
             members={community?.members}
             messageIdToScroll={messageIdToScroll}
