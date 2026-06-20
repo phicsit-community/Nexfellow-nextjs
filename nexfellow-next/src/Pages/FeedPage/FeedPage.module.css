@@ -452,7 +452,24 @@
   }
 
   .tabsHeader {
-    padding: 8px 10px;
+    padding: 8px 12px;
+    justify-content: flex-start;
+    gap: 4px;
+  }
+
+  /* Pull side buttons into the flex flow so tabs never collide with them */
+  .mobileMenuBtn {
+    position: static;
+    flex-shrink: 0;
+  }
+
+  .tabsContainer {
+    flex: 1;
+  }
+
+  .announcementBtn {
+    position: static;
+    flex-shrink: 0;
   }
 
   .tabButton {
