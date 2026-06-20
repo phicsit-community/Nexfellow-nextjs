@@ -463,11 +463,19 @@
 
   .mainContent {
     padding: 0px;
+    position: relative;
   }
 
   .backButtonContainer {
     position: absolute;
+    top: 10px;
+    left: 12px;
+    right: 12px;
     z-index: 10;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
   }
 
   .backIcon {
