@@ -211,6 +211,8 @@
   flex-direction: row;
   justify-content: space-between;
   cursor: default;
+  position: relative;
+  z-index: 1;
 }
 
 .avatarIcon {

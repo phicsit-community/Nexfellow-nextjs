@@ -977,6 +977,10 @@
     height: 100%;
   }
 
+  .CommunityBodyContainer {
+    margin-top: 0;
+  }
+
   .tabs {
     background-color: #f5f5f5;
   }
