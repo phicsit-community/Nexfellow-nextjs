@@ -20,7 +20,7 @@ export const metadata = {
     siteName: "NexFellow",
     images: [
       {
-        url: "https://nexfellow.com/og.png",
+        url: "https://nexfellow.com/og-v2.png",
         width: 1200,
         height: 630,
         alt: "NexFellow - Bringing Geeks Together",
@@ -33,7 +33,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "NexFellow - Bringing Geeks Together",
     description: "Join NexFellow to connect with tech enthusiasts, participate in challenges, attend events, and grow your skills in a supportive community.",
-    images: ["https://nexfellow.com/og.png"],
+    images: ["https://nexfellow.com/og-v2.png"],
   },
 };
 
