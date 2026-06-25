@@ -110,16 +110,23 @@ const DashboardBody = ({
   };
 
   const handlePostSubmit = async (postData) => {
+    const isEditing = !!postData.editingPostId;
     try {
       const formData = new FormData();
       formData.append("title", postData.title);
       formData.append("content", postData.content);
-      formData.append("community", communityId);
       formData.append("private", postData.private);
+
+      formData.append(
+        "community",
+        isEditing ? (postData.postCommunityId || communityId) : communityId
+      );
 
       if (postData.attachments && postData.attachments.length > 0) {
         postData.attachments.forEach((file) => {
-          formData.append("files", file);
+          if (file instanceof File) {
+            formData.append("files", file);
+          }
         });
       }
 
@@ -131,26 +138,18 @@ const DashboardBody = ({
       }
 
       let response;
-      if (editingPost) {
-        // If editing, send PUT request
+      if (isEditing) {
         response = await api.put(
-          `/post/update/${editingPost._id}`,
+          `/post/update/${postData.editingPostId}`,
           formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
+          { headers: { "Content-Type": "multipart/form-data" } }
         );
+        toast.success("Post updated successfully!");
       } else {
-        // Otherwise, create a new post
         response = await api.post("/post", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         });
 
-        // If the response contains shortened URLs, we can show a notification
         if (
           response.data.shortenedUrls &&
           response.data.shortenedUrls.length > 0
@@ -161,15 +160,15 @@ const DashboardBody = ({
         }
       }
 
-      // Fetch updated posts — always by userId to include General Feed posts
       const postsResponse = await api.get(`/post/user/${userId}`);
       setPosts(postsResponse.data.posts || []);
-
-      // Reset editing state
-      setEditingPost(null);
-      setIsDialogOpen(false);
     } catch (err) {
-      setError("Error submitting post: " + err.message);
+      toast.error(
+        isEditing
+          ? "Failed to update post: " + (err.response?.data?.message || err.message)
+          : "Failed to create post: " + (err.response?.data?.message || err.message)
+      );
+      throw err;
     }
   };
 
