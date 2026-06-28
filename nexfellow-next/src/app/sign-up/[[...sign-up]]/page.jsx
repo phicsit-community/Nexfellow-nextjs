@@ -1,0 +1,211 @@
+"use client";
+import { SignUp, useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+
+const clerkAppearance = {
+  variables: {
+    colorPrimary: "#00d4a8",
+    colorBackground: "#131f35",
+    colorText: "#f1f5f9",
+    colorTextSecondary: "#94a3b8",
+    colorInputBackground: "#0d1829",
+    colorInputText: "#f1f5f9",
+    colorNeutral: "#94a3b8",
+    borderRadius: "14px",
+    fontFamily: "inherit",
+    fontSize: "14px",
+    spacingUnit: "16px",
+  },
+  elements: {
+    rootBox: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      width: "auto",
+    },
+    card: {
+      background: "#131f35",
+      border: "1px solid rgba(255,255,255,0.1)",
+      boxShadow:
+        "0 0 0 1px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.4), 0 32px 80px rgba(0,0,0,0.5)",
+      borderRadius: "18px",
+      padding: "36px 32px",
+      width: "400px",
+      maxWidth: "100%",
+    },
+    headerTitle: {
+      color: "#f1f5f9",
+      fontSize: "20px",
+      fontWeight: "700",
+      letterSpacing: "-0.3px",
+    },
+    headerSubtitle: {
+      color: "#64748b",
+      fontSize: "14px",
+    },
+    socialButtonsBlockButton: {
+      background: "#0d1829",
+      border: "1px solid rgba(255,255,255,0.12)",
+      color: "#f1f5f9",
+      borderRadius: "10px",
+      padding: "10px 16px",
+      fontWeight: "500",
+      transition: "background 0.15s ease, border-color 0.15s ease",
+    },
+    socialButtonsBlockButtonText: {
+      color: "#f1f5f9",
+      fontWeight: "500",
+    },
+    socialButtonsProviderIcon: {
+      width: "18px",
+      height: "18px",
+    },
+    dividerLine: {
+      background: "rgba(255,255,255,0.08)",
+      height: "1px",
+    },
+    dividerText: {
+      color: "#475569",
+      fontSize: "12px",
+      fontWeight: "500",
+      textTransform: "uppercase",
+      letterSpacing: "0.08em",
+    },
+    formFieldLabel: {
+      color: "#94a3b8",
+      fontSize: "13px",
+      fontWeight: "500",
+      marginBottom: "6px",
+    },
+    formFieldInput: {
+      background: "#0d1829",
+      border: "1px solid rgba(255,255,255,0.1)",
+      borderRadius: "10px",
+      color: "#f1f5f9",
+      fontSize: "14px",
+      padding: "10px 14px",
+      outline: "none",
+      transition: "border-color 0.15s ease, box-shadow 0.15s ease",
+    },
+    formButtonPrimary: {
+      background: "linear-gradient(135deg, #00d4a8 0%, #00b894 100%)",
+      color: "#0a0f1e",
+      fontWeight: "700",
+      fontSize: "15px",
+      borderRadius: "10px",
+      padding: "12px",
+      letterSpacing: "0.01em",
+      boxShadow: "0 4px 20px rgba(0,212,168,0.35)",
+      border: "none",
+    },
+    footerActionText: {
+      color: "#64748b",
+      fontSize: "13px",
+    },
+    footerActionLink: {
+      color: "#00d4a8",
+      fontWeight: "600",
+      fontSize: "13px",
+    },
+    identityPreviewText: {
+      color: "#f1f5f9",
+    },
+    identityPreviewEditButton: {
+      color: "#00d4a8",
+    },
+    formResendCodeLink: {
+      color: "#00d4a8",
+      fontWeight: "500",
+    },
+    otpCodeFieldInput: {
+      background: "#0d1829",
+      border: "1px solid rgba(255,255,255,0.12)",
+      borderRadius: "10px",
+      color: "#f1f5f9",
+      fontSize: "20px",
+      fontWeight: "600",
+    },
+    badge: {
+      background: "rgba(0,212,168,0.12)",
+      color: "#00d4a8",
+      border: "1px solid rgba(0,212,168,0.25)",
+      borderRadius: "6px",
+    },
+    alertText: {
+      color: "#94a3b8",
+    },
+    formFieldSuccessText: {
+      color: "#00d4a8",
+    },
+    formFieldErrorText: {
+      color: "#f87171",
+    },
+    footer: {
+      background: "transparent",
+      borderTop: "1px solid rgba(255,255,255,0.06)",
+      marginTop: "8px",
+      paddingTop: "16px",
+    },
+  },
+};
+
+export default function SignUpPage() {
+  const { isSignedIn, isLoaded } = useAuth();
+  const router = useRouter();
+
+  if (isLoaded && isSignedIn) {
+    router.replace("/feed");
+    return null;
+  }
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background:
+          "radial-gradient(ellipse at 50% 40%, #0d1e3a 0%, #080d18 70%)",
+        padding: "24px",
+        overflowY: "auto",
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          width: "500px",
+          height: "500px",
+          borderRadius: "50%",
+          background:
+            "radial-gradient(circle, rgba(0,212,168,0.07) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }}
+      />
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", zIndex: 1 }}>
+        <div
+          style={{
+            width: "400px",
+            maxWidth: "100%",
+            background: "rgba(0,212,168,0.08)",
+            border: "1px solid rgba(0,212,168,0.25)",
+            borderRadius: "12px",
+            padding: "12px 16px",
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "10px",
+          }}
+        >
+          <span style={{ fontSize: "16px", flexShrink: 0, marginTop: "1px" }}>✓</span>
+          <p style={{ margin: 0, fontSize: "13px", color: "#94a3b8", lineHeight: "1.5" }}>
+            <strong style={{ color: "#00d4a8", fontWeight: "600" }}>Existing Nexfellow users:</strong>
+            <br />
+            Enter your <strong style={{ color: "#f1f5f9" }}>registered email</strong> — your existing account, posts, and data will be linked automatically.
+          </p>
+        </div>
+        <SignUp appearance={clerkAppearance} />
+      </div>
+    </div>
+  );
+}

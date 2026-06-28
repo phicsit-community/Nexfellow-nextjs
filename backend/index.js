@@ -155,6 +155,10 @@ app.use(
     credentials: true,
   })
 );
+// Clerk webhook — must be registered BEFORE express.json() (raw body required for svix verification)
+const clerkWebhookRoutes = require("./routes/clerkWebhook");
+app.use("/api/webhooks/clerk", clerkWebhookRoutes);
+
 // Dodo Payments webhook needs the raw body for HMAC-SHA256 verification.
 // This must be registered BEFORE express.json() so it intercepts the raw bytes first.
 app.use("/payments/webhook", express.raw({ type: "application/json" }), (req, res, next) => {

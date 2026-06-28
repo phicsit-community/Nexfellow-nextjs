@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@clerk/backend": "^3.8.4",
     "@resvg/resvg-js": "^2.6.2",
     "@vercel/og": "^0.6.8",
     "axios": "^1.7.9",
@@ -50,6 +51,7 @@
     "satori": "^0.12.2",
     "sharp": "^0.34.1",
     "socket.io": "^4.8.0",
+    "svix": "^1.96.1",
     "winston": "^3.17.0"
   },
   "devDependencies": {

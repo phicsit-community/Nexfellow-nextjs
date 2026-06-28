@@ -1,12 +1,15 @@
 "use client";
 
-import Signup from "@/Pages/Auth/Signup/Signup";
-import PublicLayout from "@/layouts/PublicLayout";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
+// Redirects legacy /signup route to Clerk's /sign-up page.
 export default function SignupPage() {
-    return (
-        <PublicLayout>
-            <Signup />
-        </PublicLayout>
-    );
+    const router = useRouter();
+
+    useEffect(() => {
+        router.replace("/sign-up");
+    }, [router]);
+
+    return null;
 }

@@ -6,6 +6,13 @@ const Profile = require("./profileModel");
 
 const userSchema = new schema(
   {
+    clerkId: {
+      type: String,
+      unique: true,
+      sparse: true,
+      select: false,
+    },
+
     name: {
       type: String,
       required: true,

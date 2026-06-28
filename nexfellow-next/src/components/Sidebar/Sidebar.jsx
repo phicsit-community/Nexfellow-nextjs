@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import api from "../../lib/axios";
+import useLogout from "../../utils/auth/useLogout";
 import { useMediaQuery } from "react-responsive";
 import { useTheme } from "../../hooks/useTheme";
 
@@ -126,29 +127,12 @@ function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
 
   const isActive = (path) => activeTab.startsWith(path);
 
+  const handleLogoutFn = useLogout();
   const handleLogout = async () => {
     if (loading) return;
     setLoading(true);
     try {
-      const response = await api.get("/user/logout", { withCredentials: true });
-      if (response.status === 200) {
-        // Clear all storage
-        localStorage.clear();
-        sessionStorage.clear();
-
-        // Clear all cookies
-        document.cookie.split(";").forEach((c) => {
-          document.cookie = c
-            .replace(/^ +/, "")
-            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-        });
-
-        router.push("/login");
-      } else {
-        console.error("Logout failed:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error during logout:", error.message);
+      await handleLogoutFn();
     } finally {
       setLoading(false);
     }
@@ -320,8 +304,8 @@ function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
               </div>
             )}
             <div className={style.userInfo}>
-              <span className={style.userName}>{user?.name || "Rahul K."}</span>
-              <span className={style.userSub}>{user?.occupation || (user?.professions?.[0]) || "Founder"} &middot; {user?.country || "Mumbai"}</span>
+              <span className={style.userName}>{user?.name || ""}</span>
+              <span className={style.userSub}>{user?.occupation || (user?.professions?.[0]) || ""}{user?.country ? ` · ${user.country}` : ""}</span>
             </div>
           </div>
 

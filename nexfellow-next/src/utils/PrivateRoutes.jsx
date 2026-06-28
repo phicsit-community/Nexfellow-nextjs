@@ -1,52 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const PrivateRoutes = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    const checkAuth = () => {
-      if (typeof window === "undefined") return;
+    if (isLoaded && !isSignedIn) {
+      router.replace("/sign-in");
+    }
+  }, [isSignedIn, isLoaded, router]);
 
-      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-      const expiresInStr = localStorage.getItem("expiresIn");
-
-      let isValid = false;
-      if (isLoggedIn && expiresInStr) {
-        const expiresAt = new Date(expiresInStr);
-        if (!isNaN(expiresAt)) {
-          isValid = expiresAt > new Date();
-        }
-      }
-
-      setIsAuthenticated(isValid);
-      setIsLoading(false);
-
-      // Redirect if not authenticated
-      if (!isValid) {
-        router.replace("/login");
-      }
-    };
-
-    checkAuth();
-
-    // Listen for storage changes (user logs in/out in another tab)
-    const handleStorageChange = () => {
-      checkAuth();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, [router]);
-
-  if (isLoading) {
+  if (!isLoaded) {
     return (
       <div
         style={{
@@ -67,20 +35,13 @@ const PrivateRoutes = ({ children }) => {
             borderRadius: "50%",
             animation: "spin 1s linear infinite",
           }}
-        ></div>
-        <style>
-          {`
-            @keyframes spin {
-              0% { transform: rotate(0deg); }
-              100% { transform: rotate(360deg); }
-            `}
-        </style>
+        />
+        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
-  // Return children if authenticated
-  return isAuthenticated ? <>{children}</> : null;
+  return isSignedIn ? <>{children}</> : null;
 };
 
 export default PrivateRoutes;

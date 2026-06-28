@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const authController = require("../controllers/authController");
-const { isClient } = require("../middleware");
+const { requireAuth } = require("../middleware");
 const catchAsync = require("../utils/CatchAsync");
 
 // Helper to get production-safe site URL for failure redirects
@@ -86,7 +86,7 @@ router.get(
   catchAsync(authController.facebookCallback)
 );
 
-router.get("/getDetails", isClient, catchAsync(authController.getUserDetails));
+router.get("/getDetails", requireAuth, catchAsync(authController.getUserDetails));
 
 router.post("/refresh-token", catchAsync(authController.refreshToken));
 
@@ -95,7 +95,7 @@ router.post("/exchange-code", catchAsync(authController.exchangeOAuthCode));
 
 // Account connect routes (link additional OAuth platforms to an existing account)
 // GitHub and LinkedIn reuse their login callbacks (detected via state param); Twitter has its own callback
-router.post("/connect/init", isClient, catchAsync(authController.initiateConnect));
+router.post("/connect/init", requireAuth, catchAsync(authController.initiateConnect));
 router.get("/connect/twitter/callback", catchAsync(authController.twitterConnectCallback));
 
 router.get("/logout", authController.logout);

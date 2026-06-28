@@ -18,7 +18,7 @@ export default function Feed() {
 
     useEffect(() => {
         const checkAuth = async () => {
-            // Prevent double execution
+            // Already checked — nothing more to do here; useLogout handles the redirect
             if (hasChecked.current) return;
             hasChecked.current = true;
 

@@ -1,49 +1,18 @@
-import api from "../../lib/axios";
-import { logout } from "../../store/slices/authSlice";
-import { useDispatch } from "react-redux";
-import { useRouter } from "next/navigation";
+import { useClerk } from "@clerk/nextjs";
+import { disconnectSocket } from "../socket";
 
-/**
- * Hook to handle logout functionality
- * @returns {Function} logout handler function
- */
 const useLogout = () => {
-  const dispatch = useDispatch();
-  const router = useRouter();
+  const { signOut } = useClerk();
 
   const handleLogout = async () => {
     try {
-      // Call server to invalidate refresh token and clear cookies
-      await api.get("/auth/logout", { withCredentials: true });
-
-      // Clear local storage
-      localStorage.removeItem("user");
-      localStorage.removeItem("expiresIn");
-      localStorage.setItem("isLoggedIn", "false");
-
-      // Clear any other app-specific storage
-      sessionStorage.clear();
-
-      // For JWT tokens stored in localStorage
-      localStorage.removeItem("token");
-
-      // Dispatch logout action to update Redux state
-      dispatch(logout());
-
-      // Navigate to login page
-      router.push("/login");
+      disconnectSocket();
+      // signOut() updates Clerk's isSignedIn to false.
+      // ClientInitializer watches isSignedIn and does the hard redirect once it's false.
+      await signOut();
     } catch (error) {
       console.error("Logout error:", error);
-
-      // Fallback: clear client-side auth data even if API call fails
-      localStorage.removeItem("user");
-      localStorage.removeItem("expiresIn");
-      localStorage.removeItem("token");
-      localStorage.setItem("isLoggedIn", "false");
-      sessionStorage.clear();
-
-      dispatch(logout());
-      router.push("/login");
+      window.location.replace("/sign-in");
     }
   };
 
@@ -51,4 +20,3 @@ const useLogout = () => {
 };
 
 export default useLogout;
-

@@ -1,8 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
 import clsx from "clsx";
+import { useAuth } from "@clerk/nextjs";
 
 // components
 import Navbar from "../../components/Navbar/Navbar";
@@ -14,13 +14,10 @@ import style from "./Layout.module.css";
 
 const Layout = ({ isPrivate = false, children }) => {
   const pathname = usePathname();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
-    }
-  }, []);
+  const { isSignedIn, isLoaded } = useAuth();
+  // Treat as logged in once Clerk confirms the session.
+  // Before Clerk loads, fall back to localStorage so the sidebar doesn't flash empty.
+  const isLoggedIn = isLoaded ? !!isSignedIn : (typeof window !== "undefined" && localStorage.getItem("isLoggedIn") === "true");
 
   // Route patterns for view-only pages
   const VIEW_ONLY_ROUTES = [

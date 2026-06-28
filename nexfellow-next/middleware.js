@@ -1,87 +1,56 @@
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-// Routes that require authentication
-const PRIVATE_ROUTES = [
-    "/feed",
-    "/dashboard",
-    "/explore",
-    "/communities",
-    // "/community" - removed to allow public community preview
-    "/leaderboard",
-    "/inbox",
-    "/notifications",
-    "/settings",
-    "/post",
-    "/user",
-    "/challenge",
-    "/contest",
-    "/create",
-    "/admin",
-    "/communication",
-    "/edit-profile",
-    "/verification",
-    "/other",
-    "/search",
-    "/coming-soon",
-    "/start-contest",
-    "/contest-completed",
-    "/contest-question",
-    "/moderators",
-    "/onboarding",
-    "/premium",
-];
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/login(.*)",
+  "/signup(.*)",
+  "/forgotpassword(.*)",
+  "/auth/callback(.*)",
+  "/features(.*)",
+  "/mission(.*)",
+  "/blogs(.*)",
+  "/launches(.*)",
+  "/privacy(.*)",
+  "/terms(.*)",
+  "/help(.*)",
+  "/contact(.*)",
+  "/link/(.*)",
+  "/api/webhooks(.*)",
+  "/preview(.*)",
+]);
 
-// Routes that should redirect logged-in users
-const AUTH_ROUTES = ["/login", "/signup", "/forgotpassword"];
+export default clerkMiddleware(async (auth, req) => {
+  const { pathname } = req.nextUrl;
 
-export function middleware(request) {
-    const { pathname, searchParams } = request.nextUrl;
+  if (!isPublicRoute(req)) {
+    await auth.protect();
+  }
 
-    // Check for auth cookie/token
-    const isLoggedIn = request.cookies.get("isLoggedIn")?.value === "true";
-
-    // Only treat explicit auth tokens (not session cookies) as logged-in indicators
-    const hasAuthToken = request.cookies.get("token")?.value ||
-        request.cookies.get("accessToken")?.value;
-
-    // Check if current path is a private route
-    const isPrivateRoute = PRIVATE_ROUTES.some((route) =>
-        pathname.startsWith(route)
-    );
-
-    // Check if current path is an auth route
-    const isAuthRoute = AUTH_ROUTES.some((route) =>
-        pathname.startsWith(route)
-    );
-
-    if (isPrivateRoute && !isLoggedIn && !hasAuthToken) {
-        const loginUrl = new URL("/login", request.url);
-        loginUrl.searchParams.set("redirect", pathname);
-        return NextResponse.redirect(loginUrl);
+  // After Clerk confirms the user is signed in, check onboarding status via cookie.
+  // The isOnboarded cookie is set by ClientInitializer after fetching /auth/getDetails.
+  const { userId } = await auth();
+  if (userId) {
+    const isOnboarded = req.cookies.get("isOnboarded")?.value;
+    if (
+      isOnboarded === "false" &&
+      !pathname.startsWith("/onboarding") &&
+      !pathname.startsWith("/sign-in") &&
+      !pathname.startsWith("/sign-up") &&
+      !pathname.startsWith("/api/webhooks")
+    ) {
+      return NextResponse.redirect(new URL("/onboarding", req.url));
     }
+  }
 
-    // Redirect logged-in but non-onboarded users to onboarding
-    const isOnboarded = request.cookies.get("isOnboarded")?.value;
-    if (isLoggedIn && isOnboarded === "false" && !pathname.startsWith("/onboarding")) {
-        return NextResponse.redirect(new URL("/onboarding", request.url));
-    }
-
-    // Note: Removed auto-redirect from auth routes to feed
-    // This was causing infinite loops. Login/Signup pages handle their own redirects.
-
-    return NextResponse.next();
-}
+  return NextResponse.next();
+});
 
 export const config = {
-    matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - api (API routes)
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * - public folder
-         */
-        '/((?!api|_next/static|_next/image|favicon.ico).*)',
-    ],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff2?|ttf)).*)",
+    "/(api|trpc)(.*)",
+  ],
 };

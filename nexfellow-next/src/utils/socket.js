@@ -1,51 +1,67 @@
-// src/utils/socket.js
 import { io } from "socket.io-client";
 
 let apiUrl;
 
-// Next.js environment variables
 if (process.env.NODE_ENV === "development") {
-  console.log("Running in development mode");
   apiUrl = process.env.NEXT_PUBLIC_LOCALHOST;
 } else {
-  console.log("Running in production mode");
   apiUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 }
 
 let socket = null;
 
-export const initializeSocket = (userId) => {
+// Clerk loads asynchronously. Retry getting the token a few times
+// in case session isn't ready immediately after page hydration.
+const getClerkToken = async (retries = 8, delayMs = 250) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const token = await window.Clerk?.session?.getToken();
+      if (token) return token;
+    } catch (_) {}
+    if (i < retries - 1) await new Promise((r) => setTimeout(r, delayMs));
+  }
+  return null;
+};
+
+export const initializeSocket = async (userId) => {
   if (!userId) {
     console.warn("⚠️ No userId provided. Socket will not connect.");
     return null;
   }
 
-  // If socket already exists, just update auth & reconnect
+  // If socket exists but is disconnected (e.g. after page navigation),
+  // refresh the auth token and reconnect rather than reusing the stale token.
   if (socket) {
-    socket.auth = { userId };
     if (!socket.connected) {
+      const freshToken = await getClerkToken();
+      if (!freshToken) {
+        console.warn("⚠️ Clerk session not ready — socket reconnect skipped.");
+        return socket;
+      }
+      socket.auth = { token: freshToken };
       socket.connect();
     }
     return socket;
   }
 
-  // === Create socket instance ===
+  const token = await getClerkToken();
+  if (!token) {
+    console.warn("⚠️ Could not get Clerk token — socket will not connect.");
+    return null;
+  }
+
   socket = io(apiUrl, {
-    autoConnect: false, // only connect after auth
+    autoConnect: false,
     transports: ["websocket", "polling"],
     reconnection: true,
     reconnectionAttempts: 5,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
-    auth: { userId },
+    auth: { token },
   });
 
-  // === Socket event listeners (set once) ===
   socket.on("connect", () => {
     console.log(`✅ Socket connected: ${socket.id}`);
-    console.log(`User ID used for connection: ${userId}`);
-
-    // Join personal rooms
     socket.emit("joinFollowedCommunities", userId);
     socket.emit("joinDirectMessages", userId);
   });
@@ -62,14 +78,12 @@ export const initializeSocket = (userId) => {
     console.error("Socket connection error:", err.message);
   });
 
-  // === Global notifications ===
   socket.on("newNotification", (notification) => {
     console.log("🔔 New notification:", notification);
   });
 
   socket.on("notification:read", (updatedUnreadCount) => {
     console.log("🔔 Notification read update, unread count:", updatedUnreadCount);
-    // You can propagate this event to your React state or event bus to update UI
   });
 
   socket.on("newSystemNotification", (notification) => {
@@ -80,7 +94,6 @@ export const initializeSocket = (userId) => {
     console.log("newCommunityNotification", notification);
   });
 
-  // === Community events ===
   socket.on("community:newMessage", (message) => {
     console.log("💬 New community message:", message);
   });
@@ -97,7 +110,6 @@ export const initializeSocket = (userId) => {
     console.log("⌨️ Community typing status:", data);
   });
 
-  // === Direct message events ===
   socket.on("dm:newMessage", (data) => {
     console.log("📩 New direct message:", data);
   });
@@ -110,7 +122,6 @@ export const initializeSocket = (userId) => {
     console.log("✅ Direct message read receipt:", data);
   });
 
-  // === Comments ===
   socket.on("comment:new", (comment) => {
     console.log("💬 New comment:", comment);
   });
@@ -127,7 +138,6 @@ export const initializeSocket = (userId) => {
     console.log("⚠️ Comment reported:", comment);
   });
 
-  // Finally connect
   socket.connect();
 
   return socket;
