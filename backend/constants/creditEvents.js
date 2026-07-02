@@ -115,6 +115,20 @@ const CREDIT_EVENTS = {
     delta: 10,
     description: "BuilderMap profile visited 50+ times (monthly milestone)",
   },
+  // delta: 0 intentionally — caller must pass deltaOverride: PLANS[planId].credits
+  // idempotency key is per payment_id so renewals each grant credits once
+  SUBSCRIPTION_CREDIT_GRANT: {
+    code: "SUBSCRIPTION_CREDIT_GRANT",
+    delta: 0,
+    description: "Monthly credits granted on subscription activation or renewal",
+  },
+  // delta: 0 intentionally — caller must pass deltaOverride: PLANS.free.credits
+  // idempotency key is per grant cycle so a missed/re-run cron never double-grants
+  FREE_PLAN_CREDIT_GRANT: {
+    code: "FREE_PLAN_CREDIT_GRANT",
+    delta: 0,
+    description: "Monthly free-plan credit grant",
+  },
 
   // ── Spend ────────────────────────────────────────────────────────────────────
   SUBMIT_FOR_FEEDBACK: {

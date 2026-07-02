@@ -4,6 +4,10 @@ const { Webhook } = require("svix");
 const User = require("../models/userModel");
 const Profile = require("../models/profileModel");
 const randomStringGenerator = require("randomstring");
+const CreditService = require("../services/creditService");
+const { PLANS } = require("../constants/plans");
+
+const FREE_CREDIT_GRANT_INTERVAL_MS = 30 * 24 * 60 * 60 * 1000;
 
 const defaultProfilePicture = "https://nexfellow.b-cdn.net/defaults/default-profile.png";
 const defaultBanner = "https://nexfellow.b-cdn.net/defaults/default-banner.png";
@@ -96,7 +100,18 @@ router.post(
       });
 
       user.profile = profile._id;
+      user.nextFreeCreditGrantAt = new Date(Date.now() + FREE_CREDIT_GRANT_INTERVAL_MS);
       await user.save();
+
+      // Initial free-plan credit grant. idempotencyKey is per-user so this
+      // never double-grants even if the webhook is retried.
+      await CreditService.award({
+        userId: user._id,
+        eventCode: "FREE_PLAN_CREDIT_GRANT",
+        idempotencyKey: `FREE_PLAN_CREDIT_GRANT:${user._id}:signup`,
+        deltaOverride: PLANS.free.credits,
+        source: "system",
+      }).catch((err) => console.error("[clerkWebhook] Initial credit grant failed:", err.message));
 
       console.log(`[clerkWebhook] Created user ${user._id} for Clerk ID ${clerkId}`);
     }

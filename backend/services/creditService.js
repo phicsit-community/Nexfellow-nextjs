@@ -38,11 +38,14 @@ class CreditService {
    */
   static async award(opts) {
     const event = CREDIT_EVENTS[opts.eventCode];
-    if (!event || event.delta <= 0) {
+    // deltaOverride lets callers supply the amount for events with delta: 0
+    // (e.g. SUBSCRIPTION_CREDIT_GRANT where the amount comes from PLANS[planId].credits)
+    const delta = opts.deltaOverride ?? event?.delta;
+    if (!event || delta <= 0) {
       throw new ExpressError(`Invalid earn event: ${opts.eventCode}`, 400);
     }
     await CreditService._enforceEarnCap(opts.userId, opts.eventCode, opts.entityRef);
-    const result = await CreditService._commit({ ...opts, delta: event.delta });
+    const result = await CreditService._commit({ ...opts, delta });
 
     // Streak update runs after a successful REVIEW_FEEDBACK commit
     if (opts.eventCode === "REVIEW_FEEDBACK" && !result.duplicate) {
@@ -98,9 +101,12 @@ class CreditService {
     return profile?.coin ?? 0;
   }
 
-  static async getHistory(userId, { page = 1, limit = 20, eventCode } = {}) {
+  static async getHistory(userId, { page = 1, limit = 20, eventCode, type } = {}) {
     const filter = { userId };
     if (eventCode) filter.eventCode = eventCode;
+    if (type === "earn") filter.delta = { $gt: 0 };
+    else if (type === "spend") filter.delta = { $lt: 0 };
+    else if (type === "plan") filter.eventCode = "SUBSCRIPTION_CREDIT_GRANT";
     const skip = (page - 1) * limit;
     const [transactions, total] = await Promise.all([
       CreditTransaction.find(filter)
@@ -132,11 +138,29 @@ class CreditService {
   }
 
   static async getSummary(userId) {
-    const [profile, streak, agg] = await Promise.all([
+    const startOfWeek = utcMidnight();
+    const dayNum = startOfWeek.getUTCDay() || 7; // Monday = 1 ... Sunday = 7
+    startOfWeek.setUTCDate(startOfWeek.getUTCDate() - (dayNum - 1));
+
+    const [profile, streak, agg, weekAgg] = await Promise.all([
       Profile.findOne({ userId }).select("coin").lean(),
       ReviewStreak.findOne({ userId }).select("currentStreak longestStreak").lean(),
       CreditTransaction.aggregate([
         { $match: { userId: new mongoose.Types.ObjectId(String(userId)) } },
+        {
+          $group: {
+            _id: { isEarn: { $gt: ["$delta", 0] } },
+            total: { $sum: { $abs: "$delta" } },
+          },
+        },
+      ]),
+      CreditTransaction.aggregate([
+        {
+          $match: {
+            userId: new mongoose.Types.ObjectId(String(userId)),
+            createdAt: { $gte: startOfWeek },
+          },
+        },
         {
           $group: {
             _id: { isEarn: { $gt: ["$delta", 0] } },
@@ -153,10 +177,19 @@ class CreditService {
       else totalSpent = bucket.total;
     }
 
+    let earnedThisWeek = 0;
+    let spentThisWeek = 0;
+    for (const bucket of weekAgg) {
+      if (bucket._id.isEarn) earnedThisWeek = bucket.total;
+      else spentThisWeek = bucket.total;
+    }
+
     return {
       balance: profile?.coin ?? 0,
       totalEarned,
       totalSpent,
+      earnedThisWeek,
+      spentThisWeek,
       currentStreak: streak?.currentStreak ?? 0,
       longestStreak: streak?.longestStreak ?? 0,
     };

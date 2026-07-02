@@ -164,6 +164,14 @@ const userSchema = new schema(
       default: null,
     },
 
+    // When the next monthly free-plan credit grant is due. Only consulted
+    // while subscriptionTier === "free" — paid users earn credits via
+    // SUBSCRIPTION_CREDIT_GRANT on renewal instead. See jobs/freeCreditGrantCron.js
+    nextFreeCreditGrantAt: {
+      type: Date,
+      default: null,
+    },
+
     dodoCustomerId: {
       type: String,
       default: null,

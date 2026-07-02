@@ -4,6 +4,7 @@ const User = require("../models/userModel");
 const Subscription = require("../models/subscriptionModel");
 const { PLANS, VALID_PLAN_IDS, VALID_INTERVALS } = require("../constants/plans");
 const MailSender = require("../utils/mailSender");
+const CreditService = require("../services/creditService");
 
 let _dodo = null;
 const getDodo = () => {
@@ -51,7 +52,23 @@ module.exports.createCheckoutSession = async (req, res) => {
   }
 
   const checkout = await getDodo().checkoutSessions.create(checkoutPayload);
-  return res.json({ checkoutUrl: checkout.url });
+  return res.json({ checkoutUrl: checkout.checkout_url });
+};
+
+// POST /payments/portal
+// Creates a Dodo hosted customer portal session so subscribers can manage
+// billing (update card, cancel) without us building that UI ourselves.
+module.exports.createPortalSession = async (req, res) => {
+  const user = await User.findById(req.user._id).select("+dodoCustomerId");
+  if (!user?.dodoCustomerId) {
+    return res.status(400).json({ error: "No billing account found for this user." });
+  }
+
+  const portal = await getDodo().customers.customerPortal.create(
+    user.dodoCustomerId,
+    { return_url: `${process.env.SITE_URL}/wallet` }
+  );
+  return res.json({ portalUrl: portal.link });
 };
 
 // POST /payments/webhook  (NO auth middleware — Dodo calls this directly)
@@ -162,6 +179,21 @@ async function activateSubscription(data, meta, eventType) {
   };
 
   await Promise.all([user.save(), Subscription.create(subscriptionRecord)]);
+
+  // Grant plan credits for this billing period.
+  // idempotencyKey is per paymentId so each renewal grants credits exactly once,
+  // and duplicate webhook deliveries are silently deduplicated by the unique index.
+  const creditAmount = PLANS[planId].credits;
+  if (creditAmount > 0) {
+    const grantIdempotencyKey = `SUBSCRIPTION_CREDIT_GRANT:${paymentId ?? `${data.subscription_id}:${eventType}`}`;
+    CreditService.award({
+      userId: user._id,
+      eventCode: "SUBSCRIPTION_CREDIT_GRANT",
+      idempotencyKey: grantIdempotencyKey,
+      deltaOverride: creditAmount,
+      source: "payment",
+    }).catch((err) => console.error("Subscription credit grant failed:", err.message));
+  }
 
   const planNames = { builder_pro: "Builder Pro", founder: "Founder" };
   MailSender(
