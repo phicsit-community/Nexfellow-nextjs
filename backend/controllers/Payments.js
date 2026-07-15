@@ -1,4 +1,3 @@
-const crypto = require("crypto");
 const DodoPayments = require("dodopayments");
 const User = require("../models/userModel");
 const Subscription = require("../models/subscriptionModel");
@@ -72,41 +71,24 @@ module.exports.createPortalSession = async (req, res) => {
 };
 
 // POST /payments/webhook  (NO auth middleware — Dodo calls this directly)
-// Verifies the HMAC-SHA256 signature, then routes the event to the correct handler.
+// Verifies the Standard Webhooks signature (via the Dodo SDK), then routes the
+// event to the correct handler.
 module.exports.handleWebhook = async (req, res) => {
-  const timestamp = req.headers["webhook-timestamp"];
-  const signature = req.headers["webhook-signature"];
   const rawBody = req.rawBody;
-
-  if (!timestamp || !signature || !rawBody) {
+  if (!rawBody) {
     return res.status(400).end();
   }
 
-  const signedPayload = `${timestamp}.${rawBody}`;
-  const expected = crypto
-    .createHmac("sha256", process.env.DODO_PAYMENTS_WEBHOOK_KEY)
-    .update(signedPayload)
-    .digest("base64");
-
-  let isValid = false;
-  try {
-    isValid = crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expected)
-    );
-  } catch {
-    isValid = false;
-  }
-
-  if (!isValid) {
-    return res.status(401).json({ error: "Invalid webhook signature." });
-  }
+  // webhook-id uniquely identifies this event across retries — Dodo's subscription
+  // payloads carry no payment_id of their own, so this is our idempotency anchor.
+  const webhookId = req.headers["webhook-id"];
 
   let event;
   try {
-    event = JSON.parse(rawBody);
-  } catch {
-    return res.status(400).json({ error: "Invalid JSON body." });
+    event = getDodo().webhooks.unwrap(rawBody, { headers: req.headers });
+  } catch (err) {
+    console.error("Webhook signature verification failed:", err.message);
+    return res.status(401).json({ error: "Invalid webhook signature." });
   }
 
   const { type, data } = event;
@@ -114,7 +96,7 @@ module.exports.handleWebhook = async (req, res) => {
 
   try {
     if (type === "subscription.active" || type === "subscription.renewed") {
-      await activateSubscription(data, meta, type);
+      await activateSubscription(data, meta, type, webhookId);
     } else if (
       type === "subscription.cancelled" ||
       type === "subscription.expired"
@@ -136,7 +118,7 @@ module.exports.handleWebhook = async (req, res) => {
   return res.status(200).json({ received: true });
 };
 
-async function activateSubscription(data, meta, eventType) {
+async function activateSubscription(data, meta, eventType, webhookId) {
   const { userId, planId, interval } = meta;
   if (!userId || !planId || !PLANS[planId]) return;
 
@@ -145,12 +127,15 @@ async function activateSubscription(data, meta, eventType) {
   );
   if (!user) return;
 
-  // Idempotency guard: skip if this exact payment was already processed
-  const paymentId = data.payment_id ?? data.id;
-  if (paymentId) {
-    const existing = await Subscription.findOne({ dodoPaymentId: paymentId });
+  // Idempotency guard: skip if this exact webhook delivery was already processed.
+  // subscription.active/renewed payloads carry no payment_id of their own, so the
+  // Standard Webhooks "webhook-id" header is the only stable per-event identifier.
+  if (webhookId) {
+    const existing = await Subscription.findOne({ dodoEventId: webhookId });
     if (existing) return;
   }
+
+  const customerId = data.customer?.customer_id;
 
   const now = new Date();
   const expiresAt = new Date(now);
@@ -159,7 +144,7 @@ async function activateSubscription(data, meta, eventType) {
   user.subscriptionTier = planId;
   user.subscriptionExpiresAt = expiresAt;
   user.subscriptionInterval = interval;
-  user.dodoCustomerId = data.customer_id ?? user.dodoCustomerId;
+  user.dodoCustomerId = customerId ?? user.dodoCustomerId;
   user.dodoSubscriptionId = data.subscription_id ?? user.dodoSubscriptionId;
   user.verificationBadge = PLANS[planId].badge !== null;
 
@@ -168,9 +153,9 @@ async function activateSubscription(data, meta, eventType) {
     plan: planId,
     interval,
     dodoSubscriptionId: data.subscription_id,
-    dodoPaymentId: paymentId || undefined,
-    dodoCustomerId: data.customer_id,
-    amountPaid: data.amount,
+    dodoEventId: webhookId || undefined,
+    dodoCustomerId: customerId,
+    amountPaid: data.recurring_pre_tax_amount,
     currency: data.currency,
     status: "active",
     startsAt: now,
@@ -181,11 +166,11 @@ async function activateSubscription(data, meta, eventType) {
   await Promise.all([user.save(), Subscription.create(subscriptionRecord)]);
 
   // Grant plan credits for this billing period.
-  // idempotencyKey is per paymentId so each renewal grants credits exactly once,
+  // idempotencyKey is per webhookId so each delivery grants credits exactly once,
   // and duplicate webhook deliveries are silently deduplicated by the unique index.
   const creditAmount = PLANS[planId].credits;
   if (creditAmount > 0) {
-    const grantIdempotencyKey = `SUBSCRIPTION_CREDIT_GRANT:${paymentId ?? `${data.subscription_id}:${eventType}`}`;
+    const grantIdempotencyKey = `SUBSCRIPTION_CREDIT_GRANT:${webhookId ?? `${data.subscription_id}:${eventType}:${data.previous_billing_date}`}`;
     CreditService.award({
       userId: user._id,
       eventCode: "SUBSCRIPTION_CREDIT_GRANT",
