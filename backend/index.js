@@ -64,6 +64,11 @@ const subscriptionExpiryCron = require("./jobs/subscriptionExpiryCron");
 cron.schedule("0 3 * * *", subscriptionExpiryCron, { timezone: "UTC" });
 console.log("🔄 Subscription expiry cron job scheduled (daily 03:00 UTC)");
 
+// Free-plan monthly credit grant: runs daily at 04:00 UTC
+const freeCreditGrantCron = require("./jobs/freeCreditGrantCron");
+cron.schedule("0 4 * * *", freeCreditGrantCron, { timezone: "UTC" });
+console.log("🔄 Free-plan credit grant cron job scheduled (daily 04:00 UTC)");
+
 // if debug
 // if (process.env.NODE_ENV === "development") {
 //   app.use(requestLogger);
@@ -155,6 +160,10 @@ app.use(
     credentials: true,
   })
 );
+// Clerk webhook — must be registered BEFORE express.json() (raw body required for svix verification)
+const clerkWebhookRoutes = require("./routes/clerkWebhook");
+app.use("/api/webhooks/clerk", clerkWebhookRoutes);
+
 // Dodo Payments webhook needs the raw body for HMAC-SHA256 verification.
 // This must be registered BEFORE express.json() so it intercepts the raw bytes first.
 app.use("/payments/webhook", express.raw({ type: "application/json" }), (req, res, next) => {

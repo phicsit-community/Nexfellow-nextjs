@@ -6,6 +6,13 @@ const Profile = require("./profileModel");
 
 const userSchema = new schema(
   {
+    clerkId: {
+      type: String,
+      unique: true,
+      sparse: true,
+      select: false,
+    },
+
     name: {
       type: String,
       required: true,
@@ -154,6 +161,14 @@ const userSchema = new schema(
     subscriptionInterval: {
       type: String,
       enum: ["monthly", "annual"],
+      default: null,
+    },
+
+    // When the next monthly free-plan credit grant is due. Only consulted
+    // while subscriptionTier === "free" — paid users earn credits via
+    // SUBSCRIPTION_CREDIT_GRANT on renewal instead. See jobs/freeCreditGrantCron.js
+    nextFreeCreditGrantAt: {
+      type: Date,
       default: null,
     },
 

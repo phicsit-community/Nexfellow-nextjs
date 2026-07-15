@@ -1,12 +1,15 @@
 "use client";
 
-import Login from "@/Pages/Auth/Login/Login";
-import PublicLayout from "@/layouts/PublicLayout";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
+// Redirects legacy /login route to Clerk's /sign-in page.
 export default function LoginPage() {
-    return (
-        <PublicLayout>
-            <Login />
-        </PublicLayout>
-    );
+    const router = useRouter();
+
+    useEffect(() => {
+        router.replace("/sign-in");
+    }, [router]);
+
+    return null;
 }

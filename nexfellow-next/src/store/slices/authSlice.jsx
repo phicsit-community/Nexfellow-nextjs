@@ -1,42 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { initializeSocket, disconnectSocket } from "../../utils/socket";
+import { disconnectSocket } from "../../utils/socket";
 
-// Helper to safely access localStorage (SSR-compatible)
+// SSR-safe helpers
 const getLocalStorage = (key) => {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem(key);
-  }
+  if (typeof window !== "undefined") return localStorage.getItem(key);
   return null;
 };
-
 const setLocalStorage = (key, value) => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem(key, value);
-  }
+  if (typeof window !== "undefined") localStorage.setItem(key, value);
 };
-
 const removeLocalStorage = (key) => {
+  if (typeof window !== "undefined") localStorage.removeItem(key);
+};
+
+const clearAllStorage = () => {
   if (typeof window !== "undefined") {
-    localStorage.removeItem(key);
+    localStorage.clear();
+    sessionStorage.clear();
   }
 };
 
-// Helper to set cookies (for middleware auth checks)
-const setCookie = (name, value, days = 7) => {
-  if (typeof window !== "undefined") {
-    const expires = new Date();
-    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
-  }
-};
-
-const removeCookie = (name) => {
-  if (typeof window !== "undefined") {
-    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-  }
-};
-
-// Helper to clear all cookies
 const clearAllCookies = () => {
   if (typeof window !== "undefined") {
     document.cookie.split(";").forEach((c) => {
@@ -47,77 +30,46 @@ const clearAllCookies = () => {
   }
 };
 
-// Helper to clear all storage
-const clearAllStorage = () => {
-  if (typeof window !== "undefined") {
-    localStorage.clear();
-    sessionStorage.clear();
-  }
-};
-
-// Helper to check token expiry
-const isTokenValid = () => {
-  const expiresInStr = getLocalStorage("expiresIn");
-  if (!expiresInStr) return false;
-  const expiresAt = new Date(expiresInStr);
-  return !isNaN(expiresAt) && expiresAt > new Date();
-};
-
-// SSR-safe initial state
+// SSR-safe initial state — Clerk is the source of truth for auth;
+// Redux only stores the MongoDB user profile fetched from /auth/getDetails.
 const getInitialState = () => {
-  const isLoggedIn = getLocalStorage("isLoggedIn") === "true";
   const userStr = getLocalStorage("user");
+  const isLoggedIn = getLocalStorage("isLoggedIn") === "true";
   return {
-    isLoggedIn: isLoggedIn && isTokenValid(),
-    isAuthLoading: true,
+    isLoggedIn,
+    isAuthLoading: !isLoggedIn, // skip loading spinner if we already have cached session
     user: userStr ? JSON.parse(userStr) : null,
     themePreference: getLocalStorage("themePreference") || "light",
   };
 };
 
-const initialState = getInitialState();
-
 const authSlice = createSlice({
   name: "auth",
-  initialState,
+  initialState: getInitialState(),
   reducers: {
     setAuthLoading: (state, action) => {
       state.isAuthLoading = action.payload;
     },
     login: (state, action) => {
       state.isLoggedIn = true;
+      state.isAuthLoading = false;
       state.user = action.payload?.user || null;
       state.themePreference = action.payload?.user?.themePreference || "light";
 
-      setLocalStorage("isLoggedIn", "true");
-      setCookie("isLoggedIn", "true", 7); // Set cookie for middleware auth
-      if (action.payload?.expiresIn) {
-        setLocalStorage("expiresIn", action.payload.expiresIn);
-      }
       if (action.payload?.user) {
         setLocalStorage("user", JSON.stringify(action.payload.user));
-      }
-
-      console.log("User logged in:", action.payload?.user);
-      if (action.payload?.user?.id) {
-        initializeSocket(action.payload.user.id);
+        setLocalStorage("isLoggedIn", "true");
       }
     },
     logout: (state) => {
       state.isLoggedIn = false;
       state.user = null;
       state.themePreference = "light";
+      state.isAuthLoading = false;
 
-      // Clear all storage and cookies completely
       clearAllStorage();
       clearAllCookies();
-
       disconnectSocket();
-    },
-    refreshToken: (state, action) => {
-      if (action.payload?.expiresIn) {
-        setLocalStorage("expiresIn", action.payload.expiresIn);
-      }
     },
     setUser: (state, action) => {
       state.user = action.payload;
@@ -131,12 +83,9 @@ const authSlice = createSlice({
       state.themePreference = action.payload;
       setLocalStorage("themePreference", action.payload);
     },
-    // New action to hydrate state on client mount
     hydrateFromStorage: (state) => {
       if (typeof window !== "undefined") {
-        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
         const userStr = localStorage.getItem("user");
-        state.isLoggedIn = isLoggedIn && isTokenValid();
         state.user = userStr ? JSON.parse(userStr) : null;
         state.themePreference = localStorage.getItem("themePreference") || "light";
         state.isAuthLoading = false;
@@ -145,5 +94,13 @@ const authSlice = createSlice({
   },
 });
 
-export const { login, logout, refreshToken, setAuthLoading, setUser, setThemePreference, hydrateFromStorage } = authSlice.actions;
+export const {
+  login,
+  logout,
+  setAuthLoading,
+  setUser,
+  setThemePreference,
+  hydrateFromStorage,
+} = authSlice.actions;
+
 export default authSlice.reducer;

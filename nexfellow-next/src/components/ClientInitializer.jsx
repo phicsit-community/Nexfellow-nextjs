@@ -1,120 +1,106 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { useAuth, useClerk } from "@clerk/nextjs";
 import { useSelector, useDispatch } from "react-redux";
 import api from "@/lib/axios";
-import tokenService from "@/utils/auth/tokenService";
 import { initializeSocket } from "@/utils/socket";
-import { login, setAuthLoading } from "@/store/slices/authSlice";
+import { login, logout, setAuthLoading } from "@/store/slices/authSlice";
 
 /**
- * Client-side initialization component for Next.js
- * Handles token service initialization, socket connections, and auth heartbeat
+ * Bridges Clerk auth state into Redux and initializes the socket connection.
+ *
+ * Flow:
+ *  1. Clerk detects the signed-in session.
+ *  2. We call /auth/getDetails (protected by requireAuth) to get the MongoDB user record.
+ *  3. Redux is populated with the MongoDB user data (id, username, picture, isOnboarded, etc.).
+ *  4. A cookie is set for the Next.js middleware onboarding check.
+ *  5. Socket is opened once the MongoDB user id is known.
+ *
+ * If the backend is unreachable (network error), we sign out of Clerk so the user
+ * gets a clean sign-in form instead of an infinite redirect loop.
  */
 export default function ClientInitializer() {
+    const { isSignedIn, isLoaded } = useAuth();
+    const { signOut } = useClerk();
     const user = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
+    const initializedRef = useRef(false);
+    // Track previous isSignedIn to detect true→false transition (sign-out event)
+    const prevIsSignedIn = useRef(undefined);
 
-    // Initialize token refresh service and check auth on mount
     useEffect(() => {
-        console.log("ClientInitializer: Initializing...");
+        if (!isLoaded) return;
 
         const initializeAuth = async () => {
-            // Skip auth check on public pages to avoid unnecessary API calls
-            const isPublicPage = typeof window !== "undefined" &&
-                (window.location.pathname === "/" ||
-                    window.location.pathname === "/login" ||
-                    window.location.pathname === "/signup" ||
-                    window.location.pathname === "/forgotpassword" ||
-                    window.location.pathname === "/contact" ||
-                    window.location.pathname === "/privacy" ||
-                    window.location.pathname === "/terms" ||
-                    window.location.pathname === "/help" ||
-                    window.location.pathname.startsWith("/auth/") ||
-                    window.location.pathname.startsWith("/blogs") ||
-                    window.location.pathname.startsWith("/community/"));
+            if (!isSignedIn) {
+                const wasSignedIn = prevIsSignedIn.current;
+                prevIsSignedIn.current = false;
+                dispatch(logout());
+                dispatch(setAuthLoading(false));
+                // Hard redirect only on sign-out event (not on initial unauthenticated load)
+                if (wasSignedIn === true) {
+                    window.location.replace("/sign-in");
+                }
+                return;
+            }
+            prevIsSignedIn.current = true;
 
-            if (isPublicPage) {
-                console.log("ClientInitializer: On public page, skipping auth check");
+            // Already have user data from a previous render
+            if (user?.id) {
                 dispatch(setAuthLoading(false));
                 return;
             }
 
-            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-            const userStr = localStorage.getItem("user");
-            const hasUser = userStr && userStr !== "null" && userStr !== "undefined";
-
-            // Case 1: User data exists in localStorage - we're good
-            if (isLoggedIn && hasUser) {
-                console.log("ClientInitializer: User data found in localStorage");
-                dispatch(setAuthLoading(false));
-                return;
-            }
-
-            // Case 2: No localStorage data - try to fetch from server (handles OAuth redirect)
-            // This is crucial for OAuth flows where cookies are set but localStorage is empty
-            console.log("ClientInitializer: No user data in localStorage, checking server...");
+            // Prevent double-fetch on StrictMode double-invoke
+            if (initializedRef.current) return;
+            initializedRef.current = true;
 
             try {
-                const response = await api.get("/auth/getDetails", {
-                    withCredentials: true,
-                });
+                const response = await api.get("/auth/getDetails", { withCredentials: true });
 
                 if (response.status === 200 && response.data.payload) {
-                    const { payload, expiresIn } = response.data;
-                    console.log("ClientInitializer: User authenticated via cookies, updating state");
+                    const { payload } = response.data;
+                    dispatch(login({ user: payload }));
 
-                    // Update Redux and localStorage
-                    dispatch(login({ user: payload, expiresIn }));
-
-                    // Set the isLoggedIn cookie for middleware (in case backend didn't set it)
-                    const expires = new Date();
-                    expires.setTime(expires.getTime() + 7 * 24 * 60 * 60 * 1000);
-                    document.cookie = `isLoggedIn=true;expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+                    // Set isOnboarded cookie so Next.js middleware can redirect to /onboarding
+                    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
+                    document.cookie = `isOnboarded=${payload.isOnboarded ? "true" : "false"};expires=${expires};path=/;SameSite=Lax`;
                 }
             } catch (error) {
-                // Not authenticated - clear stale data
-                console.log("ClientInitializer: Not authenticated, clearing stale data");
-                localStorage.removeItem("isLoggedIn");
-                localStorage.removeItem("user");
-                localStorage.removeItem("token");
-                localStorage.removeItem("expiresIn");
-                // Clear stale cookie
-                document.cookie = "isLoggedIn=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+                const isNetworkDown = !error.response; // no response = backend unreachable
+                const isNotFound = error.response?.status === 401;
+
+                if (isNetworkDown) {
+                    // Backend is unreachable — sign out of Clerk so the user gets a clean
+                    // sign-in form instead of looping: Clerk-session → dashboard → landing.
+                    console.warn("ClientInitializer: backend unreachable, signing out to prevent redirect loop");
+                    dispatch(logout());
+                    await signOut();
+                } else if (isNotFound) {
+                    // 401 means Clerk session valid but user not in MongoDB yet
+                    // (webhook may still be propagating). Don't sign out — let them retry.
+                    console.log("ClientInitializer: user not found in MongoDB yet, will retry on next load");
+                    dispatch(setAuthLoading(false));
+                } else {
+                    console.log("ClientInitializer: Failed to fetch user details:", error.message);
+                    dispatch(setAuthLoading(false));
+                }
             } finally {
                 dispatch(setAuthLoading(false));
+                initializedRef.current = false;
             }
         };
 
         initializeAuth();
-        tokenService.initialize();
+    }, [isSignedIn, isLoaded, dispatch]); // eslint-disable-line react-hooks/exhaustive-deps
 
-        // Auth heartbeat check every 15 minutes
-        const authCheckInterval = setInterval(() => {
-            const currentIsLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-            if (currentIsLoggedIn) {
-                console.log("ClientInitializer: Performing auth heartbeat check");
-                api
-                    .get("/auth/getDetails", { withCredentials: true })
-                    .catch((err) => {
-                        console.log("Auth heartbeat error (non-critical):", err.message);
-                    });
-            }
-        }, 15 * 60 * 1000);
-
-        return () => {
-            clearInterval(authCheckInterval);
-        };
-    }, [dispatch]);
-
-    // Initialize socket connection on user presence or change
+    // Open socket once Redux has the MongoDB user id
     useEffect(() => {
         if (user?.id) {
-            console.log("ClientInitializer: Initializing socket for user:", user.id);
             initializeSocket(user.id);
         }
-    }, [user]);
+    }, [user?.id]);
 
-    // This component doesn't render anything
     return null;
 }

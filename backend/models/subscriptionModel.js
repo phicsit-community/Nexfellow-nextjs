@@ -28,6 +28,14 @@ const subscriptionSchema = new schema(
       unique: true,
       sparse: true,
     },
+    // The Standard Webhooks "webhook-id" header for the delivery that created this
+    // record. subscription.* events carry no payment_id, so this is the only stable
+    // per-event identifier Dodo gives us for idempotency.
+    dodoEventId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
     dodoCustomerId: {
       type: String,
     },

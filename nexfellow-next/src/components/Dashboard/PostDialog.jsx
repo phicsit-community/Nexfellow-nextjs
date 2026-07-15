@@ -177,6 +177,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
             file: null,
             url: att.fileUrl,
             id: att._id,
+            type: att.fileType?.startsWith("video/") ? "video" : "image",
           }))
         );
       } else {
@@ -312,14 +313,15 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!content && attachments.length === 0) return;
-    if (!post && !selectedCommunityId) return; // nothing selected yet
+    if (!post && !selectedCommunityId) return;
 
     setIsSubmitting(true);
 
     const postData = {
-      id: post?.id,
+      editingPostId: post?._id || null,
+      postCommunityId: post?.community?._id || null,
       title,
       content,
       attachments: attachments.map((att) => att.file || att.url),
@@ -333,14 +335,17 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
       removeDraftsByContent(content);
     }
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      onSubmit(postData);
+    try {
+      await onSubmit(postData);
       setAttachments([]);
       setRemovedAttachments([]);
       setAttachedProduct(null);
       onClose();
-    }, 1500);
+    } catch {
+      // error toast already shown by onSubmit — stay open so user can retry
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const removeDraftsByContent = (contentToRemove) => {

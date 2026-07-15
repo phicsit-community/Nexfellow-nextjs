@@ -1,656 +1,1041 @@
 # Nexfellow Codebase Audit
 
-> Generated from a full read of all listed files. Every function name, field name, constant value, and file path cited below was read directly from source code.
+**Generated:** 2026-06-28  
+**Branch:** sam  
+**Scope:** Full frontend (Next.js) + backend (Node.js/Express) audit
+
+---
+
+## Table of Contents
+
+1. [Project Structure](#1-project-structure)
+2. [Backend Architecture](#2-backend-architecture)
+3. [Authentication & User System](#3-authentication--user-system)
+4. [Credits System](#4-credits-system)
+5. [Subscription & Pricing Logic](#5-subscription--pricing-logic)
+6. [Key Business Logic](#6-key-business-logic)
+7. [Environment & Config](#7-environment--config)
+8. [Payment Integration Readiness](#8-payment-integration-readiness)
 
 ---
 
 ## 1. Project Structure
 
-### Folder Tree (annotated)
+### Monorepo Layout
 
 ```
 Nexfellow-nextjs/
-├── backend/                   Node.js / Express API (port 4000)
-│   ├── index.js               Entry point — app bootstrap, cron scheduling, route mounting
-│   ├── middleware.js           Auth guards, multer upload, requirePlanFeature factory
-│   ├── config/
-│   │   └── firebaseConfig.js  Firebase Admin SDK init (currently commented out in index.js)
-│   ├── constants/
-│   │   ├── creditEvents.js    CREDIT_EVENTS map (every earn/spend/penalty code + delta)
-│   │   ├── plans.js           PLANS object (free / builder_pro / founder feature limits)
-│   │   └── roles.js           Community role enum (member, moderator, event-admin, content-admin, analyst)
-│   ├── controllers/           Business logic handlers
-│   ├── jobs/
-│   │   ├── inactivityPenaltyCron.js   Daily 02:00 UTC — deducts 10 cr from 30-day inactive users
-│   │   └── subscriptionExpiryCron.js  Daily 03:00 UTC — downgrades expired subscriptions to free
-│   ├── models/                Mongoose schemas
-│   ├── routes/                Express routers (38 route files)
-│   ├── services/
-│   │   └── creditService.js   CreditService class — single source of truth for all credit ops
-│   └── utils/                 planUtils, websocket, mailSender, notificationService, …
-│
-├── nexfellow-next/            Next.js 16 frontend (port 3000)
-│   ├── src/
-│   │   ├── app/               Next.js App Router pages
-│   │   ├── components/        Reusable UI components
-│   │   ├── lib/
-│   │   │   └── axios.js       Axios singleton with JWT interceptor + refresh-token logic
-│   │   ├── Pages/
-│   │   │   └── Premium/Premium.jsx   Pricing UI (purely presentational — no API calls yet)
-│   │   └── utils/
-│   │       └── socket.js      Socket.IO client singleton
-│
-├── admin/                     Next.js admin panel (port 5174)
-│   └── src/app/(dashboard)/   Admin pages: users, quiz, challenges, blogs, notifications, …
-│
-└── client/                    (old React app — skipped per instructions)
+├── backend/                  Node.js / Express API server
+├── nexfellow-next/           Next.js 16 frontend
+├── admin/                    Admin panel (separate app)
+├── client/                   Legacy or alternate client
+└── docs/                     Documentation
 ```
 
-### Frontend to Backend Communication
+### Backend Tree (`backend/`)
 
-| Mechanism | Details |
-|-----------|---------|
-| HTTP | Axios instance at `src/lib/axios.js`; `baseURL` = `NEXT_PUBLIC_SERVER_URL` or auto-detected production URL (`https://nexfellow-nextjs.onrender.com`) |
-| Auth | Cookies (`accessToken`, `refreshToken`, legacy `userjwt`). localStorage `accessToken` is attached as `Authorization: Bearer` header for cross-domain fallback. |
-| Token Refresh | Interceptor in `axios.js` catches 401, calls `POST /auth/refresh-token`, queues concurrent failed requests, retries on success. |
-| WebSocket | `socket.js` creates an `io()` connection to the same `NEXT_PUBLIC_SERVER_URL`. Joins personal rooms on connect via `joinFollowedCommunities` and `joinDirectMessages` events. |
-| Real-time credit events | Backend emits `creditTransaction` on the user's personal Socket.IO room after every `CreditService._commit()` call. |
+```
+backend/
+├── index.js                  Server entry point — HTTP + WebSocket bootstrap
+├── middleware.js             Auth, plan enforcement, upload middleware
+├── config/
+│   └── firebaseConfig.js     Firebase Admin SDK init
+├── constants/
+│   ├── creditEvents.js       All credit event definitions (codes, deltas, caps, gates)
+│   └── plans.js              Plan tier definitions (free / builder_pro / founder)
+├── controllers/
+│   ├── adminController.js    Admin actions including credit penalties
+│   ├── creditController.js   Credit balance / history / spend endpoints
+│   ├── Payments.js           Dodo checkout + webhook handler
+│   ├── productController.js  Full product lifecycle + review flow
+│   └── ...                   Other domain controllers
+├── jobs/
+│   ├── inactivityPenaltyCron.js   Daily cron — -10 credits after 30-day inactivity
+│   └── subscriptionExpiryCron.js  Daily cron — safety net for subscription downgrades
+├── models/
+│   ├── userModel.js          User schema (auth + subscription fields)
+│   ├── profileModel.js       Profile schema (coin/credits stored here)
+│   ├── creditTransactionModel.js  Append-only credit ledger
+│   ├── subscriptionModel.js  Subscription event records (Dodo)
+│   ├── productModel.js       Product schema
+│   ├── reviewStreakModel.js   Review streak tracking (7-day bonus logic)
+│   └── ...                   40+ other models
+├── routes/
+│   ├── authRoutes.js         OAuth + token management
+│   ├── userRoutes.js         Profile / follow / user data
+│   ├── adminRoutes.js        Admin operations
+│   ├── payments.js           Dodo checkout + webhook (POST /payments/*)
+│   ├── creditRoutes.js       Credit balance / history / spend
+│   ├── productRoutes.js      Product CRUD + submission + reviews
+│   ├── launchRoutes.js       Public launch board + upvotes
+│   ├── clerkWebhook.js       Clerk user.created / user.deleted events
+│   └── ...                   30+ other route files
+├── services/
+│   └── creditService.js      Core credit engine (award / spend / penalize / balance)
+└── utils/
+    ├── planUtils.js          getEffectiveTier() / getUserPlan() helpers
+    ├── websocket.js          WebSocket init + real-time event dispatch
+    ├── mail.js               Nodemailer transactional email
+    └── ...                   Other utility helpers
+```
+
+### Frontend Tree (`nexfellow-next/`)
+
+```
+nexfellow-next/
+├── src/
+│   ├── app/                  Next.js App Router pages
+│   │   ├── layout.js         Root layout (Clerk provider, Redux provider)
+│   │   ├── feed/page.js      Main authenticated feed
+│   │   ├── sign-in/          Clerk sign-in page
+│   │   ├── sign-up/          Clerk sign-up page
+│   │   ├── auth/callback/    OAuth callback handler
+│   │   ├── login/page.js     Legacy login page
+│   │   ├── signup/page.js    Legacy signup page
+│   │   └── ...               Other page routes
+│   ├── components/
+│   │   ├── ClientInitializer.jsx  Bootstraps auth state from Clerk on mount
+│   │   ├── Sidebar/          Navigation sidebar
+│   │   ├── Landing/Navbar/   Public navbar
+│   │   └── ...               UI components
+│   ├── Pages/
+│   │   └── Layout/Layout.jsx Authenticated shell layout
+│   ├── store/
+│   │   ├── index.js          Redux store configuration
+│   │   └── slices/
+│   │       └── authSlice.jsx Redux auth slice (isLoggedIn, user, themePreference)
+│   ├── lib/
+│   │   └── axios.js          Axios instance with Clerk token interceptor
+│   └── utils/
+│       ├── PrivateRoutes.jsx  Route guard (requires auth)
+│       ├── auth/useLogout.js  Logout helper (clears Redux + cookies + socket)
+│       └── socket.js         Socket.io client setup
+└── package.json
+```
+
+### Frontend ↔ Backend Communication
+
+- **Protocol:** REST over HTTP (Axios)
+- **Base URL:** `NEXT_PUBLIC_SERVER_URL` (env var, defaults to `http://localhost:4000`)
+- **Auth header:** Clerk JWT token attached by Axios request interceptor on every call
+- **Real-time:** Socket.io over WebSocket (`/` namespace on same backend port)
+- **No shared TypeScript types** — API shape is implicit; frontend relies on documented API contracts
 
 ---
 
 ## 2. Backend Architecture
 
-### Entry Point & Bootstrap (`index.js`)
+### Entry Point (`backend/index.js`)
 
-- Framework: Express (`express@5` is implied by usage; runs on **port 4000**).
-- Temp directories ensured at boot via `mkdirp.sync("public/temp")` and `mkdirp.sync("postsAttachments")`.
-- MongoDB connected via `mongoose.connect(process.env.DB_URL)`.
-- Three cron jobs are registered at startup (see Section 6).
-- Raw body parsing for `/payments/webhook` is registered **before** `express.json()` to preserve HMAC input bytes:
-
-```js
-app.use("/payments/webhook", express.raw({ type: "application/json" }), (req, res, next) => {
-  req.rawBody = req.body.toString("utf8");
-  next();
-});
-```
-
-- Production detected via `process.env.NODE_ENV === "production" || !!process.env.RENDER`.
-- CORS whitelist includes `localhost:3000/3001/4000/5173/5174`, production domains, and any `*.vercel.app` origin.
+- **Port:** 4000
+- **HTTP server:** `http.createServer(app)` passed to Socket.io
+- **Startup sequence:**
+  1. Helmet + CORS (allowed origins: localhost 3000/3001/4000/5173-5175, nexfellow.com, admin.nexfellow.com, onrender.com, vercel.app domains)
+  2. GZIP compression (skips WebSocket upgrades)
+  3. Cookie parser with `process.env.SECRET`
+  4. **Webhook routes registered BEFORE `express.json()`** (need raw body for signature verification)
+     - `POST /api/webhooks/clerk` — svix signature check
+     - `POST /payments/webhook` — HMAC-SHA256 check
+  5. `express.json()` + `express.urlencoded()`
+  6. All other routes
+  7. MongoDB connect via Mongoose
+  8. WebSocket init (`initializeWebsocket(server)`)
+  9. Cron jobs scheduled:
+     - Post popularity: every 30 minutes
+     - Inactivity penalty: daily 02:00 UTC
+     - Subscription expiry safety net: daily 03:00 UTC
 
 ### Middleware Stack
 
-Execution order per request:
+| Middleware | File | Purpose |
+|---|---|---|
+| `helmet` | index.js | Security headers |
+| `cors` | index.js | CORS with credentials |
+| `compression` | index.js | GZIP response compression |
+| `cookieParser` | index.js | Signed cookie parsing |
+| `express.json` | index.js | JSON body parsing |
+| `requireAuth` | middleware.js | Primary Clerk-based auth (all protected routes) |
+| `isAuthenticated` / `isClient` | middleware.js | Legacy JWT auth (alias for `requireAuth`) |
+| `isAdmin` | middleware.js | Admin JWT cookie check |
+| `isCommunityCreator` | middleware.js | Checks `user.isCommunityAccount === true` |
+| `isOwnerOrModeratorWithRole` | middleware.js | Community ownership / role check |
+| `requirePlanFeature(feature, fn)` | middleware.js | Plan tier enforcement factory |
+| `setUserIfLoggedIn` | middleware.js | Soft auth for public routes |
+| `upload` (Multer) | middleware.js | Disk storage, 3 MB limit, `./public/temp` |
 
-1. `compression` (skips WebSocket upgrades)
-2. `cookieParser(process.env.SECRET)`
-3. `express.static("public")`
-4. `bodyParser.urlencoded`
-5. `session` (express-session)
-6. `helmet` (CSP disabled)
-7. `cors`
-8. Route-specific: `isAuthenticated` / `isClient` / `isAdmin` / `setUserIfLoggedIn`
-9. Route-specific: `requirePlanFeature(feature, getCurrentCount)` (factory function in `middleware.js`)
-10. `upload` (multer, 3 MB limit, stores to `public/temp`)
+**`requireAuth` detail:**
+1. Reads `Authorization: Bearer <clerk_token>` header
+2. Verifies with Clerk SDK → extracts `clerkId`
+3. Looks up MongoDB User by `clerkId`
+4. Auto-links existing user by email if webhook hasn't run yet
+5. Sets `req.auth.userId` (Clerk ID), `req.userId` (Mongo `_id`), `req.user` (full User doc)
+6. Calls `touchActivity()` to update `Profile.lastActivityAt` (debounced 5 min)
 
-**Auth middleware variants** (all in `middleware.js`):
+### Route Organization
 
-| Middleware | Cookie checked | Header fallback | Usage |
-|-----------|---------------|-----------------|-------|
-| `isAuthenticated` | `accessToken`, `refreshToken` | `Authorization: Bearer` | New routes (products, credits, payments, launches, onboarding) |
-| `isClient` | `accessToken`, `refreshToken`, `userjwt` (signed) | `Authorization: Bearer` | Legacy routes (user, post, quiz, community) |
-| `isAdmin` | `adminjwt` (signed) | `Authorization: Bearer` | Admin panel routes |
-| `setUserIfLoggedIn` | all three | `Authorization: Bearer` | Soft auth (public routes that optionally need user) |
+| Route File | Mount Prefix | Handles |
+|---|---|---|
+| `authRoutes.js` | `/auth` | OAuth (Google, GitHub, LinkedIn, Facebook), token refresh, account linking |
+| `userRoutes.js` | `/user` | Profile, followers, following, user data |
+| `adminRoutes.js` | `/admin` | Admin: quizzes, badges, user management, posts, credit penalties |
+| `payments.js` | `/payments` | Dodo checkout session creation, webhook handling |
+| `creditRoutes.js` | `/credits` | Balance, history, summary, spend |
+| `productRoutes.js` | `/products` | Create, read, update, submit, launch products; reviews |
+| `launchRoutes.js` | `/launches` | Public product launches, upvotes, stats |
+| `communityRoutes.js` | `/community` | Community CRUD, members, roles, moderators |
+| `challengeRoutes.js` | `/challenge` | Challenge CRUD, submissions, leaderboards |
+| `taskRoutes.js` | `/task` | Task creation and management |
+| `postRoutes.js` | `/post` | Create, read, update, delete posts |
+| `commentRoutes.js` | `/comment` | Post comments |
+| `likeRoutes.js` | `/like` | Like/unlike posts |
+| `notificationRoutes.js` | `/notifications` | Notifications, broadcast activity |
+| `systemNotificationRoutes.js` | `/systemNotifications` | System-level notifications |
+| `quizRoutes.js` | `/quiz` | Quiz CRUD, questions, submissions |
+| `communityQuizRoutes.js` | `/community-quiz` | Community-specific quizzes |
+| `eventRoutes.js` | `/event` | Community events |
+| `searchRoutes.js` | `/search` | Global search (users, posts, communities) |
+| `discussionsRoutes.js` | `/discussions` | Forum-style discussions |
+| `directMessageRoutes.js` | `/direct-messages` | DM conversations |
+| `requestRoutes.js` | `/requests` | Follow/connection requests |
+| `reportRoutes.js` | `/report` | Report posts/users |
+| `bookmarkRoutes.js` | `/bookmarks` | Bookmark management |
+| `leaderboardRoutes.js` | `/leaderboard` | Global leaderboards |
+| `rewardRoute.js` | `/reward` | Reward distribution |
+| `suggestionsRoutes.js` | `/suggestions` | User/content suggestions |
+| `previewRoutes.js` | `/preview` | Public previews (no auth) |
+| `secureRoutes.js` | `/secure` | Secure admin-only endpoints |
+| `analyticsRoutes.js` | `/analytics` | User analytics |
+| `adminAnalyticsRoutes.js` | `/admin/analytics` | Admin-level analytics |
+| `blogRoutes.js` | `/admin/blogs`, `/blogs` | Blog management |
+| `builderMapRoutes.js` | `/buildermap` | Builder profile map, connections |
+| `advertisementRoutes.js` | `/advertisements` | Ads management |
+| `postPopularityRoutes.js` | `/post-popularity` | Post popularity tracking |
+| `onboarding.js` | `/api/onboarding` | User onboarding workflow |
+| `clerkWebhook.js` | `/api/webhooks/clerk` | Clerk user lifecycle events |
 
-### Route Registry
+### Controllers / Services Separation
 
-Every route prefix mounted in `index.js`:
+- **Pattern:** Routes → Controllers → Services (partial)
+- **`services/creditService.js`** is the only dedicated service layer; all other business logic lives directly in controllers
+- Controllers are per-domain (productController, adminController, creditController, Payments)
+- No shared service layer beyond credits and post popularity
 
-| Prefix | File | Handles |
-|--------|------|---------|
-| `/preview` | `previewRoutes.js` | Public previews |
-| `/auth` | `authRoutes.js` | OAuth (Google/GitHub/LinkedIn/Facebook), login, logout, token refresh, code exchange |
-| `/leaderboard` | `leaderboardRoutes.js` | Leaderboard |
-| `/user` | `userRoutes.js` | User CRUD, profile, OTP, follow/unfollow |
-| `/admin` | `adminRoutes.js` | Admin CRUD, quiz management, credit penalize |
-| `/quiz` | `quizRoutes.js` | Quiz operations |
-| `/payments` | `payments.js` | `POST /payments/checkout`, `POST /payments/webhook` |
-| `/reward` | `rewardRoute.js` | Reward CRUD |
-| `/challenge` | `challengeRoutes.js` | Challenge management |
-| `/task` | `taskRoutes.js` | Task CRUD |
-| `/completedTasks` | `completedTaskRoutes.js` | Completed task tracking |
-| `/community` | `communityRoutes.js` | Community management |
-| `/` | `share.js` | Share links |
-| `/notifications` | `notificationRoutes.js` | User notifications |
-| `/systemNotifications` | `systemNotificationRoutes.js` | System notifications |
-| `/post` | `postRoutes.js` | Post CRUD (community-creator gated) |
-| `/comment` | `commentRoutes.js` | Comments |
-| `/analytics` | `analyticsRoutes.js` | Analytics |
-| `/like` | `likeRoutes.js` | Like toggling |
-| `/requests` | `requestRoutes.js` | Connection requests |
-| `/suggestions` | `suggestionsRoutes.js` | Suggestions |
-| `/secure` | `secureRoutes.js` | Secure token routes |
-| `/event` | `eventRoutes.js` | Events |
-| `/search` | `searchRoutes.js` | Search |
-| `/community-quiz` | `communityQuizRoutes.js` | Community quiz |
-| `/discussions` | `discussionsRoutes.js` | Discussions |
-| `/direct-messages` | `directMessageRoutes.js` | DMs |
-| `/report` | `reportRoutes.js` | Reports |
-| `/` | `shortenedUrlRoutes.js` | Short URL redirect |
-| `/advertisements` | `advertisementRoutes.js` | Ads |
-| `/` | `featuredCommunitiesRoutes.js` | Featured communities |
-| `/api/onboarding` | `onboarding.js` | Onboarding submit/status/username-check |
-| `/bookmarks` | `bookmarkRoutes.js` | Bookmarks |
-| `/post-popularity` | `postPopularityRoutes.js` | Post popularity scoring |
-| `/admin/analytics` | `adminAnalyticsRoutes.js` | Admin analytics |
-| `/admin/blogs` + `/blogs` | `blogRoutes.js` | Blog CRUD |
-| `/products` | `productRoutes.js` | Product CRUD, screenshots, logo, reviews, submit, launch |
-| `/credits` | `creditRoutes.js` | Credit balance, history, summary, spend |
-| `/launches` | `launchRoutes.js` | Public launch feed, stats, upvote |
-| `/buildermap` | `builderMapRoutes.js` | Builder map, nearby builders, activity feed |
+### Database
 
-### Controller/Service Separation
-
-The codebase has a partial service layer:
-
-- `services/creditService.js` — `CreditService` class with `award()`, `spend()`, `penalize()`, `getBalance()`, `getHistory()`, `getSummary()`, and private `_commit()`, `_enforceEarnCap()`, `_updateReviewStreak()`. This is a clean service layer.
-- All other business logic lives directly in controllers (no service layer for products, users, posts, etc.).
-- `utils/planUtils.js` provides `getUserPlan(user)` and `getEffectiveTier(user)` — a small utility that reads from the `PLANS` constant.
-
-### Database & ORM
-
-- **MongoDB** via **Mongoose** (connection URL: `process.env.DB_URL`).
-- All schemas use Mongoose `Schema` and are registered as `mongoose.model()`.
-- Credit transactions use **MongoDB sessions/transactions** (`mongoose.startSession()`) for atomic writes — the only place in the codebase that uses transactions.
-- No Redis-based queue or caching is present beyond a `redisClient` utility (referenced in `postController.js` but not used for credit or payment operations).
+- **Type:** MongoDB (Atlas)
+- **ODM:** Mongoose 7.x
+- **Connection string env var:** `DB_URL`
+- **Models:** 40+ Mongoose schemas in `backend/models/`
 
 ---
 
 ## 3. Authentication & User System
 
-### Auth Mechanism
+### Authentication Method
 
-- **Email/password**: bcrypt hash, OTP-gated login (OTP stored as `otpHash`/`otpSalt`/`otpExpiry` on User, select: false).
-- **OAuth**: Google, GitHub, LinkedIn (manual PKCE), Facebook — all via Passport.js strategies. After OAuth callback, a temporary one-time code (64 hex chars, 5-minute TTL, stored in `oauthAuthCodes` Map in memory) is generated and appended to the redirect URL. Frontend exchanges it via `POST /auth/exchange-code`.
-- **Tokens**: Short-lived `accessToken` (2 h, signed with `process.env.USER_SECRET`), long-lived `refreshToken` (30 days, stored on user document in `refreshToken` + `refreshTokenExpiry` fields). Admin uses a separate `adminjwt` signed with `process.env.ADMIN_SECRET` (3 h).
+**Primary:** Clerk (post-migration)  
+**Legacy fallback:** Custom JWT in httpOnly cookies (`accessToken`, `refreshToken`, `userjwt` — signed)
 
-**⚠️ FLAG**: OAuth auth codes are stored in an in-memory `Map` (`oauthAuthCodes`). This does not survive server restarts and will not work in a multi-instance deployment. Redis should replace this.
+Clerk JWT is verified server-side on every request via `requireAuth` middleware. The legacy `isAuthenticated` and `isClient` names are aliased to `requireAuth` in routes so no route files required changes during migration.
 
-**⚠️ FLAG**: `process.env.USER_SECRET` defaults to the literal string `"secretkey"` in the `.env` file. This must be rotated before production.
+### User Model — Full Schema
 
-### User Model — All Fields
+**File:** `backend/models/userModel.js`
 
-Defined in `backend/models/userModel.js`:
+**Identity:**
 
 | Field | Type | Notes |
-|-------|------|-------|
-| `name` | String (required) | Display name |
-| `username` | String (required, unique) | URL-safe handle |
-| `googleId` | String (select: false) | |
-| `googleAccessToken` | String (select: false) | |
-| `googleRefreshToken` | String (select: false) | |
-| `linkedinId` | String (select: false) | |
-| `linkedinAccessToken` | String (select: false) | |
-| `linkedinRefreshToken` | String (select: false) | |
-| `facebookId` | String (select: false) | |
-| `facebookAccessToken` | String (select: false) | |
-| `facebookRefreshToken` | String (select: false) | |
-| `refreshToken` | String (select: false) | JWT refresh token |
-| `refreshTokenExpiry` | Date (select: false) | |
-| `picture` | String | Profile image URL |
-| `banner` | String | Banner image URL |
-| `email` | String (required, unique, select: false) | |
-| `password` | String (select: false) | bcrypt hash |
-| `subscriptionTier` | String (enum: `"free"`, `"builder_pro"`, `"founder"`) | Default: `"free"` |
-| `subscriptionExpiresAt` | Date | Null for free tier |
-| `subscriptionInterval` | String (enum: `"monthly"`, `"annual"`) | Null for free tier |
-| `dodoCustomerId` | String (select: false) | Dodo Payments customer ID |
-| `dodoSubscriptionId` | String (select: false) | Dodo Payments subscription ID |
-| `registeredQuizzes` | `[ObjectId]` ref: Quiz | |
-| `registeredCommunityQuizzes` | `[ObjectId]` ref: CommunityQuiz | |
-| `country` | String | Default: `"India"` |
-| `profile` | ObjectId ref: Profile | Linked Profile document |
-| `verified` | Boolean | Email verified |
-| `verificationBadge` | Boolean | Set true on paid subscription activation |
-| `communityBadge` | Boolean | |
-| `premiumBadge` | Boolean | |
-| `joinedChallenges` | `[ObjectId]` | |
-| `followedCommunities` | `[ObjectId]` | |
-| `createdCommunity` | ObjectId (unique) | |
-| `isCommunityAccount` | Boolean | |
-| `communityRoles` | `[{communityId, role}]` | role enum: member/moderator/content-admin/event-admin/analyst/creator |
-| `followers` | `[ObjectId]` | |
-| `milestones` | `{followers: [Number], likes: [Number], posts: [Number]}` | |
-| `following` | `[ObjectId]` | |
-| `mutedUsers` | `[ObjectId]` | |
-| `blockedUsers` | `[ObjectId]` | |
-| `hiddenPosts` | `[ObjectId]` | |
-| `otpHash` / `otpSalt` / `otpExpiry` / `isOtpVerified` / `resetPasswordOtpVerified` | various (select: false) | OTP system |
-| `themePreference` | String (enum: light/dark/system) | |
-| `privacySettings` | Object | showEmail, showFollowers, showFollowing, etc. |
-| `isOnboarded` | Boolean | |
-| `onboardingProfile` | ObjectId ref: OnboardingProfile | |
+|---|---|---|
+| `clerkId` | String | Unique, sparse, select:false — Clerk user ID |
+| `email` | String | Required, unique, select:false |
+| `password` | String | select:false, min 6 / max 1024 — only for legacy password users |
+| `name` | String | Required |
+| `username` | String | Required, unique |
+| `picture` | String | Default: null |
+| `banner` | String | Default: null |
+| `verified` | Boolean | Default: false — email verified flag |
 
-### Protected Route Pattern
+**OAuth Tokens (all select:false):**
 
-```js
-// Standard protected route (new code)
-router.get("/balance", isAuthenticated, catchAsync(getBalance));
+| Field | Type |
+|---|---|
+| `googleId`, `googleAccessToken`, `googleRefreshToken` | String |
+| `linkedinId`, `linkedinAccessToken`, `linkedinRefreshToken`, `linkedinName` | String |
+| `githubId`, `githubUsername`, `githubAccessToken` | String |
+| `twitterId`, `twitterHandle`, `twitterAccessToken` | String |
+| `facebookId`, `facebookAccessToken`, `facebookRefreshToken` | String |
 
-// Legacy protected route
-router.route("/profile").get(isClient, catchAsync(user.profile));
+**Session (all select:false):**
 
-// Plan feature guard (middleware factory)
-router.post("/:id/screenshots",
-  isAuthenticated,
-  screenshotUpload.array("screenshots", 5),
-  catchAsync(uploadScreenshots)
-  // plan check happens inline inside the controller via getUserPlan()
-);
-```
+| Field | Type | Notes |
+|---|---|---|
+| `refreshToken` | String | Legacy JWT refresh token |
+| `refreshTokenExpiry` | Date | Expiry for legacy refresh token |
 
-`requirePlanFeature(feature, getCurrentCount)` middleware factory (defined in `middleware.js`, line 525) checks `PLANS[tier][feature]` live. It attaches `req.planFeatureLimit` and returns 403 with an error message if the current count meets or exceeds the plan limit.
+**Subscription & Billing:**
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `subscriptionTier` | String | `"free"` | Enum: `free`, `builder_pro`, `founder` |
+| `subscriptionExpiresAt` | Date | null | Expiry datetime for paid tier |
+| `subscriptionInterval` | String | null | Enum: `monthly`, `annual` |
+| `dodoCustomerId` | String | null | Dodo Payments customer ID (select:false) |
+| `dodoSubscriptionId` | String | null | Dodo Payments subscription ID (select:false) |
+
+**Badges:**
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `verificationBadge` | Boolean | false | Set to true when paid subscription is active |
+| `communityBadge` | Boolean | false | Community account badge |
+| `premiumBadge` | Boolean | false | Reserved / unused |
+
+**Profile & References:**
+
+| Field | Type | Notes |
+|---|---|---|
+| `profile` | ObjectId | Ref to Profile model — credit balance lives here |
+| `country` | String | Default: "India" |
+| `themePreference` | String | Enum: light, dark, system |
+| `isCommunityAccount` | Boolean | Default: false |
+| `createdCommunity` | ObjectId | Ref to Community |
+| `followedCommunities` | [ObjectId] | Ref to Community |
+| `communityRoles` | [{ communityId, role }] | Roles per community |
+| `followers` | [ObjectId] | Ref to User |
+| `following` | [ObjectId] | Ref to User |
+| `mutedUsers`, `blockedUsers`, `hiddenPosts` | [ObjectId] | — |
+| `isOnboarded` | Boolean | Default: false |
+
+### How User Context Reaches Protected Routes
+
+1. Frontend attaches Clerk JWT via Axios interceptor: `Authorization: Bearer <token>`
+2. `requireAuth` verifies token → resolves Mongo user → attaches to `req.user`
+3. All controllers access `req.userId` (Mongo `_id`) and `req.user` (full doc)
+
+### User Creation via Clerk Webhook
+
+**File:** `backend/routes/clerkWebhook.js`
+
+On `user.created` Clerk event:
+1. Check if User already exists by `clerkId` or `email` → skip if found
+2. Derive `username` from first name (ensure uniqueness)
+3. Create `User` document with `clerkId`, `email`, `name`, `username`, `picture`, `verified: true`
+4. Create `Profile` document with `userId`, `referralCodeString` (7 chars), `coin: 0`
+5. Link `Profile._id` → `User.profile`
+
+On `user.deleted` event: soft-deletes user (sets `deletedAt`).
 
 ---
 
 ## 4. Credits System
 
-### Schema & Storage
+This is the most fully-implemented transactional system in the codebase.
 
-Credits are stored in **two places**:
+### Storage Location
 
-1. **`Profile.coin`** (Number, default: 0) — the live balance, in `backend/models/profileModel.js`. This is the authoritative balance field read by `CreditService.getBalance()`.
-2. **`CreditTransaction`** collection (`backend/models/creditTransactionModel.js`) — append-only ledger.
+Credits live on the **Profile model**, not the User model.
 
-`CreditTransaction` fields:
+**File:** `backend/models/profileModel.js`
 
-| Field | Type | Notes |
-|-------|------|-------|
-| `userId` | ObjectId ref: User | |
-| `profileId` | ObjectId ref: Profile | |
-| `eventCode` | String | Matches keys in `CREDIT_EVENTS` |
-| `delta` | Number | Positive = earned, negative = spent/penalized |
-| `balanceAfter` | Number | Running snapshot — enables tamper detection |
-| `idempotencyKey` | String (unique) | DB-level guard against double-crediting |
-| `entityRef` | `{model: String, id: ObjectId}` | The entity that triggered the credit |
-| `source` | String (enum: `"system"`, `"admin"`, `"payment"`) | |
-| `adminNote` | String | Required for admin-sourced entries |
-| `flagged` | Boolean | Soft investigation flag — does not reverse balance |
-
-Indexes: `{ userId, createdAt }`, `{ idempotencyKey }` (unique), `{ userId, eventCode }`, `{ userId, eventCode, entityRef.id }`.
-
-### Credit READ Operations
-
-Every place credits are queried:
-
-| Location | Method | What it reads |
-|----------|--------|--------------|
-| `creditService.js:96` `getBalance()` | `Profile.findOne({ userId }).select("coin")` | Live balance |
-| `creditService.js:101` `getHistory()` | `CreditTransaction.find(filter).sort({ createdAt: -1 })` | Paginated tx history |
-| `creditService.js:134` `getSummary()` | Parallel: `Profile.coin`, `ReviewStreak`, `CreditTransaction.aggregate` (totalEarned, totalSpent) | Full summary |
-| `creditController.js:6` `getBalance` | Calls `CreditService.getBalance()` | `GET /credits/balance` |
-| `creditController.js:12` `getHistory` | Calls `CreditService.getHistory()` | `GET /credits/history` |
-| `creditController.js:43` `getSummary` | Calls `CreditService.getSummary()` | `GET /credits/summary` |
-| `productController.js:313` `submitProduct` | `CreditService.getBalance(req.userId)` — inline balance check before deduction | Pre-submit guard |
-| `userController.js:52` | `userDetails.profile.coin` — returned in `sendProfileDetails` response | Profile API |
-
-### Credit ADD Operations
-
-Every place credits increase:
-
-| Trigger | Event Code | Delta | Location |
-|---------|-----------|-------|----------|
-| Review submitted by another user | `REVIEW_FEEDBACK` | +8 | `productController.js:527` — fire-and-forget after `review.save()` |
-| Marking a review as helpful | `REVIEW_HELPFUL_VOTE` | +2 | `productController.js:617` |
-| Review reaches 10 helpful votes (milestone) | `REVIEW_10_HELPFUL` | +30 | `productController.js:625` — fires once when `helpfulCount === 10` |
-| 7-day review streak (per ISO week) | `REVIEW_STREAK_7DAY` | +15 | `creditService.js:336` — inside `_updateReviewStreak()`, triggered after `REVIEW_FEEDBACK` |
-| Referral join | `REFERRAL_JOIN` | +25 | Defined in constants; **no wired handler found** |
-| Host a community event | `EVENT_HOST` | +40 | Defined in constants; **no wired handler found** |
-| Link a social account | `SOCIAL_LINK` | +5 | `onboardingController.js:161` — fires per-platform on first onboarding |
-| Complete profile | `PROFILE_COMPLETE` | +20 | `onboardingController.js:154` — one-time on `submitOnboarding` |
-| Upload resource | `RESOURCE_UPLOAD` | +10 | Defined in constants; **no wired handler found** |
-
-**⚠️ FLAG**: The following earn events are defined in `CREDIT_EVENTS` but have NO wired handlers anywhere in the codebase: `REFERRAL_PRO_UPGRADE` (+50), `CO_LAUNCH_COMPLETE` (+20), `ANNIVERSARY_REWARD` (+100), `RESOURCE_20_SAVES` (+15), `EVENT_ATTEND` (+5), `REPLY_THREAD` (+3), `FEEDBACK_MOST_HELPFUL` (+12), `PRODUCT_50_UPVOTES` (+20), `PRODUCT_FIRST_10_SIGNUPS` (+35), `PRODUCT_5_REVIEWS` (+10), `PRODUCT_FEATURED_DIGEST` (+50), `BUILDERMAP_CONNECT_ACCEPTED` (+5), `BUILDERMAP_50_VISITS` (+10), `REFERRAL_JOIN` (+25), `EVENT_HOST` (+40), `RESOURCE_UPLOAD` (+10). These are constants-only — systems not yet built.
-
-### Credit DEDUCT Operations
-
-Every place credits decrease:
-
-| Trigger | Event Code | Delta | Gate | Location |
-|---------|-----------|-------|------|----------|
-| Submit product for feedback | `SUBMIT_FOR_FEEDBACK` | -20 | 20 | `productController.js:313-325` — inline balance check + `CreditService.spend()` |
-| Builder Map connect request (free users only) | `BUILDERMAP_CONNECT_REQUEST` | -5 | 5 | Defined in constants; **no wired handler found** |
-| Boost product on board (24h) | `BOOST_PRODUCT` | -30 | 30 | Defined in constants; **no wired handler found** |
-| Request warm intro | `REQUEST_WARM_INTRO` | -15 | 15 | Defined in constants; **no wired handler found** |
-| Unlock premium resource | `UNLOCK_RESOURCE` | -10 | 10 | Defined in constants; **no wired handler found** |
-| Access GTM strategy report | `ACCESS_GTM_REPORT` | -25 | 25 | Defined in constants; **no wired handler found** |
-| Manual spend via API | any negative event code | varies | event.gate | `creditController.js:21` `POST /credits/spend` |
-
-**⚠️ FLAG**: `BUILDERMAP_CONNECT_REQUEST`, `BOOST_PRODUCT`, `REQUEST_WARM_INTRO`, `UNLOCK_RESOURCE`, and `ACCESS_GTM_REPORT` are spend events defined in `CREDIT_EVENTS` with no wired controller code.
-
-### Actions & Costs (Full Table)
-
-| Action | Code | Delta | Cap |
-|--------|------|-------|-----|
-| Give feedback on a product | `REVIEW_FEEDBACK` | +8 | 5 reviewers per product (perProduct) |
-| Helpful vote on your review | `REVIEW_HELPFUL_VOTE` | +2 | — |
-| 10+ helpful votes milestone (per review) | `REVIEW_10_HELPFUL` | +30 | — |
-| 7-day review streak (per ISO week) | `REVIEW_STREAK_7DAY` | +15 | — |
-| Refer a builder who joins | `REFERRAL_JOIN` | +25 | — |
-| Host a community event | `EVENT_HOST` | +40 | — |
-| Link a social account (once per platform) | `SOCIAL_LINK` | +5 | — |
-| Complete profile (one-time) | `PROFILE_COMPLETE` | +20 | — |
-| Upload approved resource | `RESOURCE_UPLOAD` | +10 | 2/month (perMonth) |
-| Referral upgrades to Pro | `REFERRAL_PRO_UPGRADE` | +50 | — |
-| Co-launch campaign completes | `CO_LAUNCH_COMPLETE` | +20 | — |
-| 1-year anniversary | `ANNIVERSARY_REWARD` | +100 | — |
-| Resource gets 20+ saves | `RESOURCE_20_SAVES` | +15 | — |
-| Attend a community event (once per event) | `EVENT_ATTEND` | +5 | — |
-| Reply to a comment thread | `REPLY_THREAD` | +3 | 10/day (perDay) |
-| Feedback marked most helpful | `FEEDBACK_MOST_HELPFUL` | +12 | — |
-| Product reaches 50 upvotes | `PRODUCT_50_UPVOTES` | +20 | — |
-| First 10 users sign up via product page | `PRODUCT_FIRST_10_SIGNUPS` | +35 | — |
-| Product receives 5+ reviews after launch | `PRODUCT_5_REVIEWS` | +10 | — |
-| Product featured in weekly digest | `PRODUCT_FEATURED_DIGEST` | +50 | — |
-| BuilderMap connect request accepted | `BUILDERMAP_CONNECT_ACCEPTED` | +5 | — |
-| BuilderMap profile visited 50+ times | `BUILDERMAP_50_VISITS` | +10 | — |
-| **Submit product for feedback** | `SUBMIT_FOR_FEEDBACK` | **-20** | gate: 20 |
-| **Send BuilderMap connect request (free)** | `BUILDERMAP_CONNECT_REQUEST` | **-5** | gate: 5 |
-| **Boost product on early adopter board (24h)** | `BOOST_PRODUCT` | **-30** | gate: 30 |
-| **Request warm intro** | `REQUEST_WARM_INTRO` | **-15** | gate: 15 |
-| **Unlock a premium resource** | `UNLOCK_RESOURCE` | **-10** | gate: 10 |
-| **Access GTM strategy report** | `ACCESS_GTM_REPORT` | **-25** | gate: 25 |
-| Review flagged as spam (admin) | `PENALTY_SPAM_REVIEW` | -8 | — |
-| Account warned by moderation (admin) | `PENALTY_ACCOUNT_WARN` | -20 | — |
-| Fake/incentivized referral detected (admin) | `PENALTY_FAKE_REFERRAL` | -50 | — |
-| Product listing reported and removed (admin) | `PENALTY_LISTING_REMOVE` | -30 | — |
-| 30-day inactivity soft decay | `PENALTY_INACTIVITY` | -10 | — |
-
-### Credit Expiry / Rollover Logic
-
-**⚠️ FLAG**: There is no credit expiry or rollover logic implemented anywhere in the backend code. The `Premium.jsx` pricing page claims:
-
-- Free: "30 credits per month — expires in 30 days"
-- Builder Pro: "200 credits per month — rollover up to 100"
-- Founder: "600 credits per month — rollover up to 300"
-
-None of these policies exist as code. The `PLANS` constant defines credit _allocations_ per tier (30/200/600), but there is no cron job, webhook handler, or controller that grants a monthly credit allowance or enforces expiry/rollover. The `Profile.coin` balance is only modified by `CreditService._commit()`.
-
-**⚠️ FLAG**: The `PLANS[tier].credits` field (30/200/600) is defined but never consumed by any controller or cron job. It appears to document intent, not enforce behavior.
-
-### Pre-action Balance Check Pattern
-
-Two patterns exist:
-
-**Pattern 1 — Inline check before `CreditService.spend()` (used in `productController.js`):**
-
-```js
-// productController.js:313
-const creditBalance = await CreditService.getBalance(req.userId);
-if (creditBalance < 20) {
-  throw new ExpressError(`Insufficient credits — 20 required...`, 402);
-}
-await CreditService.spend({ userId: req.userId, eventCode: "SUBMIT_FOR_FEEDBACK", ... });
 ```
-
-**Pattern 2 — Balance check inside `CreditService.spend()`:**
-
-```js
-// creditService.js:66
-const balance = await CreditService.getBalance(opts.userId);
-const required = event.gate ?? Math.abs(event.delta);
-if (balance < required) {
-  throw new ExpressError(`Insufficient credits — ${required} required...`, 402);
+Profile {
+  userId:             ObjectId  (ref: User, required)
+  coin:               Number    (default: 0)  ← CREDIT BALANCE
+  lastActivityAt:     Date      (default: now)
+  referralCodeString: String    (unique)
+  totalUsersReferred: Number    (default: 0)
+  ...other profile fields (bio, occupation, rating, etc.)
 }
 ```
 
-The `POST /credits/spend` API endpoint uses Pattern 2 exclusively. Pattern 1 (in `productController.js`) adds a redundant check before calling `spend()`, creating a TOCTOU window that could theoretically allow a concurrent request to slip through. `CreditService.spend()` already enforces the gate atomically via MongoDB session, so the outer check in the controller is redundant but harmless.
+### Credit Ledger
+
+**File:** `backend/models/creditTransactionModel.js`
+
+Append-only ledger — records are never updated, only inserted.
+
+```
+CreditTransaction {
+  userId:         ObjectId   (required)
+  profileId:      ObjectId   (required)
+  eventCode:      String     (required) — event that triggered this entry
+  delta:          Number     (required) — positive = earn, negative = spend/penalty
+  balanceAfter:   Number     (required) — running balance snapshot at time of write
+  idempotencyKey: String     (required, unique) — prevents double-crediting on retries
+  entityRef:      { model, id } — reference to related entity (Product, Review, etc.)
+  source:         String     (enum: system, admin, payment; default: system)
+  adminNote:      String     — required for admin-triggered penalties
+  flagged:        Boolean    (default: false) — for investigation
+}
+```
+
+**Indexes:**
+- `{ userId, createdAt: -1 }` — history pagination
+- `{ idempotencyKey }` unique — idempotency guard
+- `{ userId, eventCode }` — event filtering
+- `{ userId, eventCode, "entityRef.id" }` — cap enforcement queries
+
+### Credit Events Configuration
+
+**File:** `backend/constants/creditEvents.js`
+
+#### Earning Events — Implemented
+
+| Event Code | Delta | Cap | Trigger |
+|---|---|---|---|
+| `REVIEW_FEEDBACK` | +8 | max 5 reviewers per product | After creating a product review |
+| `REVIEW_HELPFUL_VOTE` | +2 | — | After marking a review helpful |
+| `REVIEW_10_HELPFUL` | +30 | once per review | When review reaches 10 helpful votes |
+| `REVIEW_STREAK_7DAY` | +15 | once per ISO week | Auto-triggered after 7-day review streak |
+
+#### Earning Events — Defined but NOT yet implemented
+
+| Event Code | Delta | Notes |
+|---|---|---|
+| `REFERRAL_JOIN` | +25 | Referred user joins |
+| `REFERRAL_PRO_UPGRADE` | +50 | Referred user upgrades to paid plan |
+| `EVENT_HOST` | +40 | Host a community event |
+| `SOCIAL_LINK` | +5 | Link OAuth platform (once per platform) |
+| `PROFILE_COMPLETE` | +20 | Complete profile (one-time) |
+| `RESOURCE_UPLOAD` | +10 | Upload approved resource (max 2/month) |
+| `CO_LAUNCH_COMPLETE` | +20 | — |
+| `ANNIVERSARY_REWARD` | +100 | — |
+| `RESOURCE_20_SAVES` | +15 | — |
+| `EVENT_ATTEND` | +5 | — |
+| `REPLY_THREAD` | +3 | Cap: 10/day |
+| `FEEDBACK_MOST_HELPFUL` | +12 | — |
+| `PRODUCT_50_UPVOTES` | +20 | — |
+| `PRODUCT_FIRST_10_SIGNUPS` | +35 | — |
+| `PRODUCT_5_REVIEWS` | +10 | — |
+| `PRODUCT_FEATURED_DIGEST` | +50 | — |
+| `BUILDERMAP_CONNECT_ACCEPTED` | +5 | — |
+| `BUILDERMAP_50_VISITS` | +10 | — |
+
+#### Spending Events
+
+| Event Code | Delta | Gate (min balance required) | Status |
+|---|---|---|---|
+| `SUBMIT_FOR_FEEDBACK` | -20 | 20 | ✅ Implemented |
+| `BUILDERMAP_CONNECT_REQUEST` | -5 | 5 | ⚠️ Partial (free users only) |
+| `BOOST_PRODUCT` | -30 | 30 | ❌ No route found |
+| `REQUEST_WARM_INTRO` | -15 | 15 | ❌ No route found |
+| `UNLOCK_RESOURCE` | -10 | 10 | ❌ No route found |
+| `ACCESS_GTM_REPORT` | -25 | 25 | ❌ No route found |
+
+#### Penalty Events — Admin Only
+
+| Event Code | Delta | Description |
+|---|---|---|
+| `PENALTY_SPAM_REVIEW` | -8 | Review flagged as spam |
+| `PENALTY_ACCOUNT_WARN` | -20 | Account moderation warning |
+| `PENALTY_FAKE_REFERRAL` | -50 | Fake referral detected |
+| `PENALTY_LISTING_REMOVE` | -30 | Product listing removed |
+| `PENALTY_INACTIVITY` | -10 | 30-day inactivity decay (cron) |
+
+### Credit Service API
+
+**File:** `backend/services/creditService.js`
+
+#### `CreditService.award(opts)` — Earn Credits
+
+```js
+await CreditService.award({
+  userId,
+  eventCode,                     // must be event with delta > 0
+  idempotencyKey,                // caller-supplied, unique string
+  entityRef: { model, id },      // required if event has perProduct cap
+  source: "system",              // optional, default "system"
+})
+// Returns: { transaction, newBalance, duplicate?: true }
+```
+
+- Enforces caps: `perProduct`, `perDay`, `perMonth`
+- Throws `ExpressError(403)` if cap exceeded
+- Handles 7-day streak bonus automatically
+- Sends notification + real-time socket event
+
+#### `CreditService.spend(opts)` — Spend Credits
+
+```js
+await CreditService.spend({
+  userId,
+  eventCode,                     // must be event with delta < 0
+  idempotencyKey,
+  entityRef,                     // optional
+})
+// Returns: { transaction, newBalance }
+// Throws ExpressError(402) if balance < gate
+```
+
+- Gate check: `balance < event.gate || balance < Math.abs(delta)` → 402
+- Atomic: MongoDB session + transaction wraps balance update + ledger insert
+
+#### `CreditService.penalize(opts)` — Admin Penalty
+
+```js
+await CreditService.penalize({
+  userId,
+  eventCode,                     // must be a PENALTY_* event
+  idempotencyKey,
+  adminNote,                     // required for audit trail
+  source: "admin",               // forced
+})
+// Can drive balance negative; no balance floor check
+```
+
+#### `CreditService.getBalance(userId)` → `Number`
+
+#### `CreditService.getHistory(userId, { page, limit, eventCode })` → paginated transactions
+
+#### `CreditService.getSummary(userId)` → `{ balance, totalEarned, totalSpent, currentStreak, longestStreak }`
+
+### Where Credits Are Read / Added / Deducted
+
+#### Spend: Submit Product for Feedback
+
+**File:** `backend/controllers/productController.js` — `POST /products/:id/submit`
+
+```js
+// balance check
+if (balance < 20) throw ExpressError(402, "Insufficient credits")
+
+CreditService.spend({
+  eventCode: "SUBMIT_FOR_FEEDBACK",
+  idempotencyKey: `SUBMIT_FOR_FEEDBACK:${userId}:${productId}`,
+})
+// → product.status = "in_review"
+```
+
+#### Earn: Writing a Product Review
+
+**File:** `backend/controllers/productController.js` — `POST /products/:id/reviews`
+
+```js
+// Fire-and-forget after review save
+CreditService.award({
+  eventCode: "REVIEW_FEEDBACK",
+  idempotencyKey: `REVIEW_FEEDBACK:${userId}:${productId}`,
+  entityRef: { model: "Product", id: productId },
+})
+// Cap: max 5 reviewers per product earn credits
+```
+
+#### Earn: Helpful Vote on Review
+
+**File:** `backend/controllers/productController.js` — `POST /products/:id/reviews/:reviewId/helpful`
+
+```js
+// Voter earns +2
+CreditService.award({ eventCode: "REVIEW_HELPFUL_VOTE", ... })
+
+// Reviewer earns +30 when helpful count reaches 10
+if (review.helpfulCount === 10) {
+  CreditService.award({ eventCode: "REVIEW_10_HELPFUL", ... })
+}
+```
+
+#### Penalize: Admin Credit Penalty
+
+**File:** `backend/routes/adminRoutes.js` — `POST /admin/credits/penalize`  
+**Controller:** `backend/controllers/adminController.js`
+
+```js
+// Allowed penalty codes: PENALTY_SPAM_REVIEW, PENALTY_ACCOUNT_WARN,
+//                        PENALTY_FAKE_REFERRAL, PENALTY_LISTING_REMOVE
+CreditService.penalize({ userId, eventCode, adminNote })
+```
+
+#### Penalize: Inactivity Decay (Cron)
+
+**File:** `backend/jobs/inactivityPenaltyCron.js` — runs daily 02:00 UTC
+
+```js
+// Finds profiles where:
+//   lastActivityAt < (now - 30 days)  AND  coin > 0
+//   AND no PENALTY_INACTIVITY transaction in last 30 days
+CreditService.penalize({ eventCode: "PENALTY_INACTIVITY", delta: -10 })
+```
+
+### Credit API Endpoints
+
+**File:** `backend/routes/creditRoutes.js` — all require `requireAuth`
+
+```
+GET  /credits/balance   → { balance }
+GET  /credits/history   → { transactions, total, page, limit }
+GET  /credits/summary   → { balance, totalEarned, totalSpent, currentStreak, longestStreak }
+POST /credits/spend     → body: { eventCode, entityId? } → { newBalance, transaction }
+```
+
+### Credit Expiry / Rollover
+
+No expiry logic exists. Credits accumulate indefinitely except for:
+- Inactivity decay: -10 every 30 days of inactivity (cron)
+- Admin penalties (manual)
+- Spending actions
 
 ---
 
 ## 5. Subscription & Pricing Logic
 
-### Plan/Tier Definition
+### Plan Definitions
 
-Defined in `backend/constants/plans.js` as a frozen `PLANS` object:
-
-| Feature | `free` | `builder_pro` | `founder` |
-|---------|--------|--------------|-----------|
-| `postCharLimit` | 500 | 2000 | 5000 |
-| `imagesPerPost` | 1 | 2 | 4 |
-| `screenshotsPerProduct` | 1 | 2 | 4 |
-| `credits` (allocation) | 30 | 200 | 600 |
-| `broadcastsPerMonth` | 0 | 3 | Infinity |
-| `badge` | null | `"blue"` | `"orange"` |
-| `builderMapAccess` | `"view_only"` | `"full"` | `"full"` |
-| `dodoProductIds.monthly` | null | `process.env.DODO_PROD_BUILDER_PRO_MONTHLY` | `process.env.DODO_PROD_FOUNDER_MONTHLY` |
-| `dodoProductIds.annual` | null | `process.env.DODO_PROD_BUILDER_PRO_ANNUAL` | `process.env.DODO_PROD_FOUNDER_ANNUAL` |
-
-`VALID_PLAN_IDS = ["builder_pro", "founder"]` and `VALID_INTERVALS = ["monthly", "annual"]`.
-
-### Where Tier is Stored on User
-
-- `User.subscriptionTier` (String, enum: `"free"` / `"builder_pro"` / `"founder"`, default `"free"`)
-- `User.subscriptionExpiresAt` (Date)
-- `User.subscriptionInterval` (String)
-- `User.dodoCustomerId` (String, select: false)
-- `User.dodoSubscriptionId` (String, select: false)
-
-The `getEffectiveTier(user)` function in `utils/planUtils.js` checks expiry at request time:
+**File:** `backend/constants/plans.js`
 
 ```js
-function getEffectiveTier(user) {
-  if (!user || user.subscriptionTier === "free") return "free";
-  if (user.subscriptionExpiresAt && user.subscriptionExpiresAt < new Date()) return "free";
-  return user.subscriptionTier;
+const PLANS = {
+  free: {
+    postCharLimit:          500,
+    imagesPerPost:          1,
+    screenshotsPerProduct:  1,
+    credits:                30,          // Initial credit grant — NOT YET IMPLEMENTED
+    broadcastsPerMonth:     0,
+    badge:                  null,
+    builderMapAccess:       "view_only",
+    dodoProductIds: { monthly: null, annual: null },
+  },
+  builder_pro: {
+    postCharLimit:          2000,
+    imagesPerPost:          2,
+    screenshotsPerProduct:  2,
+    credits:                200,         // Initial credit grant — NOT YET IMPLEMENTED
+    broadcastsPerMonth:     3,
+    badge:                  "blue",
+    builderMapAccess:       "full",
+    dodoProductIds: {
+      monthly: process.env.DODO_PROD_BUILDER_PRO_MONTHLY,
+      annual:  process.env.DODO_PROD_BUILDER_PRO_ANNUAL,
+    },
+  },
+  founder: {
+    postCharLimit:          5000,
+    imagesPerPost:          4,
+    screenshotsPerProduct:  4,
+    credits:                600,         // Initial credit grant — NOT YET IMPLEMENTED
+    broadcastsPerMonth:     Infinity,
+    badge:                  "orange",
+    builderMapAccess:       "full",
+    dodoProductIds: {
+      monthly: process.env.DODO_PROD_FOUNDER_MONTHLY,
+      annual:  process.env.DODO_PROD_FOUNDER_ANNUAL,
+    },
+  },
+};
+```
+
+### Plan Tier Storage
+
+Stored on `User` model:
+- `subscriptionTier`: `"free"` | `"builder_pro"` | `"founder"`
+- `subscriptionExpiresAt`: `Date` | `null`
+- `subscriptionInterval`: `"monthly"` | `"annual"` | `null`
+
+### Effective Tier Logic
+
+**File:** `backend/utils/planUtils.js`
+
+```js
+getEffectiveTier(user):
+  // Returns "free" if:
+  //   user.subscriptionTier === "free"  OR
+  //   user.subscriptionExpiresAt < now
+  // Otherwise returns user.subscriptionTier
+
+getUserPlan(user):
+  // Returns PLANS[getEffectiveTier(user)]
+```
+
+This means expired paid plans automatically fall back to `free` on every request — no cron needed for gating. The subscription expiry cron is a safety net to update the DB record itself.
+
+### Feature Gating (Plan Enforcement)
+
+**Middleware:** `requirePlanFeature(feature, getCurrentCount)` in `backend/middleware.js`
+
+Factory pattern — returns middleware that:
+1. Calls `getUserPlan(req.user)` for effective tier
+2. Calls `getCurrentCount(req)` to get current usage
+3. If `current >= plan[feature]` → 403 with message `"Your {tier} plan allows max {limit} {feature}"`
+
+**Currently enforced:**
+- `screenshotsPerProduct` — on `PUT /products/:id/screenshots`
+
+**Defined in plans.js but NOT yet enforced in routes:**
+- `postCharLimit`
+- `imagesPerPost`
+- `broadcastsPerMonth`
+- `builderMapAccess`
+
+### Subscription Model
+
+**File:** `backend/models/subscriptionModel.js`
+
+```
+Subscription {
+  userId:             ObjectId  (required, indexed)
+  plan:               String    (enum: free, builder_pro, founder)
+  interval:           String    (enum: monthly, annual)
+  dodoSubscriptionId: String    (indexed)
+  dodoPaymentId:      String    (unique, sparse) — idempotency guard
+  dodoCustomerId:     String
+  amountPaid:         Number
+  currency:           String
+  status:             String    (enum: pending, active, on_hold, expired, cancelled; default: pending)
+  startsAt:           Date
+  expiresAt:          Date
+  eventType:          String    — Dodo webhook event type that created/updated this
 }
 ```
 
-This means a paid user with an expired `subscriptionExpiresAt` is silently served the `free` plan even if `subscriptionTier` still says `"builder_pro"`. The cron job (`subscriptionExpiryCron.js`) normalizes these records daily.
+### Dodo Subscription Webhook Flow
 
-### Feature Gating by Tier
+**File:** `backend/controllers/Payments.js`
 
-Feature gates currently enforced in code:
+Signature verification: HMAC-SHA256 with `process.env.DODO_PAYMENTS_WEBHOOK_KEY`
 
-| Feature | Where enforced | How |
-|---------|---------------|-----|
-| Post character limit | `postController.js:67` | `getUserPlan(req.user).postCharLimit` |
-| Images per post | `postController.js:73` | `getUserPlan(req.user).imagesPerPost` |
-| Screenshots per product | `productController.js:448` | `getUserPlan(req.user).screenshotsPerProduct` |
-| General plan feature limit (factory) | `middleware.js:525` `requirePlanFeature()` | Used ad-hoc on any route |
+| Event | Handler | Action |
+|---|---|---|
+| `subscription.active` / `subscription.renewed` | `activateSubscription()` | Upgrade user tier, set `subscriptionExpiresAt`, set `verificationBadge`, create Subscription record, send email |
+| `subscription.cancelled` / `subscription.expired` | `deactivateSubscription()` | Reset user to free, clear Dodo IDs, update Subscription record |
+| `subscription.on_hold` / `subscription.failed` | `holdSubscription()` | Set Subscription status to `on_hold` (no immediate user downgrade — Dodo will retry) |
 
-**⚠️ FLAG**: `broadcastsPerMonth` and `builderMapAccess` are defined in `PLANS` but are not enforced by any controller or middleware in the current codebase. The broadcast limit check is absent from the broadcast controller.
-
-### Existing Payment / Billing Code
-
-The full Dodo Payments integration is **production-ready** in structure:
-
-- `controllers/Payments.js`: `createCheckoutSession` (creates hosted checkout), `handleWebhook` (verifies HMAC-SHA256 signature, routes events).
-- `routes/payments.js`: `POST /payments/checkout` (auth required), `POST /payments/webhook` (public, Dodo calls this).
-- Webhook events handled: `subscription.active`, `subscription.renewed`, `subscription.cancelled`, `subscription.expired`, `subscription.on_hold`, `subscription.failed`.
-- `activateSubscription()` sets `user.subscriptionTier`, `user.subscriptionExpiresAt`, `user.subscriptionInterval`, `user.dodoCustomerId`, `user.dodoSubscriptionId`, `user.verificationBadge`; creates a `Subscription` record; sends email via `MailSender`.
-- `deactivateSubscription()` resets user tier to `"free"` and marks `Subscription.status` as `cancelled` or `expired`.
-- Idempotency: checks `Subscription.findOne({ dodoPaymentId })` before processing to prevent replay.
-
-**⚠️ FLAG**: `DODO_PROD_BUILDER_PRO_MONTHLY`, `DODO_PROD_BUILDER_PRO_ANNUAL`, `DODO_PROD_FOUNDER_MONTHLY`, `DODO_PROD_FOUNDER_ANNUAL`, `DODO_PAYMENTS_API_KEY`, and `DODO_PAYMENTS_WEBHOOK_KEY` are not present in the `.env` file. These must be set before any payment flow can function.
+Idempotency guard: checks for existing `dodoPaymentId` in Subscription records before processing.
 
 ---
 
 ## 6. Key Business Logic
 
-### Product Submission Flow (End to End)
+### Product Submission Flow (End-to-End)
 
-1. **Create** — `POST /products` → `createProduct()`: sets `status: "draft"`, `owner: req.userId`. No credit cost.
-2. **Upload logo** — `POST /products/:id/logo`: uploads to Bunny CDN, updates `product.logo`.
-3. **Upload screenshots** — `POST /products/:id/screenshots`: plan-gated by `getUserPlan().screenshotsPerProduct`. Uploads to Bunny CDN.
-4. **Edit** — `PUT /products/:id`: allowed fields before launch: `["name","tagline","description","category","buildStage","feedbackFocus","specificQuestion","productUrl","demoVideo"]`. After launch, only `POST_LAUNCH_UPDATE_FIELDS` (name/tagline/category locked).
-5. **Submit for feedback** — `POST /products/:id/submit`:
-   - Only allowed from `draft` or `launched` status.
-   - **Credit gate**: requires 20 credits. `CreditService.spend({ eventCode: "SUBMIT_FOR_FEEDBACK" })` deducts 20.
-   - Sets `status: "in_review"`, increments `reviewRound`, sets `submittedAt`.
-   - Sends system notification to owner + followers (fire-and-forget).
-6. **Receive reviews** — `POST /products/:id/reviews`: reviewers (not owner) can leave reviews with `rating` (1-5), `content` (min 10 chars), `tags`. Awards reviewer `+8 cr` (REVIEW_FEEDBACK), capped at 5 reviewers per product. Reviewer can mark others' reviews helpful (`POST /products/:id/reviews/:reviewId/helpful`) for `+2 cr`, and the reviewed user gets `+30 cr` at 10 helpful votes.
-7. **Launch** — `POST /products/:id/launch`:
-   - Must be `in_review`.
-   - Requires minimum `MIN_REVIEWS_TO_LAUNCH = 5` reviews.
-   - Sets `status: "launched"`, sets `launchedAt`.
-   - Sends system/milestone notifications.
-8. **Product appears on launch feed** — `GET /launches` (public, no auth required). Query params: `tab` (today/week/alltime), `sort` (top/new/trending), `category`, `page`, `limit`.
+**Statuses:** `draft` → `in_review` → `launched` → `archived`
 
-### Broadcast / Launch System
+**Files:** `backend/controllers/productController.js`, `backend/routes/productRoutes.js`
 
-- The `/launches` routes serve launched AND `in_review` products (status `$in: ["in_review", "launched"]`).
-- Sort modes: `top` (upvoteCount desc), `new` (launchedAt desc), `trending` (upvoteCount / (1 + hours_since_launch)).
-- Live launches: `GET /launches/live` — last 48 hours, top 5 by upvote.
-- Upvote: `POST /launches/:id/upvote` (auth required) — atomic toggle, owner cannot upvote own product.
-- Community broadcasts are separate from the product launch system. They use the `/notifications` system and are moderated by community event-admins and owners.
+1. **Create** (`POST /products`)
+   - Status defaults to `"draft"`
+   - Required: `name`, `tagline`, `productUrl`
+   - Optional: `description`, `category`, `buildStage`, `feedbackFocus`, `specificQuestion`, `demoVideo`
+   - Screenshots uploaded separately via `PUT /products/:id/screenshots` (plan-gated)
 
-**⚠️ FLAG**: `broadcastsPerMonth: 3` (builder_pro) and `broadcastsPerMonth: Infinity` (founder) are defined in `PLANS` but there is no controller that reads or enforces this field. Free-tier users with `broadcastsPerMonth: 0` are not blocked from sending broadcasts.
+2. **Edit** (`PUT /products/:id`)
+   - Before launch: all `ALLOWED_UPDATE_FIELDS` editable
+   - After launch: only `POST_LAUNCH_UPDATE_FIELDS` (description, buildStage, feedbackFocus, specificQuestion, productUrl, demoVideo)
+   - `name` and `tagline` are locked after launch
 
-### Cron Jobs & Scheduled Tasks
+3. **Submit for Feedback** (`POST /products/:id/submit`)
+   - **Requires 20 credits — hard gate**
+   - Calls `CreditService.spend({ eventCode: "SUBMIT_FOR_FEEDBACK" })`
+   - Returns `402` if balance < 20
+   - Sets `status = "in_review"`, increments `reviewRound`, sets `submittedAt`
+   - Sends notifications to owner + followers
 
-| Job | Schedule | File | What it does |
-|-----|----------|------|-------------|
-| Post popularity scoring | Every 30 min | `utils/postPopularityService.js` (called from `index.js`) | Processes post popularity |
-| Inactivity penalty | Daily 02:00 UTC | `jobs/inactivityPenaltyCron.js` | Finds profiles with `lastActivityAt < 30 days ago` and `coin > 0`, deducts 10 cr (`PENALTY_INACTIVITY`) with idempotency key `PENALTY_INACTIVITY:userId:YYYY-MM-DD` |
-| Subscription expiry | Daily 03:00 UTC | `jobs/subscriptionExpiryCron.js` | Finds users with `subscriptionTier != free` AND `subscriptionExpiresAt <= now`, resets them to `free`, marks their `Subscription` record as `expired` |
+4. **Review** (`POST /products/:id/reviews`)
+   - Cannot review own product
+   - Rating: 1–5 (required)
+   - Content: 10–3000 chars
+   - Tags: max 3 from `[UX, PRICING, MOBILE, POSITIVE, PERFORMANCE, FEATURE_REQUEST]`
+   - Reviewer earns +8 credits (cap: 5 earners per product)
+   - Helpful voting: voter +2, reviewer +30 at 10-helpful milestone
 
-Activity tracking: `middleware.js:15` `touchActivity(userId)` fire-and-forgets a `Profile.findOneAndUpdate({ lastActivityAt: { $lt: 5min ago } }, { lastActivityAt: now })` on every authenticated request.
+5. **Launch** (`POST /products/:id/launch`)
+   - Requires: `status === "in_review"` AND at least 5 reviews
+   - Sets `status = "launched"`, `launchedAt = now`
+   - Notifies owner + followers
 
-### Email & Notification System
+6. **Archive/Delete**
+   - Removes screenshots from Bunny CDN
+   - Deletes all associated reviews
 
-- **Email**: `utils/mailSender.js` sends via nodemailer using `EMAIL` and `PASSWORD` env vars (SMTP credentials). Called after subscription activation/deactivation in `Payments.js`.
-- **In-app notifications**: `utils/notificationService.js` `createAndSendNotification()` creates `Notification` documents and emits Socket.IO events. Used extensively as fire-and-forget (`catch(() => {})`) after primary operations.
-- **Notification model** (`models/Notification.js`): supports `type: "community" | "direct" | "system" | "milestone" | "broadcast"`, `priority: "low" | "normal" | "high"`, polymorphic `sender` (User/Admin/System), `recipients` array with per-user `read`/`readAt`.
-- **Firebase**: `config/firebaseConfig.js` sets up Firebase Admin SDK. The `initializeFirebase()` call in `index.js` is **commented out** (`// initializeFirebase()`). Push notifications via FCM are structurally present but inactive.
+### Product Model — Key Fields
+
+**File:** `backend/models/productModel.js`
+
+```
+Product {
+  name:            String  (required, max 40 chars)
+  tagline:         String  (required, max 80 chars)
+  description:     String  (max 2000 chars)
+  category:        String  (enum: SaaS, AI/ML, Dev tools, Mobile app, Health, Finance, Education, E-commerce, Other)
+  buildStage:      String  (enum: Idea, Prototype, MVP, Beta, Launched)
+  feedbackFocus:   [String] (max 3)
+  specificQuestion: String (max 500 chars)
+  productUrl:      String  (required, URL)
+  demoVideo:       String  (URL)
+  screenshots:     [String] (max 5, plan-enforced)
+  logo:            String
+
+  status:          String  (enum: draft, in_review, launched, archived; default: draft)
+  owner:           ObjectId (ref: User, required)
+  reviewRound:     Number  (default: 0)
+  submittedAt:     Date
+  launchedAt:      Date
+
+  upvotes:         [ObjectId] (voter IDs)
+  upvoteCount:     Number  (default: 0)
+}
+```
+
+### Broadcast System
+
+**Plan limit:** `broadcastsPerMonth` in `plans.js`
+- `free`: 0
+- `builder_pro`: 3
+- `founder`: Infinity
+
+**Route:** `GET /notifications/community/:communityId/broadcast/activity` — returns broadcast notification activity
+
+The monthly limit is defined in plan config but server-side enforcement in broadcast creation was not confirmed during this audit.
+
+### Cron Jobs
+
+| Job | Schedule | File | Action |
+|---|---|---|---|
+| Post Popularity | Every 30 min | inline in index.js | Runs `PostPopularityService.processPostPopularity()` |
+| Inactivity Penalty | Daily 02:00 UTC | `jobs/inactivityPenaltyCron.js` | -10 credits after 30-day inactivity |
+| Subscription Expiry | Daily 03:00 UTC | `jobs/subscriptionExpiryCron.js` | Downgrades users with expired subscriptions |
+
+### Email / Notification System
+
+- **Email:** Nodemailer via `utils/mail.js` — `EMAIL` + `PASSWORD` env vars (SMTP)
+- **Sender:** `community@nexfellow.com`
+- **Triggered by:** Subscription activation (`activateSubscription` in Payments.js), other system events
+- **In-app notifications:** `notificationRoutes.js` + `systemNotificationRoutes.js`
+- **Real-time:** Socket.io dispatch via `utils/websocket.js` — credit events emit socket events to the receiving user
 
 ---
 
 ## 7. Environment & Config
 
-### All Env Variables (Backend)
+### Backend — All `process.env` Keys
 
-From `backend/.env`:
+**Database:**
+- `DB_URL`
 
-| Variable | Purpose |
-|---------|---------|
-| `DB_URL` | MongoDB Atlas connection string |
-| `USER_SECRET` | JWT signing secret for user access tokens |
-| `SECRET` | Cookie signing secret (`cookieParser`, `session`) |
-| `ADMIN_SECRET` | JWT signing secret for admin tokens |
-| `EMAIL` | SMTP sender address (`community@nexfellow.com`) |
-| `PASSWORD` | SMTP sender password |
-| `CONTACT_EMAIL` | Contact form destination |
-| `BACKEND_DOMAIN` | This server's public URL (used in OAuth callback URLs) |
-| `SITE_URL` | Frontend URL (used in OAuth redirects) |
-| `ADMIN_URL` | Admin panel URL |
-| `REDIS_URL` | Redis connection (present in env, client referenced in codebase) |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth |
-| `LINKEDIN_CLIENT_ID` / `LINKEDIN_CLIENT_SECRET` / `LINKEDIN_REDIRECT_URI` | LinkedIn OAuth |
-| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` / `GITHUB_CALLBACK_URL` | GitHub OAuth |
-| `FACEBOOK_CLIENT_ID` / `FACEBOOK_CLIENT_SECRET` / `FACEBOOK_REDIRECT_URI` | Facebook OAuth |
-| `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | Cloudinary (primary) |
-| `CLOUDINARY_CLOUD_NAME_2` / `CLOUDINARY_API_KEY_2` / `CLOUDINARY_API_SECRET_2` / `CLOUDINARY_URL_2` | Cloudinary (secondary) |
-| `BUNNY_STORAGE_API_KEY` | BunnyCDN storage API key |
-| `BUNNY_STORAGE_ZONE` | BunnyCDN zone name (`nexfellow`) |
-| `BUNNY_CDN_URL` | BunnyCDN public URL (`https://nexfellow.b-cdn.net`) |
-| `BUNNY_STORAGE_HOST` | BunnyCDN storage hostname |
-| `FIREBASE_TYPE` … `FIREBASE_CLIENT_CERT_URL` | Firebase Admin SDK credentials |
-| `RAZORPAY_KEY_ID` / `RAZORPAY_SECRET` | Razorpay (legacy — not referenced in active code) |
-| **Missing — required for payments**: | |
-| `DODO_PAYMENTS_API_KEY` | Dodo Payments bearer token |
-| `DODO_PAYMENTS_WEBHOOK_KEY` | Dodo webhook HMAC secret |
-| `DODO_PROD_BUILDER_PRO_MONTHLY` | Dodo product ID |
-| `DODO_PROD_BUILDER_PRO_ANNUAL` | Dodo product ID |
-| `DODO_PROD_FOUNDER_MONTHLY` | Dodo product ID |
-| `DODO_PROD_FOUNDER_ANNUAL` | Dodo product ID |
+**Server & Security:**
+- `NODE_ENV`
+- `SECRET` (cookie parser secret)
+- `USER_SECRET` (legacy JWT signing)
+- `ADMIN_SECRET` (admin JWT signing)
+- `PORT` (defaults to 4000)
 
-**⚠️ FLAG**: `RAZORPAY_KEY_ID` and `RAZORPAY_SECRET` are present in the `.env` file but Razorpay is not referenced in any active backend code. These are legacy and should be removed.
+**Clerk:**
+- `CLERK_SECRET_KEY`
+- `CLERK_WEBHOOK_SECRET`
 
-**⚠️ FLAG**: All six `DODO_*` variables are absent from `.env`. The `PLANS` constant references `process.env.DODO_PROD_*` at module load time, so all plan objects will have `null` product IDs until these are set.
+**Dodo Payments:**
+- `DODO_PAYMENTS_API_KEY`
+- `DODO_PAYMENTS_WEBHOOK_KEY`
+- `DODO_PROD_BUILDER_PRO_MONTHLY`
+- `DODO_PROD_BUILDER_PRO_ANNUAL`
+- `DODO_PROD_FOUNDER_MONTHLY`
+- `DODO_PROD_FOUNDER_ANNUAL`
 
-### All Env Variables (Frontend)
+**OAuth (Passport.js):**
+- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GITHUB_CALLBACK_URL`
+- `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `LINKEDIN_REDIRECT_URI`
+- `FACEBOOK_CLIENT_ID`, `FACEBOOK_CLIENT_SECRET`, `FACEBOOK_REDIRECT_URI`
+- `TWITTER_CLIENT_ID`, `TWITTER_CLIENT_SECRET`
 
-From `nexfellow-next/.env.local`:
+**Email:**
+- `EMAIL`
+- `PASSWORD`
+- `CONTACT_EMAIL`
 
-| Variable | Value / Purpose |
-|---------|----------------|
-| `NEXT_PUBLIC_LOCALHOST` | `http://localhost:4000` — used by socket.js in dev mode |
-| `NEXT_PUBLIC_SERVER_URL` | `http://localhost:4000` — used by axios.js as baseURL |
-| `NEXT_PUBLIC_FRONTEND_URL` | `http://localhost:3000` |
-| `NEXT_PUBLIC_NEXFELLOW_COMMUNITY_SLUGS` | Comma-separated community slugs (`devayan,iamdevayan,Subhadip4467,Deependra5701`) |
+**Storage — Bunny CDN:**
+- `BUNNY_STORAGE_API_KEY`
+- `BUNNY_STORAGE_ZONE`
+- `BUNNY_CDN_URL`
+- `BUNNY_STORAGE_HOST`
 
-### Third-party Services Integrated
+**Storage — Cloudinary (legacy):**
+- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+- `CLOUDINARY_CLOUD_NAME_2`, `CLOUDINARY_API_KEY_2`, `CLOUDINARY_API_SECRET_2`
 
-| Service | Status | Used For |
-|---------|--------|---------|
-| MongoDB Atlas | Active | Primary database |
-| BunnyCDN | Active | File/image storage for product logos, screenshots, post attachments, rewards |
-| Socket.IO | Active | Real-time notifications, DMs, credit transaction events |
-| Dodo Payments | Structurally complete, not configured | Subscription billing and webhooks |
-| Nodemailer (SMTP) | Active | Transactional email (subscription confirmations, OTP, etc.) |
-| Google OAuth | Active | Social login |
-| GitHub OAuth | Active | Social login |
-| LinkedIn OAuth | Active (manual PKCE, not Passport) | Social login |
-| Facebook OAuth | Active | Social login |
-| Firebase Admin SDK | Present but disabled (commented out) | Push notifications (FCM) |
-| Cloudinary | Present in env, referenced in `adminController.js` | Legacy image upload |
-| Razorpay | Present in env only | Legacy — no active code |
-| Redis | URL in env, client in utils | Caching (limited use) |
+**Firebase:**
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_PRIVATE_KEY`
+- `FIREBASE_CLIENT_EMAIL`
+- (additional Firebase config vars)
+
+**Razorpay (legacy — possibly unused):**
+- `RAZORPAY_KEY_ID`, `RAZORPAY_SECRET`
+
+**URLs:**
+- `SITE_URL` (frontend, e.g. `http://localhost:3001`)
+- `ADMIN_URL`
+- `BACKEND_DOMAIN` (e.g. `http://localhost:4000`)
+- `REDIS_URL`
+
+**Deployment:**
+- `RENDER`
+- `RENDER_SERVICE_ID`
+
+### Frontend — All `process.env` Keys
+
+- `NEXT_PUBLIC_SERVER_URL`
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+- `NEXT_PUBLIC_CLERK_SIGN_IN_URL`
+- `NEXT_PUBLIC_CLERK_SIGN_UP_URL`
+- `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL`
+- `NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL`
+
+### Third-Party Services
+
+| Service | Purpose | Integration Point |
+|---|---|---|
+| Clerk | User authentication + webhooks | `requireAuth` middleware, `/api/webhooks/clerk` |
+| Dodo Payments | Subscription billing | `POST /payments/checkout`, `POST /payments/webhook` |
+| Bunny CDN | Image/asset storage (current) | Product screenshots, logos, profile pictures |
+| Cloudinary | Image storage (legacy) | May be superseded by Bunny |
+| Firebase | Push notifications / storage (legacy) | `config/firebaseConfig.js` |
+| Nodemailer (SMTP) | Transactional email | `utils/mail.js` |
+| Razorpay | Legacy payment provider (likely unused) | No active routes found |
+| Google OAuth | Social login + account linking | Passport.js strategy |
+| GitHub OAuth | Social login + account linking | Passport.js strategy |
+| LinkedIn OAuth | Social login + account linking | Passport.js strategy |
+| Facebook OAuth | Social login + account linking | Passport.js strategy |
+| Twitter OAuth | Account linking only | Passport.js strategy |
 
 ---
 
-## 8. Payment Integration Readiness (Dodo Payments)
+## 8. Payment Integration Readiness
 
-### Gaps Before Integration
+### What Is Already Working
 
-1. **All six Dodo env vars are missing** from `.env`: `DODO_PAYMENTS_API_KEY`, `DODO_PAYMENTS_WEBHOOK_KEY`, `DODO_PROD_BUILDER_PRO_MONTHLY`, `DODO_PROD_BUILDER_PRO_ANNUAL`, `DODO_PROD_FOUNDER_MONTHLY`, `DODO_PROD_FOUNDER_ANNUAL`. The checkout and webhook controllers will fail silently or crash without these.
+| Item | Status |
+|---|---|
+| Dodo checkout session creation | ✅ |
+| Webhook signature verification (HMAC-SHA256) | ✅ |
+| `subscription.active` → upgrade user tier + set expiry | ✅ |
+| `subscription.renewed` → renew expiry | ✅ |
+| `subscription.cancelled` / `subscription.expired` → downgrade | ✅ |
+| `subscription.on_hold` / `subscription.failed` → hold status | ✅ |
+| Dodo product IDs per plan/interval in env vars | ✅ |
+| Subscription idempotency guard via `dodoPaymentId` | ✅ |
+| `verificationBadge` set on subscription activation | ✅ |
+| Daily subscription expiry safety net cron | ✅ |
+| Effective tier expiry check on every request | ✅ |
+| `subscriptionTier` / `subscriptionExpiresAt` on User model | ✅ |
 
-2. **No UI wiring for checkout**: `Premium.jsx` renders three plan cards with CTA buttons, but none of the buttons call `POST /payments/checkout`. The buttons have `onMouseEnter`/`onMouseLeave` hover handlers only — they do nothing on click. The credit pack buttons also have no `onClick` handlers.
+### Critical Gaps
 
-3. **No credit pack purchase flow**: `CREDIT_PACKS` in `Premium.jsx` defines three packs (Starter: $5/50cr, Growth: $12/150cr+15, Scale: $29/400cr+50). There are no corresponding Dodo product IDs, no API endpoint for one-time credit purchases, and no `source: "payment"` credit transaction path beyond its definition in the `CreditTransaction` schema.
+#### 1. Credit grant on subscription activation — NOT IMPLEMENTED
 
-4. **Monthly credit allocation not implemented**: `PLANS[tier].credits` is never consumed. No cron job tops up the user's `Profile.coin` monthly, and no webhook handler grants credits upon subscription activation.
+`plans.js` defines initial credit allocations (`free: 30`, `builder_pro: 200`, `founder: 600`) but no code in the webhook handler or anywhere else grants these credits when a user subscribes or upgrades.
 
-5. **Credit rollover not implemented**: The pricing page advertises rollover (up to 100 for Pro, up to 300 for Founder) but there is no code to calculate or enforce this cap.
+**Where to add it:** `backend/controllers/Payments.js` → inside `activateSubscription()`, after updating the user tier:
 
-6. **No subscription management UI**: There is no "manage subscription", "cancel", or "billing history" page in the frontend. After a subscription is activated by webhook, the user has no self-service way to view or cancel it.
+```js
+await CreditService.award({
+  userId: user._id,
+  eventCode: "SUBSCRIPTION_CREDIT_GRANT",   // define in creditEvents.js
+  idempotencyKey: `SUBSCRIPTION_CREDIT_GRANT:${dodoSubscriptionId}`,
+  source: "payment",
+})
+```
 
-7. **No portal / cancel endpoint**: There is no `POST /payments/cancel` or customer portal redirect endpoint.
+New event to define in `creditEvents.js`:
 
-8. **`dodoCustomerId` not pre-populated**: `checkoutPayload.customer` is only set if `req.user.dodoCustomerId` already exists. On first checkout it will be absent, which is correct Dodo behavior. But the field must be extracted from the webhook and stored, which is handled in `activateSubscription()` — this is correct.
+```js
+SUBSCRIPTION_CREDIT_GRANT: {
+  delta: null,           // dynamic — read PLANS[planId].credits at call time
+  description: "Credits granted on subscription activation",
+  cap: { perSubscriptionId: 1 },
+}
+```
 
-### Hardcoded Logic That Must Become Dynamic
+#### 2. Spend event routes missing
 
-| Item | Current state | Must become |
-|------|--------------|-------------|
-| `expiresAt` calculation in `activateSubscription()` | `now + 30 days` (monthly) or `now + 365 days` (annual) | Should use the actual `current_period_end` timestamp from the Dodo webhook payload if available |
-| `DODO_PROD_*` IDs in `plans.js` | Read from env at module load | Fine — but env vars must be set per-environment |
-| Plan badge mapping `PLANS[planId].badge` | `null` / `"blue"` / `"orange"` | Used to set `user.verificationBadge` (Boolean). This is lossy — badge colour is not stored. Consider storing the badge string directly on the user. |
-| Plan feature limits | Hardcoded in `plans.js` | Fine as code constants for now; would need DB backing only when plans become dynamically configurable |
+These events exist in `creditEvents.js` with defined deltas and gates but have no corresponding routes or controllers:
 
-### Recommended Webhook Handler Location
+| Event | Delta | Suggested Route |
+|---|---|---|
+| `BOOST_PRODUCT` | -30 | `POST /products/:id/boost` in `productRoutes.js` |
+| `REQUEST_WARM_INTRO` | -15 | `POST /buildermap/intro/:userId` in `builderMapRoutes.js` |
+| `UNLOCK_RESOURCE` | -10 | New `resourceRoutes.js` |
+| `ACCESS_GTM_REPORT` | -25 | New `resourceRoutes.js` |
 
-The webhook handler is already in the correct location: `backend/controllers/Payments.js` `handleWebhook()`, registered at `POST /payments/webhook` in `backend/routes/payments.js`. Raw body parsing for HMAC verification is correctly wired in `index.js` at line 160, **before** `express.json()`.
+#### 3. Earning events defined but not wired
 
-The signature verification implementation (lines 68-84 of `Payments.js`) uses `crypto.timingSafeEqual` with HMAC-SHA256 of `timestamp.rawBody` — this is the correct Dodo verification pattern.
+These events are in `creditEvents.js` but no code calls `CreditService.award()` for them:
 
-### Suggested Integration Points
+- `REFERRAL_JOIN` (+25) — no referral tracking route
+- `REFERRAL_PRO_UPGRADE` (+50) — could be triggered in `activateSubscription()`
+- `SOCIAL_LINK` (+5) — OAuth connection handlers don't call `award()`
+- `PROFILE_COMPLETE` (+20) — onboarding completion doesn't call `award()`
+- `EVENT_HOST` (+40) — community event creation doesn't call `award()`
+- All `PRODUCT_*` milestone events — no trigger code
 
-To complete the payment integration in priority order:
+#### 4. Plan feature gating is incomplete
 
-1. **Set all six Dodo env vars** in `.env` and production environment. Create Dodo products for each plan/interval combination and copy the product IDs.
+`plans.js` defines limits for `postCharLimit`, `imagesPerPost`, and `broadcastsPerMonth` but only `screenshotsPerProduct` is enforced via `requirePlanFeature` middleware:
 
-2. **Wire the Premium page CTA buttons** to call `POST /payments/checkout` with `{ planId, interval }` and redirect to the returned `checkoutUrl`.
+| Limit | Server-side Enforcement |
+|---|---|
+| `screenshotsPerProduct` | ✅ Enforced |
+| `postCharLimit` | ❌ Not enforced |
+| `imagesPerPost` | ❌ Not enforced |
+| `broadcastsPerMonth` | ❌ Not enforced |
+| `builderMapAccess` | ❌ Not enforced |
 
-3. **Implement monthly credit top-up**: Add a cron job (or fire it from `activateSubscription()` and `subscriptionExpiryCron.js`) that calls `CreditService.award({ eventCode: "MONTHLY_CREDIT_GRANT" })` — this will require adding a new event code. The amount should come from `PLANS[tier].credits`.
+#### 5. Frontend credit display unverified
 
-4. **Implement credit rollover**: Before the monthly top-up, if `Profile.coin > rolloverCap`, set it to `rolloverCap` first. Rollover caps (100 for Pro, 300 for Founder) can be added to the `PLANS` constant as `creditRolloverCap`.
+It is unclear from the audit whether the frontend:
+- Displays the user's credit balance in the UI
+- Disables or warns on the "Submit for Feedback" button when balance < 20
+- Updates balance in real-time via Socket.io
 
-5. **Implement credit pack purchases**: Add `POST /payments/checkout-credits` accepting `{ packId }`, look up the corresponding Dodo one-time product ID, create a Dodo checkout session. In the webhook, handle `payment.succeeded` (or equivalent one-time event) to call `CreditService.award({ source: "payment" })`.
+Backend endpoints and socket events exist to support this — frontend integration needs to be verified.
 
-6. **Add subscription management endpoints**: `POST /payments/cancel` — calls Dodo cancel subscription API using `user.dodoSubscriptionId`. Add a billing history endpoint that queries the `Subscription` collection.
+#### 6. Penalties can drive balance negative indefinitely
 
-7. **Store badge tier** properly: Change `user.verificationBadge` from Boolean to String (or add `user.subscriptionBadge`) to preserve `"blue"` / `"orange"` so the frontend can render the correct badge color without looking up the plan.
+`CreditService.penalize()` has no floor check. The inactivity cron already guards against penalizing users with `coin > 0` but admin penalties and other cron-based decay can still send balances below zero. Consider adding a minimum balance floor for non-admin penalty paths.
 
-8. **Replace in-memory OAuth code store** with Redis for multi-instance safety (see `authController.js` comment on line 22).
+#### 7. Hardcoded credit amounts
+
+All credit deltas and plan allocations are constants in `creditEvents.js` and `plans.js`. Changes require a code deploy. This is acceptable now but should be noted as a future migration target if admin-configurable pricing is needed.
+
+### Webhook Handler Location
+
+**Current:** `POST /payments/webhook` → `backend/routes/payments.js` → `backend/controllers/Payments.js`
+
+This is correctly structured. New Dodo payment events (one-time credit purchases, add-on credit packs, etc.) should be added as additional `case` branches in the existing `handleWebhook` function in `Payments.js`.
+
+### Pre-Integration Checklist
+
+| Task | Priority | Estimated Effort |
+|---|---|---|
+| Award plan credits on `subscription.active` webhook | High | Small |
+| Define `SUBSCRIPTION_CREDIT_GRANT` in creditEvents.js | High | Trivial |
+| Add `REFERRAL_PRO_UPGRADE` award in `activateSubscription()` | High | Trivial |
+| Add routes + controllers for `BOOST_PRODUCT`, `REQUEST_WARM_INTRO` | Medium | Medium |
+| Wire `REFERRAL_JOIN`, `SOCIAL_LINK`, `PROFILE_COMPLETE`, `EVENT_HOST` earning events | Medium | Medium |
+| Enforce `postCharLimit`, `imagesPerPost`, `broadcastsPerMonth` server-side | Medium | Medium |
+| Verify and build frontend credit balance display + real-time updates | High | Medium |
+| Add balance floor to inactivity penalty cron | Low | Trivial |
+
+---
+
+## Implementation Status Summary
+
+| Feature | Status |
+|---|---|
+| Clerk authentication | ✅ Complete |
+| Credit ledger (atomic, idempotent) | ✅ Complete |
+| Earn credits — product review | ✅ Complete |
+| Earn credits — helpful votes | ✅ Complete |
+| Earn credits — 7-day review streak | ✅ Complete |
+| Spend credits — submit for feedback | ✅ Complete |
+| Admin credit penalties | ✅ Complete |
+| Inactivity penalty cron | ✅ Complete |
+| Plan tier definitions | ✅ Complete |
+| Plan enforcement — screenshots | ✅ Complete |
+| Dodo checkout flow | ✅ Complete |
+| Dodo webhook handling | ✅ Complete |
+| Subscription expiry safety net | ✅ Complete |
+| Credit grant on subscription | ❌ Not implemented |
+| Referral credit rewards | ❌ Not implemented |
+| Warm intro / boost / resource unlock routes | ❌ Not implemented |
+| Post char limit enforcement | ❌ Not enforced server-side |
+| Broadcast monthly limit enforcement | ⚠️ Partial |
+| Frontend credit balance UI | ⚠️ Unverified |

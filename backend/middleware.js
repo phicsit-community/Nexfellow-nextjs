@@ -10,6 +10,11 @@ const path = require("path");
 const tokenUtils = require("./utils/token");
 const Profile = require("./models/profileModel");
 const { getUserPlan } = require("./utils/planUtils");
+const { createClerkClient, verifyToken } = require("@clerk/backend");
+
+const clerkClient = createClerkClient({
+  secretKey: process.env.CLERK_SECRET_KEY,
+});
 
 // Fire-and-forget: keep lastActivityAt fresh for the inactivity cron
 function touchActivity(userId) {
@@ -395,6 +400,59 @@ function isOwnerOrModeratorWithRole(allowedRoles = []) {
   };
 }
 
+/**
+ * Primary auth middleware — verifies a Clerk JWT from Authorization: Bearer <token>.
+ * Sets req.auth.userId (Clerk ID), req.userId (Mongo _id), and req.user (Mongoose doc).
+ * Drop-in replacement for isAuthenticated and isClient.
+ */
+const requireAuth = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Unauthorized — no token provided" });
+    }
+
+    const token = authHeader.substring(7);
+    const payload = await verifyToken(token, { secretKey: process.env.CLERK_SECRET_KEY });
+    const clerkUserId = payload.sub;
+
+    let user = await User.findOne({ clerkId: clerkUserId });
+
+    // Auto-link fallback: the webhook may not have run yet (misconfigured secret,
+    // first deploy, etc.). Look up the Clerk user's email and link their existing
+    // MongoDB account on the fly so auth works immediately.
+    if (!user) {
+      try {
+        const clerkUser = await clerkClient.users.getUser(clerkUserId);
+        const email = clerkUser.emailAddresses?.[0]?.emailAddress;
+        if (email) {
+          user = await User.findOne({ email });
+          if (user && !user.clerkId) {
+            user.clerkId = clerkUserId;
+            await user.save();
+            console.log(`[requireAuth] Auto-linked clerkId ${clerkUserId} → user ${user._id}`);
+          }
+        }
+      } catch (linkErr) {
+        console.error("[requireAuth] Auto-link failed:", linkErr.message);
+      }
+    }
+
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized — user not found" });
+    }
+
+    req.auth = { userId: clerkUserId };
+    req.userId = user._id.toString();
+    req.user = user;
+    touchActivity(user._id.toString());
+    return next();
+  } catch (err) {
+    console.error("Clerk auth error:", err.message);
+    return res.status(401).json({ message: "Unauthorized — invalid token" });
+  }
+};
+
 const isAdmin = async (req, res, next) => {
   // First try signed cookie (works in Chrome)
   let token = req.signedCookies.adminjwt;
@@ -432,62 +490,20 @@ const isAdmin = async (req, res, next) => {
 
 const setUserIfLoggedIn = async (req, res, next) => {
   try {
-    let accessToken = req.cookies.accessToken;
-    const refreshToken = req.cookies.refreshToken;
-    const userjwt = req.signedCookies.userjwt;
-
-    // Fallback: Check Authorization header
-    if (!accessToken && req.headers.authorization) {
-      const authHeader = req.headers.authorization;
-      if (authHeader.startsWith('Bearer ')) {
-        accessToken = authHeader.substring(7);
-      }
-    }
-
-    if (accessToken) {
-      const decoded = tokenUtils.verifyAccessToken(accessToken);
-      if (decoded) {
-        const user = await User.findById(decoded.id);
-        if (user) {
-          req.userId = user.id;
-          req.user = user;
-          return next();
-        }
-      }
-    }
-
-    if (refreshToken) {
-      const decoded = tokenUtils.verifyRefreshToken(refreshToken);
-      if (decoded) {
-        const user = await User.findById(decoded.id);
-        if (
-          user &&
-          user.refreshToken === refreshToken &&
-          user.refreshTokenExpiry &&
-          user.refreshTokenExpiry > new Date()
-        ) {
-          req.userId = user.id;
-          req.user = user;
-          return next();
-        }
-      }
-    }
-
-    if (userjwt) {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.substring(7);
       try {
-        const token = userjwt.token;
-        const decoded = jwt.verify(token, process.env.USER_SECRET);
-        const user = await User.findById(decoded.id);
+        const payload = await verifyToken(token, { secretKey: process.env.CLERK_SECRET_KEY });
+        const user = await User.findOne({ clerkId: payload.sub });
         if (user) {
-          req.userId = user.id;
+          req.userId = user._id.toString();
           req.user = user;
-          return next();
         }
-      } catch (e) {
-        // Invalid token, just continue
+      } catch (_) {
+        // Not a valid Clerk token — public route, proceed without user
       }
     }
-
     next();
   } catch (error) {
     console.error("Soft auth error:", error);
@@ -549,11 +565,13 @@ function requirePlanFeature(feature, getCurrentCount) {
 
 module.exports = {
   isAdmin,
-  isClient,
+  requireAuth,
+  // Legacy aliases — all route files continue to work without changes
+  isClient: requireAuth,
+  isAuthenticated: requireAuth,
   isCommunityCreator,
   isOwnerOrModeratorWithRole,
   requirePlanFeature,
   upload,
-  isAuthenticated,
   setUserIfLoggedIn,
 };

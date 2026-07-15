@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import api from "../../lib/axios";
+import useLogout from "../../utils/auth/useLogout";
 import { useMediaQuery } from "react-responsive";
 import { useTheme } from "../../hooks/useTheme";
 
@@ -25,7 +26,7 @@ import PlayOnce from "../animatedIcon/PlayOnce";
 import AnimatedAccount from "./animated/account.json";
 import staticCommuntiy from "./animated/staticCommuntiy.png";
 import AnimatedSettings from "./animated/settings.json";
-import { Package, Globe, Rocket, Activity, Settings, Star, User, Home, MessageCircle } from "lucide-react";
+import { Package, Globe, Rocket, Activity, Settings, Star, User, Home, MessageCircle, WalletMinimal } from "lucide-react";
 
 function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
   const pathname = usePathname();
@@ -97,6 +98,7 @@ function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
     { path: "/launches", isStatic: true, iconComponent: Rocket, label: "Launches", section: "discover", id: "launches" },
     { path: "/coming-soon", isStatic: true, iconComponent: Activity, label: "Momentum Board", section: "discover", id: "momentum" },
     { path: "/premium", isStatic: true, iconComponent: Star, label: "Premium", section: "discover", id: "premium" },
+    { path: "/wallet", isStatic: true, iconComponent: WalletMinimal, label: "Wallet", section: "discover", id: "wallet" },
   ];
 
   const communityItems = [
@@ -126,29 +128,12 @@ function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
 
   const isActive = (path) => activeTab.startsWith(path);
 
+  const handleLogoutFn = useLogout();
   const handleLogout = async () => {
     if (loading) return;
     setLoading(true);
     try {
-      const response = await api.get("/user/logout", { withCredentials: true });
-      if (response.status === 200) {
-        // Clear all storage
-        localStorage.clear();
-        sessionStorage.clear();
-
-        // Clear all cookies
-        document.cookie.split(";").forEach((c) => {
-          document.cookie = c
-            .replace(/^ +/, "")
-            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-        });
-
-        router.push("/login");
-      } else {
-        console.error("Logout failed:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error during logout:", error.message);
+      await handleLogoutFn();
     } finally {
       setLoading(false);
     }
@@ -320,8 +305,8 @@ function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
               </div>
             )}
             <div className={style.userInfo}>
-              <span className={style.userName}>{user?.name || "Rahul K."}</span>
-              <span className={style.userSub}>{user?.occupation || (user?.professions?.[0]) || "Founder"} &middot; {user?.country || "Mumbai"}</span>
+              <span className={style.userName}>{user?.name || ""}</span>
+              <span className={style.userSub}>{user?.occupation || (user?.professions?.[0]) || ""}{user?.country ? ` · ${user.country}` : ""}</span>
             </div>
           </div>
 

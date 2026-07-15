@@ -3,15 +3,21 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
+import { useSelector } from "react-redux";
 import { T, DARKER, MUTED, TEXT, BORDER } from "../shared/tokens";
+
+const BORDER2 = "rgba(255,255,255,0.08)";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
+
+  const { isSignedIn, isLoaded } = useAuth();
+  const username = useSelector((state) => state.auth.user?.username);
+  const isLoggedIn = isLoaded && isSignedIn;
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
@@ -20,13 +26,6 @@ export default function Navbar() {
 
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll);
-
-    const flag = localStorage.getItem("isLoggedIn");
-    const ud = JSON.parse(localStorage.getItem("user") || "{}");
-    if (flag === "true" && ud?.username) {
-      setIsLoggedIn(true);
-      setUsername(ud.username);
-    }
 
     return () => {
       window.removeEventListener("scroll", onScroll);
@@ -130,12 +129,12 @@ export default function Navbar() {
             {/* Desktop actions */}
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}
               className="navbar-desktop-actions">
-              {isLoggedIn && username ? (
-                <Link href={`/dashboard/${username}`} style={btn}>Dashboard</Link>
+              {isLoggedIn ? (
+                <Link href={username ? `/dashboard/${username}` : "/dashboard"} style={btn}>Dashboard</Link>
               ) : (
                 <>
-                  <Link href="/login" style={{ color: TEXT, textDecoration: "none", fontSize: 14, fontWeight: 500 }}>Log In</Link>
-                  <Link href="/signup" style={btn}>Get Started</Link>
+                  <Link href="/sign-in" style={{ color: TEXT, textDecoration: "none", fontSize: 14, fontWeight: 500 }}>Log In</Link>
+                  <Link href="/sign-up" style={btn}>Get Started</Link>
                 </>
               )}
             </div>
@@ -194,14 +193,14 @@ export default function Navbar() {
                 ))}
               </div>
               <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 12 }}>
-                {isLoggedIn && username ? (
-                  <Link href={`/dashboard/${username}`} onClick={() => setMenuOpen(false)}
+                {isLoggedIn ? (
+                  <Link href={username ? `/dashboard/${username}` : "/dashboard"} onClick={() => setMenuOpen(false)}
                     style={{ ...btn, textAlign: "center", padding: "12px 0", borderRadius: 10, fontSize: 15 }}>
                     Dashboard
                   </Link>
                 ) : (
                   <>
-                    <Link href="/login" onClick={() => setMenuOpen(false)}
+                    <Link href="/sign-in" onClick={() => setMenuOpen(false)}
                       style={{
                         color: TEXT, textDecoration: "none", fontSize: 15, fontWeight: 500,
                         textAlign: "center", padding: "12px 0",
@@ -210,7 +209,7 @@ export default function Navbar() {
                       }}>
                       Log In
                     </Link>
-                    <Link href="/signup" onClick={() => setMenuOpen(false)}
+                    <Link href="/sign-up" onClick={() => setMenuOpen(false)}
                       style={{ ...btn, textAlign: "center", padding: "12px 0", borderRadius: 10, fontSize: 15 }}>
                       Get Started
                     </Link>

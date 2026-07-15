@@ -198,15 +198,12 @@ module.exports.updatePost = async (req, res) => {
       .session(session);
 
     if (!post) throw new ExpressError("Post not found", 404);
-    if (!post.community)
-      throw new ExpressError("Post is not linked to a community", 400);
 
-    // Authorization: author, or owner, or content-admin moderator only
+    // Authorization: author, or (if community post) owner/content-admin moderator
     const isAuthor = post.author.toString() === req.userId;
-    const isContentAdminOrOwner = userIsContentAdminOrOwner(
-      post.community,
-      req.userId
-    );
+    const isContentAdminOrOwner = post.community
+      ? userIsContentAdminOrOwner(post.community, req.userId)
+      : false;
 
     if (!isAuthor && !isContentAdminOrOwner) {
       throw new ExpressError("Unauthorized to update this post", 403);
@@ -228,7 +225,7 @@ module.exports.updatePost = async (req, res) => {
           content,
           req.userId,
           postId,
-          post.community._id
+          post.community?._id || null
         );
       post.content = processedContent;
     }

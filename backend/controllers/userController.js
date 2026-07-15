@@ -20,6 +20,7 @@ const backendURL = process.env.BACKEND_DOMAIN;
 const isProduction = process.env.NODE_ENV === "production" || !!process.env.RENDER;
 const { uploadOnBunny, removeFromBunny } = require("../utils/attachments");
 const CreditService = require("../services/creditService");
+const { PLANS } = require("../constants/plans");
 const defaultProfilePicture =
   "https://nexfellow.b-cdn.net/defaults/default-profile.png";
 const defaultBanner = "https://nexfellow.b-cdn.net/defaults/default-banner.png";
@@ -362,7 +363,16 @@ module.exports.verifyRegistrationOtp = async (req, res) => {
 
   await profile.save();
   user.profile = profile._id;
+  user.nextFreeCreditGrantAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
   await user.save();
+
+  CreditService.award({
+    userId: user._id,
+    eventCode: "FREE_PLAN_CREDIT_GRANT",
+    idempotencyKey: `FREE_PLAN_CREDIT_GRANT:${user._id}:signup`,
+    deltaOverride: PLANS.free.credits,
+    source: "system",
+  }).catch((err) => console.error("Initial credit grant failed:", err.message));
 
   if (referralcode) {
     const referrerProfile = await Profile.findOneAndUpdate(
@@ -515,6 +525,10 @@ module.exports.profile = async (req, res) => {
     verificationBadge: userDetails.verificationBadge,
     isCommunityAccount: user.isCommunityAccount,
     followedCommunities: user.followedCommunities,
+    subscriptionTier: user.subscriptionTier,
+    subscriptionExpiresAt: user.subscriptionExpiresAt,
+    subscriptionInterval: user.subscriptionInterval,
+    nextFreeCreditGrantAt: user.nextFreeCreditGrantAt,
   };
   res.status(200).json(userFullDetails);
 };

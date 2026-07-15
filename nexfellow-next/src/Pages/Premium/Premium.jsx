@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import { useTheme } from "@/hooks/useTheme";
+import api from "@/lib/axios";
 
 const TEAL = "#14b8a6";
 const PURPLE = "#7c3aed";
@@ -99,7 +101,7 @@ function FeatureSection({ label, children, tk }) {
   );
 }
 
-function PlanCard({ plan, isAnnual, featured, tk }) {
+function PlanCard({ plan, isAnnual, featured, tk, planId, onCheckout, checkoutLoading, isCurrent }) {
   const borderColor = featured === "pro"
     ? `${PURPLE}55`
     : featured === "founder"
@@ -150,13 +152,13 @@ function PlanCard({ plan, isAnnual, featured, tk }) {
         </span>
         <span style={{ fontSize: 14, color: tk.textSecondary, marginLeft: 2 }}>/mo</span>
       </div>
-      {plan.monthly !== 0 ? (
+      {plan.monthly === 0 ? (
+        <p style={{ fontSize: 12, color: tk.textMuted, marginBottom: 16 }}>forever free · no card required</p>
+      ) : isAnnual ? (
         <p style={{ fontSize: 12, color: tk.textMuted, marginBottom: 16 }}>
           ${plan.annualTotal}/yr · save 2 months
         </p>
-      ) : (
-        <p style={{ fontSize: 12, color: tk.textMuted, marginBottom: 16 }}>forever free · no card required</p>
-      )}
+      ) : null}
 
       {/* Credits widget */}
       <div style={{
@@ -213,6 +215,8 @@ function PlanCard({ plan, isAnnual, featured, tk }) {
       </div>
 
       <button
+        onClick={planId && !isCurrent ? () => onCheckout(planId) : undefined}
+        disabled={checkoutLoading !== null || isCurrent}
         style={{
           marginTop: 20,
           width: "100%",
@@ -220,16 +224,17 @@ function PlanCard({ plan, isAnnual, featured, tk }) {
           borderRadius: 10,
           fontSize: 14,
           fontWeight: 700,
-          cursor: "pointer",
+          cursor: checkoutLoading !== null || isCurrent ? "not-allowed" : "pointer",
           border: plan.ctaBorder(tk) || "none",
-          background: plan.ctaBg,
-          color: plan.name === "Free" ? tk.textSecondary : plan.ctaColor,
+          background: isCurrent ? "transparent" : plan.ctaBg,
+          color: isCurrent ? tk.textSecondary : plan.name === "Free" ? tk.textSecondary : plan.ctaColor,
           transition: "opacity 0.2s",
+          opacity: checkoutLoading !== null && checkoutLoading !== planId ? 0.5 : 1,
         }}
-        onMouseEnter={e => e.currentTarget.style.opacity = "0.82"}
-        onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+        onMouseEnter={e => { if (checkoutLoading === null && !isCurrent) e.currentTarget.style.opacity = "0.82"; }}
+        onMouseLeave={e => { if (checkoutLoading === null && !isCurrent) e.currentTarget.style.opacity = "1"; }}
       >
-        {plan.cta}
+        {isCurrent ? "Current Plan" : checkoutLoading !== null && checkoutLoading === planId ? "Processing…" : plan.cta}
       </button>
     </div>
   );
@@ -287,8 +292,8 @@ const PLANS = [
     name: "Builder Pro",
     subtitle: "For serious builders actively shipping products",
     monthly: 16,
-    annualMonthly: 7,
-    annualTotal: 86,
+    annualMonthly: 13,
+    annualTotal: 160,
     badge: "Most Popular",
     badgeBg: PURPLE,
     creditsAmount: "200 credits",
@@ -342,8 +347,8 @@ const PLANS = [
     name: "Founder",
     subtitle: "For teams, accelerators & community builders",
     monthly: 49,
-    annualMonthly: 23,
-    annualTotal: 278,
+    annualMonthly: 41,
+    annualTotal: 490,
     badge: "Teams & Orgs",
     badgeBg: AMBER,
     creditsAmount: "600 credits",
@@ -420,31 +425,31 @@ const CREDIT_PACKS = [
   {
     name: "Starter pack",
     price: 5,
-    subtitle: "For when you've run dry mid-launch and need feedback fast. Never expires.",
+    subtitle: "For when you need feedback fast and run dry mid-launch. Never expires.",
     credits: 50,
     bonus: null,
     featured: false,
-    items: ["Instant · no expiry", "= 2 feedback rounds"],
+    items: ["Instant · no expiry", "2 feedback rounds", "Works on any plan"],
     cta: "Buy Starter",
   },
   {
     name: "Growth pack",
-    price: 12,
+    price: 15,
     subtitle: "Most popular top-up. Covers a full sprint of product launches.",
     credits: 150,
-    bonus: "+15 bonus",
+    bonus: "+25 bonus",
     featured: true,
-    items: ["Instant · no expiry", "= 7 feedback rounds", "1 free priority boost included"],
+    items: ["Instant · no expiry", "7 feedback rounds", "1 free priority boost included"],
     cta: "Buy Growth",
   },
   {
     name: "Scale pack",
-    price: 29,
+    price: 35,
     subtitle: "For builders running multiple products or community sprints.",
     credits: 400,
-    bonus: "+50 bonus",
+    bonus: "+75 bonus",
     featured: false,
-    items: ["Instant · no expiry", "= 20 feedback rounds", "3 priority boosts + 1 board spotlight"],
+    items: ["Instant · no expiry", "20 feedback rounds", "3 priority boosts and 1 board spotlight", "Works on any plan"],
     cta: "Buy Scale",
   },
 ];
@@ -539,8 +544,37 @@ function FaqItem({ q, a, defaultOpen, isLast, tk }) {
 
 export default function Premium() {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(null);
+  const [currentTier, setCurrentTier] = useState(null);
   const { effectiveTheme } = useTheme();
   const tk = effectiveTheme === "dark" ? DARK : LIGHT;
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await api.get("/user/profile");
+        if (!cancelled) setCurrentTier(data?.subscriptionTier ?? "free");
+      } catch {
+        if (!cancelled) setCurrentTier("free");
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const handleCheckout = async (planId) => {
+    const interval = isAnnual ? "annual" : "monthly";
+    setCheckoutLoading(planId);
+    try {
+      const { data } = await api.post("/payments/checkout", { planId, interval });
+      window.location.href = data.checkoutUrl;
+    } catch (err) {
+      const message = err?.response?.data?.error ?? "Something went wrong. Please try again.";
+      toast.error(message);
+    } finally {
+      setCheckoutLoading(null);
+    }
+  };
 
   return (
     <>
@@ -671,9 +705,9 @@ export default function Premium() {
             Plans — Pricing & Credits
           </p>
           <div className="premium-plans-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
-            <PlanCard plan={PLANS[0]} isAnnual={isAnnual} tk={tk} />
-            <PlanCard plan={PLANS[1]} isAnnual={isAnnual} featured="pro" tk={tk} />
-            <PlanCard plan={PLANS[2]} isAnnual={isAnnual} featured="founder" tk={tk} />
+            <PlanCard plan={PLANS[0]} isAnnual={isAnnual} tk={tk} planId={null} onCheckout={handleCheckout} checkoutLoading={checkoutLoading} isCurrent={currentTier === "free"} />
+            <PlanCard plan={PLANS[1]} isAnnual={isAnnual} featured="pro" tk={tk} planId="builder_pro" onCheckout={handleCheckout} checkoutLoading={checkoutLoading} isCurrent={currentTier === "builder_pro"} />
+            <PlanCard plan={PLANS[2]} isAnnual={isAnnual} featured="founder" tk={tk} planId="founder" onCheckout={handleCheckout} checkoutLoading={checkoutLoading} isCurrent={currentTier === "founder"} />
           </div>
         </section>
 
