@@ -15,6 +15,18 @@ const app = express();
 
 const fs = require("fs");
 require("dotenv").config({ path: fs.existsSync(".env.local") ? ".env.local" : ".env" });
+
+if (!process.env.CLERK_SECRET_KEY) {
+  // Without this, @clerk/backend's verifyToken() silently fails every request with
+  // "Failed to resolve JWK during verification." (401) instead of a clear boot error.
+  console.error(
+    "FATAL: CLERK_SECRET_KEY is not set. All authenticated requests will fail with " +
+    "'Failed to resolve JWK during verification.' Set it in this environment's config " +
+    "(e.g. Render dashboard → Environment) and redeploy."
+  );
+  process.exit(1);
+}
+
 const cors = require("cors");
 const path = require("path");
 const ExpressError = require("./utils/ExpressError");
