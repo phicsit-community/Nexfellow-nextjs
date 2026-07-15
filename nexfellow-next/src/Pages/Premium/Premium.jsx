@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useTheme } from "@/hooks/useTheme";
@@ -101,7 +101,7 @@ function FeatureSection({ label, children, tk }) {
   );
 }
 
-function PlanCard({ plan, isAnnual, featured, tk, planId, onCheckout, checkoutLoading }) {
+function PlanCard({ plan, isAnnual, featured, tk, planId, onCheckout, checkoutLoading, isCurrent }) {
   const borderColor = featured === "pro"
     ? `${PURPLE}55`
     : featured === "founder"
@@ -215,8 +215,8 @@ function PlanCard({ plan, isAnnual, featured, tk, planId, onCheckout, checkoutLo
       </div>
 
       <button
-        onClick={planId ? () => onCheckout(planId) : undefined}
-        disabled={checkoutLoading !== null}
+        onClick={planId && !isCurrent ? () => onCheckout(planId) : undefined}
+        disabled={checkoutLoading !== null || isCurrent}
         style={{
           marginTop: 20,
           width: "100%",
@@ -224,17 +224,17 @@ function PlanCard({ plan, isAnnual, featured, tk, planId, onCheckout, checkoutLo
           borderRadius: 10,
           fontSize: 14,
           fontWeight: 700,
-          cursor: checkoutLoading !== null ? "not-allowed" : "pointer",
+          cursor: checkoutLoading !== null || isCurrent ? "not-allowed" : "pointer",
           border: plan.ctaBorder(tk) || "none",
-          background: plan.ctaBg,
-          color: plan.name === "Free" ? tk.textSecondary : plan.ctaColor,
+          background: isCurrent ? "transparent" : plan.ctaBg,
+          color: isCurrent ? tk.textSecondary : plan.name === "Free" ? tk.textSecondary : plan.ctaColor,
           transition: "opacity 0.2s",
           opacity: checkoutLoading !== null && checkoutLoading !== planId ? 0.5 : 1,
         }}
-        onMouseEnter={e => { if (checkoutLoading === null) e.currentTarget.style.opacity = "0.82"; }}
-        onMouseLeave={e => { if (checkoutLoading === null) e.currentTarget.style.opacity = "1"; }}
+        onMouseEnter={e => { if (checkoutLoading === null && !isCurrent) e.currentTarget.style.opacity = "0.82"; }}
+        onMouseLeave={e => { if (checkoutLoading === null && !isCurrent) e.currentTarget.style.opacity = "1"; }}
       >
-        {checkoutLoading === planId ? "Processing…" : plan.cta}
+        {isCurrent ? "Current Plan" : checkoutLoading !== null && checkoutLoading === planId ? "Processing…" : plan.cta}
       </button>
     </div>
   );
@@ -545,8 +545,22 @@ function FaqItem({ q, a, defaultOpen, isLast, tk }) {
 export default function Premium() {
   const [isAnnual, setIsAnnual] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(null);
+  const [currentTier, setCurrentTier] = useState(null);
   const { effectiveTheme } = useTheme();
   const tk = effectiveTheme === "dark" ? DARK : LIGHT;
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await api.get("/user/profile");
+        if (!cancelled) setCurrentTier(data?.subscriptionTier ?? "free");
+      } catch {
+        if (!cancelled) setCurrentTier("free");
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const handleCheckout = async (planId) => {
     const interval = isAnnual ? "annual" : "monthly";
@@ -691,9 +705,9 @@ export default function Premium() {
             Plans — Pricing & Credits
           </p>
           <div className="premium-plans-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
-            <PlanCard plan={PLANS[0]} isAnnual={isAnnual} tk={tk} planId={null} onCheckout={handleCheckout} checkoutLoading={checkoutLoading} />
-            <PlanCard plan={PLANS[1]} isAnnual={isAnnual} featured="pro" tk={tk} planId="builder_pro" onCheckout={handleCheckout} checkoutLoading={checkoutLoading} />
-            <PlanCard plan={PLANS[2]} isAnnual={isAnnual} featured="founder" tk={tk} planId="founder" onCheckout={handleCheckout} checkoutLoading={checkoutLoading} />
+            <PlanCard plan={PLANS[0]} isAnnual={isAnnual} tk={tk} planId={null} onCheckout={handleCheckout} checkoutLoading={checkoutLoading} isCurrent={currentTier === "free"} />
+            <PlanCard plan={PLANS[1]} isAnnual={isAnnual} featured="pro" tk={tk} planId="builder_pro" onCheckout={handleCheckout} checkoutLoading={checkoutLoading} isCurrent={currentTier === "builder_pro"} />
+            <PlanCard plan={PLANS[2]} isAnnual={isAnnual} featured="founder" tk={tk} planId="founder" onCheckout={handleCheckout} checkoutLoading={checkoutLoading} isCurrent={currentTier === "founder"} />
           </div>
         </section>
 
