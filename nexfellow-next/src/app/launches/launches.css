@@ -156,10 +156,13 @@
 }
 
 /* ════════════════════════ OUTER TWO-COLUMN GRID ════════════════════════ */
+/* Sidebar column width mirrors PageHeader's .searchWrapperRight formula
+   (34.426% - 103px, capped 305px) so the sidebar's left edge — and the
+   cards inside it — line up with the search bar's left edge above. */
 .lp-outer-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: 800fr 420fr;
+  grid-template-columns: 1fr min(calc(34.426% - 24.656px), 404px);
   overflow: hidden;
 }
 
@@ -543,6 +546,7 @@
   cursor: pointer;
   color: var(--tx);
   font-family: var(--font-sans);
+  outline: none;
   transition: opacity 0.13s;
   margin-top: 2px;
 }
@@ -553,7 +557,7 @@
 
 /* ── Launch Your Product ── */
 .lps-launch-card {
-  border: 1px solid var(--b);
+  border: 1.5px dashed var(--Gb);
   border-radius: var(--r);
   margin-bottom: 10px;
   background: var(--sur);
@@ -576,6 +580,7 @@
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  outline: none;
   transition: background 0.12s, border-color 0.12s;
 }
 
@@ -608,7 +613,7 @@
   font-size: 12px;
   color: var(--tx2);
   line-height: 1.55;
-  max-width: 200px;
+  max-width: 250px;
 }
 
 .lps-submit-btn {
@@ -622,6 +627,7 @@
   font-weight: 600;
   cursor: pointer;
   font-family: var(--font-sans);
+  outline: none;
   transition: opacity 0.13s;
 }
 
@@ -1006,6 +1012,7 @@
   font-weight: 600;
   cursor: pointer;
   font-family: var(--font-sans);
+  outline: none;
   transition: opacity 0.13s;
   white-space: nowrap;
   flex-shrink: 0;

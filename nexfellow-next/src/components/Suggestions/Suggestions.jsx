@@ -232,7 +232,7 @@ const Suggestions = ({ hideSearch = false }) => {
 
       {/* Popular Communities Section */}
       <div className={styles.suggestion}>
-        <h3 className={styles.suggestionTitle}>Popular Communities</h3>
+        <h3 className={styles.suggestionTitle}>Popular Builders</h3>
 
         {loadingCommunities ? (
           <>
