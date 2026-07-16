@@ -244,3 +244,14 @@ a {
   color: #ffffff !important;
   border-color: #222 !important;
 } */
+
+/* Clerk's "Secured by Clerk" branding badge on the sign-in/sign-up pages
+   renders with its own low-contrast default text color that the
+   `appearance.elements.footerItem` prop doesn't override. Force it legible
+   against our dark auth-card background — scoped to skip the (already
+   orange, already legible) "Development mode" notice in the same footer. */
+.cl-footerItem p:not([data-clerk-dev-mode-notice]),
+.cl-footerItem a[aria-label="Clerk logo"] svg {
+  color: #94a3b8 !important;
+  opacity: 1 !important;
+}
