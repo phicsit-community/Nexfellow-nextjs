@@ -155,20 +155,20 @@ export default function Onboarding() {
     }
   };
 
-  // TODO: re-enable redirect after design review
-  // useEffect(() => {
-  //   const checkOnboarded = async () => {
-  //     try {
-  //       const { data } = await api.get('/api/onboarding');
-  //       if (data.isOnboardingComplete) {
-  //         router.replace('/feed');
-  //       }
-  //     } catch {
-  //       // Not onboarded or not logged in — stay on page
-  //     }
-  //   };
-  //   checkOnboarded();
-  // }, [router]);
+  useEffect(() => {
+    const checkOnboarded = async () => {
+      try {
+        const { data } = await api.get('/api/onboarding');
+        if (data.isOnboardingComplete) {
+          document.cookie = `isOnboarded=true; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
+          router.replace('/feed');
+        }
+      } catch {
+        // Not onboarded or not logged in — stay on page
+      }
+    };
+    checkOnboarded();
+  }, [router]);
 
   // Debounced username availability check
   useEffect(() => {

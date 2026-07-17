@@ -12,6 +12,7 @@ const clerkAppearance = {
     colorInputBackground: "#0d1829",
     colorInputText: "#f1f5f9",
     colorNeutral: "#94a3b8",
+    colorDanger: "#f87171",
     borderRadius: "14px",
     fontFamily: "inherit",
     fontSize: "14px",
@@ -87,6 +88,9 @@ const clerkAppearance = {
       padding: "10px 14px",
       outline: "none",
       transition: "border-color 0.15s ease, box-shadow 0.15s ease",
+      "&::placeholder": {
+        color: "#64748b",
+      },
     },
     formButtonPrimary: {
       background: "linear-gradient(135deg, #00d4a8 0%, #00b894 100%)",
@@ -132,8 +136,16 @@ const clerkAppearance = {
       border: "1px solid rgba(0,212,168,0.25)",
       borderRadius: "6px",
     },
+    alert: {
+      background: "rgba(248,113,113,0.1)",
+      border: "1px solid rgba(248,113,113,0.3)",
+      borderRadius: "10px",
+    },
+    alertIcon: {
+      color: "#f87171",
+    },
     alertText: {
-      color: "#94a3b8",
+      color: "#fca5a5",
     },
     formFieldSuccessText: {
       color: "#00d4a8",
@@ -141,11 +153,18 @@ const clerkAppearance = {
     formFieldErrorText: {
       color: "#f87171",
     },
+    formFieldErrorTextIcon: {
+      color: "#f87171",
+    },
     footer: {
       background: "transparent",
       borderTop: "1px solid rgba(255,255,255,0.06)",
       marginTop: "8px",
       paddingTop: "16px",
+    },
+    footerItem: {
+      color: "#94a3b8",
+      opacity: 1,
     },
   },
 };
