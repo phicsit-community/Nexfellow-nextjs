@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import api from "../../lib/axios";
+import useLogout from "../../utils/auth/useLogout";
 import { Search, LayoutDashboard, Users, LogOut } from "lucide-react";
 
 import {
@@ -39,7 +40,6 @@ function getPageTitle(pathname) {
 }
 
 function PageHeader({ onMenuToggle }) {
-  const router = useRouter();
   const pathname = usePathname();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const pageTitle = getPageTitle(pathname);
@@ -49,6 +49,7 @@ function PageHeader({ onMenuToggle }) {
   const [error, setError] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [moderated, setModerated] = useState([]);
+  const logoutFn = useLogout();
 
   // Notification state
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -130,19 +131,7 @@ function PageHeader({ onMenuToggle }) {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
     try {
-      const response = await api.get("/user/logout", { withCredentials: true });
-      if (response.status === 200) {
-        localStorage.clear();
-        sessionStorage.clear();
-        document.cookie.split(";").forEach((c) => {
-          document.cookie = c
-            .replace(/^ +/, "")
-            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-        });
-        router.push("/login");
-      }
-    } catch (error) {
-      console.error("Error during logout:", error.message);
+      await logoutFn();
     } finally {
       setIsLoggingOut(false);
     }

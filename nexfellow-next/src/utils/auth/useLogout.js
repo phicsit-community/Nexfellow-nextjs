@@ -12,7 +12,7 @@ const useLogout = () => {
       await signOut();
     } catch (error) {
       console.error("Logout error:", error);
-      window.location.replace("/sign-in");
+      window.location.replace("/");
     }
   };
 
