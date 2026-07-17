@@ -10,7 +10,10 @@ const getDodo = () => {
   if (!_dodo) {
     _dodo = new DodoPayments({
       bearerToken: process.env.DODO_PAYMENTS_API_KEY,
-      environment: process.env.NODE_ENV === "production" ? "live_mode" : "test_mode",
+      // Independent of NODE_ENV: the backend can run with NODE_ENV=production
+      // (for secure cookies, etc.) while still using a Dodo test-mode key.
+      // Set DODO_PAYMENTS_MODE=live_mode on Render once the live key is ready.
+      environment: process.env.DODO_PAYMENTS_MODE === "live_mode" ? "live_mode" : "test_mode",
     });
   }
   return _dodo;
