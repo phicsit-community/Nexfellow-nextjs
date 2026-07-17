@@ -423,6 +423,7 @@ const VALUE_PROPS = [
 
 const CREDIT_PACKS = [
   {
+    id: "starter",
     name: "Starter pack",
     price: 5,
     subtitle: "For when you need feedback fast and run dry mid-launch. Never expires.",
@@ -433,23 +434,25 @@ const CREDIT_PACKS = [
     cta: "Buy Starter",
   },
   {
+    id: "growth",
     name: "Growth pack",
     price: 15,
     subtitle: "Most popular top-up. Covers a full sprint of product launches.",
     credits: 150,
-    bonus: "+25 bonus",
+    bonus: null,
     featured: true,
-    items: ["Instant · no expiry", "7 feedback rounds", "1 free priority boost included"],
+    items: ["Instant · no expiry", "7 feedback rounds", "Works on any plan"],
     cta: "Buy Growth",
   },
   {
+    id: "scale",
     name: "Scale pack",
     price: 35,
     subtitle: "For builders running multiple products or community sprints.",
     credits: 400,
-    bonus: "+75 bonus",
+    bonus: null,
     featured: false,
-    items: ["Instant · no expiry", "20 feedback rounds", "3 priority boosts and 1 board spotlight", "Works on any plan"],
+    items: ["Instant · no expiry", "20 feedback rounds", "Works on any plan"],
     cta: "Buy Scale",
   },
 ];
@@ -567,6 +570,19 @@ export default function Premium() {
     setCheckoutLoading(planId);
     try {
       const { data } = await api.post("/payments/checkout", { planId, interval });
+      window.location.href = data.checkoutUrl;
+    } catch (err) {
+      const message = err?.response?.data?.error ?? "Something went wrong. Please try again.";
+      toast.error(message);
+    } finally {
+      setCheckoutLoading(null);
+    }
+  };
+
+  const handlePackCheckout = async (packId) => {
+    setCheckoutLoading(packId);
+    try {
+      const { data } = await api.post("/payments/checkout-credit-pack", { packId });
       window.location.href = data.checkoutUrl;
     } catch (err) {
       const message = err?.response?.data?.error ?? "Something went wrong. Please try again.";
@@ -751,7 +767,7 @@ export default function Premium() {
         </section>
 
         {/* Credit Packs */}
-        <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px 64px" }}>
+        <section id="credit-packs" style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px 64px", scrollMarginTop: 24 }}>
           <p style={{
             fontSize: 11,
             fontWeight: 700,
@@ -826,6 +842,8 @@ export default function Premium() {
                   ))}
                 </div>
                 <button
+                  onClick={() => handlePackCheckout(pack.id)}
+                  disabled={checkoutLoading === pack.id}
                   style={{
                     width: "100%",
                     padding: "11px 0",
@@ -835,13 +853,14 @@ export default function Premium() {
                     color: pack.featured ? "#fff" : tk.textSecondary,
                     fontSize: 13,
                     fontWeight: 700,
-                    cursor: "pointer",
+                    cursor: checkoutLoading === pack.id ? "default" : "pointer",
+                    opacity: checkoutLoading === pack.id ? 0.7 : 1,
                     transition: "opacity 0.2s",
                   }}
-                  onMouseEnter={e => e.currentTarget.style.opacity = "0.82"}
-                  onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+                  onMouseEnter={e => { if (checkoutLoading !== pack.id) e.currentTarget.style.opacity = "0.82"; }}
+                  onMouseLeave={e => { if (checkoutLoading !== pack.id) e.currentTarget.style.opacity = "1"; }}
                 >
-                  {pack.cta}
+                  {checkoutLoading === pack.id ? "Redirecting…" : pack.cta}
                 </button>
               </div>
             ))}

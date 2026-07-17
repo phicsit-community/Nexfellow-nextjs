@@ -8,6 +8,13 @@ const catchAsync = require("../utils/CatchAsync");
 // Returns { checkoutUrl } for the frontend to redirect the user.
 router.post("/checkout", isAuthenticated, catchAsync(paymentController.createCheckoutSession));
 
+// Authenticated: creates a Dodo hosted checkout session for a one-time credit pack.
+router.post(
+  "/checkout-credit-pack",
+  isAuthenticated,
+  catchAsync(paymentController.createCreditPackCheckoutSession)
+);
+
 // Authenticated: creates a Dodo hosted customer portal session so the user
 // can manage or cancel their subscription.
 router.post("/portal", isAuthenticated, catchAsync(paymentController.createPortalSession));

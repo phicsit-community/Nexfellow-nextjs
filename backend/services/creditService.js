@@ -60,21 +60,16 @@ class CreditService {
 
   /**
    * Deducts credits for a spend action. Throws 402 if balance is insufficient.
+   * The balance check is enforced atomically inside _commit (via requireBalance)
+   * so concurrent spends on the same account can't both pass a stale check.
    */
   static async spend(opts) {
     const event = CREDIT_EVENTS[opts.eventCode];
     if (!event || event.delta >= 0) {
       throw new ExpressError(`Invalid spend event: ${opts.eventCode}`, 400);
     }
-    const balance = await CreditService.getBalance(opts.userId);
     const required = event.gate ?? Math.abs(event.delta);
-    if (balance < required) {
-      throw new ExpressError(
-        `Insufficient credits — ${required} required, you have ${balance}`,
-        402
-      );
-    }
-    return CreditService._commit({ ...opts, delta: event.delta });
+    return CreditService._commit({ ...opts, delta: event.delta, requireBalance: required });
   }
 
   // ── Public: admin penalty ───────────────────────────────────────────────────
@@ -124,8 +119,11 @@ class CreditService {
       return {
         ...tx,
         description: meta?.description ?? tx.eventCode,
+        // Classify by the transaction's actual delta, not the event's static
+        // definition — events like SUBSCRIPTION_CREDIT_GRANT/CREDIT_PACK_PURCHASE
+        // define delta: 0 and pass the real amount via deltaOverride per-transaction.
         eventType: meta
-          ? meta.delta > 0
+          ? tx.delta > 0
             ? "earn"
             : tx.source === "admin" || tx.eventCode.startsWith("PENALTY_")
             ? "penalty"
@@ -197,15 +195,39 @@ class CreditService {
 
   // ── Private: atomic DB writer ───────────────────────────────────────────────
 
-  static async _commit({ userId, delta, eventCode, idempotencyKey, entityRef, source, adminNote }) {
+  static async _commit({
+    userId,
+    delta,
+    eventCode,
+    idempotencyKey,
+    entityRef,
+    source,
+    adminNote,
+    requireBalance,
+  }) {
     const session = await mongoose.startSession();
     try {
       session.startTransaction();
 
-      const profile = await Profile.findOne({ userId }).session(session);
-      if (!profile) throw new ExpressError("Profile not found", 404);
+      // Balance check + deduction happen as a single atomic findOneAndUpdate so
+      // concurrent spends can't both read a sufficient balance before either writes.
+      const filter = requireBalance != null ? { userId, coin: { $gte: requireBalance } } : { userId };
+      const profile = await Profile.findOneAndUpdate(
+        filter,
+        { $inc: { coin: delta } },
+        { new: true, session }
+      );
 
-      const newBalance = profile.coin + delta;
+      if (!profile) {
+        const current = await Profile.findOne({ userId }).select("coin").session(session).lean();
+        if (!current) throw new ExpressError("Profile not found", 404);
+        throw new ExpressError(
+          `Insufficient credits — ${requireBalance} required, you have ${current.coin}`,
+          402
+        );
+      }
+
+      const newBalance = profile.coin;
 
       const [tx] = await CreditTransaction.create(
         [
@@ -223,8 +245,6 @@ class CreditService {
         ],
         { session }
       );
-
-      await Profile.findByIdAndUpdate(profile._id, { $inc: { coin: delta } }, { session });
 
       await session.commitTransaction();
 

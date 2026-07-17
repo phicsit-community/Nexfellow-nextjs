@@ -10,6 +10,7 @@ import {
   Copy,
   Download,
   ExternalLink,
+  Zap,
 } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import api from "@/lib/axios";
@@ -285,6 +286,27 @@ export default function Wallet() {
               <StatTile label="All time earned" value={summary?.totalEarned ?? 0} tk={tk} />
               <StatTile label="All time spent" value={summary?.totalSpent ?? 0} tk={tk} />
             </div>
+
+            <Link href="/premium#credit-packs" style={{ textDecoration: "none" }}>
+              <div style={{
+                marginTop: 14,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 12,
+                border: `1px solid ${TEAL}30`,
+                background: `${TEAL}0d`,
+                borderRadius: 10,
+                padding: "12px 14px",
+                cursor: "pointer",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <Zap size={15} color={TEAL} />
+                  <span style={{ fontSize: 13, fontWeight: 700, color: tk.textPrimary }}>Running low? Buy more credits</span>
+                </div>
+                <span style={{ fontSize: 12, fontWeight: 700, color: TEAL }}>From $5 →</span>
+              </div>
+            </Link>
           </div>
 
           {/* Current plan */}

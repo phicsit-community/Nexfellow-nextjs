@@ -47,14 +47,20 @@ const getLaunches = async (req, res) => {
     match.category = category;
   }
 
+  // Boosted products (active BOOST_PRODUCT spend) are pinned above the normal
+  // ranking within whatever tab/sort is selected.
   let sortStage;
   if (sort === "new") {
-    sortStage = { $sort: { launchedAt: -1 } };
+    sortStage = { $sort: { isBoosted: -1, launchedAt: -1 } };
   } else if (sort === "trending") {
-    sortStage = { $sort: { trendingScore: -1, launchedAt: -1 } };
+    sortStage = { $sort: { isBoosted: -1, trendingScore: -1, launchedAt: -1 } };
   } else {
-    sortStage = { $sort: { upvoteCount: -1, launchedAt: -1 } };
+    sortStage = { $sort: { isBoosted: -1, upvoteCount: -1, launchedAt: -1 } };
   }
+
+  const addBoostedField = [
+    { $addFields: { isBoosted: { $cond: [{ $gt: ["$boostedUntil", now] }, 1, 0] } } },
+  ];
 
   const addTrendingField =
     sort === "trending"
@@ -84,6 +90,7 @@ const getLaunches = async (req, res) => {
 
   const pipeline = [
     { $match: match },
+    ...addBoostedField,
     ...addTrendingField,
     sortStage,
     { $skip: (pageNum - 1) * limitNum },
@@ -120,7 +127,7 @@ const getLaunches = async (req, res) => {
       },
     },
     // Never expose the upvotes array (voter IDs) or internal fields to clients.
-    { $project: { reviews: 0, upvotes: 0, trendingScore: 0 } },
+    { $project: { reviews: 0, upvotes: 0, trendingScore: 0, isBoosted: 0 } },
   ];
 
   const [products, total] = await Promise.all([
@@ -153,9 +160,11 @@ const getLiveLaunches = async (_req, res) => {
   const cutoff = new Date();
   cutoff.setHours(cutoff.getHours() - 48);
 
+  const now = new Date();
   const products = await Product.aggregate([
     { $match: { status: { $in: ["in_review", "launched"] }, launchedAt: { $gte: cutoff } } },
-    { $sort: { upvoteCount: -1, launchedAt: -1 } },
+    { $addFields: { isBoosted: { $cond: [{ $gt: ["$boostedUntil", now] }, 1, 0] } } },
+    { $sort: { isBoosted: -1, upvoteCount: -1, launchedAt: -1 } },
     { $limit: 5 },
     {
       $lookup: {
@@ -178,7 +187,7 @@ const getLiveLaunches = async (_req, res) => {
         },
       },
     },
-    { $project: { reviews: 0, upvotes: 0 } },
+    { $project: { reviews: 0, upvotes: 0, isBoosted: 0 } },
   ]);
 
   res.status(200).json({ live: products });

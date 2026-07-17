@@ -117,6 +117,11 @@ const productSchema = new Schema(
     },
     upvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     upvoteCount: { type: Number, default: 0 },
+    // Set by BOOST_PRODUCT credit spend — pins the product at the top of
+    // Launches while boostedUntil is in the future. boostCount doubles as
+    // the idempotency anchor for repeat boosts (see productController.boostProduct).
+    boostedUntil: { type: Date, default: null },
+    boostCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
@@ -125,6 +130,7 @@ productSchema.index({ owner: 1, status: 1 });
 productSchema.index({ owner: 1, createdAt: -1 });
 productSchema.index({ status: 1, launchedAt: -1 });
 productSchema.index({ status: 1, upvoteCount: -1 });
+productSchema.index({ boostedUntil: -1 });
 
 productSchema.pre("save", function (next) {
   if (this.isModified("status")) {

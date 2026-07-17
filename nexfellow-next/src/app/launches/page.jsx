@@ -134,8 +134,9 @@ function ProductRow({ product, rank, voted, votes, onVote, onClick }) {
   const catMeta = CATEGORY_META[product.category] || { icon: '⚡', bg: '#e8e8e8' };
   const ownerName = product.owner?.name || 'Builder';
   const isNew = new Date(product.launchedAt) > new Date(Date.now() - 24 * 3600000);
-  const tag = rank === 1 ? 'FEATURED' : isNew ? 'NEW' : null;
-  const tagType = rank === 1 ? 'featured' : 'new';
+  const isBoosted = product.boostedUntil && new Date(product.boostedUntil) > new Date();
+  const tag = isBoosted ? 'BOOSTED' : rank === 1 ? 'FEATURED' : isNew ? 'NEW' : null;
+  const tagType = isBoosted ? 'boosted' : rank === 1 ? 'featured' : 'new';
 
   return (
     <div className="lp-row" onClick={onClick}>

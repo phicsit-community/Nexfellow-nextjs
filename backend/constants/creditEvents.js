@@ -129,6 +129,13 @@ const CREDIT_EVENTS = {
     delta: 0,
     description: "Monthly free-plan credit grant",
   },
+  // delta: 0 intentionally — caller must pass deltaOverride: CREDIT_PACKS[packId].credits
+  // idempotency key is per payment_id so a retried webhook never double-grants
+  CREDIT_PACK_PURCHASE: {
+    code: "CREDIT_PACK_PURCHASE",
+    delta: 0,
+    description: "One-time credit pack purchase",
+  },
 
   // ── Spend ────────────────────────────────────────────────────────────────────
   SUBMIT_FOR_FEEDBACK: {

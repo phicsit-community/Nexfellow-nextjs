@@ -1042,7 +1042,7 @@ module.exports.getActiveUserCount = async (req, res) => {
 
 // POST /admin/credits/penalize
 module.exports.penalizeUser = async (req, res) => {
-  const { userId, eventCode, adminNote } = req.body;
+  const { userId, eventCode, adminNote, entityId } = req.body;
 
   if (!userId || !eventCode || !adminNote) {
     return res.status(400).json({ message: "userId, eventCode, and adminNote are required" });
@@ -1053,11 +1053,15 @@ module.exports.penalizeUser = async (req, res) => {
     });
   }
 
-  const iKey = `${eventCode}:${userId}:${req.adminId}:${Date.now()}`;
+  // Deduped on (eventCode, userId, entityId) so a retried/double-submitted request
+  // can't apply the same penalty twice. Falls back to adminNote when no entityId is
+  // given, since two genuinely distinct incidents will have distinct notes.
+  const iKey = `${eventCode}:${userId}:${entityId || adminNote}`;
   const result = await CreditService.penalize({
     userId,
     eventCode,
     idempotencyKey: iKey,
+    entityRef: entityId ? { id: entityId } : undefined,
     source: "admin",
     adminNote,
   });

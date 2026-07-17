@@ -6,6 +6,8 @@ const Community = require("../models/communityModel");
 const mongoose = require("mongoose");
 const { getIo } = require("../utils/websocket");
 const NotificationService = require("../utils/notificationService");
+const CreditService = require("../services/creditService");
+const ExpressError = require("../utils/ExpressError");
 
 // Helpers
 const str = (v) => (v != null ? String(v) : v);
@@ -235,7 +237,7 @@ exports.sendMessage = async (req, res) => {
   session.startTransaction();
 
   try {
-    const { recipientId, content } = req.body;
+    const { recipientId, content, viaBuilderMap } = req.body;
     const senderId = req.userId;
 
     if (!mongoose.Types.ObjectId.isValid(recipientId)) {
@@ -275,6 +277,24 @@ exports.sendMessage = async (req, res) => {
     }).session(session);
 
     const isNewConversation = !conversation;
+
+    // A BuilderMap "Message" click is a warm-intro request — charge credits once
+    // per (sender, recipient) pair, only the first time a conversation is opened.
+    // Regular Inbox messaging (new or existing conversations) stays free.
+    if (isNewConversation && viaBuilderMap) {
+      try {
+        await CreditService.spend({
+          userId: senderId,
+          eventCode: "REQUEST_WARM_INTRO",
+          idempotencyKey: `REQUEST_WARM_INTRO:${senderId}:${recipientId}`,
+          entityRef: { id: recipientId },
+        });
+      } catch (creditErr) {
+        await session.abortTransaction();
+        const statusCode = creditErr instanceof ExpressError ? creditErr.statusCode : 500;
+        return res.status(statusCode).json({ message: creditErr.message });
+      }
+    }
 
     if (isNewConversation) {
       conversation = new Conversation({

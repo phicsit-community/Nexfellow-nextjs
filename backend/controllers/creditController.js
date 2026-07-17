@@ -26,9 +26,10 @@ const spend = async (req, res) => {
   if (!event || event.delta >= 0) {
     throw new ExpressError("Invalid spend event code", 400);
   }
+  if (!entityId) throw new ExpressError("entityId is required", 400);
 
-  const entityRef = entityId ? { id: entityId } : undefined;
-  const iKey = `${eventCode}:${req.userId}:${entityId || ""}:${Date.now()}`;
+  const entityRef = { id: entityId };
+  const iKey = `${eventCode}:${req.userId}:${entityId}`;
 
   const result = await CreditService.spend({
     userId: req.userId,

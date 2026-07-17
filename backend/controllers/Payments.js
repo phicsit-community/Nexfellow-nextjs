@@ -2,6 +2,7 @@ const DodoPayments = require("dodopayments");
 const User = require("../models/userModel");
 const Subscription = require("../models/subscriptionModel");
 const { PLANS, VALID_PLAN_IDS, VALID_INTERVALS } = require("../constants/plans");
+const { CREDIT_PACKS, VALID_PACK_IDS } = require("../constants/creditPacks");
 const MailSender = require("../utils/mailSender");
 const CreditService = require("../services/creditService");
 
@@ -57,6 +58,37 @@ module.exports.createCheckoutSession = async (req, res) => {
   return res.json({ checkoutUrl: checkout.checkout_url });
 };
 
+// POST /payments/checkout-credit-pack
+// Creates a Dodo hosted checkout session for a one-time credit top-up pack.
+// Amount is NEVER taken from the client — it is defined by the Dodo product.
+module.exports.createCreditPackCheckoutSession = async (req, res) => {
+  const { packId } = req.body;
+
+  if (!VALID_PACK_IDS.includes(packId)) {
+    return res.status(400).json({ error: "Invalid credit pack." });
+  }
+
+  const productId = CREDIT_PACKS[packId].dodoProductId;
+  if (!productId) {
+    return res.status(400).json({ error: "Credit pack not available." });
+  }
+
+  const checkoutPayload = {
+    product_cart: [{ product_id: productId, quantity: 1 }],
+    metadata: {
+      userId: req.user._id.toString(),
+      packId,
+    },
+  };
+
+  if (req.user.dodoCustomerId) {
+    checkoutPayload.customer = { customer_id: req.user.dodoCustomerId };
+  }
+
+  const checkout = await getDodo().checkoutSessions.create(checkoutPayload);
+  return res.json({ checkoutUrl: checkout.checkout_url });
+};
+
 // POST /payments/portal
 // Creates a Dodo hosted customer portal session so subscribers can manage
 // billing (update card, cancel) without us building that UI ourselves.
@@ -98,7 +130,9 @@ module.exports.handleWebhook = async (req, res) => {
   const meta = data?.metadata ?? {};
 
   try {
-    if (type === "subscription.active" || type === "subscription.renewed") {
+    if (type === "payment.succeeded") {
+      await grantCreditPackPurchase(data, meta);
+    } else if (type === "subscription.active" || type === "subscription.renewed") {
       await activateSubscription(data, meta, type, webhookId);
     } else if (
       type === "subscription.cancelled" ||
@@ -120,6 +154,25 @@ module.exports.handleWebhook = async (req, res) => {
 
   return res.status(200).json({ received: true });
 };
+
+async function grantCreditPackPurchase(data, meta) {
+  const { userId, packId } = meta;
+  // payment.succeeded also fires for subscription payments — only handle
+  // deliveries carrying our credit-pack metadata, ignore everything else.
+  if (!userId || !packId || !CREDIT_PACKS[packId]) return;
+
+  const user = await User.findById(userId);
+  if (!user) return;
+
+  const creditAmount = CREDIT_PACKS[packId].credits;
+  await CreditService.award({
+    userId: user._id,
+    eventCode: "CREDIT_PACK_PURCHASE",
+    idempotencyKey: `CREDIT_PACK_PURCHASE:${data.payment_id}`,
+    deltaOverride: creditAmount,
+    source: "payment",
+  });
+}
 
 async function activateSubscription(data, meta, eventType, webhookId) {
   const { userId, planId, interval } = meta;
