@@ -14,15 +14,26 @@ module.exports.submitOnboarding = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // Check if onboarding is already complete
+    // If onboarding is already complete, treat resubmission as idempotent
+    // rather than erroring — the client may retry after a stale redirect.
     const existing = await OnboardingProfile.findOne({
       userId,
       isOnboardingComplete: true,
     });
     if (existing) {
-      return res
-        .status(400)
-        .json({ message: "Onboarding has already been completed" });
+      res.cookie("isOnboarded", "true", {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production" || !!process.env.RENDER,
+        sameSite:
+          process.env.NODE_ENV === "production" || !!process.env.RENDER
+            ? "none"
+            : "lax",
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
+      return res.status(200).json({
+        message: "Onboarding completed successfully",
+        onboardingProfile: existing,
+      });
     }
 
     const {

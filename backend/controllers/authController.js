@@ -540,6 +540,7 @@ exports.getUserDetails = async (req, res) => {
       verified: user.verified,
       verificationBadge: user.verificationBadge,
       isCommunityAccount: user.isCommunityAccount,
+      isOnboarded: user.isOnboarded,
       provider: 'email',
       connectedAccounts: {
         github:   user.githubId   ? { connected: true, handle: user.githubUsername  || null } : { connected: false },
