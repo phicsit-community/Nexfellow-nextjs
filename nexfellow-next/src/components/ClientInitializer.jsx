@@ -40,7 +40,7 @@ export default function ClientInitializer() {
                 dispatch(setAuthLoading(false));
                 // Hard redirect only on sign-out event (not on initial unauthenticated load)
                 if (wasSignedIn === true) {
-                    window.location.replace("/sign-in");
+                    window.location.replace("/");
                 }
                 return;
             }

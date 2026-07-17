@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import api from "../../lib/axios";
+import useLogout from "../../utils/auth/useLogout";
 import ThemeToggleButton from "../ThemeToggle/ThemeToggleButton";
 import ModeratedDropdown from "../Header/ModeratedDropdown";
 
@@ -24,8 +24,8 @@ function ProfileDropdown() {
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [error, setError] = useState(null);
     const [moderated, setModerated] = useState([]);
-    const router = useRouter();
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+    const logoutFn = useLogout();
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -69,27 +69,8 @@ function ProfileDropdown() {
         setIsLoggingOut(true);
 
         try {
-            const response = await api.get("/user/logout", {
-                withCredentials: true,
-            });
-
-            if (response.status === 200) {
-                localStorage.clear();
-                sessionStorage.clear();
-
-                document.cookie.split(";").forEach((c) => {
-                    document.cookie = c
-                        .replace(/^ +/, "")
-                        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-                });
-
-                router.push("/login");
-            } else {
-                console.error("Logout failed:", response.data.message);
-                setIsLoggingOut(false);
-            }
-        } catch (error) {
-            console.error("Error during logout:", error.message);
+            await logoutFn();
+        } finally {
             setIsLoggingOut(false);
         }
     };
