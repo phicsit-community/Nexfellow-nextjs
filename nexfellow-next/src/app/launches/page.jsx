@@ -84,7 +84,7 @@ function RankBadge({ rank, className, style }) {
   if (!config) return null;
   const filterId = `lp-rank-badge-shadow-${rank}`;
   return (
-    <svg width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
       <g filter={`url(#${filterId})`}>
         <rect x="2.25" y="1.125" width="27" height="27" rx="13.5" fill="white" shapeRendering="crispEdges" />
         <rect x="2.8125" y="1.6875" width="25.875" height="25.875" rx="12.9375" stroke="#F1F5F9" strokeWidth="1.125" shapeRendering="crispEdges" />
@@ -213,7 +213,7 @@ function ProductRow({ product, rank, voted, votes, onVote, onClick }) {
       <div className="lp-row-icon-wrap">
         {isUrl(product.logo) ? (
           <div className="lp-row-icon" style={{ background: catMeta.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <img src={product.logo} alt="" style={{ width: 28, height: 28, objectFit: 'contain', borderRadius: 4 }} />
+            <img src={product.logo} alt="" style={{ width: 36, height: 36, objectFit: 'contain', borderRadius: 6 }} />
           </div>
         ) : (
           <div className="lp-row-icon" style={{ background: catMeta.bg }}>{catMeta.icon}</div>
