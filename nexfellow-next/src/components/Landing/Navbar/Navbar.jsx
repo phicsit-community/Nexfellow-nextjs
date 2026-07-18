@@ -85,7 +85,7 @@ export default function Navbar() {
         }),
         transition: "background 0.3s",
       }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
+        <div style={{ maxWidth: 1200, margin: "30px auto", padding: "0 24px" }}>
           {/* Main row */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 68 }}>
 
