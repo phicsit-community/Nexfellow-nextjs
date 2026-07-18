@@ -13,6 +13,8 @@ const {
   updateProduct,
   submitProduct,
   launchProduct,
+  boostProduct,
+  getGtmReport,
   deleteProduct,
   uploadScreenshots,
   uploadLogo,
@@ -71,6 +73,8 @@ router.put("/:id", isAuthenticated, catchAsync(updateProduct));
 router.delete("/:id", isAuthenticated, catchAsync(deleteProduct));
 router.post("/:id/submit", isAuthenticated, catchAsync(submitProduct));
 router.post("/:id/launch", isAuthenticated, catchAsync(launchProduct));
+router.post("/:id/boost", isAuthenticated, catchAsync(boostProduct));
+router.get("/:id/gtm-report", isAuthenticated, catchAsync(getGtmReport));
 router.post(
   "/:id/screenshots",
   isAuthenticated,

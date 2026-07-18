@@ -491,6 +491,12 @@ function BuilderPopup({ builder, detail, myUserId, onClose }) {
     const [isConnected, setIsConnected] = useState(false);
     const [connectLoading, setConnectLoading] = useState(false);
 
+    const [showComposer, setShowComposer] = useState(false);
+    const [introText, setIntroText] = useState("");
+    const [introSending, setIntroSending] = useState(false);
+    const [introError, setIntroError] = useState(null);
+    const [introSent, setIntroSent] = useState(false);
+
     useEffect(() => {
         if (!profile.userId || isSelf) return;
         api.get(`/user/followStatus/${profile.userId}`)
@@ -509,6 +515,32 @@ function BuilderPopup({ builder, detail, myUserId, onClose }) {
             console.error("Connect error:", err);
         } finally {
             setConnectLoading(false);
+        }
+    };
+
+    const toggleComposer = () => {
+        setIntroError(null);
+        setIntroSent(false);
+        setShowComposer((v) => !v);
+    };
+
+    const handleSendIntro = async () => {
+        if (!introText.trim() || introSending || !profile.userId) return;
+        setIntroSending(true);
+        setIntroError(null);
+        try {
+            await api.post("/direct-messages/send", {
+                recipientId: profile.userId,
+                content: introText.trim(),
+                viaBuilderMap: true,
+            });
+            setIntroSent(true);
+            setShowComposer(false);
+            setIntroText("");
+        } catch (err) {
+            setIntroError(err.response?.data?.message || "Failed to send message");
+        } finally {
+            setIntroSending(false);
         }
     };
 
@@ -558,17 +590,51 @@ function BuilderPopup({ builder, detail, myUserId, onClose }) {
             {badge && <span className={styles.openBadge}>{badge}</span>}
 
             {!isSelf && (
-                <div className={styles.actionRow}>
-                    <button
-                        className={styles.connectBtn}
-                        onClick={handleConnect}
-                        disabled={connectLoading}
-                        style={{ opacity: connectLoading ? 0.7 : 1 }}
-                    >
-                        {isConnected ? "Following" : "Connect"}
-                    </button>
-                    <button className={styles.messageBtn}>Message</button>
-                </div>
+                <>
+                    <div className={styles.actionRow}>
+                        <button
+                            className={styles.connectBtn}
+                            onClick={handleConnect}
+                            disabled={connectLoading}
+                            style={{ opacity: connectLoading ? 0.7 : 1 }}
+                        >
+                            {isConnected ? "Following" : "Connect"}
+                        </button>
+                        <button className={styles.messageBtn} onClick={toggleComposer}>
+                            Message
+                        </button>
+                    </div>
+                    {showComposer && (
+                        <div className={styles.introComposer}>
+                            <textarea
+                                className={styles.introTextarea}
+                                placeholder={`Say hi to ${displayName.split(" ")[0]}...`}
+                                value={introText}
+                                onChange={(e) => setIntroText(e.target.value)}
+                                maxLength={1000}
+                                autoFocus
+                            />
+                            <div className={styles.introHint}>
+                                First message to a new connection costs 15 credits.
+                            </div>
+                            {introError && <div className={styles.introError}>{introError}</div>}
+                            <div className={styles.introActions}>
+                                <button
+                                    className={styles.connectBtn}
+                                    onClick={handleSendIntro}
+                                    disabled={introSending || !introText.trim()}
+                                    style={{ opacity: introSending || !introText.trim() ? 0.7 : 1 }}
+                                >
+                                    {introSending ? "Sending…" : "Send"}
+                                </button>
+                                <button className={styles.messageBtn} onClick={() => setShowComposer(false)}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                    {introSent && <div className={styles.introSent}>Message sent ✓</div>}
+                </>
             )}
         </div>
     );
@@ -577,23 +643,25 @@ function BuilderPopup({ builder, detail, myUserId, onClose }) {
 // ─── Matches Panel ────────────────────────────────────────────────────────────
 
 function MatchesPanel({ topMatches, selectedMatch, myUserId, onSelect }) {
-    if (topMatches.length === 0) {
-        return (
-            <div className={styles.emptyState}>
-                No builders with location data yet.
-            </div>
-        );
-    }
-
-    const match = selectedMatch || topMatches[0];
+    const match = topMatches.length > 0 ? (selectedMatch || topMatches[0]) : null;
     const isSelf = myUserId && match?.userId && String(myUserId) === String(match.userId);
 
     const [isConnected, setIsConnected] = useState(false);
     const [connectLoading, setConnectLoading] = useState(false);
 
+    const [showComposer, setShowComposer] = useState(false);
+    const [introText, setIntroText] = useState("");
+    const [introSending, setIntroSending] = useState(false);
+    const [introError, setIntroError] = useState(null);
+    const [introSent, setIntroSent] = useState(false);
+
     useEffect(() => {
         if (!match?.userId || isSelf) return;
         setIsConnected(false);
+        setShowComposer(false);
+        setIntroText("");
+        setIntroError(null);
+        setIntroSent(false);
         api.get(`/user/followStatus/${match.userId}`)
             .then((res) => setIsConnected(res.data.isFollowing))
             .catch(() => {});
@@ -612,6 +680,40 @@ function MatchesPanel({ topMatches, selectedMatch, myUserId, onSelect }) {
             setConnectLoading(false);
         }
     };
+
+    const toggleComposer = () => {
+        setIntroError(null);
+        setIntroSent(false);
+        setShowComposer((v) => !v);
+    };
+
+    const handleSendIntro = async () => {
+        if (!introText.trim() || introSending || !match?.userId) return;
+        setIntroSending(true);
+        setIntroError(null);
+        try {
+            await api.post("/direct-messages/send", {
+                recipientId: match.userId,
+                content: introText.trim(),
+                viaBuilderMap: true,
+            });
+            setIntroSent(true);
+            setShowComposer(false);
+            setIntroText("");
+        } catch (err) {
+            setIntroError(err.response?.data?.message || "Failed to send message");
+        } finally {
+            setIntroSending(false);
+        }
+    };
+
+    if (topMatches.length === 0) {
+        return (
+            <div className={styles.emptyState}>
+                No builders with location data yet.
+            </div>
+        );
+    }
 
     return (
         <div className={styles.matchesPanel}>
@@ -658,17 +760,51 @@ function MatchesPanel({ topMatches, selectedMatch, myUserId, onSelect }) {
                     )}
 
                     {!isSelf && (
-                        <div className={styles.actionRow}>
-                            <button
-                                className={styles.connectBtn}
-                                onClick={handleConnect}
-                                disabled={connectLoading}
-                                style={{ opacity: connectLoading ? 0.7 : 1 }}
-                            >
-                                {isConnected ? "Following" : "Connect"}
-                            </button>
-                            <button className={styles.messageBtn}>Message</button>
-                        </div>
+                        <>
+                            <div className={styles.actionRow}>
+                                <button
+                                    className={styles.connectBtn}
+                                    onClick={handleConnect}
+                                    disabled={connectLoading}
+                                    style={{ opacity: connectLoading ? 0.7 : 1 }}
+                                >
+                                    {isConnected ? "Following" : "Connect"}
+                                </button>
+                                <button className={styles.messageBtn} onClick={toggleComposer}>
+                                    Message
+                                </button>
+                            </div>
+                            {showComposer && (
+                                <div className={styles.introComposer}>
+                                    <textarea
+                                        className={styles.introTextarea}
+                                        placeholder={`Say hi to ${match.name?.split(" ")[0] || match.firstName || "them"}...`}
+                                        value={introText}
+                                        onChange={(e) => setIntroText(e.target.value)}
+                                        maxLength={1000}
+                                        autoFocus
+                                    />
+                                    <div className={styles.introHint}>
+                                        First message to a new connection costs 15 credits.
+                                    </div>
+                                    {introError && <div className={styles.introError}>{introError}</div>}
+                                    <div className={styles.introActions}>
+                                        <button
+                                            className={styles.connectBtn}
+                                            onClick={handleSendIntro}
+                                            disabled={introSending || !introText.trim()}
+                                            style={{ opacity: introSending || !introText.trim() ? 0.7 : 1 }}
+                                        >
+                                            {introSending ? "Sending…" : "Send"}
+                                        </button>
+                                        <button className={styles.messageBtn} onClick={() => setShowComposer(false)}>
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                            {introSent && <div className={styles.introSent}>Message sent ✓</div>}
+                        </>
                     )}
                 </div>
             )}

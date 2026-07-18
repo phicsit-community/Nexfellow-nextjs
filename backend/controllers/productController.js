@@ -9,6 +9,7 @@ const { REVIEW_TAGS } = require("../models/productReviewModel");
 const NotificationService = require("../utils/notificationService");
 const User = require("../models/userModel");
 const CreditService = require("../services/creditService");
+const CreditTransaction = require("../models/creditTransactionModel");
 const { getUserPlan } = require("../utils/planUtils");
 
 const getBunnyStoragePath = (cdnUrl) => {
@@ -410,6 +411,175 @@ const launchProduct = async (req, res) => {
   res.status(200).json({ message: "Product launched successfully", product });
 };
 
+// POST /products/:id/boost
+// Pins the product at the top of Launches for 24h. Costs 30 credits (BOOST_PRODUCT).
+const boostProduct = async (req, res) => {
+  assertValidId(req.params.id);
+
+  const product = await Product.findById(req.params.id);
+  if (!product) throw new ExpressError("Product not found", 404);
+  if (product.owner.toString() !== req.userId)
+    throw new ExpressError("Forbidden", 403);
+  if (!["in_review", "launched"].includes(product.status))
+    throw new ExpressError("Only submitted or launched products can be boosted", 400);
+
+  const now = new Date();
+  if (product.boostedUntil && product.boostedUntil > now)
+    throw new ExpressError("This product is already boosted", 400);
+
+  // boostCount is read before the spend and used as the idempotency anchor —
+  // a retried/double-clicked request reads the same count and dedupes,
+  // while a genuinely new boost later (after boostCount has since incremented) charges again.
+  await CreditService.spend({
+    userId: req.userId,
+    eventCode: "BOOST_PRODUCT",
+    idempotencyKey: `BOOST_PRODUCT:${req.userId}:${product._id}:${product.boostCount}`,
+    entityRef: { model: "Product", id: product._id },
+  });
+
+  const boostedUntil = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  const updated = await Product.findOneAndUpdate(
+    { _id: product._id, boostedUntil: { $not: { $gt: now } } },
+    { $set: { boostedUntil }, $inc: { boostCount: 1 } },
+    { new: true }
+  );
+
+  // A concurrent duplicate request already applied the boost — credits were
+  // already deduped above, just return the current state.
+  res.status(200).json({ message: "Product boosted for 24 hours", product: updated || (await Product.findById(product._id)) });
+};
+
+// GET /products/:id/gtm-report
+// Unlocks (25 credits, once per product) an auto-generated insights report
+// built from this product's own review/upvote data plus a category benchmark.
+const getGtmReport = async (req, res) => {
+  assertValidId(req.params.id);
+
+  const product = await Product.findById(req.params.id);
+  if (!product) throw new ExpressError("Product not found", 404);
+  if (product.owner.toString() !== req.userId)
+    throw new ExpressError("Forbidden", 403);
+  if (!["in_review", "launched"].includes(product.status))
+    throw new ExpressError("GTM reports are only available for submitted or launched products", 400);
+
+  const idempotencyKey = `ACCESS_GTM_REPORT:${req.userId}:${product._id}`;
+  const alreadyUnlocked = await CreditTransaction.findOne({ idempotencyKey }).lean();
+  if (!alreadyUnlocked) {
+    await CreditService.spend({
+      userId: req.userId,
+      eventCode: "ACCESS_GTM_REPORT",
+      idempotencyKey,
+      entityRef: { model: "Product", id: product._id },
+    });
+  }
+
+  const [reviewAgg, tagAgg, topReview, categoryBenchmark] = await Promise.all([
+    ProductReview.aggregate([
+      { $match: { product: product._id } },
+      {
+        $group: {
+          _id: null,
+          totalReviews: { $sum: 1 },
+          avgRating: { $avg: "$rating" },
+          dist5: { $sum: { $cond: [{ $eq: ["$rating", 5] }, 1, 0] } },
+          dist4: { $sum: { $cond: [{ $eq: ["$rating", 4] }, 1, 0] } },
+          dist3: { $sum: { $cond: [{ $eq: ["$rating", 3] }, 1, 0] } },
+          dist2: { $sum: { $cond: [{ $eq: ["$rating", 2] }, 1, 0] } },
+          dist1: { $sum: { $cond: [{ $eq: ["$rating", 1] }, 1, 0] } },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          totalReviews: 1,
+          avgRating: { $round: ["$avgRating", 1] },
+          dist5: 1, dist4: 1, dist3: 1, dist2: 1, dist1: 1,
+        },
+      },
+    ]),
+    ProductReview.aggregate([
+      { $match: { product: product._id } },
+      { $unwind: "$tags" },
+      { $group: { _id: "$tags", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $project: { _id: 0, tag: "$_id", count: 1 } },
+    ]),
+    ProductReview.findOne({ product: product._id })
+      .sort({ helpfulCount: -1, createdAt: -1 })
+      .select("content rating helpfulCount")
+      .lean(),
+    Product.aggregate([
+      {
+        $match: {
+          category: product.category,
+          status: { $in: ["in_review", "launched"] },
+          _id: { $ne: product._id },
+        },
+      },
+      {
+        $lookup: {
+          from: "productreviews",
+          localField: "_id",
+          foreignField: "product",
+          as: "reviews",
+          pipeline: [{ $project: { rating: 1 } }],
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          sampleSize: { $sum: 1 },
+          avgUpvotes: { $avg: "$upvoteCount" },
+          avgRating: { $avg: { $avg: "$reviews.rating" } },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          sampleSize: 1,
+          avgUpvotes: { $round: [{ $ifNull: ["$avgUpvotes", 0] }, 1] },
+          avgRating: { $round: [{ $ifNull: ["$avgRating", 0] }, 1] },
+        },
+      },
+    ]),
+  ]);
+
+  const stats = reviewAgg[0] ?? {
+    totalReviews: 0, avgRating: 0, dist5: 0, dist4: 0, dist3: 0, dist2: 0, dist1: 0,
+  };
+  const benchmark = categoryBenchmark[0] ?? { sampleSize: 0, avgUpvotes: 0, avgRating: 0 };
+
+  const insights = [];
+  if (stats.totalReviews === 0) {
+    insights.push("No reviews yet — insights will get sharper once feedback comes in.");
+  } else {
+    if (benchmark.sampleSize > 0) {
+      insights.push(
+        stats.avgRating >= benchmark.avgRating
+          ? `Your average rating (${stats.avgRating}) is at or above the ${product.category} category average (${benchmark.avgRating}).`
+          : `Your average rating (${stats.avgRating}) is below the ${product.category} category average (${benchmark.avgRating}) — worth digging into your lowest-rated reviews.`
+      );
+      insights.push(
+        product.upvoteCount >= benchmark.avgUpvotes
+          ? `Your upvotes (${product.upvoteCount}) are at or above the category average (${benchmark.avgUpvotes}).`
+          : `Your upvotes (${product.upvoteCount}) are below the category average (${benchmark.avgUpvotes}) — consider promoting your launch to your network.`
+      );
+    }
+    if (tagAgg.length > 0) {
+      insights.push(`Most common feedback theme: "${tagAgg[0].tag}" (${tagAgg[0].count} mention${tagAgg[0].count === 1 ? "" : "s"}).`);
+    }
+  }
+
+  res.status(200).json({
+    product: { _id: product._id, name: product.name, category: product.category, upvoteCount: product.upvoteCount },
+    stats,
+    tagCounts: tagAgg,
+    topReview: topReview || null,
+    benchmark,
+    insights,
+  });
+};
+
 // DELETE /products/:id
 const deleteProduct = async (req, res) => {
   assertValidId(req.params.id);
@@ -736,6 +906,8 @@ module.exports = {
   updateProduct,
   submitProduct,
   launchProduct,
+  boostProduct,
+  getGtmReport,
   deleteProduct,
   uploadScreenshots,
   uploadLogo,

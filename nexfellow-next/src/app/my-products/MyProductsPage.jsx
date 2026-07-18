@@ -256,11 +256,14 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate, onDeleteRequ
   const [actionError,    setActionError]    = useState('');
   const [menuOpen,       setMenuOpen]       = useState(false);
   const [menuPos,        setMenuPos]        = useState({ top: 0, left: 0 });
+  const [showGtmModal,   setShowGtmModal]   = useState(false);
   const menuBtnRef = useRef(null);
 
   const stageBadge  = getStageBadge(product);
   const statusBadge = getStatusBadge(product.status);
   const rating      = product.avgRating > 0 ? product.avgRating : null;
+  const isBoosted   = product.boostedUntil && new Date(product.boostedUntil) > new Date();
+  const boostable   = product.status === 'in_review' || product.status === 'launched';
 
   // Fetch reviews the first time this row is expanded
   useEffect(() => {
@@ -314,6 +317,20 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate, onDeleteRequ
     }
   };
 
+  const handleBoost = async (e) => {
+    e.stopPropagation();
+    setActionLoading(true);
+    setActionError('');
+    try {
+      const res = await api.post(`/products/${product._id}/boost`);
+      onProductUpdate?.({ ...product, ...res.data.product });
+    } catch (err) {
+      setActionError(err?.response?.data?.message || 'Boost failed');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const handleReplyAdded = (reviewId, newReplies) => {
     setReviews(prev => prev.map(r => r._id === reviewId ? { ...r, replies: newReplies } : r));
   };
@@ -334,7 +351,10 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate, onDeleteRequ
         onClick={onToggle}
       >
         <td className="mp-td mp-td-product">
-          <div className="mp-prod-name">{product.name}</div>
+          <div className="mp-prod-name">
+            {product.name}
+            {isBoosted && <span className="mp-boost-badge" title="Pinned at the top of Launches for 24h">🚀 Boosted</span>}
+          </div>
           <div className="mp-prod-cat">{product.category}</div>
         </td>
         <td className="mp-td">
@@ -410,6 +430,22 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate, onDeleteRequ
                   className="mp-more-menu"
                   style={{ position: 'fixed', top: menuPos.top, right: menuPos.right, zIndex: 99999 }}
                 >
+                  {boostable && !isBoosted && (
+                    <button
+                      className="mp-more-menu-item"
+                      onMouseDown={e => { e.stopPropagation(); setMenuOpen(false); handleBoost(e); }}
+                    >
+                      🚀 Boost (30 credits)
+                    </button>
+                  )}
+                  {boostable && (
+                    <button
+                      className="mp-more-menu-item"
+                      onMouseDown={e => { e.stopPropagation(); setMenuOpen(false); setShowGtmModal(true); }}
+                    >
+                      📊 GTM report (25 credits)
+                    </button>
+                  )}
                   <button
                     className="mp-more-menu-item mp-more-menu-item--danger"
                     onMouseDown={e => { e.stopPropagation(); setMenuOpen(false); onDeleteRequest?.(product); }}
@@ -476,7 +512,98 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate, onDeleteRequ
           </td>
         </tr>
       )}
+
+      {showGtmModal && (
+        <GtmReportModal product={product} onClose={() => setShowGtmModal(false)} />
+      )}
     </>
+  );
+}
+
+// ── GTM Report modal (shared by desktop + mobile cards) ────────────────────────
+
+function GtmReportModal({ product, onClose }) {
+  const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState('');
+  const [report,  setReport]  = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    api.get(`/products/${product._id}/gtm-report`)
+      .then(res => { if (!cancelled) setReport(res.data); })
+      .catch(err => { if (!cancelled) setError(err?.response?.data?.message || 'Failed to load GTM report'); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [product._id]);
+
+  return createPortal(
+    <div className="mp-modal-overlay" onClick={onClose}>
+      <div className="mp-modal mp-gtm-modal" onClick={e => e.stopPropagation()}>
+        <div className="mp-modal-header">
+          <span className="mp-modal-title">GTM Report — {product.name}</span>
+          <button className="mp-modal-close" onClick={onClose}>✕</button>
+        </div>
+        <div className="mp-modal-body">
+          {loading && <div className="mp-feedback-empty"><span>Generating report…</span></div>}
+          {error && <div className="mp-action-error">{error}</div>}
+          {report && (
+            <div className="mp-gtm-body">
+              <div className="mp-gtm-stats-grid">
+                <div className="mp-gtm-stat">
+                  <span className="mp-gtm-stat-value">{report.stats.avgRating > 0 ? `${report.stats.avgRating}★` : '—'}</span>
+                  <span className="mp-gtm-stat-label">Avg rating</span>
+                </div>
+                <div className="mp-gtm-stat">
+                  <span className="mp-gtm-stat-value">{report.stats.totalReviews}</span>
+                  <span className="mp-gtm-stat-label">Reviews</span>
+                </div>
+                <div className="mp-gtm-stat">
+                  <span className="mp-gtm-stat-value">{report.product.upvoteCount}</span>
+                  <span className="mp-gtm-stat-label">Upvotes</span>
+                </div>
+              </div>
+
+              {report.benchmark.sampleSize > 0 && (
+                <p className="mp-gtm-benchmark">
+                  Category benchmark ({report.product.category}, {report.benchmark.sampleSize} products):{' '}
+                  {report.benchmark.avgRating}★ avg rating · {report.benchmark.avgUpvotes} avg upvotes
+                </p>
+              )}
+
+              {report.insights.length > 0 && (
+                <div className="mp-gtm-section">
+                  <h4 className="mp-gtm-section-title">Insights</h4>
+                  <ul className="mp-gtm-insight-list">
+                    {report.insights.map((ins, i) => <li key={i}>{ins}</li>)}
+                  </ul>
+                </div>
+              )}
+
+              {report.tagCounts.length > 0 && (
+                <div className="mp-gtm-section">
+                  <h4 className="mp-gtm-section-title">Feedback themes</h4>
+                  <div className="mp-feedback-tags">
+                    {report.tagCounts.map(t => (
+                      <span key={t.tag} className="mp-filter-tag active">{t.tag} ({t.count})</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {report.topReview && (
+                <div className="mp-gtm-section">
+                  <h4 className="mp-gtm-section-title">Most helpful review</h4>
+                  <p className="mp-gtm-top-review">
+                    &ldquo;{report.topReview.content}&rdquo; — {report.topReview.rating}★, {report.topReview.helpfulCount} helpful votes
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>,
+    document.body
   );
 }
 
@@ -1019,10 +1146,13 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
   const [actionLoading,  setActionLoading]  = useState(false);
   const [actionError,    setActionError]    = useState('');
   const [menuOpen,       setMenuOpen]       = useState(false);
+  const [showGtmModal,   setShowGtmModal]   = useState(false);
 
   const stageBadge  = getStageBadge(product);
   const statusBadge = getStatusBadge(product.status);
   const rating      = product.avgRating > 0 ? product.avgRating : null;
+  const isBoosted   = product.boostedUntil && new Date(product.boostedUntil) > new Date();
+  const boostable   = product.status === 'in_review' || product.status === 'launched';
   const imgSrc      = product.logoUrl
     || (typeof product.logo === 'string' ? product.logo : product.logo?.url)
     || null;
@@ -1069,6 +1199,17 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
     } finally { setActionLoading(false); }
   };
 
+  const handleBoost = async (e) => {
+    e?.stopPropagation?.();
+    setActionLoading(true); setActionError('');
+    try {
+      const res = await api.post(`/products/${product._id}/boost`);
+      onProductUpdate?.({ ...product, ...res.data.product });
+    } catch (err) {
+      setActionError(err?.response?.data?.message || 'Boost failed');
+    } finally { setActionLoading(false); }
+  };
+
   const handleReplyAdded = (reviewId, newReplies) => {
     setReviews(prev => prev.map(r => r._id === reviewId ? { ...r, replies: newReplies } : r));
   };
@@ -1101,6 +1242,7 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
             {product.round && (
               <span className="mp-mobile-card-round-badge">Round {product.round}</span>
             )}
+            {isBoosted && <span className="mp-boost-badge" title="Pinned at the top of Launches for 24h">🚀 Boosted</span>}
           </div>
           <div className="mp-mobile-card-cat">{product.category}</div>
           <div className="mp-mobile-card-badges">
@@ -1134,6 +1276,22 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
           </button>
           {menuOpen && (
             <div className="mp-mobile-dropdown">
+              {boostable && !isBoosted && (
+                <button
+                  className="mp-more-menu-item"
+                  onMouseDown={() => { setMenuOpen(false); handleBoost(); }}
+                >
+                  🚀 Boost (30 credits)
+                </button>
+              )}
+              {boostable && (
+                <button
+                  className="mp-more-menu-item"
+                  onMouseDown={() => { setMenuOpen(false); setShowGtmModal(true); }}
+                >
+                  📊 GTM report (25 credits)
+                </button>
+              )}
               <button
                 className="mp-more-menu-item mp-more-menu-item--danger"
                 onMouseDown={() => { setMenuOpen(false); onDeleteRequest?.(product); }}
@@ -1243,6 +1401,10 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
             </div>
           )}
         </div>
+      )}
+
+      {showGtmModal && (
+        <GtmReportModal product={product} onClose={() => setShowGtmModal(false)} />
       )}
     </div>
   );

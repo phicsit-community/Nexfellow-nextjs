@@ -323,6 +323,52 @@
     background: #f8fafc;
 }
 
+.messageBtn:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.introComposer {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.introTextarea {
+    width: 100%;
+    min-height: 60px;
+    padding: 8px;
+    font-size: 12.5px;
+    font-family: inherit;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.introActions {
+    display: flex;
+    gap: 8px;
+}
+
+.introHint {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+.introError {
+    font-size: 11.5px;
+    color: #ef4444;
+}
+
+.introSent {
+    font-size: 12px;
+    color: #14b8a6;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
 
 /* ── Mobile-only elements (hidden on desktop) ───────────────────────────────── */
 
@@ -856,6 +902,12 @@
 
 :global(.dark) .messageBtn:hover {
     background: #2e3347;
+}
+
+:global(.dark) .introTextarea {
+    background: #1a1c27;
+    border-color: #2a2d3a;
+    color: #e2e8f0;
 }
 
 /* Right panel */
