@@ -26,7 +26,7 @@ import PlayOnce from "../animatedIcon/PlayOnce";
 import AnimatedAccount from "./animated/account.json";
 import staticCommuntiy from "./animated/staticCommuntiy.png";
 import AnimatedSettings from "./animated/settings.json";
-import { Package, Globe, Rocket, Activity, Settings, Star, User, Home, MessageCircle, WalletMinimal, Library } from "lucide-react";
+import { Package, Globe, Rocket, Activity, Settings, Star, User, Home, MessageCircle, WalletMinimal } from "lucide-react";
 
 function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
   const pathname = usePathname();
@@ -96,7 +96,6 @@ function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
   const discoverItems = [
     { path: "/buildersmap", isStatic: true, iconComponent: Globe, label: "BuildersMap", badgeNew: "2 new", section: "discover", id: "buildersmap" },
     { path: "/launches", isStatic: true, iconComponent: Rocket, label: "Launches", section: "discover", id: "launches" },
-    { path: "/resources", isStatic: true, iconComponent: Library, label: "Resources", section: "discover", id: "resources" },
     { path: "/coming-soon", isStatic: true, iconComponent: Activity, label: "Momentum Board", section: "discover", id: "momentum" },
     { path: "/premium", isStatic: true, iconComponent: Star, label: "Premium", section: "discover", id: "premium" },
     { path: "/wallet", isStatic: true, iconComponent: WalletMinimal, label: "Wallet", section: "discover", id: "wallet" },
