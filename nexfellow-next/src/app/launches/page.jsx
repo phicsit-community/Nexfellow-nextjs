@@ -12,31 +12,100 @@ const AVATAR_COLORS = ['#ff8c5a', '#6be0ff', '#c8f060', '#f0c040', '#b19cd9', '#
 
 const CATEGORY_META = {
   'SaaS/Productivity': { icon: '📊', bg: '#f0f9d4' },
-  'AI/ML tools':       { icon: '🤖', bg: '#e6f0ff' },
-  'Dev tools':         { icon: '💻', bg: '#f0eeff' },
-  'Mobile app':        { icon: '📱', bg: '#fff5f0' },
-  'Health/Wellness':   { icon: '💚', bg: '#e6f5f2' },
-  'Finance':           { icon: '💰', bg: '#fef9e7' },
-  'Education':         { icon: '🎓', bg: '#f0f9d4' },
-  'E-commerce':        { icon: '🛒', bg: '#fce4ec' },
-  'Other':             { icon: '◆',  bg: '#f5f5f5' },
+  'AI/ML tools': { icon: '🤖', bg: '#e6f0ff' },
+  'Dev tools': { icon: '💻', bg: '#f0eeff' },
+  'Mobile app': { icon: '📱', bg: '#fff5f0' },
+  'Health/Wellness': { icon: '💚', bg: '#e6f5f2' },
+  'Finance': { icon: '💰', bg: '#fef9e7' },
+  'Education': { icon: '🎓', bg: '#f0f9d4' },
+  'E-commerce': { icon: '🛒', bg: '#fce4ec' },
+  'Other': { icon: '◆', bg: '#f5f5f5' },
 };
 
 const ORDINALS = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th'];
 
-const TAB_API = { 'Today': 'today', 'This Week': 'week', 'All Time': 'alltime' };
+const TAB_API = { 'Recent': 'week', 'All Time': 'alltime' };
 
 const REVIEW_TAG_CLASS = {
-  'UX':          'fbt-ux',
-  'PRICING':     'fbt-bug',
-  'MOBILE':      'fbt-feature',
-  'POSITIVE':    'fbt-design',
+  'UX': 'fbt-ux',
+  'PRICING': 'fbt-bug',
+  'MOBILE': 'fbt-feature',
+  'POSITIVE': 'fbt-design',
   'PERFORMANCE': 'fbt-perf',
   'FEATURE REQ': 'fbt-feature',
 };
 
 const REVIEW_TAGS = ['UX', 'PRICING', 'MOBILE', 'POSITIVE', 'PERFORMANCE', 'FEATURE REQ'];
 
+
+function UpvoteIcon({ className, style }) {
+  return (
+    <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
+      <path d="M0.328125 4.81641L4.79297 0.316406C5.05078 0.105469 5.33203 0 5.63672 0C5.94141 0 6.21094 0.105469 6.44531 0.316406L10.9102 4.81641C11.2383 5.19141 11.3203 5.60156 11.1562 6.04688C10.9688 6.49219 10.6172 6.72656 10.1016 6.75H1.13672C0.644531 6.72656 0.292969 6.49219 0.0820312 6.04688C-0.0820312 5.60156 0 5.19141 0.328125 4.81641Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+function CommentIcon({ className, style }) {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  );
+}
+
+function BookmarkIcon({ filled, className, style }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
+      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+    </svg>
+  );
+}
+
+const RANK_BADGE_CROWN = "M14.4996 5.30859L13.0347 2.90625C12.9826 2.80208 12.898 2.75 12.7808 2.75H10.4371C10.3069 2.76302 10.2157 2.82161 10.1636 2.92578C10.1115 3.02995 10.1181 3.13411 10.1832 3.23828L12.3511 6.34375C12.9501 5.79688 13.6662 5.45182 14.4996 5.30859ZM15.1246 5.875C14.148 5.90104 13.3407 6.23958 12.7027 6.89062C12.0516 7.52865 11.7131 8.33594 11.6871 9.3125C11.7131 10.2891 12.0516 11.0964 12.7027 11.7344C13.3407 12.3854 14.148 12.724 15.1246 12.75C16.1011 12.724 16.9084 12.3854 17.5464 11.7344C18.1975 11.0964 18.536 10.2891 18.5621 9.3125C18.536 8.33594 18.1975 7.52865 17.5464 6.89062C16.9084 6.23958 16.1011 5.90104 15.1246 5.875ZM16.941 8.94141L16.1988 9.66406L16.355 10.6992C16.3681 10.7904 16.342 10.862 16.2769 10.9141C16.2118 10.9661 16.1337 10.9727 16.0425 10.9336L15.1246 10.4453L14.2066 10.9336C14.1155 10.9727 14.0373 10.9661 13.9722 10.9141C13.9071 10.862 13.8746 10.7904 13.8746 10.6992L14.0503 9.66406L13.3082 8.94141C13.2431 8.8763 13.23 8.79818 13.2691 8.70703C13.2951 8.62891 13.3537 8.58333 13.4449 8.57031L14.4605 8.41406L14.9293 7.49609C14.9683 7.40495 15.0334 7.35938 15.1246 7.35938C15.2157 7.35938 15.2808 7.40495 15.3199 7.49609L15.7886 8.41406L16.8043 8.57031C16.8954 8.58333 16.954 8.62891 16.98 8.70703C17.0191 8.79818 17.0061 8.8763 16.941 8.94141ZM19.7925 2.75H17.4683C17.3511 2.75 17.26 2.80208 17.1949 2.90625L15.7496 5.28906C16.5829 5.43229 17.299 5.77734 17.898 6.32422L20.066 3.21875C20.1311 3.11458 20.1376 3.01693 20.0855 2.92578C20.0334 2.82161 19.9358 2.76302 19.7925 2.75Z";
+
+const RANK_BADGE_CONFIG = {
+  1: {
+    crownColor: '#EAB308',
+    numberPath: 'M16.9727 14.3182V22.5H15.2429V15.9601H15.195L13.3213 17.1347V15.6006L15.3468 14.3182H16.9727Z',
+  },
+  2: {
+    crownColor: '#94A3B8',
+    numberPath: 'M12.4132 22.5V21.2536L15.3256 18.5569C15.5732 18.3172 15.781 18.1015 15.9488 17.9097C16.1192 17.718 16.2484 17.5302 16.3363 17.3464C16.4242 17.16 16.4681 16.9589 16.4681 16.7432C16.4681 16.5035 16.4135 16.2971 16.3043 16.1239C16.1951 15.9482 16.046 15.8137 15.8569 15.7204C15.6678 15.6246 15.4534 15.5766 15.2137 15.5766C14.9633 15.5766 14.7449 15.6272 14.5585 15.7284C14.3721 15.8296 14.2282 15.9748 14.127 16.1639C14.0258 16.353 13.9752 16.578 13.9752 16.839H12.3333C12.3333 16.3037 12.4545 15.839 12.6968 15.4448C12.9392 15.0506 13.2788 14.7456 13.7156 14.5299C14.1523 14.3142 14.6557 14.2063 15.2257 14.2063C15.8116 14.2063 16.3216 14.3102 16.7558 14.5179C17.1926 14.723 17.5321 15.008 17.7745 15.3729C18.0169 15.7377 18.1381 16.1559 18.1381 16.6273C18.1381 16.9363 18.0768 17.2412 17.9543 17.5422C17.8344 17.8431 17.62 18.1774 17.3111 18.5449C17.0021 18.9098 16.5667 19.3479 16.0047 19.8593L14.8102 21.0298V21.0858H18.2459V22.5H12.4132Z',
+  },
+  3: {
+    crownColor: '#FB923C',
+    numberPath: 'M15.4374 22.6119C14.8408 22.6119 14.3095 22.5093 13.8434 22.3042C13.38 22.0965 13.0138 21.8115 12.7448 21.4493C12.4784 21.0844 12.3413 20.6636 12.3333 20.1869H14.0751C14.0858 20.3866 14.151 20.5624 14.2709 20.7142C14.3934 20.8634 14.5558 20.9792 14.7583 21.0618C14.9607 21.1444 15.1884 21.1856 15.4414 21.1856C15.7051 21.1856 15.9381 21.139 16.1405 21.0458C16.343 20.9526 16.5014 20.8234 16.6159 20.6583C16.7305 20.4932 16.7877 20.3027 16.7877 20.087C16.7877 19.8686 16.7265 19.6755 16.604 19.5077C16.4841 19.3373 16.311 19.2041 16.0846 19.1082C15.8609 19.0123 15.5945 18.9644 15.2856 18.9644H14.5225V17.694H15.2856C15.5466 17.694 15.777 17.6487 15.9767 17.5581C16.1792 17.4676 16.3363 17.3424 16.4482 17.1826C16.56 17.0202 16.6159 16.8311 16.6159 16.6153C16.6159 16.4102 16.5667 16.2305 16.4681 16.076C16.3722 15.9189 16.2364 15.7963 16.0606 15.7085C15.8875 15.6206 15.6851 15.5766 15.4534 15.5766C15.219 15.5766 15.0046 15.6192 14.8102 15.7045C14.6158 15.787 14.46 15.9055 14.3428 16.06C14.2256 16.2145 14.163 16.3956 14.155 16.6033H12.4971C12.5051 16.1319 12.6396 15.7164 12.9006 15.3569C13.1616 14.9973 13.5131 14.7164 13.9553 14.5139C14.4 14.3089 14.9021 14.2063 15.4614 14.2063C16.026 14.2063 16.5201 14.3102 16.9435 14.5179C17.367 14.719 17.6959 15.008 17.9303 15.3449C18.1673 15.6911 18.2845 16.08 18.2819 16.5115C18.2845 16.9695 18.142 17.3517 17.8544 17.658C17.5694 17.9643 17.1979 18.1587 16.7398 18.2413V18.3052C17.3417 18.3825 17.7998 18.5915 18.1141 18.9324C18.431 19.2707 18.5882 19.6942 18.5855 20.2029C18.5882 20.6689 18.4537 21.0831 18.182 21.4453C17.913 21.8075 17.5415 22.0925 17.0674 22.3002C16.5933 22.508 16.05 22.6119 15.4374 22.6119Z',
+  },
+};
+
+function RankBadge({ rank, className, style }) {
+  const config = RANK_BADGE_CONFIG[rank];
+  if (!config) return null;
+  const filterId = `lp-rank-badge-shadow-${rank}`;
+  return (
+    <svg width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
+      <g filter={`url(#${filterId})`}>
+        <rect x="2.25" y="1.125" width="27" height="27" rx="13.5" fill="white" shapeRendering="crispEdges" />
+        <rect x="2.8125" y="1.6875" width="25.875" height="25.875" rx="12.9375" stroke="#F1F5F9" strokeWidth="1.125" shapeRendering="crispEdges" />
+        <path d={RANK_BADGE_CROWN} fill={config.crownColor} />
+        <path d={config.numberPath} fill="#334155" />
+      </g>
+      <defs>
+        <filter id={filterId} x="0" y="0" width="31.5" height="31.5" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+          <feOffset dy="1.125" />
+          <feGaussianBlur stdDeviation="1.125" />
+          <feComposite in2="hardAlpha" operator="out" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
+          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
+        </filter>
+      </defs>
+    </svg>
+  );
+}
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -137,17 +206,24 @@ function ProductRow({ product, rank, voted, votes, onVote, onClick }) {
   const isBoosted = product.boostedUntil && new Date(product.boostedUntil) > new Date();
   const tag = isBoosted ? 'BOOSTED' : rank === 1 ? 'FEATURED' : isNew ? 'NEW' : null;
   const tagType = isBoosted ? 'boosted' : rank === 1 ? 'featured' : 'new';
+  const [saved, setSaved] = useState(false);
 
   return (
     <div className="lp-row" onClick={onClick}>
-      <div className="lp-row-rank">{rank}</div>
-      {isUrl(product.logo) ? (
-        <div className="lp-row-icon" style={{ background: catMeta.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img src={product.logo} alt="" style={{ width: 28, height: 28, objectFit: 'contain', borderRadius: 4 }} />
-        </div>
-      ) : (
-        <div className="lp-row-icon" style={{ background: catMeta.bg }}>{catMeta.icon}</div>
-      )}
+      <div className="lp-row-icon-wrap">
+        {isUrl(product.logo) ? (
+          <div className="lp-row-icon" style={{ background: catMeta.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <img src={product.logo} alt="" style={{ width: 28, height: 28, objectFit: 'contain', borderRadius: 4 }} />
+          </div>
+        ) : (
+          <div className="lp-row-icon" style={{ background: catMeta.bg }}>{catMeta.icon}</div>
+        )}
+        {rank <= 3 ? (
+          <RankBadge rank={rank} className="lp-rank-badge" />
+        ) : (
+          <span className="lp-rank-badge lp-rank-badge-plain">{rank}</span>
+        )}
+      </div>
       <div className="lp-row-info">
         <div className="lp-row-name-row">
           <span className="lp-row-name">{product.name}</span>
@@ -162,19 +238,27 @@ function ProductRow({ product, rank, voted, votes, onVote, onClick }) {
             <span>{ownerName} · {launchLabel(product.reviewRound)}</span>
           </div>
           <span className="lp-row-rating">★ {product.avgRating?.toFixed(1) ?? '0.0'}</span>
-          <span className="lp-row-fb">💬 {product.totalReviews ?? 0}</span>
           <div className="lp-row-cats">
             {product.category && <span className="lp-cat">{product.category}</span>}
           </div>
         </div>
       </div>
-      <button
-        className={`lp-vote-btn${voted ? ' voted' : ''}`}
-        onClick={e => { e.stopPropagation(); onVote(product._id); }}
-      >
-        <span className="lp-vote-arr">▲</span>
-        <span className="lp-vote-num">{votes}</span>
-      </button>
+      <div className="lp-row-actions">
+        <span className="lp-row-fb"><CommentIcon /> {product.totalReviews ?? 0}</span>
+        <button
+          className={`lp-vote-btn${voted ? ' voted' : ''}`}
+          onClick={e => { e.stopPropagation(); onVote(product._id); }}
+        >
+          <span className="lp-vote-arr"><UpvoteIcon /></span>
+          <span className="lp-vote-num">{votes}</span>
+        </button>
+        <button
+          className={`lp-bookmark-btn${saved ? ' saved' : ''}`}
+          onClick={e => { e.stopPropagation(); setSaved(s => !s); }}
+        >
+          <BookmarkIcon filled={saved} />
+        </button>
+      </div>
     </div>
   );
 }
@@ -510,7 +594,7 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                   className={`dpv-vote-badge${voted ? ' voted' : ''}`}
                   onClick={() => onVote && onVote(product._id)}
                 >
-                  <span className="dpv-vote-arr">▲</span>
+                  <span className="dpv-vote-arr"><UpvoteIcon /></span>
                   <span className="dpv-vote-count">{votes ?? product.upvoteCount ?? 0}</span>
                   <span className="dpv-vote-label">Hot Product</span>
                 </div>
@@ -589,7 +673,7 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                     <div className="dpv-star-row">
                       <span className="dpv-star-label">Your rating</span>
                       <div className="dpv-stars-input">
-                        {[1,2,3,4,5].map(n => (
+                        {[1, 2, 3, 4, 5].map(n => (
                           <button
                             key={n}
                             type="button"
@@ -723,7 +807,7 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                           disabled={!isLoggedIn || isOwnReview}
                           title={isOwnReview ? "Can't mark your own review helpful" : ''}
                         >
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill={helpful.marked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill={helpful.marked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" /><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" /></svg>
                           Helpful ({helpful.count})
                         </button>
                         {isLoggedIn && (
@@ -731,7 +815,7 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                             className="dpv-review-btn"
                             onClick={() => setReplyOpen(m => ({ ...m, [r._id]: !m[r._id] }))}
                           >
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
                             Reply
                           </button>
                         )}
@@ -764,7 +848,7 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                                         className="dpv-sub-reply-btn"
                                         onClick={() => setSubReplyOpen(m => ({ ...m, [rootRep._id]: !m[rootRep._id] }))}
                                       >
-                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
                                         Reply
                                       </button>
                                     )}
@@ -814,7 +898,7 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                                                   setSubReplyText(m => ({ ...m, [rootRep._id]: `@${childName} ` }));
                                                 }}
                                               >
-                                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
                                                 Reply
                                               </button>
                                             )}
@@ -982,11 +1066,11 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                     className="dpv-link-row"
                   >
                     <span className="dpv-link-icon">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>
                     </span>
                     <span className="dpv-link-label">Visit Website</span>
                     <span className="dpv-link-arrow">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
                     </span>
                   </a>
                 ) : (
@@ -1018,11 +1102,11 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                 className={`dpv-action-btn${saved ? ' saved' : ''}`}
                 onClick={() => setSaved(s => !s)}
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>
                 {saved ? 'Saved' : 'Save for Later'}
               </button>
               <button className="dpv-action-btn" onClick={handleShare}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>
                 {shareMsg || 'Share Product'}
               </button>
             </div>
@@ -1034,7 +1118,7 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                   className="dpv-report-link-btn"
                   onClick={() => { setReportOpen(o => !o); setReportError(''); }}
                 >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" /><line x1="4" y1="22" x2="4" y2="15" /></svg>
                   Report an Issue
                 </button>
                 {reportOpen && !reportDone && (
@@ -1045,7 +1129,7 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
                       onChange={e => setReportCategory(e.target.value)}
                     >
                       <option value="">Select category…</option>
-                      {['Spam','Misinformation','Inappropriate Content','Copyright Violation','Other'].map(c => (
+                      {['Spam', 'Misinformation', 'Inappropriate Content', 'Copyright Violation', 'Other'].map(c => (
                         <option key={c} value={c}>{c}</option>
                       ))}
                     </select>
@@ -1082,7 +1166,7 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
 // ─── Main launches page ───────────────────────────────────────────────────────
 
 export default function LaunchesPage() {
-  const [activeTab, setActiveTab] = useState('Today');
+  const [activeTab, setActiveTab] = useState('Recent');
   const [launchOpen, setLaunchOpen] = useState(true);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [launches, setLaunches] = useState([]);
@@ -1208,20 +1292,17 @@ export default function LaunchesPage() {
             {/* ── Left: tab bar + scrollable list ── */}
             <div className="lp-main-area">
               <div className="lp-tabbar">
-                {['Today', 'This Week', 'All Time'].map(tab => (
-                  <button
-                    key={tab}
-                    className={`lp-tab${activeTab === tab ? ' active' : ''}`}
-                    onClick={() => setActiveTab(tab)}
-                  >
-                    {tab === 'This Week' ? (
-                      <>
-                        <span className="lp-tab-desktop-label">This Week</span>
-                        <span className="lp-tab-mobile-label">Week</span>
-                      </>
-                    ) : tab}
-                  </button>
-                ))}
+                <div className="lp-tabbar-track">
+                  {['Recent', 'All Time'].map(tab => (
+                    <button
+                      key={tab}
+                      className={`lp-tab${activeTab === tab ? ' active' : ''}`}
+                      onClick={() => setActiveTab(tab)}
+                    >
+                      {tab}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="lp-scroll">
@@ -1284,7 +1365,7 @@ export default function LaunchesPage() {
                       </div>
                     </div>
                     <div className="lps-pod-stats">
-                      <span>▲ {podProduct.upvoteCount ?? 0}</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><UpvoteIcon /> {podProduct.upvoteCount ?? 0}</span>
                       <span>★ {podProduct.avgRating?.toFixed(1) ?? '0.0'}</span>
                       <span>💬 {podProduct.totalReviews ?? 0}</span>
                     </div>
@@ -1305,12 +1386,15 @@ export default function LaunchesPage() {
               {/* Launch Your Product */}
               <div className="lps-launch-card">
                 <button className="lps-launch-toggle" onClick={() => setLaunchOpen(o => !o)}>
-                  <span className={`lps-launch-chevron${launchOpen ? '' : ' closed'}`}>∧</span>
+                  <span className={`lps-launch-chevron${launchOpen ? '' : ' closed'}`}><svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0.328125 4.81641L4.79297 0.316406C5.05078 0.105469 5.33203 0 5.63672 0C5.94141 0 6.21094 0.105469 6.44531 0.316406L10.9102 4.81641C11.2383 5.19141 11.3203 5.60156 11.1562 6.04688C10.9688 6.49219 10.6172 6.72656 10.1016 6.75H1.13672C0.644531 6.72656 0.292969 6.49219 0.0820312 6.04688C-0.0820312 5.60156 0 5.19141 0.328125 4.81641Z" fill="#0D9488" />
+                  </svg>
+                  </span>
                 </button>
                 {launchOpen && (
                   <>
                     <div className="lps-launch-title">Launch Your Product</div>
-                    <div className="lps-launch-desc">Get feedback from builders, makers, and early <br /> adopters</div>
+                    <div className="lps-launch-desc">Get feedback from builders, makers, and adopters</div>
                     <button className="lps-submit-btn">Submit to Launches</button>
                   </>
                 )}
@@ -1334,7 +1418,7 @@ export default function LaunchesPage() {
                     <span className="lps-ti-rank">{i + 1}</span>
                     <div className="lps-ti-info">
                       <span className="lps-ti-name">{p.name}</span>
-                      <span className="lps-ti-votes">▲ {p.upvoteCount ?? 0}</span>
+                      <span className="lps-ti-votes" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><UpvoteIcon /> {p.upvoteCount ?? 0}</span>
                     </div>
                   </div>
                 ))}
