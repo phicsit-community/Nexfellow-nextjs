@@ -522,7 +522,7 @@ module.exports.facebookCallback = async (req, res) => {
 
 exports.getUserDetails = async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select('+githubId +githubUsername +linkedinId +linkedinName +twitterId +twitterHandle +googleId');
+    const user = await User.findById(req.userId).select('+email +githubId +githubUsername +linkedinId +linkedinName +twitterId +twitterHandle +googleId');
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
