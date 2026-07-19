@@ -54,6 +54,13 @@ router.get(
 // Get unread notifications for a user
 router.get("/unread", isClient, NotificationController.getUnreadNotifications);
 
+// Get unread notification count for a user (must stay above /:notificationId)
+router.get(
+  "/unread-count",
+  isClient,
+  NotificationController.getUnreadCount
+);
+
 router.get(
   "/:notificationId",
   isClient,

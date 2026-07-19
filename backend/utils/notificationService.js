@@ -59,6 +59,17 @@ class NotificationService {
     }
   }
 
+  static async getUnreadCount(userId) {
+    try {
+      return await Notification.countDocuments({
+        recipients: { $elemMatch: { user: userId, read: false } },
+      });
+    } catch (error) {
+      console.error("Error counting unread notifications:", error);
+      throw error;
+    }
+  }
+
   static async getUnreadNotifications(userId) {
     try {
       // Fetch all unread notifications for the user
