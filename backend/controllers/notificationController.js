@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const NotificationService = require("../utils/notificationService");
 const UserDeviceToken = require("../models/UserDeviceToken");
 const Community = require("../models/communityModel");
@@ -307,8 +308,31 @@ class NotificationController {
     }
   }
 
+  // Get unread notification count for a user
+  static async getUnreadCount(req, res) {
+    try {
+      const userId = req.userId;
+      const count = await NotificationService.getUnreadCount(userId);
+
+      res.status(200).json({
+        message: "Unread notification count retrieved successfully",
+        count,
+      });
+    } catch (error) {
+      console.error("Error fetching unread notification count:", error);
+      res.status(500).json({
+        message: "Error fetching unread notification count",
+        error: error.message,
+      });
+    }
+  }
+
   static async getNotificationById(req, res) {
     try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.notificationId)) {
+        return res.status(400).json({ message: "Invalid notification ID" });
+      }
+
       const notification = await Notification.findById(
         req.params.notificationId
       ).populate("community");
