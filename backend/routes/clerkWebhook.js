@@ -2,15 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Webhook } = require("svix");
 const User = require("../models/userModel");
-const Profile = require("../models/profileModel");
-const randomStringGenerator = require("randomstring");
-const CreditService = require("../services/creditService");
-const { PLANS } = require("../constants/plans");
-
-const FREE_CREDIT_GRANT_INTERVAL_MS = 30 * 24 * 60 * 60 * 1000;
-
-const defaultProfilePicture = "https://nexfellow.b-cdn.net/defaults/default-profile.png";
-const defaultBanner = "https://nexfellow.b-cdn.net/defaults/default-banner.png";
+const { provisionUserFromClerk } = require("../services/userProvisioningService");
 
 // Clerk webhook secrets use standard base64 (+/), but @stablelib/base64 inside
 // svix/standardwebhooks expects base64url (-_). These are the same bytes — just
@@ -18,20 +10,6 @@ const defaultBanner = "https://nexfellow.b-cdn.net/defaults/default-banner.png";
 function toBase64Url(secret) {
   if (!secret || !secret.startsWith("whsec_")) return secret;
   return "whsec_" + secret.slice(6).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
-}
-
-async function generateUsername(fullName) {
-  let firstWord = (String(fullName || "").trim().split(/\s+/)[0] || "user");
-  let base = firstWord.replace(/[^a-zA-Z0-9_]/g, "").toLowerCase();
-  if (!base) base = "user";
-
-  for (let i = 0; i < 20; i++) {
-    const suffix = Math.floor(1000 + Math.random() * 9000);
-    const candidate = `${base}${suffix}`;
-    const exists = await User.exists({ username: candidate });
-    if (!exists) return candidate;
-  }
-  return `${base}${Date.now().toString().slice(-6)}`;
 }
 
 // Raw body required for svix signature verification.
@@ -67,7 +45,7 @@ router.post(
     }
 
     if (event.type === "user.created") {
-      const { id: clerkId, email_addresses, image_url, first_name, last_name } = event.data;
+      const { id: clerkId, email_addresses } = event.data;
       const email = email_addresses?.[0]?.email_address;
 
       const existingUser = await User.findOne({ $or: [{ clerkId }, { email }] });
@@ -79,41 +57,20 @@ router.post(
         return res.status(200).json({ received: true });
       }
 
-      const name = [first_name, last_name].filter(Boolean).join(" ") || email.split("@")[0];
-      const username = await generateUsername(name);
-
-      const user = await User.create({
-        clerkId,
-        email,
-        name,
-        username,
-        picture: image_url || defaultProfilePicture,
-        banner: defaultBanner,
-        verified: true,
-      });
-
-      const referralCode = randomStringGenerator.generate(7).toUpperCase();
-      const profile = await Profile.create({
-        userId: user._id,
-        referralCodeString: referralCode,
-        coin: 0,
-      });
-
-      user.profile = profile._id;
-      user.nextFreeCreditGrantAt = new Date(Date.now() + FREE_CREDIT_GRANT_INTERVAL_MS);
-      await user.save();
-
-      // Initial free-plan credit grant. idempotencyKey is per-user so this
-      // never double-grants even if the webhook is retried.
-      await CreditService.award({
-        userId: user._id,
-        eventCode: "FREE_PLAN_CREDIT_GRANT",
-        idempotencyKey: `FREE_PLAN_CREDIT_GRANT:${user._id}:signup`,
-        deltaOverride: PLANS.free.credits,
-        source: "system",
-      }).catch((err) => console.error("[clerkWebhook] Initial credit grant failed:", err.message));
-
-      console.log(`[clerkWebhook] Created user ${user._id} for Clerk ID ${clerkId}`);
+      try {
+        const user = await provisionUserFromClerk(event.data);
+        console.log(`[clerkWebhook] Created user ${user._id} for Clerk ID ${clerkId}`);
+      } catch (err) {
+        // requireAuth's on-the-fly fallback may have provisioned this user in the
+        // gap between our findOne above and this insert (e.g. user hit the app
+        // before the webhook arrived). A duplicate-key error here just means the
+        // user already exists — nothing left to do.
+        if (err.code === 11000) {
+          console.log(`[clerkWebhook] User for Clerk ID ${clerkId} already provisioned, skipping`);
+        } else {
+          throw err;
+        }
+      }
     }
 
     if (event.type === "user.deleted") {

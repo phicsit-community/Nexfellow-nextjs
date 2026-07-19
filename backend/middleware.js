@@ -11,6 +11,7 @@ const tokenUtils = require("./utils/token");
 const Profile = require("./models/profileModel");
 const { getUserPlan } = require("./utils/planUtils");
 const { createClerkClient, verifyToken } = require("@clerk/backend");
+const { provisionUserFromClerk } = require("./services/userProvisioningService");
 
 const clerkClient = createClerkClient({
   secretKey: process.env.CLERK_SECRET_KEY,
@@ -418,13 +419,17 @@ const requireAuth = async (req, res, next) => {
 
     let user = await User.findOne({ clerkId: clerkUserId });
 
-    // Auto-link fallback: the webhook may not have run yet (misconfigured secret,
-    // first deploy, etc.). Look up the Clerk user's email and link their existing
-    // MongoDB account on the fly so auth works immediately.
+    // Auto-link / auto-provision fallback: the user.created webhook may not have
+    // run yet (delivery delay, misconfigured secret, first deploy, etc.). Look up
+    // the Clerk user's email — if a MongoDB account already exists (pre-Clerk
+    // account, or race with the webhook), link it. If not, this is a brand-new
+    // signup: provision the MongoDB user on the fly so the client never gets
+    // stuck retrying getDetails/onboarding while waiting on the webhook.
     if (!user) {
+      let email;
       try {
         const clerkUser = await clerkClient.users.getUser(clerkUserId);
-        const email = clerkUser.emailAddresses?.[0]?.emailAddress;
+        email = clerkUser.emailAddresses?.[0]?.emailAddress;
         if (email) {
           user = await User.findOne({ email });
           if (user && !user.clerkId) {
@@ -433,8 +438,22 @@ const requireAuth = async (req, res, next) => {
             console.log(`[requireAuth] Auto-linked clerkId ${clerkUserId} → user ${user._id}`);
           }
         }
+
+        if (!user) {
+          user = await provisionUserFromClerk(clerkUser);
+          console.log(`[requireAuth] Auto-provisioned new user ${user._id} for clerkId ${clerkUserId}`);
+        }
       } catch (linkErr) {
-        console.error("[requireAuth] Auto-link failed:", linkErr.message);
+        if (linkErr.code === 11000) {
+          // Lost a race with the webhook (or a concurrent request) — the user
+          // now exists, just re-fetch it instead of failing this request.
+          user = await User.findOne({ clerkId: clerkUserId });
+          if (!user && email) {
+            user = await User.findOne({ email });
+          }
+        } else {
+          console.error("[requireAuth] Auto-link/provision failed:", linkErr.message);
+        }
       }
     }
 
