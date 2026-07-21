@@ -8,7 +8,7 @@ const getBalance = async (req, res) => {
   res.status(200).json({ balance });
 };
 
-// GET /credits/history?page=1&limit=20&eventCode=REVIEW_FEEDBACK&type=earn|spend|plan
+// GET /credits/history?page=1&limit=20&eventCode=REVIEW_HELPFUL_VOTE&type=earn|spend|plan
 const getHistory = async (req, res) => {
   const page = Math.max(1, parseInt(req.query.page) || 1);
   const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
@@ -52,15 +52,12 @@ const getSummary = async (req, res) => {
 // frontend never has to hardcode amounts/descriptions that can drift from
 // the backend source of truth.
 const EARN_EVENT_CODES = [
-  "REVIEW_FEEDBACK",
   "REVIEW_HELPFUL_VOTE",
   "REVIEW_10_HELPFUL",
   "REVIEW_STREAK_7DAY",
   "REFERRAL_JOIN",
-  "EVENT_HOST",
   "SOCIAL_LINK",
   "PROFILE_COMPLETE",
-  "RESOURCE_UPLOAD",
 ];
 
 const getEarnEvents = async (req, res) => {

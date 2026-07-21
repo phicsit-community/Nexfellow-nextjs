@@ -363,7 +363,6 @@ module.exports.verifyRegistrationOtp = async (req, res) => {
 
   await profile.save();
   user.profile = profile._id;
-  user.nextFreeCreditGrantAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
   await user.save();
 
   CreditService.award({

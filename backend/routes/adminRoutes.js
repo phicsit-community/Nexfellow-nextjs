@@ -2,7 +2,6 @@ const router = require("express").Router();
 const catchAsync = require("../utils/CatchAsync");
 const admin = require("../controllers/adminController.js");
 const featuredCommunitiesController = require("../controllers/featuredCommunitiesController");
-const resourceController = require("../controllers/resourceController");
 const { isClient, isAdmin, upload } = require("../middleware.js");
 
 router.route("/login").post(catchAsync(admin.adminlogin));
@@ -120,23 +119,6 @@ router.post(
   "/credits/penalize",
   isAdmin,
   catchAsync(admin.penalizeUser)
-);
-
-// Resource library moderation
-router.get(
-  "/resources/pending",
-  isAdmin,
-  catchAsync(resourceController.listPendingResources)
-);
-router.post(
-  "/resources/:id/approve",
-  isAdmin,
-  catchAsync(resourceController.approveResource)
-);
-router.post(
-  "/resources/:id/reject",
-  isAdmin,
-  catchAsync(resourceController.rejectResource)
 );
 
 module.exports = router;

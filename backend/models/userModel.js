@@ -164,9 +164,9 @@ const userSchema = new schema(
       default: null,
     },
 
-    // When the next monthly free-plan credit grant is due. Only consulted
-    // while subscriptionTier === "free" — paid users earn credits via
-    // SUBSCRIPTION_CREDIT_GRANT on renewal instead. See jobs/freeCreditGrantCron.js
+    // Legacy field from when the free-plan credit grant recurred monthly.
+    // The grant is now one-time (awarded at signup only), so this is no
+    // longer set for new users; kept for backward compatibility with old records.
     nextFreeCreditGrantAt: {
       type: Date,
       default: null,
