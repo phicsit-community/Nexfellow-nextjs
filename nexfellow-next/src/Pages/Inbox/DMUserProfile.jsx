@@ -24,6 +24,7 @@ import styles from "./DMUserProfile.module.css";
 
 import communityBadge from "./assets/badge3.svg";
 import verificationBadge from "./assets/badge2.svg";
+import verifyOrangeBadge from "./assets/badge2-orange.svg";
 
 const safe = (v, d = "") => (v == null ? d : v);
 
@@ -80,6 +81,7 @@ const DMUserProfile = ({
     const community          = user?.community || null;
     const hasCommunityBadge  = !!user?.communityBadge && isCommunity && !!community;
     const hasVerificationBadge = !hasCommunityBadge && !!user?.verificationBadge;
+    const planBadge = !hasCommunityBadge ? (user?.planBadge || null) : null;
 
     const country       = safe(user?.country);
     const followers     = user?.followersCount;
@@ -148,9 +150,13 @@ const DMUserProfile = ({
                         <span className={styles.nameText}>{name}</span>
                         {hasCommunityBadge
                             ? <img src={communityBadge?.src  || communityBadge}  alt="badge"    className={styles.badgeIcon} />
-                            : hasVerificationBadge
-                                ? <img src={verificationBadge?.src || verificationBadge} alt="verified" className={styles.badgeIcon} />
-                                : null
+                            : planBadge === "orange"
+                                ? <img src={verifyOrangeBadge?.src || verifyOrangeBadge} alt="Founder Badge" className={styles.badgeIcon} />
+                                : planBadge === "blue"
+                                    ? <img src={verificationBadge?.src || verificationBadge} alt="Builder Pro Badge" className={styles.badgeIcon} />
+                                    : hasVerificationBadge
+                                        ? <img src={verificationBadge?.src || verificationBadge} alt="verified" className={styles.badgeIcon} />
+                                        : null
                         }
                     </div>
 

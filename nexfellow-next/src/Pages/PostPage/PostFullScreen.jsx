@@ -16,6 +16,7 @@ import api from "../../lib/axios";
 import Comment from "../../components/Post/Comment";
 import styles from "./PostFullScreen.module.css";
 import VERIFY from "./assets/Verify.svg";
+import VERIFY_ORANGE from "./assets/VerifyOrange.svg";
 import communityBadge from "./assets/badge3.svg";
 import BackButton from "../../components/BackButton/BackButton";
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -752,6 +753,18 @@ const PostFullScreen = () => {
                                   className={styles.badge}
                                 />
                               )
+                            ) : post.author.planBadge === "orange" ? (
+                              <img
+                                src={VERIFY_ORANGE?.src || VERIFY_ORANGE}
+                                alt="Founder Badge"
+                                className={styles.verified}
+                              />
+                            ) : post.author.planBadge === "blue" ? (
+                              <img
+                                src={VERIFY?.src || VERIFY}
+                                alt="Builder Pro Badge"
+                                className={styles.verified}
+                              />
                             ) : (
                               post.author.verificationBadge && (
                                 <img
@@ -975,6 +988,18 @@ const PostFullScreen = () => {
                       className={styles.badge}
                     />
                   )
+                ) : post.author.planBadge === "orange" ? (
+                  <img
+                    src={VERIFY_ORANGE?.src || VERIFY_ORANGE}
+                    alt="Founder Badge"
+                    className={styles.verified}
+                  />
+                ) : post.author.planBadge === "blue" ? (
+                  <img
+                    src={VERIFY?.src || VERIFY}
+                    alt="Builder Pro Badge"
+                    className={styles.verified}
+                  />
                 ) : (
                   post.author.verificationBadge && (
                     <img

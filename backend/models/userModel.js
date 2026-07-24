@@ -228,6 +228,15 @@ const userSchema = new schema(
       default: false,
     },
 
+    // Plan-tier badge: awarded automatically on subscription purchase
+    // (blue for Builder Pro, orange for Founder — see constants/plans.js)
+    // or granted manually by an admin to any user.
+    planBadge: {
+      type: String,
+      enum: ["blue", "orange", null],
+      default: null,
+    },
+
     joinedChallenges: [
       {
         type: mongoose.Schema.Types.ObjectId,

@@ -24,6 +24,8 @@ interface User {
     verificationBadge?: boolean;
     premiumBadge?: boolean;
     communityBadge?: boolean;
+    planBadge?: "blue" | "orange" | null;
+    subscriptionTier?: string;
     createdCommunity?: {
         accountType?: string;
     };
@@ -186,6 +188,31 @@ const UsersPage = () => {
         }
     };
 
+    const setPlanBadge = async (id: string, color: "blue" | "orange" | null) => {
+        try {
+            const res = await authFetch(
+                `${apiUrl}/admin/plan-badge/${id}`,
+                token,
+                {
+                    method: "PUT",
+                    body: JSON.stringify({ badgeColor: color }),
+                }
+            );
+            if (res.ok) {
+                const result = await res.json();
+                setData(prev => prev.map(u =>
+                    u._id === id ? { ...u, planBadge: result.planBadge } : u
+                ));
+            }
+        } catch (error) {
+            console.error("Error setting plan badge:", error);
+        }
+    };
+
+    const togglePlanBadge = (id: string, currentColor: "blue" | "orange" | null | undefined, color: "blue" | "orange") => {
+        setPlanBadge(id, currentColor === color ? null : color);
+    };
+
     const downloadCSV = () => {
         if (!data || data.length === 0) return;
 
@@ -330,13 +357,14 @@ const UsersPage = () => {
                                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Contact</th>
                                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Occupation</th>
                                 <th className="text-center px-6 py-4 text-sm font-semibold text-gray-700">Verified Badge</th>
+                                <th className="text-center px-6 py-4 text-sm font-semibold text-gray-700">Plan Badge</th>
                                 <th className="text-center px-6 py-4 text-sm font-semibold text-gray-700">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {paginatedData.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="text-center py-12 text-gray-500">
+                                    <td colSpan={6} className="text-center py-12 text-gray-500">
                                         No users found
                                     </td>
                                 </tr>
@@ -416,6 +444,34 @@ const UsersPage = () => {
                                                     <img src="/images/badges/premium-badge.svg" alt="Premium" className="w-6 h-6" />
                                                 </button>
                                                 */}
+                                            </div>
+                                        </td>
+
+                                        {/* Plan Badge (blue = Builder Pro, orange = Founder) */}
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center justify-center gap-3">
+                                                <button
+                                                    onClick={() => togglePlanBadge(user._id, user.planBadge, "blue")}
+                                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${user.planBadge === "blue"
+                                                        ? 'opacity-100 hover:opacity-80'
+                                                        : 'opacity-30 grayscale hover:opacity-50'
+                                                        }`}
+                                                    title={user.planBadge === "blue" ? 'Remove Blue Badge' : 'Give Blue Badge (Builder Pro)'}
+                                                >
+                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                    <img src="/images/badges/plan-blue.svg" alt="Blue Badge" className="w-6 h-6" />
+                                                </button>
+                                                <button
+                                                    onClick={() => togglePlanBadge(user._id, user.planBadge, "orange")}
+                                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${user.planBadge === "orange"
+                                                        ? 'opacity-100 hover:opacity-80'
+                                                        : 'opacity-30 grayscale hover:opacity-50'
+                                                        }`}
+                                                    title={user.planBadge === "orange" ? 'Remove Orange Badge' : 'Give Orange Badge (Founder)'}
+                                                >
+                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                    <img src="/images/badges/plan-orange.svg" alt="Orange Badge" className="w-6 h-6" />
+                                                </button>
                                             </div>
                                         </td>
 

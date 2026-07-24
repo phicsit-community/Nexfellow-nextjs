@@ -55,6 +55,9 @@ router
   .route("/premiumbadge/:id")
   .put(isAdmin, catchAsync(admin.givePremiumBadge));
 router
+  .route("/plan-badge/:id")
+  .put(isAdmin, catchAsync(admin.setPlanBadge));
+router
   .route("/:adminId/registered-users")
   .get(isAdmin, catchAsync(admin.getRegisteredUsersByAdmin));
 router

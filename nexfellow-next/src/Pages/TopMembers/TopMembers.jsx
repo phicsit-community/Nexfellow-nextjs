@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import api from "../../lib/axios";
 import { useParams, useRouter } from "next/navigation";
 import VERIFY from "./assets/badge2.svg";
+import VERIFY_ORANGE from "./assets/badge2-orange.svg";
 import COMMUNITY_BADGE from "./assets/badge3.svg";
 import styles from "./TopMembers.module.css";
 import BackButton from "../../components/BackButton/BackButton";
@@ -365,6 +366,24 @@ const TopMembers = () => {
                             Verified
                           </span>
                         )
+                      ) : user.planBadge === "orange" ? (
+                        <span className={styles.badgePill}>
+                          <img
+                            src={VERIFY_ORANGE?.src || VERIFY_ORANGE}
+                            className={styles.badge}
+                            alt="Founder Badge"
+                          />
+                          Founder
+                        </span>
+                      ) : user.planBadge === "blue" ? (
+                        <span className={styles.badgePill}>
+                          <img
+                            src={VERIFY?.src || VERIFY}
+                            className={styles.badge}
+                            alt="Builder Pro Badge"
+                          />
+                          Builder Pro
+                        </span>
                       ) : user.verificationBadge ? (
                         <span className={styles.badgePill}>
                           <img
@@ -465,6 +484,24 @@ const TopMembers = () => {
                           Verified
                         </span>
                       )
+                    ) : user.planBadge === "orange" ? (
+                      <span className={styles.badgePill}>
+                        <img
+                          src={VERIFY_ORANGE?.src || VERIFY_ORANGE}
+                          className={styles.badge}
+                          alt="Founder Badge"
+                        />
+                        Founder
+                      </span>
+                    ) : user.planBadge === "blue" ? (
+                      <span className={styles.badgePill}>
+                        <img
+                          src={VERIFY?.src || VERIFY}
+                          className={styles.badge}
+                          alt="Builder Pro Badge"
+                        />
+                        Builder Pro
+                      </span>
                     ) : user.verificationBadge ? (
                       <span className={styles.badgePill}>
                         <img

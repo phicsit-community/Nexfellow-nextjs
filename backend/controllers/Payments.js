@@ -203,6 +203,9 @@ async function activateSubscription(data, meta, eventType, webhookId) {
   user.dodoCustomerId = customerId ?? user.dodoCustomerId;
   user.dodoSubscriptionId = data.subscription_id ?? user.dodoSubscriptionId;
   user.verificationBadge = PLANS[planId].badge !== null;
+  // Blue badge for Builder Pro, orange badge for Founder — set automatically
+  // from the plan being activated, overriding whatever badge the user had before.
+  user.planBadge = PLANS[planId].badge;
 
   const subscriptionRecord = {
     userId: user._id,
@@ -260,6 +263,7 @@ async function deactivateSubscription(data, eventType) {
     subscriptionInterval: null,
     dodoSubscriptionId: null,
     verificationBadge: false,
+    planBadge: null,
   });
 
   subscription.status =

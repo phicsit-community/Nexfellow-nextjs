@@ -627,13 +627,42 @@ module.exports.givePremiumBadge = async (req, res) => {
   }
 };
 
+// Plan Badge Controller — lets an admin grant/remove the blue (Builder Pro)
+// or orange (Founder) badge on any user, independent of their subscription
+// (e.g. to reward a free-plan user). Passing badgeColor: null removes it.
+module.exports.setPlanBadge = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { badgeColor } = req.body;
+
+    if (!["blue", "orange", null].includes(badgeColor)) {
+      return res
+        .status(400)
+        .send("badgeColor must be 'blue', 'orange', or null");
+    }
+
+    const updatedUser = await userModel.findByIdAndUpdate(
+      userId,
+      { $set: { planBadge: badgeColor } },
+      { new: true, select: "_id planBadge" }
+    );
+
+    if (!updatedUser) return res.status(404).send("User not found");
+
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+};
+
 module.exports.getRegisteredUsersByAdmin = async (req, res) => {
   try {
     const users = await userModel
       .find()
       .sort({ createdAt: -1 })
       .select(
-        "_id username name email verificationBadge premiumBadge communityBadge picture profile createdCommunity createdAt country "
+        "_id username name email verificationBadge premiumBadge communityBadge planBadge subscriptionTier picture profile createdCommunity createdAt country "
       )
       .populate({
         path: "profile",
@@ -652,6 +681,8 @@ module.exports.getRegisteredUsersByAdmin = async (req, res) => {
       verificationBadge: user.verificationBadge,
       premiumBadge: user.premiumBadge,
       communityBadge: user.communityBadge,
+      planBadge: user.planBadge,
+      subscriptionTier: user.subscriptionTier,
       picture: user.picture,
       occupation: user.profile?.occupation,
       phoneNumber: user.profile?.phoneNumber,

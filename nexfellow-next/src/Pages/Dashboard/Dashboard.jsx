@@ -12,6 +12,7 @@ import CommunityBanner from "./assets/community_image.svg";
 import ProfileImage from "./assets/profile_image.svg";
 import communityBadge from "./assets/badge3.svg";
 import verificationBadge from "./assets/badge2.svg";
+import verifyOrangeBadge from "./assets/badge2-orange.svg";
 import InviteIcon from "./assets/invite.svg";
 import EditIcon from "./assets/edit.svg";
 
@@ -180,6 +181,18 @@ const Dashboard = () => {
                           className={styles.badge}
                         />
                       ) : null
+                    ) : userData?.planBadge === "orange" ? (
+                      <img
+                        src={verifyOrangeBadge?.src || verifyOrangeBadge}
+                        alt="Founder Badge"
+                        className={styles.badge}
+                      />
+                    ) : userData?.planBadge === "blue" ? (
+                      <img
+                        src={verificationBadge?.src || verificationBadge}
+                        alt="Builder Pro Badge"
+                        className={styles.badge}
+                      />
                     ) : userData?.verificationBadge ? (
                       <img
                         src={verificationBadge?.src || verificationBadge}

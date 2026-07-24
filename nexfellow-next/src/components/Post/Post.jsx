@@ -27,6 +27,7 @@ import { PiShareNetworkDuotone } from "react-icons/pi";
 import { PiBookmarkSimpleDuotone, PiBookmarkSimpleFill } from "react-icons/pi";
 import { FaThumbtack } from "react-icons/fa";
 import VERIFY from "./assets/Verify.svg";
+import VERIFY_ORANGE from "./assets/VerifyOrange.svg";
 import communityBadge from "./assets/badge3.svg";
 import api from "../../lib/axios";
 import ShareIcon from "../ShareIcon/ShareIcon";
@@ -427,6 +428,18 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
                           className={styles.badge}
                         />
                       ) : null
+                    ) : post.author.planBadge === "orange" ? (
+                      <img
+                        src={VERIFY_ORANGE?.src || VERIFY_ORANGE}
+                        alt="Founder Badge"
+                        className={styles.verified}
+                      />
+                    ) : post.author.planBadge === "blue" ? (
+                      <img
+                        src={VERIFY?.src || VERIFY}
+                        alt="Builder Pro Badge"
+                        className={styles.verified}
+                      />
                     ) : post.author.verificationBadge ? (
                       <img
                         src={VERIFY?.src || VERIFY}
