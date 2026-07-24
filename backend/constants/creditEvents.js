@@ -1,35 +1,24 @@
 const CREDIT_EVENTS = {
   // ── Earn: wired ─────────────────────────────────────────────────────────────
-  REVIEW_FEEDBACK: {
-    code: "REVIEW_FEEDBACK",
-    delta: 8,
-    description: "Give feedback on a product",
-    cap: { perProduct: 5 },
-  },
   REVIEW_HELPFUL_VOTE: {
     code: "REVIEW_HELPFUL_VOTE",
     delta: 2,
-    description: "Helpful vote on your review",
+    description: "Helpful vote on your review from the product's author",
   },
   REVIEW_10_HELPFUL: {
     code: "REVIEW_10_HELPFUL",
-    delta: 30,
+    delta: 20,
     description: "Receive 10+ helpful votes (one-time milestone per review)",
   },
   REVIEW_STREAK_7DAY: {
     code: "REVIEW_STREAK_7DAY",
-    delta: 15,
+    delta: 12,
     description: "7-day review streak (once per ISO week)",
   },
   REFERRAL_JOIN: {
     code: "REFERRAL_JOIN",
-    delta: 25,
+    delta: 30,
     description: "Refer a builder who joins",
-  },
-  EVENT_HOST: {
-    code: "EVENT_HOST",
-    delta: 40,
-    description: "Host a community event",
   },
   SOCIAL_LINK: {
     code: "SOCIAL_LINK",
@@ -40,12 +29,6 @@ const CREDIT_EVENTS = {
     code: "PROFILE_COMPLETE",
     delta: 20,
     description: "Complete your profile (one-time)",
-  },
-  RESOURCE_UPLOAD: {
-    code: "RESOURCE_UPLOAD",
-    delta: 10,
-    description: "Upload resource to library (approved by mods)",
-    cap: { perMonth: 2 },
   },
 
   // ── Earn: constants only — systems not yet built ─────────────────────────────
@@ -63,11 +46,6 @@ const CREDIT_EVENTS = {
     code: "ANNIVERSARY_REWARD",
     delta: 100,
     description: "1 year on the platform",
-  },
-  RESOURCE_20_SAVES: {
-    code: "RESOURCE_20_SAVES",
-    delta: 15,
-    description: "Resource gets 20+ saves",
   },
   EVENT_ATTEND: {
     code: "EVENT_ATTEND",
@@ -123,11 +101,11 @@ const CREDIT_EVENTS = {
     description: "Monthly credits granted on subscription activation or renewal",
   },
   // delta: 0 intentionally — caller must pass deltaOverride: PLANS.free.credits
-  // idempotency key is per grant cycle so a missed/re-run cron never double-grants
+  // idempotency key is per user (":signup") so this can only ever be granted once
   FREE_PLAN_CREDIT_GRANT: {
     code: "FREE_PLAN_CREDIT_GRANT",
     delta: 0,
-    description: "Monthly free-plan credit grant",
+    description: "One-time free-plan credit grant",
   },
   // delta: 0 intentionally — caller must pass deltaOverride: CREDIT_PACKS[packId].credits
   // idempotency key is per payment_id so a retried webhook never double-grants
@@ -161,12 +139,6 @@ const CREDIT_EVENTS = {
     delta: -15,
     gate: 15,
     description: "Request warm intro",
-  },
-  UNLOCK_RESOURCE: {
-    code: "UNLOCK_RESOURCE",
-    delta: -10,
-    gate: 10,
-    description: "Unlock a premium resource",
   },
   ACCESS_GTM_REPORT: {
     code: "ACCESS_GTM_REPORT",

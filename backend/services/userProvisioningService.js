@@ -4,8 +4,6 @@ const randomStringGenerator = require("randomstring");
 const CreditService = require("./creditService");
 const { PLANS } = require("../constants/plans");
 
-const FREE_CREDIT_GRANT_INTERVAL_MS = 30 * 24 * 60 * 60 * 1000;
-
 const defaultProfilePicture = "https://nexfellow.b-cdn.net/defaults/default-profile.png";
 const defaultBanner = "https://nexfellow.b-cdn.net/defaults/default-banner.png";
 
@@ -63,7 +61,6 @@ async function provisionUserFromClerk(clerkUser) {
   });
 
   user.profile = profile._id;
-  user.nextFreeCreditGrantAt = new Date(Date.now() + FREE_CREDIT_GRANT_INTERVAL_MS);
   await user.save();
 
   // Initial free-plan credit grant. idempotencyKey is per-user so this

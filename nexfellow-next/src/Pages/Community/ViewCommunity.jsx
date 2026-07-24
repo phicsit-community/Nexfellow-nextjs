@@ -13,6 +13,7 @@ import CommunityBanner from "./assets/community_image.svg";
 import ProfileImage from "./assets/profile_image.svg";
 import communityBadge from "./assets/badge3.svg";
 import verificationBadge from "./assets/badge2.svg";
+import verifyOrangeBadge from "./assets/badge2-orange.svg";
 import Webicon from "./assets/web.svg";
 import Msgicon from "./assets/message.svg";
 
@@ -388,6 +389,18 @@ const Community = () => {
                           className={styles.badge}
                         />
                       ) : null
+                    ) : community.owner?.planBadge === "orange" ? (
+                      <img
+                        src={verifyOrangeBadge?.src || verifyOrangeBadge}
+                        alt="Founder Badge"
+                        className={styles.badge}
+                      />
+                    ) : community.owner?.planBadge === "blue" ? (
+                      <img
+                        src={verificationBadge?.src || verificationBadge}
+                        alt="Builder Pro Badge"
+                        className={styles.badge}
+                      />
                     ) : community.owner?.verificationBadge ? (
                       <img
                         src={verificationBadge?.src || verificationBadge}

@@ -3,7 +3,6 @@ const User = require("../models/userModel");
 const { uploadOnBunny, removeFromBunny } = require("../utils/attachments");
 const Community = require("../models/communityModel");
 const generateSlug = require("../utils/slugGenerator");
-const CreditService = require("../services/creditService");
 
 // Helper to extract Bunny storage path from CDN URL
 const getBunnyStoragePath = (cdnUrl) => {
@@ -94,13 +93,6 @@ module.exports.createEvent = async (req, res) => {
     res
       .status(201)
       .json({ message: "Event created successfully", event: newEvent });
-
-    CreditService.award({
-      userId: req.user._id.toString(),
-      eventCode: "EVENT_HOST",
-      idempotencyKey: `EVENT_HOST:${req.user._id}:${newEvent._id}`,
-      entityRef: { model: "Event", id: newEvent._id },
-    }).catch((err) => console.error("Credit (event host):", err.message));
   } catch (error) {
     res.status(500).json({ message: "Error creating event", error });
   }

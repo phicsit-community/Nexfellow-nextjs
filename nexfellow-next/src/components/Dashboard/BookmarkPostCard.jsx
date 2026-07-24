@@ -16,6 +16,7 @@ import {
 } from "react-icons/pi";
 
 import verify from "./assets/badge1.svg";
+import verifyOrange from "./assets/badge1-orange.svg";
 import communityBadge from "./assets/badge2.svg";
 
 const unitAbbreviationMap = {
@@ -88,6 +89,18 @@ const BookmarkPostCard = ({ data, bookmark, path = "post" }) => {
                                                 className={styles.badge}
                                             />
                                         ) : null
+                                    ) : data.author?.planBadge === "orange" ? (
+                                        <img
+                                            src={verifyOrange?.src || verifyOrange}
+                                            alt="Founder Badge"
+                                            className={styles.verified}
+                                        />
+                                    ) : data.author?.planBadge === "blue" ? (
+                                        <img
+                                            src={verify?.src || verify}
+                                            alt="Builder Pro Badge"
+                                            className={styles.verified}
+                                        />
                                     ) : data.author?.verificationBadge ? (
                                         <img
                                             src={verify?.src || verify}

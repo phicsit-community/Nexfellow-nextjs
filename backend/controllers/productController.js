@@ -693,13 +693,11 @@ const createReview = async (req, res) => {
   await review.populate("reviewer", "name username picture");
   res.status(201).json(review);
 
-  // Fire-and-forget: credit failure must never break the review submission
-  CreditService.award({
-    userId: req.userId,
-    eventCode: "REVIEW_FEEDBACK",
-    idempotencyKey: `REVIEW_FEEDBACK:${req.userId}:${product._id}`,
-    entityRef: { model: "Product", id: product._id },
-  }).catch((err) => console.error("Credit (createReview):", err.message));
+  // Fire-and-forget: streak update failure must never break the review submission.
+  // Giving feedback no longer earns credits directly — only the 7-day streak milestone does.
+  CreditService.recordReviewSubmitted(req.userId).catch((err) =>
+    console.error("Streak update (createReview):", err.message)
+  );
 };
 
 // GET /products/:id/reviews
@@ -765,10 +763,13 @@ const markHelpful = async (req, res) => {
 
   const userId = new mongoose.Types.ObjectId(req.userId);
 
-  const review = await ProductReview.findOne(
-    { _id: req.params.reviewId, product: req.params.id },
-    { reviewer: 1 }
-  );
+  const [review, product] = await Promise.all([
+    ProductReview.findOne(
+      { _id: req.params.reviewId, product: req.params.id },
+      { reviewer: 1 }
+    ),
+    Product.findById(req.params.id).select("owner"),
+  ]);
   if (!review) throw new ExpressError("Review not found", 404);
 
   // Reviewer cannot mark their own review as helpful.
@@ -785,15 +786,17 @@ const markHelpful = async (req, res) => {
   if (marked) {
     res.status(200).json({ helpfulCount: marked.helpfulCount, marked: true });
 
-    // Credit the voter +2 (fire-and-forget)
-    CreditService.award({
-      userId: req.userId,
-      eventCode: "REVIEW_HELPFUL_VOTE",
-      idempotencyKey: `REVIEW_HELPFUL_VOTE:${req.userId}:${review._id}`,
-      entityRef: { model: "ProductReview", id: review._id },
-    }).catch((err) => console.error("Credit (helpful vote):", err.message));
+    // Credit the voter +2 only when the vote comes from the product's own author (fire-and-forget)
+    if (product?.owner?.equals(userId)) {
+      CreditService.award({
+        userId: req.userId,
+        eventCode: "REVIEW_HELPFUL_VOTE",
+        idempotencyKey: `REVIEW_HELPFUL_VOTE:${req.userId}:${review._id}`,
+        entityRef: { model: "ProductReview", id: review._id },
+      }).catch((err) => console.error("Credit (helpful vote):", err.message));
+    }
 
-    // Milestone +30 when the review crosses 10 helpful votes (fires exactly once)
+    // Milestone +20 when the review crosses 10 helpful votes (fires exactly once)
     if (marked.helpfulCount === 10) {
       CreditService.award({
         userId: review.reviewer.toString(),

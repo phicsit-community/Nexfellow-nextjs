@@ -122,7 +122,6 @@ module.exports = {
         CommunityQuiz:
           "title description startTime endTime totalRegistered User_profile_Image creatorId",
         Community: "name description owner category",
-        Resource: "title description link",
       };
 
       function getNestedPopulate(type) {
@@ -190,12 +189,6 @@ module.exports = {
           match: { __t: "Community" },
           options: { strictPopulate: false },
           populate: getNestedPopulate("Community"),
-        })
-        .populate({
-          path: "bookmarkItem",
-          select: modelFields.Resource,
-          match: { __t: "Resource" },
-          options: { strictPopulate: false },
         });
 
       res.status(200).json({ bookmarks });

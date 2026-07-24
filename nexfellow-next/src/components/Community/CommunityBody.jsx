@@ -26,6 +26,7 @@ import { FaBellSlash, FaEyeSlash, FaExclamationCircle } from "react-icons/fa";
 import Discussion from "../Discussion/Discussion";
 import communityBadge from "./assets/badge3.svg";
 import verificationBadge from "./assets/badge2.svg";
+import verifyOrangeBadge from "./assets/badge2-orange.svg";
 
 const CommunityBody = ({ communityId, ownerId, messageIdToScroll }) => {
   const [activeTab, setActiveTab] = useState(() => {
@@ -448,9 +449,13 @@ const CommunityBody = ({ communityId, ownerId, messageIdToScroll }) => {
                 ).map((follower) => {
                   const badgeSrc = follower?.communityBadge
                     ? communityBadge?.src || communityBadge
-                    : follower?.verificationBadge
-                      ? verificationBadge?.src || verificationBadge
-                      : null;
+                    : follower?.planBadge === "orange"
+                      ? verifyOrangeBadge?.src || verifyOrangeBadge
+                      : follower?.planBadge === "blue"
+                        ? verificationBadge?.src || verificationBadge
+                        : follower?.verificationBadge
+                          ? verificationBadge?.src || verificationBadge
+                          : null;
 
                   return (
                     <div key={follower._id} className={styles.memberItem}>

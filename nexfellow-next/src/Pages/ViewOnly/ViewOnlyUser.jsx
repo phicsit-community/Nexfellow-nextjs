@@ -6,6 +6,7 @@ import api from "../../lib/axios";
 import styles from "./ViewOnlyUser.module.css"; // Copy/adapt from ViewOnlyExplore.module.css
 import { FaUsers, FaUserPlus, FaCalendarAlt } from "react-icons/fa";
 import verificationBadge from "./assets/badge2.svg"; // Optional: if you show verified users
+import verifyOrangeBadge from "./assets/badge2-orange.svg";
 
 const ViewOnlyUser = () => {
   const params = useParams();
@@ -99,7 +100,25 @@ const ViewOnlyUser = () => {
               </span>
             </div>
             <div className={styles.badges}>
-              {isVerified && (
+              {user?.planBadge === "orange" ? (
+                <span className={styles.verifiedBadge}>
+                  Founder
+                  <img
+                    src={verifyOrangeBadge?.src || verifyOrangeBadge}
+                    alt="Founder Badge"
+                    className={styles.badge}
+                  />
+                </span>
+              ) : user?.planBadge === "blue" ? (
+                <span className={styles.verifiedBadge}>
+                  Builder Pro
+                  <img
+                    src={verificationBadge?.src || verificationBadge}
+                    alt="Builder Pro Badge"
+                    className={styles.badge}
+                  />
+                </span>
+              ) : isVerified && (
                 <span className={styles.verifiedBadge}>
                   Verified
                   <img

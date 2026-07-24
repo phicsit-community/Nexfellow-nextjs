@@ -45,15 +45,18 @@ class CreditService {
       throw new ExpressError(`Invalid earn event: ${opts.eventCode}`, 400);
     }
     await CreditService._enforceEarnCap(opts.userId, opts.eventCode, opts.entityRef);
-    const result = await CreditService._commit({ ...opts, delta });
+    return CreditService._commit({ ...opts, delta });
+  }
 
-    // Streak update runs after a successful REVIEW_FEEDBACK commit
-    if (opts.eventCode === "REVIEW_FEEDBACK" && !result.duplicate) {
-      CreditService._updateReviewStreak(opts.userId).catch((err) =>
-        console.error("Streak update failed:", err.message)
-      );
-    }
-    return result;
+  // ── Public: review streak tracking ──────────────────────────────────────────
+
+  /**
+   * Records that a review was submitted, updating the user's daily streak and
+   * awarding the 7-day milestone. Giving feedback no longer earns credits on
+   * its own, so this is called directly instead of piggybacking on award().
+   */
+  static async recordReviewSubmitted(userId) {
+    return CreditService._updateReviewStreak(userId);
   }
 
   // ── Public: spend credits ───────────────────────────────────────────────────

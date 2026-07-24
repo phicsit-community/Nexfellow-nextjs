@@ -13,6 +13,7 @@ import BannerImage from "./assets/community_image.svg";
 
 import communityBadge from "./assets/badge3.svg";
 import verificationBadge from "./assets/badge2.svg";
+import verifyOrangeBadge from "./assets/badge2-orange.svg";
 import Webicon from "./assets/web.svg";
 import Shareicon from "./assets/share.svg";
 import { UserCircle2 } from "lucide-react";
@@ -187,6 +188,18 @@ const User = () => {
                           className={styles.badge}
                         />
                       )
+                    ) : userDetails?.planBadge === "orange" ? (
+                      <img
+                        src={verifyOrangeBadge?.src || verifyOrangeBadge}
+                        alt="Founder Badge"
+                        className={styles.badge}
+                      />
+                    ) : userDetails?.planBadge === "blue" ? (
+                      <img
+                        src={verificationBadge?.src || verificationBadge}
+                        alt="Builder Pro Badge"
+                        className={styles.badge}
+                      />
                     ) : (
                       userDetails?.verificationBadge && (
                         <img

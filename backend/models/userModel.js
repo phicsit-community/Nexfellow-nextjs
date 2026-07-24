@@ -164,9 +164,9 @@ const userSchema = new schema(
       default: null,
     },
 
-    // When the next monthly free-plan credit grant is due. Only consulted
-    // while subscriptionTier === "free" — paid users earn credits via
-    // SUBSCRIPTION_CREDIT_GRANT on renewal instead. See jobs/freeCreditGrantCron.js
+    // Legacy field from when the free-plan credit grant recurred monthly.
+    // The grant is now one-time (awarded at signup only), so this is no
+    // longer set for new users; kept for backward compatibility with old records.
     nextFreeCreditGrantAt: {
       type: Date,
       default: null,
@@ -226,6 +226,15 @@ const userSchema = new schema(
     premiumBadge: {
       type: Boolean,
       default: false,
+    },
+
+    // Plan-tier badge: awarded automatically on subscription purchase
+    // (blue for Builder Pro, orange for Founder — see constants/plans.js)
+    // or granted manually by an admin to any user.
+    planBadge: {
+      type: String,
+      enum: ["blue", "orange", null],
+      default: null,
     },
 
     joinedChallenges: [

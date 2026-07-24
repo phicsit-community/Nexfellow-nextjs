@@ -13,7 +13,7 @@ import SkeletonAnalytics from "../Skeletons/SkeletonAnalytics";
 // icons
 import { FaBookmark } from "react-icons/fa";
 import { FaEdit, FaTrash, FaThumbtack, FaLink } from "react-icons/fa";
-import { FaTrophy, FaUsers, FaBook } from "react-icons/fa";
+import { FaTrophy, FaUsers } from "react-icons/fa";
 
 // components
 import Post from "../Post/Post";
@@ -366,12 +366,6 @@ const DashboardBody = ({
       icon: <FaUsers className={styles.cardIcon} />,
       title: "Communities",
       desc: "Your favorite communities",
-    },
-    {
-      type: "resources",
-      icon: <FaBook className={styles.cardIcon} />,
-      title: "Resources",
-      desc: "Saved resources & links",
     },
   ];
 

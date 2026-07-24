@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import MetaTags from "../../components/MetaTags/MetaTags";
 import { FaFire, FaUsers, FaCalendarAlt, FaCheckCircle } from "react-icons/fa";
 import verificationBadge from "./assets/badge2.svg";
+import verifyOrangeBadge from "./assets/badge2-orange.svg";
 
 
 const ViewOnlyExplore = () => {
@@ -165,7 +166,25 @@ const ViewOnlyExplore = () => {
               {isFeatured && (
                 <span className={styles.featuredBadge}>Featured</span>
               )}
-              {isVerified && (
+              {community?.owner?.planBadge === "orange" ? (
+                <span className={styles.verifiedBadge}>
+                  Founder
+                  <img
+                    src={verifyOrangeBadge?.src || verifyOrangeBadge}
+                    alt="Founder Badge"
+                    className={styles.badge}
+                  />
+                </span>
+              ) : community?.owner?.planBadge === "blue" ? (
+                <span className={styles.verifiedBadge}>
+                  Builder Pro
+                  <img
+                    src={verificationBadge?.src || verificationBadge}
+                    alt="Builder Pro Badge"
+                    className={styles.badge}
+                  />
+                </span>
+              ) : isVerified && (
                 <span className={styles.verifiedBadge}>
                   Verified
                   <img
