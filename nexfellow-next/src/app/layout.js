@@ -12,11 +12,11 @@ const poppins = Poppins({
 
 export const metadata = {
   metadataBase: new URL("https://nexfellow.com"),
-  title: "NexFellow - Bringing Geeks Together",
-  description: "Join NexFellow to connect with tech enthusiasts, participate in challenges, attend events, and grow your skills in a supportive community.",
+  title: "NexFellow - Get Real Feedback",
+  description: "NexFellow connects you with experienced builders who give honest, actionable product feedback. Launch faster with real user insights.",
   openGraph: {
-    title: "NexFellow - Bringing Geeks Together",
-    description: "Join NexFellow to connect with tech enthusiasts, participate in challenges, attend events, and grow your skills in a supportive community.",
+    title: "NexFellow - Get Real Feedback",
+    description: "NexFellow connects you with experienced builders who give honest, actionable product feedback. Launch faster with real user insights.",
     url: "https://nexfellow.com",
     siteName: "NexFellow",
     images: [
@@ -24,7 +24,7 @@ export const metadata = {
         url: "https://nexfellow.com/og-v2.png",
         width: 1200,
         height: 630,
-        alt: "NexFellow - Bringing Geeks Together",
+        alt: "NexFellow - Get Real Feedback",
       },
     ],
     type: "website",
@@ -32,8 +32,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "NexFellow - Bringing Geeks Together",
-    description: "Join NexFellow to connect with tech enthusiasts, participate in challenges, attend events, and grow your skills in a supportive community.",
+    title: "NexFellow - Get Real Feedback",
+    description: "NexFellow connects you with experienced builders who give honest, actionable product feedback. Launch faster with real user insights.",
     images: ["https://nexfellow.com/og-v2.png"],
   },
 };

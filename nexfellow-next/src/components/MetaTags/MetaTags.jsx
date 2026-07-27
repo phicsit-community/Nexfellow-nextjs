@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import Head from "next/head";
 
 const MetaTags = ({
-  title = "NexFellow - Bringing Geeks Together",
-  description = "Join NexFellow to connect with tech enthusiasts, participate in challenges, attend events, and grow your skills in a supportive community.",
+  title = "NexFellow - Get Real Feedback",
+  description = "NexFellow connects you with experienced builders who give honest, actionable product feedback. Launch faster with real user insights.",
   image,
   type = "website",
   url,
