@@ -628,8 +628,12 @@ module.exports.givePremiumBadge = async (req, res) => {
 };
 
 // Plan Badge Controller — lets an admin grant/remove the blue (Builder Pro)
-// or orange (Founder) badge on any user, independent of their subscription
-// (e.g. to reward a free-plan user). Passing badgeColor: null removes it.
+// or orange (Founder) badge. Free-plan users can be freely set to any badge
+// (blue/orange/null) to reward them. Users on an active paid subscription
+// have their badge protected: an admin can only upgrade it (blue -> orange),
+// never remove it or downgrade it, since it was earned through payment.
+const PLAN_BADGE_RANK = { blue: 1, orange: 2 };
+
 module.exports.setPlanBadge = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -641,13 +645,29 @@ module.exports.setPlanBadge = async (req, res) => {
         .send("badgeColor must be 'blue', 'orange', or null");
     }
 
+    const user = await userModel
+      .findById(userId)
+      .select("_id planBadge subscriptionTier");
+    if (!user) return res.status(404).send("User not found");
+
+    if (user.subscriptionTier !== "free") {
+      const isDowngradeOrRemoval =
+        badgeColor === null ||
+        PLAN_BADGE_RANK[badgeColor] < PLAN_BADGE_RANK[user.planBadge];
+      if (isDowngradeOrRemoval) {
+        return res
+          .status(403)
+          .send(
+            "Cannot remove or downgrade a badge earned through an active subscription"
+          );
+      }
+    }
+
     const updatedUser = await userModel.findByIdAndUpdate(
       userId,
       { $set: { planBadge: badgeColor } },
       { new: true, select: "_id planBadge" }
     );
-
-    if (!updatedUser) return res.status(404).send("User not found");
 
     res.status(200).json(updatedUser);
   } catch (err) {

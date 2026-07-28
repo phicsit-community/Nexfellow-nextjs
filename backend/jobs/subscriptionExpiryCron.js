@@ -23,6 +23,7 @@ module.exports = async function subscriptionExpiryCron() {
       user.subscriptionInterval = null;
       user.dodoSubscriptionId = null;
       user.verificationBadge = false;
+      user.planBadge = null;
 
       await user.save();
 
