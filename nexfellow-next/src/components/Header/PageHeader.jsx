@@ -31,6 +31,7 @@ const PAGE_TITLES = {
   "/launches": "Launches",
   "/buildersmap": "Builders Map",
   "/inbox": "Inbox",
+  "/wallet": "Wallet",
 };
 
 function getPageTitle(pathname) {
