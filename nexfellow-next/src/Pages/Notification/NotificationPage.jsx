@@ -30,10 +30,26 @@ const NotificationPage = () => {
   const fetchNotifications = async (pageNum = 1) => {
     setLoading(true);
     try {
-      const [systemRes, communityRes] = await Promise.all([
+      const [systemResult, communityResult] = await Promise.allSettled([
         api.get(`/systemNotifications?page=${pageNum}&limit=${LIMIT}`),
         api.get(`/notifications?page=${pageNum}&limit=${LIMIT}`),
       ]);
+
+      if (systemResult.status === "rejected") {
+        console.error("Error fetching system notifications:", systemResult.reason);
+      }
+      if (communityResult.status === "rejected") {
+        console.error("Error fetching community notifications:", communityResult.reason);
+      }
+
+      const systemNotifications =
+        systemResult.status === "fulfilled"
+          ? systemResult.value.data.notifications
+          : [];
+      const communityNotifications =
+        communityResult.status === "fulfilled"
+          ? communityResult.value.data.notifications
+          : [];
 
       // add demo notification for testing
       // systemRes.data.notifications.push({
@@ -65,8 +81,8 @@ const NotificationPage = () => {
       // });
 
       const combined = [
-        ...systemRes.data.notifications.map((n) => ({ ...n, type: "system" })),
-        ...communityRes.data.notifications.map((n) => ({
+        ...systemNotifications.map((n) => ({ ...n, type: "system" })),
+        ...communityNotifications.map((n) => ({
           ...n,
           type: "community",
         })),
@@ -78,7 +94,10 @@ const NotificationPage = () => {
         setNotifications((prev) => [...prev, ...combined]);
       }
 
-      setHasMore(combined.length === LIMIT * 2);
+      setHasMore(
+        systemNotifications.length === LIMIT ||
+          communityNotifications.length === LIMIT
+      );
     } catch (err) {
       console.error("Error fetching notifications:", err);
     }

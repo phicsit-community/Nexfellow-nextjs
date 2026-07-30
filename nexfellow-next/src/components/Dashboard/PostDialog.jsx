@@ -17,8 +17,28 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "../../lib/axios";
 
+// Mirrors backend/constants/plans.js postCharLimit for display purposes only.
+// The backend is the source of truth and enforces the real limit.
+const POST_CHAR_LIMITS = {
+  free: 500,
+  builder_pro: 2000,
+  founder: 5000,
+};
+
+const getPostCharLimit = (user) => {
+  if (!user || user.subscriptionTier === "free") return POST_CHAR_LIMITS.free;
+  if (
+    user.subscriptionExpiresAt &&
+    new Date(user.subscriptionExpiresAt) < new Date()
+  ) {
+    return POST_CHAR_LIMITS.free;
+  }
+  return POST_CHAR_LIMITS[user.subscriptionTier] || POST_CHAR_LIMITS.free;
+};
+
 const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
   const user = useSelector((state) => state.auth.user);
+  const charLimit = getPostCharLimit(user);
   const [isDark, setIsDark] = useState(
     () => document.documentElement.classList.contains("dark")
   );
@@ -789,7 +809,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                     className={styles.textarea}
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    maxLength={1800}
+                    maxLength={charLimit}
                   />
 
                   <AnimatePresence>
@@ -952,7 +972,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                     )}
 
                     {content.length > 0 && (() => {
-                      const MAX = 1800;
+                      const MAX = charLimit;
                       const pct = content.length / MAX;
                       const r = 14;
                       const circ = 2 * Math.PI * r;
@@ -1004,7 +1024,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                         (!content.trim() && attachments.length === 0) ||
                         (!post && !selectedCommunityId) ||
                         isSubmitting ||
-                        content.length > 1800
+                        content.length > charLimit
                       }
                     >
                       {post ? "Update" : "Post"}

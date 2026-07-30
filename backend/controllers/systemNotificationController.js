@@ -86,10 +86,18 @@ class SystemNotificationController {
       };
 
       const notifications = await Notification.find(query)
-        .populate("sender")
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit)
         .limit(limit);
+
+      // Only populate sender for non-system senders (there is no "System" model to populate)
+      const toPopulate = notifications.filter(
+        (n) => n.senderModel !== "System"
+      );
+      await Notification.populate(toPopulate, {
+        path: "sender",
+        select: "name picture",
+      });
 
       const total = await Notification.countDocuments(query);
 
@@ -116,9 +124,16 @@ class SystemNotificationController {
         "recipients.user": userId,
         "recipients.read": false,
         type: "system",
-      })
-        .populate("sender")
-        .sort({ createdAt: -1 });
+      }).sort({ createdAt: -1 });
+
+      // Only populate sender for non-system senders (there is no "System" model to populate)
+      const toPopulate = unreadNotifications.filter(
+        (n) => n.senderModel !== "System"
+      );
+      await Notification.populate(toPopulate, {
+        path: "sender",
+        select: "name picture",
+      });
 
       res.status(200).json({
         message: "Unread system notifications retrieved successfully",
@@ -194,7 +209,11 @@ class SystemNotificationController {
     try {
       const notification = await Notification.findById(
         req.params.notificationId
-      ).populate("sender");
+      );
+
+      if (notification && notification.senderModel !== "System") {
+        await notification.populate({ path: "sender", select: "name picture" });
+      }
 
       if (!notification) {
         return res

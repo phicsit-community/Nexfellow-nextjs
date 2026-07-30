@@ -5,6 +5,7 @@ import { saveAs } from "file-saver";
 import { IoIosSearch } from "react-icons/io";
 import { FiTrash2, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { BsCheckCircleFill, BsStarFill } from "react-icons/bs";
+import { toast } from "sonner";
 import { useAuth, authFetch } from "@/hooks/useAuth";
 import Loader from "@/components/Loader/Loader";
 import Image from "next/image";
@@ -126,68 +127,6 @@ const UsersPage = () => {
         });
     };
 
-    const toggleVerification = async (id: string, currentStatus: boolean) => {
-        try {
-            const res = await authFetch(
-                `${apiUrl}/admin/givebadge/${id}`,
-                token,
-                { method: "PUT" }
-            );
-            if (res.ok) {
-                const result = await res.json();
-                setData(prev => prev.map(u =>
-                    u._id === id ? {
-                        ...u,
-                        verificationBadge: result.verificationBadge,
-                        communityBadge: result.communityBadge
-                    } : u
-                ));
-            }
-        } catch (error) {
-            console.error("Error toggling verification:", error);
-        }
-    };
-
-    const togglePremium = async (id: string, currentStatus: boolean) => {
-        try {
-            const res = await authFetch(
-                `${apiUrl}/admin/premiumbadge/${id}`,
-                token,
-                { method: "PUT" }
-            );
-            if (res.ok) {
-                const result = await res.json();
-                setData(prev => prev.map(u =>
-                    u._id === id ? { ...u, premiumBadge: result.premiumBadge } : u
-                ));
-            }
-        } catch (error) {
-            console.error("Error toggling premium:", error);
-        }
-    };
-
-    const toggleCommunityBadge = async (id: string, currentStatus: boolean) => {
-        try {
-            const res = await authFetch(
-                `${apiUrl}/admin/communitybadge/${id}`,
-                token,
-                { method: "PUT" }
-            );
-            if (res.ok) {
-                const result = await res.json();
-                setData(prev => prev.map(u =>
-                    u._id === id ? {
-                        ...u,
-                        communityBadge: result.communityBadge,
-                        verificationBadge: result.verificationBadge
-                    } : u
-                ));
-            }
-        } catch (error) {
-            console.error("Error toggling community badge:", error);
-        }
-    };
-
     const setPlanBadge = async (id: string, color: "blue" | "orange" | null) => {
         try {
             const res = await authFetch(
@@ -203,9 +142,13 @@ const UsersPage = () => {
                 setData(prev => prev.map(u =>
                     u._id === id ? { ...u, planBadge: result.planBadge } : u
                 ));
+            } else {
+                const message = await res.text();
+                toast.error(message || "Failed to update plan badge");
             }
         } catch (error) {
             console.error("Error setting plan badge:", error);
+            toast.error("Failed to update plan badge");
         }
     };
 
@@ -356,7 +299,6 @@ const UsersPage = () => {
                                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Users</th>
                                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Contact</th>
                                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Occupation</th>
-                                <th className="text-center px-6 py-4 text-sm font-semibold text-gray-700">Verified Badge</th>
                                 <th className="text-center px-6 py-4 text-sm font-semibold text-gray-700">Plan Badge</th>
                                 <th className="text-center px-6 py-4 text-sm font-semibold text-gray-700">Action</th>
                             </tr>
@@ -364,7 +306,7 @@ const UsersPage = () => {
                         <tbody>
                             {paginatedData.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="text-center py-12 text-gray-500">
+                                    <td colSpan={5} className="text-center py-12 text-gray-500">
                                         No users found
                                     </td>
                                 </tr>
@@ -405,46 +347,6 @@ const UsersPage = () => {
                                         {/* Occupation */}
                                         <td className="px-6 py-4">
                                             <p className="text-sm text-gray-600">{user.occupation || user.createdCommunity?.accountType || 'Freelance'}</p>
-                                        </td>
-
-                                        {/* Badges */}
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center justify-center gap-3">
-                                                <button
-                                                    onClick={() => toggleVerification(user._id, user.verificationBadge || false)}
-                                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${user.verificationBadge
-                                                        ? 'opacity-100 hover:opacity-80'
-                                                        : 'opacity-30 grayscale hover:opacity-50'
-                                                        }`}
-                                                    title={user.verificationBadge ? 'Remove Verification' : 'Add Verification'}
-                                                >
-                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                    <img src="/images/badges/verification.svg" alt="Verification" className="w-6 h-6" />
-                                                </button>
-                                                <button
-                                                    onClick={() => toggleCommunityBadge(user._id, user.communityBadge || false)}
-                                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${user.communityBadge
-                                                        ? 'opacity-100 hover:opacity-80'
-                                                        : 'opacity-30 grayscale hover:opacity-50'
-                                                        }`}
-                                                    title={user.communityBadge ? 'Remove Community Badge' : 'Add Community Badge'}
-                                                >
-                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                    <img src="/images/badges/community-badge.svg" alt="Community" className="w-6 h-6" />
-                                                </button>
-                                                {/* Premium badge - uncomment when needed
-                                                <button
-                                                    onClick={() => togglePremium(user._id, user.premiumBadge || false)}
-                                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${user.premiumBadge
-                                                        ? 'opacity-100 hover:opacity-80'
-                                                        : 'opacity-30 grayscale hover:opacity-50'
-                                                        }`}
-                                                    title={user.premiumBadge ? 'Remove Premium' : 'Add Premium'}
-                                                >
-                                                    <img src="/images/badges/premium-badge.svg" alt="Premium" className="w-6 h-6" />
-                                                </button>
-                                                */}
-                                            </div>
                                         </td>
 
                                         {/* Plan Badge (blue = Builder Pro, orange = Founder) */}

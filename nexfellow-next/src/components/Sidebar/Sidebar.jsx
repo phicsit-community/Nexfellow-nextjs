@@ -40,6 +40,7 @@ function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
   const showFull = !isMobile || isDrawerOpen;
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [totalComments, setTotalComments] = useState(null);
+  const [unreadNotifications, setUnreadNotifications] = useState(null);
   const { effectiveTheme } = useTheme();
 
   const handleLogoClick = (e) => {
@@ -88,6 +89,16 @@ function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
       .catch(() => {});
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    api.get("/notifications/unread-count")
+      .then((res) => {
+        const count = res.data?.count ?? 0;
+        setUnreadNotifications(count > 9 ? "9+" : count > 0 ? String(count) : null);
+      })
+      .catch(() => {});
+  }, [isLoggedIn]);
+
   const coreItems = [
     { path: "/feed", icon: AnimatedHome, label: "Home", section: "core", id: "home" },
     { path: "/my-products", isStatic: true, iconComponent: Package, label: "My Products", badge: totalComments, section: "core", id: "my-products" },
@@ -113,7 +124,7 @@ function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
     },
     // { path: "/leaderboard", icon: AnimatedLeaderboard, label: "Leaderboard", section: "community", id: "leaderboard" },
     { path: "/inbox", icon: AnimatedMessenger, label: "Inbox", section: "community", id: "inbox" },
-    { path: "/notifications", icon: AnimatedNotification, label: "Notification", section: "community", id: "notification" },
+    { path: "/notifications", icon: AnimatedNotification, label: "Notification", badge: unreadNotifications, section: "community", id: "notification" },
   ];
 
   const allItems = [...coreItems, ...discoverItems, ...communityItems];
