@@ -118,7 +118,6 @@ function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
       icon: AnimatedCommunity?.src || AnimatedCommunity,
       label: "Community",
       staticIcon: staticCommuntiy?.src || staticCommuntiy,
-      hasDot: true,
       section: "community",
       id: "community"
     },

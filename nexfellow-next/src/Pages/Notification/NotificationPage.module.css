@@ -451,6 +451,10 @@
   .notificationContentDescription {
     max-width: 100px;
   }
+
+  .notificationsList {
+    padding-bottom: 80px;
+  }
 }
 
 @media (max-width: 480px) {

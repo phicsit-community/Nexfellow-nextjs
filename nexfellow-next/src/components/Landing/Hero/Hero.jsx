@@ -208,7 +208,7 @@ export default function Hero() {
               </defs>
             </svg>
 
-            <span style={{ color: TEXT, fontSize: 13, fontWeight: 500 }}> · 10,000+ builders already in</span>
+            <span style={{ color: TEXT, fontSize: 13, fontWeight: 500 }}> 10,000+ builders already in</span>
           </motion.div>
 
           {/* Headline */}

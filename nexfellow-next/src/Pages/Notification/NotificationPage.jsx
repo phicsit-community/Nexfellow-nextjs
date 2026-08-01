@@ -423,7 +423,7 @@ const NotificationPage = () => {
           <div
             className={styles.notificationsList}
             onScroll={handleScroll}
-            style={{ overflowY: "auto", maxHeight: "70vh" }}
+            style={{ overflowY: "auto" }}
           >
             {loading && page === 1 ? (
               <div
