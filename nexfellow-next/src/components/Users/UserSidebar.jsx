@@ -64,29 +64,6 @@ const UserCommunitySidebar = () => {
     // },
   ];
 
-  const activeChallenges = [
-    // {
-    //   name: "Challenges Name",
-    //   date: "May 25 - 7:30 PM",
-    //   image: Event,
-    // },
-    // {
-    //   name: "Challenges Name",
-    //   date: "May 25 - 7:30 PM",
-    //   image: Event,
-    // },
-    // {
-    //   name: "Challenges Name",
-    //   date: "May 25 - 7:30 PM",
-    //   image: Event,
-    // },
-    // {
-    //   name: "Challenges Name",
-    //   date: "May 25 - 7:30 PM",
-    //   image: Event,
-    // },
-  ];
-
   return (
     <div className={styles.sidebar}>
       {topMembers.length === 0 ? (
@@ -149,33 +126,6 @@ const UserCommunitySidebar = () => {
                 <div>
                   <p className={styles.eventName}>{event.name}</p>
                   <p className={styles.eventDate}>{event.date}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {activeChallenges.length === 0 ? (
-        <EmptyStateBox
-          type="challenges"
-          title="Active Challenges"
-          description="No active challenges at the moment. Check back soon for new opportunities!"
-        />
-      ) : (
-        <div className={styles.activeChallenges}>
-          <h3 className={styles.sidebarTitle}>Active Challenges</h3>
-          <div className={styles.challengesList}>
-            {activeChallenges.map((challenge, index) => (
-              <div key={index} className={styles.challenge}>
-                <img
-                  src={challenge.image}
-                  alt={challenge.name}
-                  className={styles.challengeImage}
-                />
-                <div>
-                  <p className={styles.challengeName}>{challenge.name}</p>
-                  <p className={styles.challengeDate}>{challenge.date}</p>
                 </div>
               </div>
             ))}

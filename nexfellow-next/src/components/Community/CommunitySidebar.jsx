@@ -11,7 +11,7 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import EmptyStateBox from "../EmptyStateBox/EmptyStateBox";
 import { BsStopwatch } from "react-icons/bs";
-import { Timer, Users2 } from "lucide-react";
+import { Users2 } from "lucide-react";
 
 const UserCommunitySidebar = ({ communityId }) => {
   const router = useRouter();
@@ -20,7 +20,6 @@ const UserCommunitySidebar = ({ communityId }) => {
   // const [topMembers, setTopMembers] = useState([]);
   const [events, setEvents] = useState([]);
   // const [activeChallenges, setActiveChallenges] = useState([]);
-  const [contests, setContests] = useState([]);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -59,84 +58,6 @@ const UserCommunitySidebar = ({ communityId }) => {
 
     if (communityId) {
       fetchEvents();
-    }
-  }, [communityId]);
-
-  function formatContestDuration(contest) {
-    if (!contest) return "N/A";
-
-    // If contest follows the "rapid" timer mode with questions array
-    if (
-      contest.timerMode === "rapid" &&
-      Array.isArray(contest.questions) &&
-      contest.questions.length > 0
-    ) {
-      const totalSeconds = contest.questions.reduce(
-        (sum, q) => sum + (q.timeLimit || q.duration || 0),
-        0
-      );
-      if (totalSeconds >= 60) {
-        const mins = Math.floor(totalSeconds / 60);
-        const secs = totalSeconds % 60;
-        return secs === 0 ? `${mins} min` : `${mins} min ${secs} sec`;
-      } else {
-        return `${totalSeconds} sec`;
-      }
-    }
-
-    // If contest uses "full" timerMode and has a duration in minutes
-    if (contest.timerMode === "full" && typeof contest.duration === "number") {
-      if (contest.duration >= 60) {
-        const hours = Math.floor(contest.duration / 60);
-        const mins = contest.duration % 60;
-        return mins === 0 ? `${hours} hr` : `${hours} hr ${mins} min`;
-      }
-      return `${contest.duration} min`;
-    }
-
-    // Otherwise fallback to similar logic you have
-    if (contest.duration) {
-      const minutes = contest.duration;
-      if (minutes >= 60) {
-        const hours = Math.round((minutes / 60) * 10) / 10; // Round to 1 decimal place
-        return hours % 1 === 0 ? `${hours} hour` : `${hours} hours`;
-      } else {
-        return `${minutes} minutes`;
-      }
-    }
-
-    return "N/A";
-  }
-
-  useEffect(() => {
-    const fetchContests = async () => {
-      try {
-        const res = await api.get(`/community-quiz/${communityId}/quizzes`);
-        console.log(res.data);
-        const contestsData = res.data.quizzes.map((val) => {
-          return {
-            name: val.title || "Untitled Contest",
-            date: new Date(val.startTime).toLocaleString("en-US", {
-              dateStyle: "long",
-              timeStyle: "short",
-            }),
-            image: val.imageUrl || Event?.src || Event,
-            id: val._id || val.id,
-            slug: val.slug || val.id,
-            duration: formatContestDuration(val),
-            totalRegistered: val.totalRegistered || 0,
-            timerMode: val.timerMode,
-            questions: val.questions,
-          };
-        });
-        setContests(contestsData);
-      } catch (error) {
-        console.error("Error fetching contests:", error);
-      }
-    };
-
-    if (communityId) {
-      fetchContests();
     }
   }, [communityId]);
 
@@ -355,52 +276,6 @@ const UserCommunitySidebar = ({ communityId }) => {
                 </div>
               </Link>
             ))}
-          </div>
-        </div>
-      )}
-
-      {contests.length === 0 ? (
-        <EmptyStateBox
-          type="contests"
-          title="Contests"
-          description="No contests at the moment. Check back soon for new opportunities!"
-        />
-      ) : (
-        <div className={styles.contests}>
-          <h3 className={styles.sidebarTitle}>Contests</h3>
-          <div className={styles.contestsList}>
-            {contests.map((contest, index) => {
-              console.log(contest);
-              return (
-                <Link
-                  key={index}
-                  className={styles.contest}
-                  href={`/community/contests/${contest.slug || contest.id}`}
-                >
-                  <img
-                    src={contest.image || (DefaultImage?.src || DefaultImage)}
-                    alt={contest.name}
-                    className={styles.contestImage}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = DefaultImage?.src || DefaultImage;
-                    }}
-                  />
-                  <div>
-                    <p className={styles.contestName}>{contest.name}</p>
-                    <p className={styles.contestDate}>{contest.date}</p>
-                    <div className="flex gap-2">
-                      <p className={styles.contestDuration}>
-                        <Timer size={13} /> {contest.duration}
-                      </p>
-                      <p className={styles.contestParticipants}>
-                        <Users2 size={13} /> {contest.totalRegistered}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
           </div>
         </div>
       )}
