@@ -58,12 +58,13 @@ const CommunityInfoPopover = ({
             newTop = "60px"; // show below
           } else if (spaceAbove > popoverHeight + 200) {
             newTop = -popoverHeight - 10 + "px"; // show above
-          } else if (spaceAbove > spaceBelow) {
-            // Neither side fully fits: pick whichever has more room and
-            // let the popover's own max-height/overflow-y handle the rest.
-            newTop = -Math.min(popoverHeight, spaceAbove - 10) - 10 + "px";
           } else {
-            newTop = "60px"; // fallback: below, clamped by max-height/overflow-y
+            // Neither side is confirmed to fully fit (spaceBelow/spaceAbove
+            // are only approximate — postRect spans the whole post card,
+            // not just the avatar anchor). Default to below and let the
+            // popover's own max-height/overflow-y handle any overflow,
+            // rather than guessing "above" and clipping the header instead.
+            newTop = "60px";
           }
         }
 
