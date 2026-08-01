@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 
 import api from "../../lib/axios";
 import styles from "./EditProfileForm.module.css";
@@ -57,9 +57,11 @@ const EditProfileForm = () => {
   const router = useRouter();
   const params = useParams();
   const username = params?.username;
+  const searchParams = useSearchParams();
   const [id, setId] = useState(null);
   const [communityId, setCommunityId] = useState(null);
   const [user, setUser] = useState(null);
+  const [connectingPlatform, setConnectingPlatform] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     username: "",
@@ -182,6 +184,53 @@ const EditProfileForm = () => {
   const handleBackButtonClick = () => {
     router.back();
   };
+
+  const connectPlatform = async (platform) => {
+    setConnectingPlatform(platform);
+    try {
+      const { data } = await api.post("/auth/connect/init", {
+        platform,
+        returnTo: `/edit-profile/${username}`,
+      });
+      window.location.href = data.oauthUrl;
+    } catch {
+      toast.error(`Failed to start ${platform} connection. Please try again.`);
+      setConnectingPlatform(null);
+    }
+  };
+
+  // Handle return from OAuth connect redirect (?connected=github&handle=xxx)
+  useEffect(() => {
+    const connected = searchParams.get("connected");
+    const handle = searchParams.get("handle");
+    const connectErr = searchParams.get("connect_error");
+
+    if (connectErr) {
+      toast.error("Could not connect account. Please try again.");
+      window.history.replaceState({}, "", `/edit-profile/${username}`);
+      setConnectingPlatform(null);
+      return;
+    }
+
+    if (connected && handle) {
+      const decodedHandle = decodeURIComponent(handle);
+      toast.success(
+        `${connected === "github" ? "GitHub" : "LinkedIn"} connected successfully!`
+      );
+      setUser((prev) =>
+        prev && {
+          ...prev,
+          connectedAccounts: {
+            ...prev.connectedAccounts,
+            [connected]: { connected: true, handle: decodedHandle },
+          },
+        }
+      );
+      window.history.replaceState({}, "", `/edit-profile/${username}`);
+      setConnectingPlatform(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -1046,8 +1095,6 @@ const EditProfileForm = () => {
             <div className={styles.socialLinksGrid}>
               {[
                 { key: "twitter", label: "Twitter / X", placeholder: "https://twitter.com/username" },
-                { key: "github", label: "GitHub", placeholder: "https://github.com/username" },
-                { key: "linkedin", label: "LinkedIn", placeholder: "https://linkedin.com/in/username" },
                 { key: "portfolio", label: "Portfolio / Website", placeholder: "https://yourwebsite.com" },
               ].map(({ key, label, placeholder }) => (
                 <div key={key} className={styles.formField}>
@@ -1063,6 +1110,99 @@ const EditProfileForm = () => {
                   />
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* ── Connected Accounts (OAuth) ── */}
+          <div className={styles.formSection}>
+            <h4 className={styles.sectionTitle}>Connected Accounts</h4>
+            <p className={styles.sectionSub}>
+              Link your GitHub and LinkedIn via OAuth to verify ownership.
+            </p>
+            <div className={styles.connectedAccountsGrid}>
+              <div className={styles.connectAccountRow}>
+                <div
+                  className={styles.connectAccountIcon}
+                  style={{ background: "#24292e" }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+                    <path
+                      d="M9 2a7 7 0 00-2.21 13.64c.35.06.48-.15.48-.34v-1.2c-1.94.42-2.35-.94-2.35-.94-.32-.81-.78-1.02-.78-1.02-.64-.43.05-.43.05-.43.7.05 1.07.72 1.07.72.63 1.07 1.64.76 2.04.58.06-.45.24-.76.44-.94-1.55-.18-3.18-.78-3.18-3.46 0-.76.27-1.39.72-1.87-.07-.18-.31-.89.07-1.85 0 0 .59-.19 1.92.72a6.7 6.7 0 013.5 0c1.33-.91 1.92-.72 1.92-.72.38.96.14 1.67.07 1.85.45.48.72 1.11.72 1.87 0 2.69-1.64 3.28-3.2 3.45.25.22.48.65.48 1.3v1.94c0 .19.13.4.48.34A7 7 0 009 2z"
+                      fill="#ffffff"
+                    />
+                  </svg>
+                </div>
+                <div className={styles.connectAccountInfo}>
+                  <div className={styles.connectAccountName}>GitHub</div>
+                  <div className={styles.connectAccountHandle}>
+                    {user?.connectedAccounts?.github?.connected
+                      ? `@${user.connectedAccounts.github.handle || "connected"}`
+                      : "Not connected"}
+                  </div>
+                </div>
+                {user?.connectedAccounts?.github?.connected ? (
+                  <button
+                    type="button"
+                    className={`${styles.connectBtn} ${styles.connectBtnDone}`}
+                    disabled
+                  >
+                    Connected ✓
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className={styles.connectBtn}
+                    onClick={() => connectPlatform("github")}
+                    disabled={connectingPlatform === "github"}
+                  >
+                    {connectingPlatform === "github" ? "…" : "Connect"}
+                  </button>
+                )}
+              </div>
+
+              <div className={styles.connectAccountRow}>
+                <div
+                  className={styles.connectAccountIcon}
+                  style={{ background: "#0a66c2" }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+                    <rect x="2" y="6" width="2.5" height="9" fill="#fff" />
+                    <circle cx="3.25" cy="3.5" r="1.5" fill="#fff" />
+                    <path
+                      d="M8 6v9M8 9.5a3 3 0 016 0V15"
+                      stroke="#fff"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </div>
+                <div className={styles.connectAccountInfo}>
+                  <div className={styles.connectAccountName}>LinkedIn</div>
+                  <div className={styles.connectAccountHandle}>
+                    {user?.connectedAccounts?.linkedin?.connected
+                      ? user.connectedAccounts.linkedin.handle || "Connected"
+                      : "Not connected"}
+                  </div>
+                </div>
+                {user?.connectedAccounts?.linkedin?.connected ? (
+                  <button
+                    type="button"
+                    className={`${styles.connectBtn} ${styles.connectBtnDone}`}
+                    disabled
+                  >
+                    Connected ✓
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className={styles.connectBtn}
+                    onClick={() => connectPlatform("linkedin")}
+                    disabled={connectingPlatform === "linkedin"}
+                  >
+                    {connectingPlatform === "linkedin" ? "…" : "Connect"}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 

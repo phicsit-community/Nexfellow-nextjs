@@ -638,7 +638,7 @@ module.exports.getProfileByUsername = async (req, res) => {
 
   // If the user matches, return normal profile data
   const user = await User.findOne({ username })
-    .select("+email +dateOfBirth")
+    .select("+email +dateOfBirth +githubId +githubUsername +linkedinId +linkedinName")
     .populate("profile")
     .populate("onboardingProfile")
     .populate("createdCommunity")
@@ -668,6 +668,14 @@ module.exports.getProfileByUsername = async (req, res) => {
     socialLinks: op.socialLinks || {},
     createdCommunity: user.createdCommunity || null,
     followers: user.followers || [],
+    connectedAccounts: {
+      github: user.githubId
+        ? { connected: true, handle: user.githubUsername || null }
+        : { connected: false },
+      linkedin: user.linkedinId
+        ? { connected: true, handle: user.linkedinName || null }
+        : { connected: false },
+    },
   };
 
   res.status(200).json(userFullDetails);

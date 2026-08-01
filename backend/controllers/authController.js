@@ -30,6 +30,24 @@ const generateConnectCode = (userId, extras = {}) => {
   return code;
 };
 
+// Allowlist of safe post-connect redirect targets. Each entry must match the
+// FULL string (anchored ^...$) — no partial/prefix matches — since the value
+// is client-supplied (req.body.returnTo) and gets concatenated directly onto
+// SITE_URL in a res.redirect(); a ban-list here would be an open-redirect risk.
+const RETURN_TO_ALLOWLIST = [
+  /^\/onboarding$/,
+  /^\/edit-profile\/[A-Za-z0-9_.-]{1,100}$/,
+];
+
+const sanitizeReturnTo = (returnTo) => {
+  if (typeof returnTo !== 'string' || returnTo.length === 0) return null;
+  if (!returnTo.startsWith('/') || returnTo.startsWith('//')) return null; // no protocol-relative
+  if (returnTo.includes('\\')) return null;                                // backslash bypass
+  if (/[\x00-\x1f\x7f]/.test(returnTo)) return null;                       // control chars
+  if (/^\/[^/]*:/.test(returnTo)) return null;                             // scheme smuggling
+  return RETURN_TO_ALLOWLIST.some((re) => re.test(returnTo)) ? returnTo : null;
+};
+
 // Twitter OAuth 2.0 PKCE helpers
 const generatePKCE = () => {
   const verifier   = crypto.randomBytes(32).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
@@ -819,12 +837,14 @@ module.exports.initiateConnect = (req, res) => {
   let oauthUrl;
 
   if (platform === 'github') {
-    const state = generateConnectCode(req.userId);
+    const returnTo = sanitizeReturnTo(req.body.returnTo);
+    const state = generateConnectCode(req.userId, { returnTo });
     // Reuse the same callback URL registered in the GitHub OAuth App
     oauthUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(`${BACKEND_DOMAIN}/auth/github/callback`)}&scope=user:email&state=${state}`;
 
   } else if (platform === 'linkedin') {
-    const state = generateConnectCode(req.userId);
+    const returnTo = sanitizeReturnTo(req.body.returnTo);
+    const state = generateConnectCode(req.userId, { returnTo });
     // Reuse the same callback URL registered in the LinkedIn OAuth App
     oauthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(`${BACKEND_DOMAIN}/auth/linkedin/callback`)}&scope=openid%20profile%20email&state=${state}`;
 
@@ -850,9 +870,10 @@ module.exports.githubConnectCallback = async (req, res) => {
   const connectData = connectStateCodes.get(state);
   if (!connectData || connectData.expiresAt < Date.now()) {
     connectStateCodes.delete(state);
-    return res.redirect(`${SITE_URL}/onboarding?connect_error=expired`);
+    return res.redirect(`${SITE_URL}${connectData?.returnTo || '/onboarding'}?connect_error=expired`);
   }
   connectStateCodes.delete(state);
+  const returnTo = connectData.returnTo || '/onboarding';
 
   try {
     const tokenRes = await axios.post(
@@ -868,7 +889,7 @@ module.exports.githubConnectCallback = async (req, res) => {
 
     const { access_token } = tokenRes.data;
     if (!access_token) {
-      return res.redirect(`${SITE_URL}/onboarding?connect_error=github_token_failed`);
+      return res.redirect(`${SITE_URL}${returnTo}?connect_error=github_token_failed`);
     }
 
     const profileRes = await axios.get('https://api.github.com/user', {
@@ -882,10 +903,10 @@ module.exports.githubConnectCallback = async (req, res) => {
       githubAccessToken: access_token,
     });
 
-    return res.redirect(`${SITE_URL}/onboarding?connected=github&handle=${encodeURIComponent(githubProfile.login)}`);
+    return res.redirect(`${SITE_URL}${returnTo}?connected=github&handle=${encodeURIComponent(githubProfile.login)}`);
   } catch (err) {
     console.error('GitHub connect callback error:', err.message);
-    return res.redirect(`${SITE_URL}/onboarding?connect_error=github_failed`);
+    return res.redirect(`${SITE_URL}${returnTo}?connect_error=github_failed`);
   }
 };
 
@@ -896,9 +917,10 @@ module.exports.linkedinConnectCallback = async (req, res) => {
   const connectData = connectStateCodes.get(state);
   if (!connectData || connectData.expiresAt < Date.now()) {
     connectStateCodes.delete(state);
-    return res.redirect(`${SITE_URL}/onboarding?connect_error=expired`);
+    return res.redirect(`${SITE_URL}${connectData?.returnTo || '/onboarding'}?connect_error=expired`);
   }
   connectStateCodes.delete(state);
+  const returnTo = connectData.returnTo || '/onboarding';
 
   try {
     const tokenRes = await axios.post(
@@ -915,7 +937,7 @@ module.exports.linkedinConnectCallback = async (req, res) => {
 
     const { access_token } = tokenRes.data;
     if (!access_token) {
-      return res.redirect(`${SITE_URL}/onboarding?connect_error=linkedin_token_failed`);
+      return res.redirect(`${SITE_URL}${returnTo}?connect_error=linkedin_token_failed`);
     }
 
     const profileRes = await axios.get('https://api.linkedin.com/v2/userinfo', {
@@ -930,10 +952,10 @@ module.exports.linkedinConnectCallback = async (req, res) => {
       linkedinAccessToken: access_token,
     });
 
-    return res.redirect(`${SITE_URL}/onboarding?connected=linkedin&handle=${encodeURIComponent(displayName)}`);
+    return res.redirect(`${SITE_URL}${returnTo}?connected=linkedin&handle=${encodeURIComponent(displayName)}`);
   } catch (err) {
     console.error('LinkedIn connect callback error:', err.message);
-    return res.redirect(`${SITE_URL}/onboarding?connect_error=linkedin_failed`);
+    return res.redirect(`${SITE_URL}${returnTo}?connect_error=linkedin_failed`);
   }
 };
 
