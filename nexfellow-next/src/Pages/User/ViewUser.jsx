@@ -274,7 +274,14 @@ const User = () => {
                         className={styles.svgIcon}
                       />
                     </button>
-                    <button className={styles.iconButton}>
+                    <button
+                      className={styles.iconButton}
+                      onClick={() => {
+                        const profileUrl = `${window.location.origin}/user/${username}`;
+                        navigator.clipboard.writeText(profileUrl);
+                        toast.success("Profile link copied to clipboard!");
+                      }}
+                    >
                       <img
                         src={Shareicon?.src || Shareicon}
                         alt="Share"
