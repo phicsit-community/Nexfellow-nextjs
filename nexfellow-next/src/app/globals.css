@@ -255,3 +255,13 @@ a {
   color: #94a3b8 !important;
   opacity: 1 !important;
 }
+
+/* Clerk's OTP boxes don't use a real native caret — the blinking cursor
+   is a fake `<div>` whose color comes from the `colorInputForeground`
+   theme variable (defaults to black), not from `appearance.elements` or
+   CSS `caret-color`. The real fix is setting `colorInputForeground` in
+   `appearance.variables` on the SignIn/SignUp components. These rules
+   are just a harmless belt-and-suspenders fallback for the digit text. */
+.cl-otpCodeFieldInput {
+  color: #f1f5f9 !important;
+}

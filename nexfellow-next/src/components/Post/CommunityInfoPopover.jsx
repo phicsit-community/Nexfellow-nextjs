@@ -58,8 +58,12 @@ const CommunityInfoPopover = ({
             newTop = "60px"; // show below
           } else if (spaceAbove > popoverHeight + 200) {
             newTop = -popoverHeight - 10 + "px"; // show above
+          } else if (spaceAbove > spaceBelow) {
+            // Neither side fully fits: pick whichever has more room and
+            // let the popover's own max-height/overflow-y handle the rest.
+            newTop = -Math.min(popoverHeight, spaceAbove - 10) - 10 + "px";
           } else {
-            newTop = "60px"; // fallback
+            newTop = "60px"; // fallback: below, clamped by max-height/overflow-y
           }
         }
 
