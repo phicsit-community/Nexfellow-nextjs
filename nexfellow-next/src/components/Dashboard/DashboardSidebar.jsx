@@ -37,8 +37,7 @@ const DashboardSidebar = ({
 
   const isActive = (path) => activeTab === path;
 
-  const isLocked =
-    (!communityBadge || verificationBadge) && !isCommunityAccount;
+  const isLocked = false;
 
   useEffect(() => {
     if (floatingButtonRef.current) {
