@@ -152,7 +152,7 @@ export default function TheProblem() {
               <div style={{ width: 28, height: 2, background: T }} />
               <span style={{ color: T, fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>THE PROBLEM</span>
             </div>
-            <h2 style={{ fontSize: "clamp(28px, 4vw, 52px)", fontWeight: 800, color: TEXT, lineHeight: 1.15, letterSpacing: "-1px", maxWidth: 640 }}>
+            <h2 style={{ fontSize: "clamp(28px, 4vw, 52px)", fontWeight: 800, color: TEXT, lineHeight: 1.15, letterSpacing: "-1px", maxWidth: 990 }}>
               Building is the easy part.{" "}
               <span style={{ color: T }}>Getting heard</span>{" "}
               is where most products die.
