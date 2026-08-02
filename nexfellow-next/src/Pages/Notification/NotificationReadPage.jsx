@@ -14,6 +14,7 @@ const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 import { Button } from "../../components/ui/button";
 import userImg from "./assets/Frame.svg";
 import timeAgo from "./../../utils/timeAgo";
+import { getNotificationIcon } from "./../../utils/notificationIcons";
 
 const NotificationReadPage = () => {
   const params = useParams();
@@ -108,7 +109,8 @@ const NotificationReadPage = () => {
   if (!notification) return <div className={styles.loading}>Loading...</div>;
 
   const senderName = notification?.sender?.name || "System";
-  const senderPic = notification?.sender?.picture || userImg;
+  const senderPic =
+    notification?.sender?.picture || getNotificationIcon(notification) || userImg;
 
   return (
     <div className={styles.mainContainer}>

@@ -12,6 +12,7 @@ import NoNotification from "./assets/NoNotification.svg";
 import BackButton from "../../components/BackButton/BackButton";
 import { ThreeDots } from "react-loader-spinner";
 import { Bell, Trash2 } from "lucide-react";
+import { getNotificationIcon } from "../../utils/notificationIcons";
 
 const NotificationPage = () => {
   const router = useRouter();
@@ -460,7 +461,11 @@ const NotificationPage = () => {
                   >
                     <div className={styles.profileContainer}>
                       <img
-                        src={notification.sender?.picture || defaultProfilePic}
+                        src={
+                          notification.sender?.picture ||
+                          getNotificationIcon(notification) ||
+                          defaultProfilePic
+                        }
                         alt="Profile"
                         className={styles.profilePic}
                         style={{

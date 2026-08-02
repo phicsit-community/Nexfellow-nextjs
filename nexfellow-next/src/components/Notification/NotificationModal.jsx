@@ -20,6 +20,7 @@ import defaultProfilePic from "./assets/default.jpg";
 import NoNotifcation from "./assets/NoNotification.svg";
 import { Trash2 } from "lucide-react";
 import { PiConfetti } from "react-icons/pi";
+import { getNotificationIcon } from "../../utils/notificationIcons";
 
 const NotificationModal = ({ closeModal }) => {
   const router = useRouter();
@@ -502,6 +503,12 @@ const NotificationModal = ({ closeModal }) => {
                           handleProfileClick(notification);
                         }}
                       />
+                    ) : getNotificationIcon(notification) ? (
+                      <img
+                        src={getNotificationIcon(notification)}
+                        alt={notification.title}
+                        className={styles.profilePic}
+                      />
                     ) : notification.type === "milestone" ? (
                       <PiConfetti size={22} />
                     ) : (
@@ -634,6 +641,12 @@ const NotificationModal = ({ closeModal }) => {
                               closeModal();
                               handleProfileClick(selectedNotification);
                             }}
+                          />
+                        ) : getNotificationIcon(selectedNotification) ? (
+                          <img
+                            src={getNotificationIcon(selectedNotification)}
+                            alt={selectedNotification.title}
+                            className={styles.profilePic}
                           />
                         ) : selectedNotification.type === "milestone" ? (
                           <PiConfetti size={22} />

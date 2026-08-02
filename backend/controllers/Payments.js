@@ -5,6 +5,7 @@ const { PLANS, VALID_PLAN_IDS, VALID_INTERVALS } = require("../constants/plans")
 const { CREDIT_PACKS, VALID_PACK_IDS } = require("../constants/creditPacks");
 const MailSender = require("../utils/mailSender");
 const CreditService = require("../services/creditService");
+const NotificationService = require("../utils/notificationService");
 
 let _dodo = null;
 const getDodo = () => {
@@ -240,6 +241,24 @@ async function activateSubscription(data, meta, eventType, webhookId) {
   }
 
   const planNames = { builder_pro: "Builder Pro", founder: "Founder" };
+
+  // Title must match an icon file in public/notificationIcons/ (e.g. "Builder Plan.png")
+  // so the frontend can render the plan icon for this notification.
+  const planNotificationTitles = { builder_pro: "Builder Plan", founder: "Founder Plan" };
+  const planNotificationTitle = planNotificationTitles[planId];
+  if (planNotificationTitle) {
+    NotificationService.createAndSendNotification({
+      title: planNotificationTitle,
+      message: `Your ${planNames[planId] ?? planId} (${interval}) subscription is now active. It renews on ${expiresAt.toDateString()}.`,
+      senderId: null,
+      senderModel: "System",
+      recipients: [user._id],
+      type: "system",
+      priority: "normal",
+      meta: { planId, interval, expiresAt },
+    }).catch((err) => console.error("Plan purchase notification failed:", err.message));
+  }
+
   MailSender(
     user.email,
     `Your ${planNames[planId] ?? planId} subscription is active`,
