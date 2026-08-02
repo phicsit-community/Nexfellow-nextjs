@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { T, DARKER } from "../shared/tokens";
 
-const PRODUCT_LINKS = [["How it works", "#how-it-works", true], ["Features", "/"], ["Launches", "/launches"], ["Changelog", "/"]];
+const PRODUCT_LINKS = [["How it works", "#how-it-works", true], ["Features", "/features"], ["Launches", "/launches"], ["Changelog", "/"]];
 const COMPANY_LINKS = [["Mission", "/mission"], ["About us", "/"], ["Success Stories", "/coming-soon"], ["Contact us", "/contact"]];
 const SUPPORT_LINKS = [["How credits work", "/coming-soon", true], ["Report a bug", "/"], ["Request a feature", "/"], ["API docs", "/coming-soon", true]];
 

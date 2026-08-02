@@ -225,7 +225,7 @@ export default function SignInPage() {
           <p style={{ margin: 0, fontSize: "13px", color: "#94a3b8", lineHeight: "1.5" }}>
             <strong style={{ color: "#00d4a8", fontWeight: "600" }}>Already have a Nexfellow account?</strong>
             <br />
-            Click <strong style={{ color: "#f1f5f9" }}>"Sign up"</strong> below and enter your existing email — your account and data will be linked automatically.
+            Sign up with the email address associated with your account to access your existing profile and data.
           </p>
         </div>
         <SignIn appearance={clerkAppearance} />
