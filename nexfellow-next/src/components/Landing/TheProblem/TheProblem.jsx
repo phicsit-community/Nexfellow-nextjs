@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import FadeIn from "../shared/FadeIn";
-import { T, BG, MUTED, TEXT, DARKER } from "../shared/tokens";
+import { T, BG, MUTED, TEXT } from "../shared/tokens";
 
 /* ── Mockup components ─────────────────────────────────────────────── */
 
@@ -281,11 +282,19 @@ export default function TheProblem() {
             <p className="problem-quote-text" style={{ color: TEXT, fontSize: 18, lineHeight: 1.85, fontStyle: "italic", marginBottom: 32 }}>
               "Before NexFellow, I shipped 4 products that quietly failed. The problem wasn’t the idea. It was building alone. Honest feedback from founders helped me get my first 40 paying users in 6 weeks."
             </p>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
-              {/* Replace with image if you have one, using RP placeholder for now */}
-              <div style={{ width: 48, height: 48, borderRadius: "50%", background: `linear-gradient(135deg, ${T}, #0f766e)`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 16, color: DARKER }}>RP</div>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14 }}>
+              <div style={{ width: 56, height: 56, border: `1px solid ${T}`, padding: 3, overflow: "hidden" }}>
+                <Image
+                  src="/images/anoop-maurya.jpg"
+                  alt="Deependra Gaur"
+                  width={56}
+                  height={56}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(100%)" }}
+                />
+              </div>
               <div style={{ textAlign: "center" }}>
-                <div style={{ color: T, fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "1.5px" }}>Founder · NexFellow Member</div>
+                <div style={{ color: TEXT, fontSize: 15, fontWeight: 700, marginBottom: 6 }}>Deependra Gaur</div>
+                <div style={{ color: T, fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "1.5px" }}>Founder | Sylus AI &amp; Gemai Pvt. Ltd.</div>
               </div>
             </div>
             </div>
