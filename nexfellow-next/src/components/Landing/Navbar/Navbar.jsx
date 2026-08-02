@@ -134,7 +134,7 @@ export default function Navbar() {
               ) : (
                 <>
                   <Link href="/sign-in" style={{ color: TEXT, textDecoration: "none", fontSize: 14, fontWeight: 500 }}>Log In</Link>
-                  <Link href="/sign-up" style={btn}>Get Started</Link>
+                  <Link href="/sign-up" style={{ ...btn, color: "#fff" }}>Get Started</Link>
                 </>
               )}
             </div>
@@ -210,7 +210,7 @@ export default function Navbar() {
                       Log In
                     </Link>
                     <Link href="/sign-up" onClick={() => setMenuOpen(false)}
-                      style={{ ...btn, textAlign: "center", padding: "12px 0", borderRadius: 10, fontSize: 15 }}>
+                      style={{ ...btn, color: "#fff", textAlign: "center", padding: "12px 0", borderRadius: 10, fontSize: 15 }}>
                       Get Started
                     </Link>
                   </>
