@@ -6,7 +6,6 @@ import { Switch } from "../../components/ui/switch";
 
 const PrivacySettings = () => {
   const [settings, setSettings] = useState({
-    showEmail: true,
     showFollowers: true,
     showFollowing: true,
     showRegisteredQuizzes: true,
@@ -86,19 +85,6 @@ const PrivacySettings = () => {
 
       <div className={styles.settingsGroup}>
         <h3 className={styles.groupTitle}>Profile Visibility</h3>
-
-        <div className={styles.settingItem}>
-          <div className={styles.settingInfo}>
-            <h4>Show Email</h4>
-            <p>Allow others to see your email address</p>
-          </div>
-          <Switch
-            checked={settings.showEmail}
-            onCheckedChange={() => handleToggle("showEmail")}
-            id="show-email"
-            disabled={savingSettings.showEmail}
-          />
-        </div>
 
         <div className={styles.settingItem}>
           <div className={styles.settingInfo}>
