@@ -33,7 +33,7 @@ export default function FeaturesHero() {
       }} />
 
       {/* Text content — centered, constrained width */}
-      <div style={{ position: "relative", zIndex: 5, textAlign: "center", maxWidth: 1000, padding: "0 24px", width: "100%" }}>
+      <div style={{ position: "relative", zIndex: 5, textAlign: "center", maxWidth: 1220, padding: "0 24px", width: "100%" }}>
 
         {/* Platform badge */}
         <motion.div
@@ -41,7 +41,7 @@ export default function FeaturesHero() {
           style={{
             display: "inline-flex", alignItems: "center", gap: 8,
             background: "rgba(13,32,53,0.8)", border: `1px solid ${BORDER}`,
-            borderRadius: 20, padding: "6px 16px", marginBottom: 32,
+            borderRadius: 20, padding: "6px 16px", marginBottom: 21,
             backdropFilter: "blur(8px)",
           }}
         >
@@ -53,14 +53,14 @@ export default function FeaturesHero() {
         <motion.h1
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.7 }}
           style={{
-            fontSize: "clamp(38px, 6vw, 72px)", fontWeight: 800, lineHeight: 1.1,
+            fontSize: "clamp(38px, 6vw, 65px)", fontWeight: 800, lineHeight: 1.1,
             color: TEXT, marginBottom: 24, letterSpacing: "-2px"
           }}
         >
           Every tool a builder needs to{" "}
-          <span style={{ color: T, whiteSpace: "nowrap" }}>get found,</span>{" "}
+          <span style={{ color: T, whiteSpace: "nowrap" }}>get <br/> found,</span>{" "}
           get feedback,{" "}
-          <span style={{ color: "#f59e0b", fontStyle: "italic" }}>grow.</span>
+          <span style={{ color: T}}>grow.</span>
         </motion.h1>
 
         {/* Subtitle */}
