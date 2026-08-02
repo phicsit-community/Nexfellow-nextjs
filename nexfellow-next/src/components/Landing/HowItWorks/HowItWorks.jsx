@@ -52,7 +52,7 @@ const STEPS = [
   {
     num: 2,
     title: "We match real builders",
-    desc: "The system pairs you with reviewers in your niche — people who've shipped, not lurkers. You can hand-pick, too.",
+    desc: "We connect you with experienced reviewers who have actually built products in your niche. You can also choose who you'd like feedback from.",
     icon: (
       <svg width="200" height="124" viewBox="0 0 200 124" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M180.779 120.253H19.0293V14.4469C19.0317 12.8784 19.656 11.3749 20.7652 10.266C21.8745 9.15707 23.3782 8.53323 24.9466 8.53125H174.862C176.43 8.53312 177.934 9.15691 179.043 10.2659C180.153 11.3748 180.777 12.8784 180.779 14.4469V120.253Z" fill="#090814"/>
