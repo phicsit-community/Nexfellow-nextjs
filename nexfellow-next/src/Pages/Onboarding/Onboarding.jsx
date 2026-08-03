@@ -202,7 +202,7 @@ export default function Onboarding() {
 
   // Screen 2 validation — called instead of goTo(3)
   const continueFromProfile = () => {
-    const { fname, lname, handle, email } = profile;
+    const { fname, lname, handle, email, bio } = profile;
     const clean = handle.replace(/^@/, '').trim();
     if (!fname.trim())           return setScreenError('First name is required.');
     if (!lname.trim())           return setScreenError('Last name is required.');
@@ -210,6 +210,7 @@ export default function Onboarding() {
     if (usernameAvailable === false) return setScreenError('That username is already taken — choose another.');
     if (!email.trim())           return setScreenError('Email address is required.');
     if (!/\S+@\S+\.\S+/.test(email)) return setScreenError('Please enter a valid email address.');
+    if (!bio.trim())              return setScreenError('Short bio is required.');
     goTo(3);
   };
 
@@ -305,17 +306,6 @@ export default function Onboarding() {
                 </div>
               );
             })}
-          </div>
-
-          <div className={styles["left-card"]}>
-            <div className={styles["lc-quote"]}>"The feedback I got in 6 hours completely changed how I think about my pricing. Nothing else has done that."</div>
-            <div className={styles["lc-author"]}>
-              <div className={styles["lc-av"]}>RK</div>
-              <div>
-                <div className={styles["lc-name"]}>Rahul K.</div>
-                <div className={styles["lc-role"]}>Founder, TaskFlow AI</div>
-              </div>
-            </div>
           </div>
         </div>
 
