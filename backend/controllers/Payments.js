@@ -5,6 +5,7 @@ const { PLANS, VALID_PLAN_IDS, VALID_INTERVALS } = require("../constants/plans")
 const { CREDIT_PACKS, VALID_PACK_IDS } = require("../constants/creditPacks");
 const MailSender = require("../utils/mailSender");
 const CreditService = require("../services/creditService");
+const { grantSubscriptionCredits } = require("../services/subscriptionCreditGrant");
 const NotificationService = require("../utils/notificationService");
 
 let _dodo = null;
@@ -195,8 +196,20 @@ async function activateSubscription(data, meta, eventType, webhookId) {
   const customerId = data.customer?.customer_id;
 
   const now = new Date();
-  const expiresAt = new Date(now);
-  expiresAt.setDate(expiresAt.getDate() + (interval === "annual" ? 365 : 30));
+  // Trust Dodo's own billing schedule instead of guessing +30/+365 days from
+  // webhook-processing time — that drifted from real calendar months/years and
+  // from delivery delays. next_billing_date is present on every
+  // subscription.active/renewed payload.
+  let expiresAt;
+  if (data.next_billing_date) {
+    expiresAt = new Date(data.next_billing_date);
+  } else {
+    console.error(
+      `Webhook for subscription ${data.subscription_id} is missing next_billing_date; falling back to a local estimate.`
+    );
+    expiresAt = new Date(now);
+    expiresAt.setDate(expiresAt.getDate() + (interval === "annual" ? 365 : 30));
+  }
 
   user.subscriptionTier = planId;
   user.subscriptionExpiresAt = expiresAt;
@@ -207,6 +220,9 @@ async function activateSubscription(data, meta, eventType, webhookId) {
   // Blue badge for Builder Pro, orange badge for Founder — set automatically
   // from the plan being activated, overriding whatever badge the user had before.
   user.planBadge = PLANS[planId].badge;
+  // Anchor for annualCreditGrantCron: annual plans only get a renewal webhook
+  // once a year, so the cron grants the in-between months from this date.
+  user.lastSubscriptionCreditGrantAt = now;
 
   const subscriptionRecord = {
     userId: user._id,
@@ -225,20 +241,16 @@ async function activateSubscription(data, meta, eventType, webhookId) {
 
   await Promise.all([user.save(), Subscription.create(subscriptionRecord)]);
 
-  // Grant plan credits for this billing period.
+  // Grant plan credits for this billing period (trimming any balance above the
+  // plan's rollover cap first — see subscriptionCreditGrant.js).
   // idempotencyKey is per webhookId so each delivery grants credits exactly once,
   // and duplicate webhook deliveries are silently deduplicated by the unique index.
-  const creditAmount = PLANS[planId].credits;
-  if (creditAmount > 0) {
-    const grantIdempotencyKey = `SUBSCRIPTION_CREDIT_GRANT:${webhookId ?? `${data.subscription_id}:${eventType}:${data.previous_billing_date}`}`;
-    CreditService.award({
-      userId: user._id,
-      eventCode: "SUBSCRIPTION_CREDIT_GRANT",
-      idempotencyKey: grantIdempotencyKey,
-      deltaOverride: creditAmount,
-      source: "payment",
-    }).catch((err) => console.error("Subscription credit grant failed:", err.message));
-  }
+  const grantIdempotencyKey = `SUBSCRIPTION_CREDIT_GRANT:${webhookId ?? `${data.subscription_id}:${eventType}:${data.previous_billing_date}`}`;
+  grantSubscriptionCredits({
+    userId: user._id,
+    planId,
+    idempotencyKey: grantIdempotencyKey,
+  }).catch((err) => console.error("Subscription credit grant failed:", err.message));
 
   const planNames = { builder_pro: "Builder Pro", founder: "Founder" };
 

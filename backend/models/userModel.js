@@ -164,6 +164,16 @@ const userSchema = new schema(
       default: null,
     },
 
+    // Set on every SUBSCRIPTION_CREDIT_GRANT (activation, renewal, or the
+    // annual-plan monthly credit cron). Dodo only fires a renewal webhook once
+    // a year for annual plans, so annualCreditGrantCron uses this as the anchor
+    // to grant the 11 in-between months' credits on the same monthly cadence
+    // monthly-plan subscribers get automatically from their webhook.
+    lastSubscriptionCreditGrantAt: {
+      type: Date,
+      default: null,
+    },
+
     // Legacy field from when the free-plan credit grant recurred monthly.
     // The grant is now one-time (awarded at signup only), so this is no
     // longer set for new users; kept for backward compatibility with old records.

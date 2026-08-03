@@ -92,6 +92,26 @@ class CreditService {
     });
   }
 
+  // ── Public: rollover cap enforcement ────────────────────────────────────────
+
+  /**
+   * Trims a balance above `cap` down to `cap`, run right before a new billing
+   * cycle's SUBSCRIPTION_CREDIT_GRANT so unused credits don't accumulate past
+   * the plan's advertised "rollover up to N" limit. No-op if already at/under cap.
+   */
+  static async trimRolloverIfNeeded({ userId, cap, idempotencyKey }) {
+    const profile = await Profile.findOne({ userId }).select("coin").lean();
+    if (!profile || profile.coin <= cap) return null;
+    const delta = cap - profile.coin;
+    return CreditService._commit({
+      userId,
+      delta,
+      eventCode: "CREDIT_ROLLOVER_TRIM",
+      idempotencyKey,
+      source: "system",
+    });
+  }
+
   // ── Public: query ───────────────────────────────────────────────────────────
 
   static async getBalance(userId) {

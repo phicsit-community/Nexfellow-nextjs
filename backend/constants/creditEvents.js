@@ -114,6 +114,13 @@ const CREDIT_EVENTS = {
     delta: 0,
     description: "One-time credit pack purchase",
   },
+  // delta: 0 — CreditService.trimRolloverIfNeeded computes the actual (negative)
+  // amount from the user's balance vs. PLANS[planId].rolloverCap.
+  CREDIT_ROLLOVER_TRIM: {
+    code: "CREDIT_ROLLOVER_TRIM",
+    delta: 0,
+    description: "Unused credits trimmed to rollover cap before this cycle's grant",
+  },
 
   // ── Spend ────────────────────────────────────────────────────────────────────
   SUBMIT_FOR_FEEDBACK: {

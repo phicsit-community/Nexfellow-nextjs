@@ -14,6 +14,9 @@ const PLANS = Object.freeze({
     imagesPerPost: 2,
     screenshotsPerProduct: 2,
     credits: 200,
+    // Unused credits above this cap are trimmed before each month's grant —
+    // matches the "rollover up to 100" copy on the pricing page.
+    rolloverCap: 100,
     broadcastsPerMonth: 3,
     badge: "blue",
     builderMapAccess: "full",
@@ -27,6 +30,9 @@ const PLANS = Object.freeze({
     imagesPerPost: 4,
     screenshotsPerProduct: 4,
     credits: 600,
+    // Unused credits above this cap are trimmed before each month's grant —
+    // matches the "rollover up to 300" copy on the pricing page.
+    rolloverCap: 300,
     broadcastsPerMonth: Infinity,
     badge: "orange",
     builderMapAccess: "full",

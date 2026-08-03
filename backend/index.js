@@ -76,6 +76,11 @@ const subscriptionExpiryCron = require("./jobs/subscriptionExpiryCron");
 cron.schedule("0 3 * * *", subscriptionExpiryCron, { timezone: "UTC" });
 console.log("🔄 Subscription expiry cron job scheduled (daily 03:00 UTC)");
 
+// Annual-plan monthly credit grant: runs daily at 04:00 UTC
+const annualCreditGrantCron = require("./jobs/annualCreditGrantCron");
+cron.schedule("0 4 * * *", annualCreditGrantCron, { timezone: "UTC" });
+console.log("🔄 Annual credit grant cron job scheduled (daily 04:00 UTC)");
+
 // if debug
 // if (process.env.NODE_ENV === "development") {
 //   app.use(requestLogger);
