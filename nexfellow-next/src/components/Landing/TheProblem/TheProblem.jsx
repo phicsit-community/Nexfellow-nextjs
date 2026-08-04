@@ -285,15 +285,15 @@ export default function TheProblem() {
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14 }}>
               <div style={{ width: 56, height: 56, border: `1px solid ${T}`, padding: 3, overflow: "hidden" }}>
                 <Image
-                  src="/images/anoop-maurya.jpg"
-                  alt="Deependra Gaur"
+                  src="/images/AnoopPhoto.jpeg"
+                  alt="Anoop Maurya"
                   width={56}
                   height={56}
                   style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(100%)" }}
                 />
               </div>
               <div style={{ textAlign: "center" }}>
-                <div style={{ color: TEXT, fontSize: 15, fontWeight: 700, marginBottom: 6 }}>Deependra Gaur</div>
+                <div style={{ color: TEXT, fontSize: 15, fontWeight: 700, marginBottom: 6 }}>Anoop Maurya</div>
                 <div style={{ color: T, fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "1.5px" }}>Founder | Sylus AI &amp; Gemai Pvt. Ltd.</div>
               </div>
             </div>
