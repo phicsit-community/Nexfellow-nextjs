@@ -2,64 +2,34 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import DotGrid from "../shared/DotGrid";
 import { T, BG, DARKER, MUTED, TEXT, BORDER, BORDER2 } from "../shared/tokens";
 import TrueFocus from './TrueFocus';
 
-const AvatarAM = () => (
-  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="15" cy="15" r="15" fill="url(#am_g)" />
-    <defs><linearGradient id="am_g" x1="0" y1="0" x2="30" y2="30" gradientUnits="userSpaceOnUse"><stop stopColor="#14b8a6" /><stop offset="1" stopColor="#0f766e" /></linearGradient></defs>
-    <text x="15" y="19.5" textAnchor="middle" fill="#071a2c" fontSize="11" fontWeight="700" fontFamily="Inter,sans-serif">AM</text>
-  </svg>
-);
-const AvatarRK = () => (
-  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="15" cy="15" r="15" fill="url(#rk_g)" />
-    <defs><linearGradient id="rk_g" x1="0" y1="0" x2="30" y2="30" gradientUnits="userSpaceOnUse"><stop stopColor="#7c3aed" /><stop offset="1" stopColor="#2563eb" /></linearGradient></defs>
-    <text x="15" y="19.5" textAnchor="middle" fill="white" fontSize="11" fontWeight="700" fontFamily="Inter,sans-serif">RK</text>
-  </svg>
-);
-const AvatarDK = () => (
-  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="15" cy="15" r="15" fill="url(#dk_g)" />
-    <defs><linearGradient id="dk_g" x1="0" y1="0" x2="30" y2="30" gradientUnits="userSpaceOnUse"><stop stopColor="#f59e0b" /><stop offset="1" stopColor="#d97706" /></linearGradient></defs>
-    <text x="15" y="19.5" textAnchor="middle" fill="#071a2c" fontSize="11" fontWeight="700" fontFamily="Inter,sans-serif">DK</text>
-  </svg>
-);
-const AvatarTN = () => (
-  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="15" cy="15" r="15" fill="url(#tn_g)" />
-    <defs><linearGradient id="tn_g" x1="0" y1="0" x2="30" y2="30" gradientUnits="userSpaceOnUse"><stop stopColor="#ec4899" /><stop offset="1" stopColor="#8b5cf6" /></linearGradient></defs>
-    <text x="15" y="19.5" textAnchor="middle" fill="white" fontSize="11" fontWeight="700" fontFamily="Inter,sans-serif">TN</text>
-  </svg>
-);
-const AvatarER = () => (
-  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="15" cy="15" r="15" fill="url(#er_g)" />
-    <defs><linearGradient id="er_g" x1="0" y1="0" x2="30" y2="30" gradientUnits="userSpaceOnUse"><stop stopColor="#2dd4bf" /><stop offset="1" stopColor="#0891b2" /></linearGradient></defs>
-    <text x="15" y="19.5" textAnchor="middle" fill="#071a2c" fontSize="11" fontWeight="700" fontFamily="Inter,sans-serif">ER</text>
-  </svg>
-);
-const AvatarMT = () => (
-  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="15" cy="15" r="15" fill="url(#mt_g)" />
-    <defs><linearGradient id="mt_g" x1="0" y1="0" x2="30" y2="30" gradientUnits="userSpaceOnUse"><stop stopColor="#22c55e" /><stop offset="1" stopColor="#16a34a" /></linearGradient></defs>
-    <text x="15" y="19.5" textAnchor="middle" fill="#071a2c" fontSize="11" fontWeight="700" fontFamily="Inter,sans-serif">MT</text>
-  </svg>
-);
+function Avatar({ name }) {
+  return (
+    <Image
+      src={`/heroPics/${encodeURIComponent(name)}.png`}
+      alt={name}
+      width={30}
+      height={30}
+      style={{ width: 30, height: 30, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
+    />
+  );
+}
 
 const LEFT_CARDS = [
-  { quote: "The best feedback I've received in years of building.", name: "Arjun Mehta", role: "Founder & Indie SaaS Builder", Avatar: AvatarAM, rotate: -5 },
-  { quote: "The real-time feedback loops reduced our iteration cycle by nearly 40%.", name: "Riya Kapoor", role: "Side Project Builder", Avatar: AvatarRK, rotate: 5 },
-  { quote: "Direct, actionable insights from people who actually ship code.", name: "Daniel Kim", role: "Startup Founder (B2B SaaS)", Avatar: AvatarDK, rotate: -5 },
+  { quote: "The best feedback I've received in years of building.", name: "Arjun Mehta", role: "Founder & Indie SaaS Builder", rotate: -5 },
+  { quote: "The real-time feedback loops reduced our iteration cycle by nearly 40%.", name: "Riya Kapoor", role: "Side Project Builder", rotate: 5 },
+  { quote: "Direct, actionable insights from people who actually ship code.", name: "Daniel Kim", role: "Startup Founder (B2B SaaS)", rotate: -5 },
 ];
 
 const RIGHT_CARDS = [
-  { quote: "NexFellow cut our feedback loop from weeks to minutes.", name: "Thabo Nkosi", role: "SaaS Builder", Avatar: AvatarTN, rotate: 5 },
-  { quote: "No fluff. Just raw technical validation from fellow engineers.", name: "Emily Rodriguez", role: "Startup Founder (Growth & Product)", Avatar: AvatarER, rotate: -5 },
-  { quote: "We validated our MVP and got our first 100 users through NexFellow feedback.", name: "Michael Torres", role: "Growth-Focused Founder", Avatar: AvatarMT, rotate: 5 },
+  { quote: "NexFellow cut our feedback loop from weeks to minutes.", name: "Thabo Nkosi", role: "SaaS Builder", rotate: 5 },
+  { quote: "No fluff. Just raw technical validation from fellow engineers.", name: "Emily Rodriguez", role: "Startup Founder (Growth & Product)", rotate: -5 },
+  { quote: "We validated our MVP and got our first 100 users through NexFellow feedback.", name: "Michael Torres", role: "Growth-Focused Founder", rotate: 5 },
 ];
 
 const STATS = [
@@ -72,7 +42,7 @@ const LEFT_POS = [[30, 22], [30, 46], [30, 70]];
 const RIGHT_POS = [[30, 22], [30, 46], [30, 70]];
 
 function TestimonialCard({ card, delay = 0 }) {
-  const { quote, name, role, Avatar, rotate = 0 } = card;
+  const { quote, name, role, rotate = 0 } = card;
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -90,7 +60,7 @@ function TestimonialCard({ card, delay = 0 }) {
         "{quote}"
       </p>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <Avatar />
+        <Avatar name={name} />
         <div>
           <div style={{ color: TEXT, fontSize: 11, fontWeight: 600 }}>{name}</div>
           <div style={{ color: MUTED, fontSize: 10 }}>{role}</div>
