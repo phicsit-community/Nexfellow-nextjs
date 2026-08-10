@@ -30,7 +30,7 @@ const Comingsoon = () => {
                     under construction.
                 </p>
                 <div className={styles.actions}>
-                    <button className={styles.notifyButton} onClick={() => router.push('/')}>Go Home</button>
+                    <button className={styles.notifyButton} onClick={() => router.push('/feed')}>Go Home</button>
                 </div>
             </div>
         </div>
