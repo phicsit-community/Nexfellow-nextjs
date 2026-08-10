@@ -38,6 +38,7 @@ function getPageTitle(pathname) {
   if (PAGE_TITLES[pathname]) return PAGE_TITLES[pathname];
   if (pathname?.startsWith("/dashboard")) return "Dashboard";
   if (pathname?.startsWith("/explore")) return "Profile";
+  if (pathname?.startsWith("/post")) return "Post";
   return null;
 }
 
