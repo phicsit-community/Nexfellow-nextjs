@@ -220,7 +220,9 @@ export default function BuildersMap() {
                 setMyLocation(nearbyRes.data.myLocation);
                 setMyProfile(myProf);
 
-                const top = [...enrichedBuilders].sort((a, b) => b.match - a.match);
+                const top = [...enrichedBuilders]
+                    .filter((b) => !resolvedMyUserId || String(b.userId) !== String(resolvedMyUserId))
+                    .sort((a, b) => b.match - a.match);
                 if (top[0]) setSelectedMatch(top[0]);
             } catch (err) {
                 console.error("BuildersMap load error:", err);
@@ -291,7 +293,10 @@ export default function BuildersMap() {
 
     // ── Derived ───────────────────────────────────────────────────────────────
 
-    const topMatches = [...enriched].sort((a, b) => b.match - a.match).slice(0, 10);
+    const topMatches = [...enriched]
+        .filter((b) => !myUserId || String(b.userId) !== String(myUserId))
+        .sort((a, b) => b.match - a.match)
+        .slice(0, 10);
 
     const cityCounts = nearby.reduce((acc, b) => {
         if (b.city) acc[b.city] = (acc[b.city] || 0) + 1;
