@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import styles from "./CommunityInfoPopover.module.css";
 import profile from "../../assets/profile.jpg";
 import api from "../../lib/axios";
+import VERIFY from "./assets/Verify.svg";
+import VERIFY_ORANGE from "./assets/VerifyOrange.svg";
+import communityBadgeIcon from "./assets/badge3.svg";
 
 const Spinner = ({ variant }) => (
   <div className={`${styles.spinner} ${styles[variant]}`} />
@@ -100,6 +103,19 @@ const CommunityInfoPopover = ({
     router.push(`/explore/${community.username}`);
   };
 
+  const getBadgeIcon = () => {
+    if (community.isCommunityAccount && community.communityId) {
+      if (community.communityBadge) return communityBadgeIcon;
+      if (community.verificationBadge) return VERIFY;
+      return null;
+    }
+    if (community.planBadge === "orange") return VERIFY_ORANGE;
+    if (community.planBadge === "blue") return VERIFY;
+    if (community.verificationBadge) return VERIFY;
+    return null;
+  };
+  const badgeIcon = getBadgeIcon();
+
   useEffect(() => {
     const fetchFollowStatus = async () => {
       try {
@@ -186,7 +202,16 @@ const CommunityInfoPopover = ({
           )}
         </div>
       </div>
-      <div className={styles.communityName}>{community.name}</div>
+      <div className={styles.communityName}>
+        {community.name}
+        {badgeIcon && (
+          <img
+            src={badgeIcon?.src || badgeIcon}
+            alt="Verified Badge"
+            className={styles.badge}
+          />
+        )}
+      </div>
       <div className={styles.username}>@{community.username}</div>
       <div className={styles.stats}>
         <div>

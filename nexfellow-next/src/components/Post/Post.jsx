@@ -43,6 +43,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
   const [followings, setFollowings] = useState(0);
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
+  const [communityDescription, setCommunityDescription] = useState("");
   const [isFollowing, setIsFollowing] = useState(false);
   const [shareCount, setShareCount] = useState(post.shares);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -97,6 +98,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
         const res = await api.get(`/user/publicprofile/${post.author._id}`);
         setFollowers(res.data.followers);
         setFollowerCount(res.data.followers.length);
+        setCommunityDescription(res.data.description || "");
       } catch (error) {
         console.error("Error fetching followers:", error);
       }
@@ -375,13 +377,20 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
                     profilePic: post.author.picture,
                     followers: followerCount,
                     following: followingCount,
-                    bio: post.community?.description
-                      ? post.community.description.length > 60
-                        ? `${post.community.description.slice(0, 60)}...`
-                        : post.community.description
-                      : "",
+                    bio: (() => {
+                      const description =
+                        post.community?.description || communityDescription;
+                      if (!description) return "";
+                      return description.length > 60
+                        ? `${description.slice(0, 60)}...`
+                        : description;
+                    })(),
                     communityId: post.author.createdCommunity,
                     communityOwnerId: post.author._id,
+                    isCommunityAccount: post.author.isCommunityAccount,
+                    communityBadge: post.author.communityBadge,
+                    verificationBadge: post.author.verificationBadge,
+                    planBadge: post.author.planBadge,
                   }}
                   setShowPopover={setShowInfoPopover}
                   postRef={postRef}

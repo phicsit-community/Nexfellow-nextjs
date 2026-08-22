@@ -112,6 +112,15 @@
 .communityName {
   font-weight: 500;
   font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 :global(.dark) .communityName {
