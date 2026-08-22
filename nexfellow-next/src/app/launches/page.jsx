@@ -24,7 +24,7 @@ const CATEGORY_META = {
 
 const ORDINALS = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th'];
 
-const TAB_API = { 'Recent': 'week', 'All Time': 'alltime' };
+const TAB_API = { 'Weekly': 'week', 'All Time': 'alltime' };
 
 const REVIEW_TAG_CLASS = {
   'UX': 'fbt-ux',
@@ -1169,7 +1169,7 @@ function ProductDetail({ productId, onBack, onVote, voted, votes, onVoteInit }) 
 // ─── Main launches page ───────────────────────────────────────────────────────
 
 export default function LaunchesPage() {
-  const [activeTab, setActiveTab] = useState('Recent');
+  const [activeTab, setActiveTab] = useState('Weekly');
   const [launchOpen, setLaunchOpen] = useState(true);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [launches, setLaunches] = useState([]);
@@ -1296,7 +1296,7 @@ export default function LaunchesPage() {
             <div className="lp-main-area">
               <div className="lp-tabbar">
                 <div className="lp-tabbar-track">
-                  {['Recent', 'All Time'].map(tab => (
+                  {['Weekly', 'All Time'].map(tab => (
                     <button
                       key={tab}
                       className={`lp-tab${activeTab === tab ? ' active' : ''}`}
