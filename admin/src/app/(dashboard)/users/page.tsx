@@ -8,7 +8,6 @@ import { BsCheckCircleFill, BsStarFill } from "react-icons/bs";
 import { toast } from "sonner";
 import { useAuth, authFetch } from "@/hooks/useAuth";
 import Loader from "@/components/Loader/Loader";
-import Image from "next/image";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 
@@ -298,7 +297,6 @@ const UsersPage = () => {
                             <tr className="bg-gray-50 border-b border-gray-100">
                                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Users</th>
                                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Contact</th>
-                                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Occupation</th>
                                 <th className="text-center px-6 py-4 text-sm font-semibold text-gray-700">Plan Badge</th>
                                 <th className="text-center px-6 py-4 text-sm font-semibold text-gray-700">Action</th>
                             </tr>
@@ -306,7 +304,7 @@ const UsersPage = () => {
                         <tbody>
                             {paginatedData.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="text-center py-12 text-gray-500">
+                                    <td colSpan={4} className="text-center py-12 text-gray-500">
                                         No users found
                                     </td>
                                 </tr>
@@ -317,19 +315,9 @@ const UsersPage = () => {
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 shrink-0">
-                                                    {user.picture ? (
-                                                        <Image
-                                                            src={user.picture}
-                                                            alt={user.name}
-                                                            width={40}
-                                                            height={40}
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    ) : (
-                                                        <div className="w-full h-full bg-teal-100 flex items-center justify-center text-teal-600 font-semibold">
-                                                            {user.name?.charAt(0)?.toUpperCase() || 'U'}
-                                                        </div>
-                                                    )}
+                                                    <div className="w-full h-full bg-teal-100 flex items-center justify-center text-teal-600 font-semibold">
+                                                        {user.name?.charAt(0)?.toUpperCase() || 'U'}
+                                                    </div>
                                                 </div>
                                                 <div>
                                                     <p className="text-sm font-medium text-gray-900">{user.name || 'Unknown'}</p>
@@ -341,12 +329,6 @@ const UsersPage = () => {
                                         {/* Contact */}
                                         <td className="px-6 py-4">
                                             <p className="text-sm text-gray-900">{user.email || 'No email'}</p>
-                                            <p className="text-sm text-gray-500">{user.phone || 'No phone'}</p>
-                                        </td>
-
-                                        {/* Occupation */}
-                                        <td className="px-6 py-4">
-                                            <p className="text-sm text-gray-600">{user.occupation || user.createdCommunity?.accountType || 'Freelance'}</p>
                                         </td>
 
                                         {/* Plan Badge (blue = Builder Pro, orange = Founder) */}

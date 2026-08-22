@@ -207,17 +207,9 @@ export default function RequestsPage() {
                         >
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden shrink-0">
-                                    {request.userId?.picture ? (
-                                        <img
-                                            src={request.userId.picture}
-                                            alt="User"
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                            <AiOutlineUser className="text-xl" />
-                                        </div>
-                                    )}
+                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                        <AiOutlineUser className="text-xl" />
+                                    </div>
                                 </div>
                                 <div>
                                     <p className="text-gray-900 font-medium">{request.communityName || request.userId?.name || request.userId?.username}</p>
@@ -287,17 +279,9 @@ export default function RequestsPage() {
 
                             <div className="flex items-center gap-4 mb-6">
                                 <div className="w-16 h-16 bg-gray-200 rounded-full overflow-hidden">
-                                    {selectedRequest.userId?.picture ? (
-                                        <img
-                                            src={selectedRequest.userId.picture}
-                                            alt="User"
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                            <AiOutlineUser className="text-2xl" />
-                                        </div>
-                                    )}
+                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                        <AiOutlineUser className="text-2xl" />
+                                    </div>
                                 </div>
                                 <div>
                                     <p className="text-gray-900 font-medium text-lg">{selectedRequest.communityName || selectedRequest.userId?.name || selectedRequest.userId?.username}</p>

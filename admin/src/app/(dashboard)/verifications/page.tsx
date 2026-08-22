@@ -261,22 +261,14 @@ export default function VerificationsPage() {
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-gray-200">
-                                                    {request.userId?.picture ? (
-                                                        <img
-                                                            src={request.userId.picture}
-                                                            alt={request.userId?.name || request.userId?.username || ''}
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    ) : (
-                                                        <div className="w-full h-full flex items-center justify-center text-gray-500 bg-gray-200 text-sm font-semibold">
-                                                            {(request.communityName || request.userId?.name || request.userId?.username || 'U')
-                                                                .split(' ')
-                                                                .map((w: string) => w[0])
-                                                                .slice(0, 2)
-                                                                .join('')
-                                                                .toUpperCase()}
-                                                        </div>
-                                                    )}
+                                                    <div className="w-full h-full flex items-center justify-center text-gray-500 bg-gray-200 text-sm font-semibold">
+                                                        {(request.communityName || request.userId?.name || request.userId?.username || 'U')
+                                                            .split(' ')
+                                                            .map((w: string) => w[0])
+                                                            .slice(0, 2)
+                                                            .join('')
+                                                            .toUpperCase()}
+                                                    </div>
                                                 </div>
                                                 <p className="text-gray-900 font-medium">{request.communityName || request.userId?.name || request.userId?.username || 'Unknown'}</p>
                                             </div>
@@ -328,17 +320,9 @@ export default function VerificationsPage() {
                         {/* User Profile */}
                         <div className="flex flex-col sm:flex-row items-center sm:items-start p-2 sm:p-4 gap-4">
                             <div className="shrink-0 overflow-hidden w-20 h-20 sm:w-[101px] sm:h-[101px] rounded-full">
-                                {selectedRequest.userId?.picture ? (
-                                    <img
-                                        src={selectedRequest.userId.picture}
-                                        alt="User"
-                                        className="w-full h-full object-cover"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                        <AiOutlineUser style={{ fontSize: 40, color: '#9CA3AF' }} />
-                                    </div>
-                                )}
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                    <AiOutlineUser style={{ fontSize: 40, color: '#9CA3AF' }} />
+                                </div>
                             </div>
                             <div className="flex flex-col justify-center flex-1 min-w-0 p-2 sm:p-4 gap-1">
                                 {/* Name + Badge */}

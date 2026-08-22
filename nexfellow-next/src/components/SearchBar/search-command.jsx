@@ -15,8 +15,6 @@ import {
 import {
   Users,
   FileText,
-  Compass,
-  Trophy,
   GroupIcon as Communities,
   Inbox,
   Calendar,
@@ -64,18 +62,6 @@ export default function SearchCommand() {
           if (e.key === "p") {
             e.preventDefault();
             if (user?.username) router.push(`/dashboard/${user.username}`);
-            setOpen(false);
-          } else if (e.key === "e") {
-            e.preventDefault();
-            router.push("/explore");
-            setOpen(false);
-          } else if (e.key === "l") {
-            e.preventDefault();
-            router.push("/leaderboard");
-            setOpen(false);
-          } else if (e.key === "c") {
-            e.preventDefault();
-            router.push("/communities");
             setOpen(false);
           } else if (e.key === "i") {
             e.preventDefault();
@@ -184,66 +170,6 @@ export default function SearchCommand() {
                       style={{ padding: "0.375rem 0.5rem" }}
                     >
                       <span className="text-xs">⌘</span>P
-                    </kbd>
-                  </CommandShortcut>
-                </CommandItem>
-                <CommandItem
-                  onSelect={() => {
-                    router.push("/explore");
-                    setOpen(false);
-                  }}
-                  className="cursor-pointer flex items-center gap-2 justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <Compass className="mr-2 h-4 w-4" />
-                    <span>Explore</span>
-                  </div>
-                  <CommandShortcut>
-                    <kbd
-                      className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-                      style={{ padding: "0.375rem 0.5rem" }}
-                    >
-                      <span className="text-xs">⌘</span>E
-                    </kbd>
-                  </CommandShortcut>
-                </CommandItem>
-                <CommandItem
-                  onSelect={() => {
-                    router.push("/leaderboard");
-                    setOpen(false);
-                  }}
-                  className="cursor-pointer flex items-center gap-2 justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <Trophy className="mr-2 h-4 w-4" />
-                    <span>Leaderboard</span>
-                  </div>
-                  <CommandShortcut>
-                    <kbd
-                      className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-                      style={{ padding: "0.375rem 0.5rem" }}
-                    >
-                      <span className="text-xs">⌘</span>L
-                    </kbd>
-                  </CommandShortcut>
-                </CommandItem>
-                <CommandItem
-                  onSelect={() => {
-                    router.push("/communities");
-                    setOpen(false);
-                  }}
-                  className="cursor-pointer flex items-center gap-2 justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <Communities className="mr-2 h-4 w-4" />
-                    <span>Communities</span>
-                  </div>
-                  <CommandShortcut>
-                    <kbd
-                      className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-                      style={{ padding: "0.375rem 0.5rem" }}
-                    >
-                      <span className="text-xs">⌘</span>C
                     </kbd>
                   </CommandShortcut>
                 </CommandItem>
@@ -432,18 +358,6 @@ export function SearchCommandMobile() {
             e.preventDefault();
             if (user?.username) router.push(`/dashboard/${user.username}`);
             setOpen(false);
-          } else if (e.key === "e") {
-            e.preventDefault();
-            router.push("/explore");
-            setOpen(false);
-          } else if (e.key === "l") {
-            e.preventDefault();
-            router.push("/leaderboard");
-            setOpen(false);
-          } else if (e.key === "c") {
-            e.preventDefault();
-            router.push("/communities");
-            setOpen(false);
           } else if (e.key === "i") {
             e.preventDefault();
             router.push("/inbox");
@@ -535,66 +449,6 @@ export function SearchCommandMobile() {
                       style={{ padding: "0.375rem 0.5rem" }}
                     >
                       <span className="text-xs">⌘</span>P
-                    </kbd>
-                  </CommandShortcut>
-                </CommandItem>
-                <CommandItem
-                  onSelect={() => {
-                    router.push("/explore");
-                    setOpen(false);
-                  }}
-                  className="cursor-pointer flex items-center gap-2 justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <Compass className="mr-2 h-4 w-4" />
-                    <span>Explore</span>
-                  </div>
-                  <CommandShortcut>
-                    <kbd
-                      className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-                      style={{ padding: "0.375rem 0.5rem" }}
-                    >
-                      <span className="text-xs">⌘</span>E
-                    </kbd>
-                  </CommandShortcut>
-                </CommandItem>
-                <CommandItem
-                  onSelect={() => {
-                    router.push("/leaderboard");
-                    setOpen(false);
-                  }}
-                  className="cursor-pointer flex items-center gap-2 justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <Trophy className="mr-2 h-4 w-4" />
-                    <span>Leaderboard</span>
-                  </div>
-                  <CommandShortcut>
-                    <kbd
-                      className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-                      style={{ padding: "0.375rem 0.5rem" }}
-                    >
-                      <span className="text-xs">⌘</span>L
-                    </kbd>
-                  </CommandShortcut>
-                </CommandItem>
-                <CommandItem
-                  onSelect={() => {
-                    router.push("/communities");
-                    setOpen(false);
-                  }}
-                  className="cursor-pointer flex items-center gap-2 justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <Communities className="mr-2 h-4 w-4" />
-                    <span>Communities</span>
-                  </div>
-                  <CommandShortcut>
-                    <kbd
-                      className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-                      style={{ padding: "0.375rem 0.5rem" }}
-                    >
-                      <span className="text-xs">⌘</span>C
                     </kbd>
                   </CommandShortcut>
                 </CommandItem>
