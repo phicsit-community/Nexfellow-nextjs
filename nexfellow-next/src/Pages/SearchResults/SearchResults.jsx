@@ -549,7 +549,7 @@ function SearchResults() {
         </div>
       </div>
       <div className={styles.suggestionsContainer}>
-        <Suggestions />
+        <Suggestions hideSearch />
       </div>
     </div>
   );

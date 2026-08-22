@@ -507,7 +507,7 @@ export const ExploreCard = ({
       community.reputationScore === undefined
     ) {
       setLoadingReputation(true);
-      axios
+      api
         .get(`/analytics/${community._id}/reputation`)
         .then((res) => {
           setReputationScore(res.data.reputationScore || 0);
@@ -524,7 +524,7 @@ export const ExploreCard = ({
     // Fetch bookmark state if not provided
     if (initialBookmarked === undefined && !bookmarkChecked) {
       setBookmarkChecked(true);
-      axios
+      api
         .get(`/bookmarks/check/Community/${community._id}`)
         .then((res) => {
           setIsBookmarked(res.data.isBookmarked || false);
