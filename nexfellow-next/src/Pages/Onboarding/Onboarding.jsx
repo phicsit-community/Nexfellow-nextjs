@@ -265,8 +265,13 @@ export default function Onboarding() {
       document.cookie = `isOnboarded=true; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
       goTo(7);
     } catch (err) {
-      const msg = err.response?.data?.message || 'Something went wrong. Please try again.';
-      setSubmitError(msg);
+      if (err.response?.status === 429) {
+        const secs = Number(err.response?.data?.retryAfter) || 0;
+        const wait = secs >= 60 ? `${Math.ceil(secs / 60)} minute(s)` : `${secs || 30} seconds`;
+        setSubmitError(`Too many attempts. Your details are saved on this page — please try again in ${wait}.`);
+      } else {
+        setSubmitError(err.response?.data?.message || 'Something went wrong. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
