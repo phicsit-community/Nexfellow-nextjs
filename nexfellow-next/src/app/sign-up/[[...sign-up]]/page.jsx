@@ -22,7 +22,7 @@ const clerkAppearance = {
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      width: "auto",
+      width: "100%",
     },
     card: {
       background: "#131f35",
@@ -31,8 +31,8 @@ const clerkAppearance = {
         "0 0 0 1px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.4), 0 32px 80px rgba(0,0,0,0.5)",
       borderRadius: "18px",
       padding: "36px 32px",
-      width: "400px",
-      maxWidth: "100%",
+      width: "100%",
+      maxWidth: "400px",
     },
     headerTitle: {
       color: "#f1f5f9",
@@ -190,12 +190,13 @@ export default function SignUpPage() {
           "radial-gradient(ellipse at 50% 40%, #0d1e3a 0%, #080d18 70%)",
         padding: "24px",
         overflowY: "auto",
+        overflowX: "hidden",
       }}
     >
       <div
         style={{
           position: "absolute",
-          width: "500px",
+          width: "min(500px, 100%)",
           height: "500px",
           borderRadius: "50%",
           background:
@@ -203,11 +204,10 @@ export default function SignUpPage() {
           pointerEvents: "none",
         }}
       />
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", zIndex: 1 }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", zIndex: 1, width: "100%", maxWidth: "400px" }}>
         <div
           style={{
-            width: "400px",
-            maxWidth: "100%",
+            width: "100%",
             background: "rgba(0,212,168,0.08)",
             border: "1px solid rgba(0,212,168,0.25)",
             borderRadius: "12px",
@@ -217,7 +217,6 @@ export default function SignUpPage() {
             gap: "10px",
           }}
         >
-          <span style={{ fontSize: "16px", flexShrink: 0, marginTop: "1px" }}>✓</span>
           <p style={{ margin: 0, fontSize: "13px", color: "#94a3b8", lineHeight: "1.5" }}>
             <strong style={{ color: "#00d4a8", fontWeight: "600" }}>Existing Nexfellow users:</strong>
             <br />
