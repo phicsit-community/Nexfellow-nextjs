@@ -70,11 +70,10 @@ export default function MissionHero() {
           color: MUTED,
           fontSize: isMobile ? 15 : "clamp(15px, 2vw, 17px)",
           lineHeight: 1.7,
-          maxWidth: isMobile ? "100%" : 620,
+          maxWidth: isMobile ? "100%" : 900,
           margin: "0 auto 40px",
         }}>
-          NexFellow exists because thousands of brilliant builders ship great products into silence.
-          We&apos;re changing that — one connection, one review, one launch at a time.
+          NexFellow was built because too many talented builders create amazing products that never get the attention they deserve. We&apos;re here to help every product find its first users, honest feedback, and the recognition it deserves.
         </p>
 
         <Link href="/signup" style={{
