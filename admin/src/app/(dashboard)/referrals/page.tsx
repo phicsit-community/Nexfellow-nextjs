@@ -133,7 +133,17 @@ export default function ReferralsPage() {
                                         <div className="flex items-center">{getRankBadge(globalRank)}</div>
                                         <div className="col-span-2 flex items-center gap-3">
                                             <div className="w-10 h-10 bg-gray-200 rounded-full overflow-hidden flex items-center justify-center text-gray-500 text-sm font-semibold">
-                                                {(user.username || user.name || 'U').charAt(0).toUpperCase()}
+                                                {user.picture ? (
+                                                    // eslint-disable-next-line @next/next/no-img-element
+                                                    <img
+                                                        src={user.picture}
+                                                        alt={user.name || 'User'}
+                                                        referrerPolicy="no-referrer"
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    (user.username || user.name || 'U').charAt(0).toUpperCase()
+                                                )}
                                             </div>
                                             <div>
                                                 <p className="text-gray-900 font-medium">{user.username}</p>

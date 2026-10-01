@@ -297,6 +297,7 @@ const UsersPage = () => {
                             <tr className="bg-gray-50 border-b border-gray-100">
                                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Users</th>
                                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Contact</th>
+                                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Joined On</th>
                                 <th className="text-center px-6 py-4 text-sm font-semibold text-gray-700">Plan Badge</th>
                                 <th className="text-center px-6 py-4 text-sm font-semibold text-gray-700">Action</th>
                             </tr>
@@ -304,7 +305,7 @@ const UsersPage = () => {
                         <tbody>
                             {paginatedData.length === 0 ? (
                                 <tr>
-                                    <td colSpan={4} className="text-center py-12 text-gray-500">
+                                    <td colSpan={5} className="text-center py-12 text-gray-500">
                                         No users found
                                     </td>
                                 </tr>
@@ -315,9 +316,19 @@ const UsersPage = () => {
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 shrink-0">
-                                                    <div className="w-full h-full bg-teal-100 flex items-center justify-center text-teal-600 font-semibold">
-                                                        {user.name?.charAt(0)?.toUpperCase() || 'U'}
-                                                    </div>
+                                                    {user.picture ? (
+                                                        // eslint-disable-next-line @next/next/no-img-element
+                                                        <img
+                                                            src={user.picture}
+                                                            alt={user.name || 'User'}
+                                                            referrerPolicy="no-referrer"
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full h-full bg-teal-100 flex items-center justify-center text-teal-600 font-semibold">
+                                                            {user.name?.charAt(0)?.toUpperCase() || 'U'}
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <div>
                                                     <p className="text-sm font-medium text-gray-900">{user.name || 'Unknown'}</p>
@@ -329,6 +340,19 @@ const UsersPage = () => {
                                         {/* Contact */}
                                         <td className="px-6 py-4">
                                             <p className="text-sm text-gray-900">{user.email || 'No email'}</p>
+                                        </td>
+
+                                        {/* Joining Date */}
+                                        <td className="px-6 py-4">
+                                            <p className="text-sm text-gray-900">
+                                                {user.createdAt
+                                                    ? new Date(user.createdAt).toLocaleDateString("en-IN", {
+                                                        day: "2-digit",
+                                                        month: "short",
+                                                        year: "numeric",
+                                                    })
+                                                    : "N/A"}
+                                            </p>
                                         </td>
 
                                         {/* Plan Badge (blue = Builder Pro, orange = Founder) */}
