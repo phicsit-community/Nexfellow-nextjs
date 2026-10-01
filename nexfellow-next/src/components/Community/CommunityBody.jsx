@@ -447,9 +447,8 @@ const CommunityBody = ({ communityId, ownerId, messageIdToScroll }) => {
                   ? community.owner.followers
                   : community.owner.followers.slice(0, 30)
                 ).map((follower) => {
-                  const badgeSrc = follower?.communityBadge
-                    ? communityBadge?.src || communityBadge
-                    : follower?.planBadge === "orange"
+                  const badgeSrc =
+                    follower?.planBadge === "orange"
                       ? verifyOrangeBadge?.src || verifyOrangeBadge
                       : follower?.planBadge === "blue"
                         ? verificationBadge?.src || verificationBadge

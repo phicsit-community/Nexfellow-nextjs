@@ -374,22 +374,7 @@ const Community = () => {
                         ? community.owner?.name.slice(0, 20) + "…"
                         : community.owner?.name}
                     </h2>
-                    {community.owner?.isCommunityAccount &&
-                      community.owner?.createdCommunity ? (
-                      community.owner?.communityBadge ? (
-                        <img
-                          src={communityBadge?.src || communityBadge}
-                          alt="Community Badge"
-                          className={styles.badge}
-                        />
-                      ) : community.owner?.verificationBadge ? (
-                        <img
-                          src={verificationBadge?.src || verificationBadge}
-                          alt="Verification Badge"
-                          className={styles.badge}
-                        />
-                      ) : null
-                    ) : community.owner?.planBadge === "orange" ? (
+                    {community.owner?.planBadge === "orange" ? (
                       <img
                         src={verifyOrangeBadge?.src || verifyOrangeBadge}
                         alt="Founder Badge"

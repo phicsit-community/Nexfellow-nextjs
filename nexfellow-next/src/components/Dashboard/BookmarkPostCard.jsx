@@ -75,21 +75,7 @@ const BookmarkPostCard = ({ data, bookmark, path = "post" }) => {
                             <span className={styles.feedAuthor}>
                                 {data.author?.name || "Unknown"}
                                 <div className={styles.feedAuthorBadges}>
-                                    {data.author?.isCommunityAccount && data.author?.createdCommunity ? (
-                                        data.author?.communityBadge ? (
-                                            <img
-                                                src={communityBadge?.src || communityBadge}
-                                                alt="Community Badge"
-                                                className={styles.badge}
-                                            />
-                                        ) : data.author?.verificationBadge ? (
-                                            <img
-                                                src={verify?.src || verify}
-                                                alt="Verification Badge"
-                                                className={styles.badge}
-                                            />
-                                        ) : null
-                                    ) : data.author?.planBadge === "orange" ? (
+                                    {data.author?.planBadge === "orange" ? (
                                         <img
                                             src={verifyOrange?.src || verifyOrange}
                                             alt="Founder Badge"

@@ -197,14 +197,6 @@ const approveVerifyRequest = async (req, res) => {
     user.createdCommunity = savedCommunity._id;
     user.isCommunityAccount = true;
 
-    if (accountType === "Individual") {
-      user.verificationBadge = true;
-      user.communityBadge = false;
-    } else if (accountType === "Organization") {
-      user.verificationBadge = false;
-      user.communityBadge = true;
-    }
-
     await user.save();
 
     request.status = "Approved";
@@ -262,8 +254,6 @@ const rejectVerifyRequest = async (req, res) => {
       }
 
       user.isCommunityAccount = false;
-      user.verificationBadge = false;
-      user.communityBadge = false;
 
       if (request.communityName !== user.name) {
         user.name = request.name || user.name;

@@ -104,11 +104,6 @@ const CommunityInfoPopover = ({
   };
 
   const getBadgeIcon = () => {
-    if (community.isCommunityAccount && community.communityId) {
-      if (community.communityBadge) return communityBadgeIcon;
-      if (community.verificationBadge) return VERIFY;
-      return null;
-    }
     if (community.planBadge === "orange") return VERIFY_ORANGE;
     if (community.planBadge === "blue") return VERIFY;
     if (community.verificationBadge) return VERIFY;

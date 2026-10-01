@@ -738,22 +738,7 @@ const PostFullScreen = () => {
                             }
                           >
                             {post.author.name}
-                            {post.author.isCommunityAccount &&
-                              post.author.createdCommunity ? (
-                              post.community?.accountType === "Organization" ? (
-                                <img
-                                  src={communityBadge?.src || communityBadge}
-                                  alt="Community Badge"
-                                  className={styles.badge}
-                                />
-                              ) : (
-                                <img
-                                  src={VERIFY?.src || VERIFY}
-                                  alt="Verification Badge"
-                                  className={styles.badge}
-                                />
-                              )
-                            ) : post.author.planBadge === "orange" ? (
+                            {post.author.planBadge === "orange" ? (
                               <img
                                 src={VERIFY_ORANGE?.src || VERIFY_ORANGE}
                                 alt="Founder Badge"
@@ -973,22 +958,7 @@ const PostFullScreen = () => {
                 onClick={() => router.push(`/explore/${post.author.username}`)}
               >
                 {post.author.name}
-                {post.author.isCommunityAccount &&
-                  post.author.createdCommunity ? (
-                  post.community?.accountType === "Organization" ? (
-                    <img
-                      src={communityBadge?.src || communityBadge}
-                      alt="Community Badge"
-                      className={styles.badge}
-                    />
-                  ) : (
-                    <img
-                      src={VERIFY?.src || VERIFY}
-                      alt="Verification Badge"
-                      className={styles.badge}
-                    />
-                  )
-                ) : post.author.planBadge === "orange" ? (
+                {post.author.planBadge === "orange" ? (
                   <img
                     src={VERIFY_ORANGE?.src || VERIFY_ORANGE}
                     alt="Founder Badge"

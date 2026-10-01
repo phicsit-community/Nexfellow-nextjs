@@ -966,29 +966,14 @@ module.exports.updateProfile = async (req, res) => {
 
     // Community update logic (only if user owns a community)
     if (user.isCommunityAccount && user.createdCommunity) {
-      let badgeChanged = false;
       if (accountType && ["Individual", "Organization"].includes(accountType)) {
         user.createdCommunity.accountType = accountType;
-
-        // Update badges according to accountType
-        if (accountType === "Individual") {
-          if (!user.verificationBadge || user.communityBadge)
-            badgeChanged = true;
-          user.verificationBadge = true;
-          user.communityBadge = false;
-        } else if (accountType === "Organization") {
-          if (!user.communityBadge || user.verificationBadge)
-            badgeChanged = true;
-          user.communityBadge = true;
-          user.verificationBadge = false;
-        }
       }
       user.createdCommunity.description =
         description || user.createdCommunity.description;
       user.createdCommunity.category =
         category || user.createdCommunity.category;
       await user.createdCommunity.save();
-      if (badgeChanged) await user.save();
       await user.populate("createdCommunity");
     } else {
       // If no community, update profile bio

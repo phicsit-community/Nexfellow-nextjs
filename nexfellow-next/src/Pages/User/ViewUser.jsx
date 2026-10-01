@@ -173,22 +173,7 @@ const User = () => {
                     <h2 className={styles.communityName}>
                       {userDetails?.name}
                     </h2>
-                    {userDetails?.isCommunityAccount &&
-                      userDetails?.createdCommunity ? (
-                      userDetails?.accountType === "Organization" ? (
-                        <img
-                          src={communityBadge?.src || communityBadge}
-                          alt="Community Badge"
-                          className={styles.badge}
-                        />
-                      ) : (
-                        <img
-                          src={verificationBadge?.src || verificationBadge}
-                          alt="Verification Badge"
-                          className={styles.badge}
-                        />
-                      )
-                    ) : userDetails?.planBadge === "orange" ? (
+                    {userDetails?.planBadge === "orange" ? (
                       <img
                         src={verifyOrangeBadge?.src || verifyOrangeBadge}
                         alt="Founder Badge"

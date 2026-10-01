@@ -422,22 +422,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
                         ? post.author.name.slice(0, nameMaxLength) + "..."
                         : (post.author?.name ?? "")}
                     </div>
-                    {post.author.isCommunityAccount &&
-                      post.author.createdCommunity ? (
-                      post.author.communityBadge ? (
-                        <img
-                          src={communityBadge?.src || communityBadge}
-                          alt="Community Badge"
-                          className={styles.badge}
-                        />
-                      ) : post.author.verificationBadge ? (
-                        <img
-                          src={VERIFY?.src || VERIFY}
-                          alt="Verification Badge"
-                          className={styles.badge}
-                        />
-                      ) : null
-                    ) : post.author.planBadge === "orange" ? (
+                    {post.author.planBadge === "orange" ? (
                       <img
                         src={VERIFY_ORANGE?.src || VERIFY_ORANGE}
                         alt="Founder Badge"

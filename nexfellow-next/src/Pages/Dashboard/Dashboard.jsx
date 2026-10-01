@@ -166,22 +166,7 @@ const Dashboard = () => {
                         ? (communityData?.name || userData?.name || "Community Name").slice(0, 20) + "…"
                         : (communityData?.name || userData?.name || "Community Name")}
                     </h2>
-                    {userData?.isCommunityAccount &&
-                      userData?.createdCommunity ? (
-                      userData?.communityBadge ? (
-                        <img
-                          src={communityBadge?.src || communityBadge}
-                          alt="Community Badge"
-                          className={styles.badge}
-                        />
-                      ) : userData?.verificationBadge ? (
-                        <img
-                          src={verificationBadge?.src || verificationBadge}
-                          alt="Verification Badge"
-                          className={styles.badge}
-                        />
-                      ) : null
-                    ) : userData?.planBadge === "orange" ? (
+                    {userData?.planBadge === "orange" ? (
                       <img
                         src={verifyOrangeBadge?.src || verifyOrangeBadge}
                         alt="Founder Badge"

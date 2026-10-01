@@ -79,9 +79,8 @@ const DMUserProfile = ({
     const picture  = user?.picture || "";
     const isCommunity        = !!user?.isCommunityAccount;
     const community          = user?.community || null;
-    const hasCommunityBadge  = !!user?.communityBadge && isCommunity && !!community;
-    const hasVerificationBadge = !hasCommunityBadge && !!user?.verificationBadge;
-    const planBadge = !hasCommunityBadge ? (user?.planBadge || null) : null;
+    const hasVerificationBadge = !!user?.verificationBadge;
+    const planBadge = user?.planBadge || null;
 
     const country       = safe(user?.country);
     const followers     = user?.followersCount;
@@ -148,9 +147,7 @@ const DMUserProfile = ({
                 <div className={styles.profileInfo}>
                     <div className={styles.nameRow}>
                         <span className={styles.nameText}>{name}</span>
-                        {hasCommunityBadge
-                            ? <img src={communityBadge?.src  || communityBadge}  alt="badge"    className={styles.badgeIcon} />
-                            : planBadge === "orange"
+                        {planBadge === "orange"
                                 ? <img src={verifyOrangeBadge?.src || verifyOrangeBadge} alt="Founder Badge" className={styles.badgeIcon} />
                                 : planBadge === "blue"
                                     ? <img src={verificationBadge?.src || verificationBadge} alt="Builder Pro Badge" className={styles.badgeIcon} />

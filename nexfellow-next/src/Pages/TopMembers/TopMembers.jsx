@@ -345,28 +345,7 @@ const TopMembers = () => {
                     </td>
                     <td>@{user.username}</td>
                     <td>
-                      {user.isCommunityAccount && user.createdCommunity ? (
-                        user.createdCommunity?.accountType ===
-                          "Organization" ? (
-                          <span className={styles.badgePill}>
-                            <img
-                              src={COMMUNITY_BADGE?.src || COMMUNITY_BADGE}
-                              className={styles.badge}
-                              alt="Community Badge"
-                            />
-                            Community
-                          </span>
-                        ) : (
-                          <span className={styles.badgePill}>
-                            <img
-                              src={VERIFY?.src || VERIFY}
-                              className={styles.badge}
-                              alt="Verified Badge"
-                            />
-                            Verified
-                          </span>
-                        )
-                      ) : user.planBadge === "orange" ? (
+                      {user.planBadge === "orange" ? (
                         <span className={styles.badgePill}>
                           <img
                             src={VERIFY_ORANGE?.src || VERIFY_ORANGE}
@@ -464,27 +443,7 @@ const TopMembers = () => {
                   </div>
 
                   <div className={styles.badgeSection}>
-                    {user.isCommunityAccount && user.createdCommunity ? (
-                      user.createdCommunity?.accountType === "Organization" ? (
-                        <span className={styles.badgePill}>
-                          <img
-                            src={COMMUNITY_BADGE?.src || COMMUNITY_BADGE}
-                            className={styles.badge}
-                            alt="Community Badge"
-                          />
-                          Community
-                        </span>
-                      ) : (
-                        <span className={styles.badgePill}>
-                          <img
-                            src={VERIFY?.src || VERIFY}
-                            className={styles.badge}
-                            alt="Verified Badge"
-                          />
-                          Verified
-                        </span>
-                      )
-                    ) : user.planBadge === "orange" ? (
+                    {user.planBadge === "orange" ? (
                       <span className={styles.badgePill}>
                         <img
                           src={VERIFY_ORANGE?.src || VERIFY_ORANGE}
