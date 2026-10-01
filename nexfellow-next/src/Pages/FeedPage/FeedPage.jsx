@@ -128,8 +128,8 @@ const FeedPage = () => {
           {isWhatsNewOpen && <WhatsNewModal closeModal={toggleWhatsNew} />}
         </div>
 
-        {/* Create Post Box - Only show for verified users */}
-        {(user?.verificationBadge || user?.isCommunityAccount) && (
+        {/* Create Post Box - any user can post; limits depend on plan */}
+        {user && (
           <div className={styles.createPostBox}>
             <div className={styles.inputRow} onClick={handleCreatePostClick}>
               <div className={styles.avatarWrapper}>

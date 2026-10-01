@@ -64,6 +64,8 @@ module.exports.createPost = async (req, res) => {
     const plan = getUserPlan(req.user);
 
     if (content && content.length > plan.postCharLimit) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(403).json({
         error: `Post content exceeds the ${plan.postCharLimit}-character limit for your ${req.user.subscriptionTier} plan.`,
         limit: plan.postCharLimit,
@@ -71,6 +73,8 @@ module.exports.createPost = async (req, res) => {
     }
 
     if (req.files && req.files.length > plan.imagesPerPost) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(403).json({
         error: `Your ${req.user.subscriptionTier} plan allows a maximum of ${plan.imagesPerPost} image(s) per post.`,
         limit: plan.imagesPerPost,
@@ -173,7 +177,9 @@ module.exports.createPost = async (req, res) => {
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    res.status(500).json({ message: "Error creating post: " + error.message });
+    res
+      .status(error.statusCode || error.status || 500)
+      .json({ message: "Error creating post: " + error.message });
   }
 };
 
@@ -261,6 +267,14 @@ module.exports.updatePost = async (req, res) => {
     }
 
     if (req.files && req.files.length > 0) {
+      const plan = getUserPlan(req.user);
+      if (post.attachments.length + req.files.length > plan.imagesPerPost) {
+        throw new ExpressError(
+          `Your ${req.user.subscriptionTier} plan allows a maximum of ${plan.imagesPerPost} image(s) per post.`,
+          403
+        );
+      }
+
       const attachmentPromises = req.files.map(async (file) => {
         return await uploadAttachment(
           file.path,
@@ -284,7 +298,9 @@ module.exports.updatePost = async (req, res) => {
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    res.status(500).json({ message: "Error updating post: " + error.message });
+    res
+      .status(error.statusCode || error.status || 500)
+      .json({ message: "Error updating post: " + error.message });
   }
 };
 
@@ -325,7 +341,9 @@ module.exports.deletePost = async (req, res) => {
     await Post.findByIdAndDelete(postId);
     res.status(200).json({ message: "Post deleted successfully!" });
   } catch (error) {
-    res.status(500).json({ message: "Error deleting post: " + error.message });
+    res
+      .status(error.statusCode || error.status || 500)
+      .json({ message: "Error deleting post: " + error.message });
   }
 };
 

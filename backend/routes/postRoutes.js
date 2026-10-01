@@ -27,11 +27,10 @@ const router = express.Router();
 /**
  * @route   POST /post
  * @desc    Create a new post with attachments
- * @access  Private (Only Community Creators)
+ * @access  Private (any authenticated user; limits depend on plan)
  */
 router.route("/").post(
   isClient,
-  isCommunityCreator,
   upload.array("files", 4),
   catchAsync(postController.createPost)
 );
@@ -39,13 +38,12 @@ router.route("/").post(
 /**
  * @route   PUT /post/update/:postId
  * @desc    Update a specific post by ID
- * @access  Private (Only Community Creators)
+ * @access  Private (author, or community owner/content-admin)
  */
 router
   .route("/update/:postId")
   .put(
     isClient,
-    isCommunityCreator,
     upload.array("files", 10),
     catchAsync(postController.updatePost)
   );
@@ -153,6 +151,6 @@ router
 router
   .route("/:postId")
   .get(isClient, catchAsync(postController.getPostById))
-  .delete(isClient, isCommunityCreator, catchAsync(postController.deletePost));
+  .delete(isClient, catchAsync(postController.deletePost));
 
 module.exports = router;

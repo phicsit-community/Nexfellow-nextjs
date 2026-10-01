@@ -25,20 +25,32 @@ const POST_CHAR_LIMITS = {
   founder: 5000,
 };
 
-const getPostCharLimit = (user) => {
-  if (!user || user.subscriptionTier === "free") return POST_CHAR_LIMITS.free;
+// Mirrors backend/constants/plans.js imagesPerPost (backend counts every attachment).
+const POST_ATTACHMENT_LIMITS = {
+  free: 1,
+  builder_pro: 2,
+  founder: 4,
+};
+
+const getEffectiveTier = (user) => {
+  if (!user || !POST_CHAR_LIMITS[user.subscriptionTier]) return "free";
   if (
     user.subscriptionExpiresAt &&
     new Date(user.subscriptionExpiresAt) < new Date()
   ) {
-    return POST_CHAR_LIMITS.free;
+    return "free";
   }
-  return POST_CHAR_LIMITS[user.subscriptionTier] || POST_CHAR_LIMITS.free;
+  return user.subscriptionTier;
 };
+
+const getPostCharLimit = (user) => POST_CHAR_LIMITS[getEffectiveTier(user)];
+const getAttachmentLimit = (user) =>
+  POST_ATTACHMENT_LIMITS[getEffectiveTier(user)];
 
 const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
   const user = useSelector((state) => state.auth.user);
   const charLimit = getPostCharLimit(user);
+  const attachmentLimit = getAttachmentLimit(user);
   const [isDark, setIsDark] = useState(
     () => document.documentElement.classList.contains("dark")
   );
@@ -258,16 +270,18 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
       }
     });
 
-    const existingImages = attachments.filter((a) => a.type === "image");
-    const availableSlots = 4 - existingImages.length;
+    const limitMessage = `Your plan allows up to ${attachmentLimit} attachment${
+      attachmentLimit === 1 ? "" : "s"
+    } per post.`;
+    const availableSlots = attachmentLimit - attachments.length;
     if (availableSlots <= 0) {
-      toast("You can upload up to 4 images only.");
+      toast(limitMessage);
       return;
     }
 
     const filesToAttach = validFiles.slice(0, availableSlots);
     if (filesToAttach.length < validFiles.length) {
-      toast("You can upload up to 4 images only.");
+      toast(limitMessage);
     }
 
     const imagePreviews = filesToAttach.map((file) => ({
@@ -299,6 +313,16 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
     const hasVideo = attachments.some((a) => a.type === "video");
     if (hasVideo) {
       toast("You can only attach one video per post.");
+      e.target.value = "";
+      return;
+    }
+
+    if (attachments.length >= attachmentLimit) {
+      toast(
+        `Your plan allows up to ${attachmentLimit} attachment${
+          attachmentLimit === 1 ? "" : "s"
+        } per post.`
+      );
       e.target.value = "";
       return;
     }
