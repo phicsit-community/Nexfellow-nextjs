@@ -85,9 +85,9 @@ export default function Navbar() {
         }),
         transition: "background 0.3s",
       }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "15px 24px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: isMobile ? "4px 16px" : "15px 24px" }}>
           {/* Main row */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 68 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: isMobile ? 56 : 68 }}>
 
             {/* Logo */}
             <Link href="/" className="navbar-logo-wrap" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
@@ -95,7 +95,7 @@ export default function Navbar() {
                 <img
                   src="/nexfellowLogo.png"
                   alt="NexFellow"
-                  style={{ height: 50, width: "auto", objectFit: "contain" }}
+                  style={{ height: 42, width: "auto", objectFit: "contain" }}
                 />
               ) : (
                 <svg width="234" height="63" viewBox="0 0 234 63" fill="none" xmlns="http://www.w3.org/2000/svg">
