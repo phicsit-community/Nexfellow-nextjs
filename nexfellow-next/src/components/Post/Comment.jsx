@@ -212,8 +212,9 @@ const Comment = ({
     if (threeDotRef.current) {
       const rect = threeDotRef.current.getBoundingClientRect();
       setPosition({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
+        top: rect.bottom,
+        left: rect.right,
+        anchorTop: rect.top,
       });
     }
     setIsModalOpen(true);
