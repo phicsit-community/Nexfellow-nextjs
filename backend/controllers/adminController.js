@@ -682,10 +682,14 @@ module.exports.getRegisteredUsersByAdmin = async (req, res) => {
       .find()
       .sort({ createdAt: -1 })
       .select(
-        "_id username name email verificationBadge premiumBadge communityBadge planBadge subscriptionTier picture profile createdCommunity createdAt country "
+        "_id username name email verificationBadge premiumBadge communityBadge planBadge subscriptionTier picture profile createdCommunity createdAt onboardingProfile "
       )
       .populate({
         path: "profile",
+      })
+      .populate({
+        path: "onboardingProfile",
+        select: "country",
       })
       .populate({
         path: "createdCommunity",
@@ -711,7 +715,8 @@ module.exports.getRegisteredUsersByAdmin = async (req, res) => {
       coins: user.profile?.coin,
       createdCommunity: user.createdCommunity || null,
       createdAt: user.createdAt,
-      country: user.country,
+      // Country comes from the onboarding form (User.country defaults to "India")
+      country: user.onboardingProfile?.country || null,
     }));
 
     return res.status(200).json(data);

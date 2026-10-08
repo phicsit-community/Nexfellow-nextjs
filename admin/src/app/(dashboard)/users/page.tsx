@@ -297,6 +297,7 @@ const UsersPage = () => {
                             <tr className="bg-gray-50 border-b border-gray-100">
                                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Users</th>
                                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Contact</th>
+                                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Country</th>
                                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Joined On</th>
                                 <th className="text-center px-6 py-4 text-sm font-semibold text-gray-700">Plan Badge</th>
                                 <th className="text-center px-6 py-4 text-sm font-semibold text-gray-700">Action</th>
@@ -305,7 +306,7 @@ const UsersPage = () => {
                         <tbody>
                             {paginatedData.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="text-center py-12 text-gray-500">
+                                    <td colSpan={6} className="text-center py-12 text-gray-500">
                                         No users found
                                     </td>
                                 </tr>
@@ -340,6 +341,11 @@ const UsersPage = () => {
                                         {/* Contact */}
                                         <td className="px-6 py-4">
                                             <p className="text-sm text-gray-900">{user.email || 'No email'}</p>
+                                        </td>
+
+                                        {/* Country (from onboarding) */}
+                                        <td className="px-6 py-4">
+                                            <p className="text-sm text-gray-900">{user.country || 'N/A'}</p>
                                         </td>
 
                                         {/* Joining Date */}

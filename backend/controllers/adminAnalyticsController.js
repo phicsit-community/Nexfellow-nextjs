@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const OnboardingProfile = require("../models/OnboardingProfile");
 const Post = require("../models/postModel");
 const Comment = require("../models/commentModel");
 const Bookmark = require("../models/bookmarkModel");
@@ -289,23 +290,35 @@ exports.getOverview = async (req, res) => {
     if (communityCreators > 0) roleDistribution["Community Creator"] = communityCreators;
     if (verifiedUsers > 0) roleDistribution["Verified"] = verifiedUsers;
     if (premiumUsers > 0) roleDistribution["Premium"] = premiumUsers;
+    // Country comes from the onboarding form (User.country defaults to "India", so it is not reliable)
+    // Start from User so everyone is counted; users without a country (e.g. not onboarded yet) fall under "Unknown"
     const countryAgg = await User.aggregate([
-      { $group: { _id: "$country", count: { $sum: 1 } } },
+      {
+        $lookup: {
+          from: OnboardingProfile.collection.name,
+          localField: "_id",
+          foreignField: "userId",
+          as: "ob",
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $trim: {
+              input: { $ifNull: [{ $arrayElemAt: ["$ob.country", 0] }, ""] },
+            },
+          },
+          count: { $sum: 1 },
+        },
+      },
       { $sort: { count: -1 } },
-      { $limit: 6 },
     ]);
     const countryDistribution = {};
     let otherCount = 0;
-    (
-      await User.aggregate([
-        { $group: { _id: "$country", count: { $sum: 1 } } },
-        { $sort: { count: -1 } },
-        { $skip: 6 },
-      ])
-    ).forEach((c) => (otherCount += c.count));
-    countryAgg.forEach(
-      (c) => (countryDistribution[c._id || "Unknown"] = c.count)
-    );
+    countryAgg.forEach((c, i) => {
+      if (i < 6) countryDistribution[c._id || "Unknown"] = c.count;
+      else otherCount += c.count;
+    });
     if (otherCount > 0) countryDistribution["Other"] = otherCount;
 
     // (Community etc as needed)
