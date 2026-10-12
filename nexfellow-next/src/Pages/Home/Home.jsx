@@ -11,6 +11,7 @@ const TheProblem         = lazy(() => import("@/components/Landing/TheProblem/Th
 const BuildersMap        = lazy(() => import("@/components/Landing/BuildersMap/BuildersMap"));
 const LandingTestimonials = lazy(() => import("@/components/Landing/Testimonials/LandingTestimonials"));
 const CtaBanner          = lazy(() => import("@/components/Landing/CtaBanner/CtaBanner"));
+const ContactUs           = lazy(() => import("@/components/Landing/ContactUs/ContactUs"));
 const Footer             = lazy(() => import("@/components/Landing/Footer/Footer"));
 
 const Spinner = () => (
@@ -32,6 +33,7 @@ export default function Home() {
       <Suspense fallback={<Spinner />}><BuildersMap /></Suspense>
       <Suspense fallback={<Spinner />}><LandingTestimonials /></Suspense>
       <Suspense fallback={<Spinner />}><CtaBanner /></Suspense>
+      <Suspense fallback={<Spinner />}><ContactUs /></Suspense>
       <Suspense fallback={<Spinner />}><Footer /></Suspense>
     </div>
   );
