@@ -33,7 +33,7 @@ export default function Home() {
       <Suspense fallback={<Spinner />}><BuildersMap /></Suspense>
       <Suspense fallback={<Spinner />}><LandingTestimonials /></Suspense>
       <Suspense fallback={<Spinner />}><CtaBanner /></Suspense>
-      <Suspense fallback={<Spinner />}><ContactUs /></Suspense>
+      {/* <Suspense fallback={<Spinner />}><ContactUs /></Suspense> */}
       <Suspense fallback={<Spinner />}><Footer /></Suspense>
     </div>
   );
