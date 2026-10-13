@@ -15,7 +15,7 @@
 }
 
 .footerSvgPath {
-    fill: #143345;
+    fill: #12353b;
 }
 
 .backgroundText {
@@ -331,7 +331,7 @@
 
 @media (max-width: 576px) {
     .footer {
-        background: #143345;
+        background: #12353b;
     }
 
     .container {

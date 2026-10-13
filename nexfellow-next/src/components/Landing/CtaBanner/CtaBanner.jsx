@@ -33,7 +33,7 @@ export default function CtaBanner() {
         <div className="cta-card" style={{
           maxWidth: 700, margin: "0 auto",
           position: "relative",
-          background: "rgba(8, 24, 42, 0)",
+          background: "rgba(0,24,31, 0)",
           backdropFilter: "blur(13px)",
           WebkitBackdropFilter: "blur(24px)",
           border: "1px solid rgba(255, 255, 255, 0.16)",
@@ -41,7 +41,7 @@ export default function CtaBanner() {
           padding: "48px 40px",
           textAlign: "center",
           boxShadow: `
-            0 0 0 1px rgba(20,184,166,0.15),
+            0 0 0 1px rgba(36,178,180,0.15),
             0 8px 32px rgba(0,0,0,0.45),
             0 32px 80px rgba(0,0,0,0.35),
             inset 0 1px 0 rgba(255,255,255,0.08)
@@ -50,7 +50,7 @@ export default function CtaBanner() {
           {/* Badge */}
           <div style={{
             display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 24,
-            background: "rgba(20,184,166,0.12)", border: `1px solid ${BORDER}`,
+            background: "rgba(36,178,180,0.12)", border: `1px solid ${BORDER}`,
             borderRadius: 20, padding: "5px 14px",
           }}>
             <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 6px #22c55e" }} />

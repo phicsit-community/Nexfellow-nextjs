@@ -6,7 +6,7 @@ import { useIsMobile } from "../shared/useIsMobile";
 
 const REVIEWS = [
   {
-    initials: "AS", gradient: ["#14b8a6", "#0f766e"],
+    initials: "AS", gradient: ["#24b2b4", "#0f766e"],
     name: "Arjun S.", score: 4.0, time: "2 hr ago", tag: "UNREAD",
     text: "The pricing page caused confusion — Starter vs Pro difference isn't clear. A comparison table would help. CTA on mobile is below the fold on small screens.",
     badges: [{ label: "UX", color: "#3b82f6" }, { label: "PRICING", color: "#f59e0b" }, { label: "MOBILE", color: "#8b5cf6" }],
@@ -57,7 +57,7 @@ export default function FeedbackSection() {
                 <path d="M356.591 78.0909L356.591 497L255.545 497L255.545 172.591L253.091 172.591L159.409 229.864L159.409 142.318L262.705 78.0909L356.591 78.0909ZM622.449 507.227C585.903 507.227 554.403 498.568 527.949 481.25C501.494 463.795 481.108 438.773 466.79 406.182C452.472 373.455 445.381 334.114 445.517 288.159C445.653 242.205 452.813 203.205 466.994 171.159C481.313 138.977 501.631 114.5 527.949 97.7273C554.403 80.8182 585.903 72.3636 622.449 72.3636C658.994 72.3636 690.494 80.8182 716.949 97.7273C743.54 114.5 763.994 138.977 778.313 171.159C792.631 203.341 799.722 242.341 799.585 288.159C799.585 334.25 792.426 373.659 778.108 406.386C763.79 439.114 743.403 464.136 716.949 481.455C690.631 498.636 659.131 507.227 622.449 507.227ZM622.449 424.386C644.267 424.386 661.926 413.273 675.426 391.045C688.926 368.682 695.608 334.386 695.472 288.159C695.472 257.886 692.403 232.932 686.267 213.295C680.131 193.523 671.608 178.795 660.699 169.114C649.79 159.432 637.04 154.591 622.449 154.591C600.767 154.591 583.244 165.568 569.881 187.523C556.517 209.341 549.767 242.886 549.631 288.159C549.494 318.841 552.426 344.273 558.426 364.455C564.563 384.636 573.153 399.705 584.199 409.659C595.244 419.477 607.994 424.386 622.449 424.386Z" fill="url(#paint0_linear_4682_14291)" />
               </g>
               <g filter="url(#filter1_f_4682_14291)">
-                <rect x="108" y="318" width="432" height="450" rx="216" fill="#24B2B4" fillOpacity="0.2" />
+                <rect x="108" y="318" width="432" height="450" rx="216" fill="#24b2b4" fillOpacity="0.2" />
               </g>
               <foreignObject x="78.4839" y="246.198" width="854.987" height="618.243"><div xmlns="http://www.w3.org/1999/xhtml" style={{ backdropFilter: "none", clipPath: "url(#bgblur_1_4682_14291_clip_path)", height: "100%", width: "100%" }}></div></foreignObject><g filter="url(#filter2_d_4682_14291)" data-figma-bg-blur-radius="8.39728">
                 <g clipPath="url(#clip0_4682_14291)">
@@ -246,14 +246,14 @@ export default function FeedbackSection() {
             <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, alignItems: isMobile ? "flex-start" : "flex-end" }}>
               <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
                 <span style={{
-                  background: "rgba(20,184,166,0.12)", color: T,
+                  background: "rgba(36,178,180,0.12)", color: T,
                   border: `1px solid ${BORDER}`, borderRadius: 20,
                   fontSize: 12, fontWeight: 600, padding: "5px 14px",
                 }}>
                   8-10 reviews in 24 hrs
                 </span>
                 <span style={{
-                  background: "rgba(20,184,166,0.12)", color: T,
+                  background: "rgba(36,178,180,0.12)", color: T,
                   border: `1px solid ${BORDER}`, borderRadius: 20,
                   fontSize: 12, fontWeight: 600, padding: "5px 14px",
                 }}>
@@ -262,7 +262,7 @@ export default function FeedbackSection() {
               </div>
               <span style={{
                 display: "inline-flex",
-                background: "rgba(20,184,166,0.08)", color: MUTED,
+                background: "rgba(36,178,180,0.08)", color: MUTED,
                 border: `1px solid ${BORDER}`, borderRadius: 20,
                 fontSize: 12, fontWeight: 600, padding: "5px 14px",
                 alignSelf: isMobile ? "flex-start" : "flex-end",

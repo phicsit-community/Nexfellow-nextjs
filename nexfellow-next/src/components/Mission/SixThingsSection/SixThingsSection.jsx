@@ -130,7 +130,7 @@ export default function SixThingsSection() {
                 <div style={{
                   width: 44, height: 44,
                   borderRadius: 12,
-                  background: "rgba(20,184,166,0.08)",
+                  background: "rgba(36,178,180,0.08)",
                   border: `1px solid ${BORDER}`,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   marginBottom: 20,

@@ -13,14 +13,14 @@ const Footer = lazy(() => import("@/components/Landing/Footer/Footer"));
 
 const Spinner = () => (
   <div style={{ height: 120, display: "flex", alignItems: "center", justifyContent: "center" }}>
-    <div style={{ width: 28, height: 28, border: "2px solid rgba(20,184,166,0.2)", borderTopColor: "#14b8a6", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+    <div style={{ width: 28, height: 28, border: "2px solid rgba(36,178,180,0.2)", borderTopColor: "#24b2b4", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
     <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
   </div>
 );
 
 export default function Features() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif", background: "#071a2c", minHeight: "100vh", overflowX: "hidden" }}>
+    <div style={{ fontFamily: "'Inter', sans-serif", background: "#00181f", minHeight: "100vh", overflowX: "hidden" }}>
       <Navbar />
       <FeaturesHero />
       <EarlyAdopterSection />

@@ -31,14 +31,14 @@ function SidebarGroup({ title, items }) {
         <div key={i} style={{
           display: "flex", alignItems: "center", gap: 8, padding: "6px 8px",
           borderRadius: 6, marginBottom: 2,
-          background: item.active ? "rgba(20,184,166,0.12)" : "transparent",
+          background: item.active ? "rgba(36,178,180,0.12)" : "transparent",
         }}>
           <span style={{ fontSize: 12 }}>{item.icon}</span>
           <span style={{ fontSize: 11, color: item.active ? T : MUTED, fontWeight: item.active ? 600 : 400 }}>{item.label}</span>
           {item.badge && (
             <span style={{
               marginLeft: "auto", fontSize: 9, fontWeight: 700, borderRadius: 10, padding: "1px 5px",
-              background: typeof item.badge === "number" ? T : "rgba(20,184,166,0.2)",
+              background: typeof item.badge === "number" ? T : "rgba(36,178,180,0.2)",
               color: typeof item.badge === "number" ? DARKER : T,
             }}>{item.badge}</span>
           )}
@@ -52,13 +52,13 @@ function SidebarGroup({ title, items }) {
 export default function DashboardMockup() {
   return (
     <div style={{
-      background: "#0a1628", borderRadius: 16,
+      background: "#0a2128", borderRadius: 16,
       border: "1px solid rgba(255,255,255,0.1)",
       overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
       width: "100%", maxWidth: 680,
     }}>
       {/* Top bar */}
-      <div style={{ background: "#071220", padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+      <div style={{ background: "#051f26", padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <img src="/NexFellowLogo.svg" alt="" style={{ height: 22 }} />
           <span style={{ color: T, fontWeight: 700, fontSize: 13 }}>NexFellow</span>
@@ -74,7 +74,7 @@ export default function DashboardMockup() {
 
       <div style={{ display: "flex" }}>
         {/* Sidebar */}
-        <div style={{ width: 160, background: "#071220", padding: "16px 0", borderRight: "1px solid rgba(255,255,255,0.06)", flexShrink: 0 }}>
+        <div style={{ width: 160, background: "#051f26", padding: "16px 0", borderRight: "1px solid rgba(255,255,255,0.06)", flexShrink: 0 }}>
           <SidebarGroup title="CORE"      items={SIDEBAR_CORE} />
           <SidebarGroup title="DISCOVER"  items={SIDEBAR_DISCOVER} />
           <SidebarGroup title="COMMUNITY" items={SIDEBAR_COMMUNITY} />

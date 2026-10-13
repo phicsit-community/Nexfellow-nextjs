@@ -50,7 +50,7 @@ export default function BuilderNetworkSection() {
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 32 }}>
               {["AI-matched by domain & stage", "Filter by availability status", "View what they're building"].map((tag, i) => (
                 <span key={i} style={{
-                  background: "rgba(20,184,166,0.08)", color: MUTED,
+                  background: "rgba(36,178,180,0.08)", color: MUTED,
                   border: `1px solid ${BORDER}`, borderRadius: 20,
                   fontSize: 12, fontWeight: 500, padding: "6px 14px",
                 }}>

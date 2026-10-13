@@ -4,7 +4,7 @@
   padding: 40px;
   font-family: "Arial", sans-serif;
   color: #333;
-  background: #0C1C26;
+  background: #0a2128;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -56,7 +56,7 @@
 }
 
 /* .faqItem:hover {
-  background-color: #11232f;
+  background-color: #0a2128;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(95, 255, 248, 0.1);
 } */
@@ -102,7 +102,7 @@
   min-width: 35px;
   min-height: 35px;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  background-color: #11232f;
+  background-color: #0a2128;
   border-radius: 25px;
   padding: 0px;
 }

@@ -49,10 +49,10 @@ function TestimonialCard({ card, delay = 0 }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, delay }}
       style={{
-        background: "rgba(13,32,53,0.88)", border: `1px solid ${BORDER}`,
+        background: "rgba(10,33,40,0.88)", border: `1px solid ${BORDER}`,
         borderRadius: 14, padding: "16px 18px", width: 240,
         backdropFilter: "blur(12px)",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.45), 0 0 30px rgba(20,184,166,0.10), 0 0 60px rgba(20,184,166,0.06)",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.45), 0 0 30px rgba(36,178,180,0.10), 0 0 60px rgba(36,178,180,0.06)",
         rotate: rotate,
       }}
     >
@@ -111,7 +111,7 @@ export default function Hero() {
           position: "absolute", top: "50%", left: "50%",
           transform: "translate(-50%, -60%)",
           width: 700, height: 600,
-          background: `radial-gradient(ellipse at center, rgba(20,184,166,0.12) 0%, transparent 70%)`,
+          background: `radial-gradient(ellipse at center, rgba(36,178,180,0.12) 0%, transparent 70%)`,
           pointerEvents: "none",
         }} />
 
@@ -153,7 +153,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
             style={{
               display: "inline-flex", alignItems: "center", gap: 8,
-              background: "rgba(13,32,53,0.8)", border: `1px solid ${BORDER}`,
+              background: "rgba(10,33,40,0.8)", border: `1px solid ${BORDER}`,
               borderRadius: 20, padding: "1px 16px", marginBottom: 28,
               backdropFilter: "blur(8px)",
             }}
@@ -197,7 +197,7 @@ export default function Hero() {
                   manualMode={false}
                   blurAmount={2}
                   borderColor={T}
-                  glowColor={`rgba(20,184,166,0.6)`}
+                  glowColor={`rgba(36,178,180,0.6)`}
                   animationDuration={0.5}
                   pauseBetweenAnimations={1}
                 />
@@ -225,7 +225,7 @@ export default function Hero() {
               display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8,
               background: T, color: DARKER, padding: "14px 32px",
               borderRadius: 100, fontWeight: 700, fontSize: 16, textDecoration: "none",
-              boxShadow: `0 0 32px rgba(20,184,166,0.35)`,
+              boxShadow: `0 0 32px rgba(36,178,180,0.35)`,
               width: "100%",
             }}>
               Get started free →

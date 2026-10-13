@@ -42,12 +42,12 @@
 
 .mobileMarqueeWrapper::before {
   left: 0;
-  background: linear-gradient(to right, #0c1a2e 0%, transparent 100%);
+  background: linear-gradient(to right, #00181f 0%, transparent 100%);
 }
 
 .mobileMarqueeWrapper::after {
   right: 0;
-  background: linear-gradient(to left, #0c1a2e 0%, transparent 100%);
+  background: linear-gradient(to left, #00181f 0%, transparent 100%);
 }
 
 @keyframes scrollRight {

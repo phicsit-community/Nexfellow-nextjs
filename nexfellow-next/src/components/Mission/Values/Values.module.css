@@ -1,7 +1,7 @@
 .container {
   padding: 4rem 1rem;
   text-align: center;
-  background-color: #0C1C26;
+  background-color: #0a2128;
 }
 
 .title {
@@ -22,7 +22,7 @@
 }
 
 .card {
-  background: #0C1C26;
+  background: #0a2128;
   border-radius: 24px;
   border: 2px solid rgba(255, 255, 255, 0.1);
   padding: 2rem;

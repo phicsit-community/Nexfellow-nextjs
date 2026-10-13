@@ -1,5 +1,5 @@
 .section {
-  background: #021a21;
+  background: #00181f;
   padding: 57.6px 15.4px 64px;
   font-family: "Inter", sans-serif;
 }
@@ -15,7 +15,7 @@
 
 .eyebrow {
   display: block;
-  color: #2dd4bf;
+  color: #24b2b4;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.25em;
@@ -34,7 +34,7 @@
 
 .accent {
   display: block;
-  color: #2dd9c9;
+  color: #24b2b4;
 }
 
 .subtitle {
@@ -61,8 +61,8 @@
   width: 48px;
   height: 48px;
   border-radius: 9px;
-  background: #0f2133;
-  color: #2dd9c9;
+  background: #0a2128;
+  color: #24b2b4;
   margin-bottom: 11.5px;
 }
 
@@ -92,7 +92,7 @@
   gap: 14.1px;
   padding: 14.1px 16.6px;
   border-radius: 14.1px;
-  background: #162b36;
+  background: #0a2128;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -104,8 +104,8 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #0f2133;
-  color: #2dd9c9;
+  background: #0a2128;
+  color: #24b2b4;
 }
 
 .infoBody {
@@ -149,7 +149,7 @@
 }
 
 .form {
-  background: #16262e;
+  background: #0a2128;
   border: 1px solid rgba(255, 255, 255, 0.04);
   border-radius: 17.9px;
   padding: 38.4px 42.2px 56.3px;
@@ -180,7 +180,7 @@
 
 .input {
   width: 100%;
-  background: #0f1f26;
+  background: #0a2128;
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 6.4px;
   padding: 0 15.4px;
@@ -197,7 +197,7 @@
 }
 
 .input:focus {
-  border-color: #2dd9c9;
+  border-color: #24b2b4;
 }
 
 .textarea {
@@ -212,7 +212,7 @@
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  background: #35e3d4;
+  background: #2cc3c5;
   color: #05303a;
   border: none;
   border-radius: 6.4px;

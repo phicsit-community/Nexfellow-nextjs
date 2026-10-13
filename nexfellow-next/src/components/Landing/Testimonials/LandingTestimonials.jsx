@@ -34,7 +34,7 @@ const SIDE_CARDS = [
   },
   {
     name: "Nina Patel", role: "CPO, DevPulse", avatar: "NP",
-    grad: "linear-gradient(135deg, #14b8a6, #0ea5e9)",
+    grad: "linear-gradient(135deg, #24b2b4, #0ea5e9)",
     quote: "NexFellow replaced three paid user-research tools for us. Faster, deeper, and brutally honest.",
   },
 ];
@@ -143,7 +143,7 @@ export default function LandingTestimonials() {
                       borderRadius: 16, padding: 20, flexShrink: 0,
                       transition: "border-color 0.2s",
                     }}
-                    onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(20,184,166,0.35)"}
+                    onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(36,178,180,0.35)"}
                     onMouseLeave={e => e.currentTarget.style.borderColor = BORDER2}
                   >
                     <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>

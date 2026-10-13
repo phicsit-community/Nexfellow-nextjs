@@ -30,7 +30,7 @@
 }
 
 .highlight {
-  color: rgba(34, 211, 238, 1);
+  color: rgba(36,178,180, 1);
 }
 
 .subheading {
@@ -99,7 +99,7 @@
   margin: 0;
 }
 .missionsub {
-  color: rgba(34, 211, 238, 1);
+  color: rgba(36,178,180, 1);
 }
 .visionsub {
   color: rgba(251, 146, 60, 1);
@@ -195,7 +195,7 @@
   width: 96px;
   height: 4px;
 
-  background: linear-gradient(90deg, #22d3ee 0%, #c084fc 50%, #fb923c 100%);
+  background: linear-gradient(90deg, #24b2b4 0%, #c084fc 50%, #fb923c 100%);
   margin-bottom: 50px;
 }
 

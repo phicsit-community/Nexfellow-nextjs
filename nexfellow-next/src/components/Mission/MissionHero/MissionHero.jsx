@@ -35,7 +35,7 @@ export default function MissionHero() {
         top: "50%", left: "50%",
         transform: "translate(-50%, -50%)",
         width: isMobile ? 300 : 600, height: isMobile ? 200 : 400,
-        background: "radial-gradient(ellipse, rgba(20,184,166,0.12) 0%, transparent 70%)",
+        background: "radial-gradient(ellipse, rgba(36,178,180,0.12) 0%, transparent 70%)",
         pointerEvents: "none",
       }} />
 
@@ -43,7 +43,7 @@ export default function MissionHero() {
         {/* Badge */}
         <div style={{
           display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 32,
-          background: "rgba(20,184,166,0.08)",
+          background: "rgba(36,178,180,0.08)",
           border: `1px solid ${BORDER}`,
           borderRadius: 20, padding: "6px 16px",
         }}>
@@ -93,7 +93,7 @@ export default function MissionHero() {
           display: "grid",
           gridTemplateColumns: isMobile ? "repeat(3, 1fr)" : "repeat(3, 1fr)",
           gap: 0,
-          background: "#0d2035",
+          background: "#0a2128",
           border: `1px solid rgba(255,255,255,0.1)`,
           borderRadius: 16,
           overflow: "hidden",

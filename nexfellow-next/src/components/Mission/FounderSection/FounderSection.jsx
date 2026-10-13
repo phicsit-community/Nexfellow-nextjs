@@ -65,7 +65,7 @@ export default function FounderSection() {
                   width: 80, height: 80,
                   borderRadius: "50%",
                   border: `2px solid ${BORDER}`,
-                  background: "rgba(20,184,166,0.1)",
+                  background: "rgba(36,178,180,0.1)",
                   margin: "0 auto 16px",
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
@@ -163,7 +163,7 @@ export default function FounderSection() {
 
               {/* Secondary pull-quote card */}
               <div style={{
-                background: "rgba(20,184,166,0.04)",
+                background: "rgba(36,178,180,0.04)",
                 border: `1px solid ${BORDER}`,
                 borderRadius: 16,
                 padding: "24px",

@@ -28,7 +28,7 @@ export default function FeaturesHero() {
         position: "absolute", top: "50%", left: "50%",
         transform: "translate(-50%, -60%)",
         width: 800, height: 700,
-        background: `radial-gradient(ellipse at center, rgba(20,184,166,0.1) 0%, transparent 70%)`,
+        background: `radial-gradient(ellipse at center, rgba(36,178,180,0.1) 0%, transparent 70%)`,
         pointerEvents: "none",
       }} />
 
@@ -40,7 +40,7 @@ export default function FeaturesHero() {
           initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           style={{
             display: "inline-flex", alignItems: "center", gap: 8,
-            background: "rgba(13,32,53,0.8)", border: `1px solid ${BORDER}`,
+            background: "rgba(10,33,40,0.8)", border: `1px solid ${BORDER}`,
             borderRadius: 20, padding: "6px 16px", marginBottom: 21,
             backdropFilter: "blur(8px)",
           }}
@@ -77,7 +77,7 @@ export default function FeaturesHero() {
             display: "inline-flex", alignItems: "center", gap: 8,
             background: T, color: DARKER, padding: "14px 36px",
             borderRadius: 100, fontWeight: 700, fontSize: 16, textDecoration: "none",
-            boxShadow: `0 0 32px rgba(20,184,166,0.35)`,
+            boxShadow: `0 0 32px rgba(36,178,180,0.35)`,
           }}>
             Get started free <span style={{ fontSize: 18 }}>→</span>
           </Link>
@@ -93,7 +93,7 @@ export default function FeaturesHero() {
           marginTop: isMobile ? 48 : 72,
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
-          background: "rgba(13,32,53,0.65)",
+          background: "rgba(10,33,40,0.65)",
           border: `1px solid ${BORDER2}`,
           borderRadius: 16,
           backdropFilter: "blur(14px)",
