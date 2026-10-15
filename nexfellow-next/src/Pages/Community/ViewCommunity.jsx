@@ -438,16 +438,14 @@ const Community = () => {
                       onClick={() => {
                         const owner = community?.owner;
                         if (!owner?._id) return;
-                        router.push("/inbox", {
-                          state: {
-                            dmTarget: {
-                              _id: owner._id,
-                              name: owner.name,
-                              username: owner.username,
-                              picture: owner.picture,
-                            },
-                          },
+                        // Next's router has no history state; Inbox reads the target from query params
+                        const params = new URLSearchParams({
+                          userId: owner._id,
+                          name: owner.name || "",
+                          username: owner.username || "",
+                          picture: owner.picture || "",
                         });
+                        router.push(`/inbox?${params.toString()}`);
                       }}
                       aria-label="Message owner"
                     >

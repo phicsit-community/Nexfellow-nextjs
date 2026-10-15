@@ -469,27 +469,22 @@ const Inbox = () => {
     if (handledDeepLinkRef.current) return;
     if (isLoading) return; // wait until conversations fetched
 
-    // Prefer history state
-    const stateTarget = location?.state?.dmTarget;
-
-    // Fallback to query params if needed
+    // Deep-link target comes from query params (e.g. /inbox?userId=...&name=...)
     const qpUserId = searchParams.get("userId");
     const qpName = searchParams.get("name") || "";
     const qpUsername = searchParams.get("username") || "";
     const qpPicture = searchParams.get("picture") || "";
 
-    const target = stateTarget
-      ? stateTarget
-      : qpUserId
-        ? { _id: qpUserId, name: qpName, username: qpUsername, picture: qpPicture }
-        : null;
+    const target = qpUserId
+      ? { _id: qpUserId, name: qpName, username: qpUsername, picture: qpPicture }
+      : null;
 
     if (target?._id) {
       handledDeepLinkRef.current = true;
       openDMTarget(target);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, conversations, location?.state]);
+  }, [isLoading, conversations, searchParams]);
 
   const fetchMessages = async (conversationId) => {
     if (!conversationId) return;
@@ -950,7 +945,8 @@ const Inbox = () => {
           <button
             className={styles.newMessageButton}
             onClick={() => setShowNewMessageModal(true)}
-            aria-label="New Message"
+            aria-label="New message"
+            title="New message"
           >
             <IoAdd />
           </button>
@@ -1012,13 +1008,7 @@ const Inbox = () => {
                   <AiOutlineSend size={40} />
                 </div>
                 <h4>No conversations yet</h4>
-                <p>Start chatting with other users</p>
-                <button
-                  className={styles.startConversationButton}
-                  onClick={() => setShowNewMessageModal(true)}
-                >
-                  Start a conversation
-                </button>
+                <p>Tap <strong>+</strong> above to message someone.</p>
               </div>
             ) : (
               conversations.map((conversation) => (
@@ -1431,17 +1421,23 @@ const Inbox = () => {
         ) : (
           <div className={styles.noConversationSelected}>
             <img src={newConvImg?.src || newConvImg} />
-            <h3>Select a conversation or start a new one</h3>
-            <h4>
-              Choose from your existing conversations or start a new chat with
-              someone.
-            </h4>
-            <button
-              className={styles.startConversationButton}
-              onClick={() => setShowNewMessageModal(true)}
-            >
-              Start a conversation
-            </button>
+            {!isLoading && conversations.length === 0 ? (
+              <>
+                <h3>Start your first conversation</h3>
+                <h4>Message a builder to share feedback, ask questions, or collaborate.</h4>
+                <button
+                  className={styles.startConversationButton}
+                  onClick={() => setShowNewMessageModal(true)}
+                >
+                  Start a conversation
+                </button>
+              </>
+            ) : (
+              <>
+                <h3>Select a conversation</h3>
+                <h4>Pick a conversation from the list, or use + to start a new one.</h4>
+              </>
+            )}
           </div>
         )}
         </div>

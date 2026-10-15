@@ -209,6 +209,9 @@
   justify-content: center;
   gap: 6px;
   transition: color 0.2s ease;
+  /* Keep the label on one line at its natural width so the underline (width: 100%) always spans it */
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .activeTab {
@@ -225,7 +228,9 @@
   width: 100%;
   height: 2px;
   background-color: var(--primary-color, #24b2b4);
-  animation: slideIn 0.3s ease;
+  /* Grow from the label's left edge (not its centre) so it never looks offset mid-animation */
+  transform-origin: left;
+  animation: slideIn 0.2s ease-out;
 }
 
 .filterButton {
