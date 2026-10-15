@@ -460,7 +460,6 @@ const FAQ_ITEMS = [
   {
     q: "What is NexFellow Premium?",
     a: "NexFellow Premium is designed for builders who want to grow faster. You'll get priority feedback from verified builders within 24 hours, a verified badge that helps build trust with investors and potential co-founders, full access to BuilderMap to connect with other builders, and detailed insights that show exactly what users like, dislike, and think you should improve.",
-    defaultOpen: true,
   },
   {
     q: "How does the feedback guarantee work?",
@@ -504,15 +503,21 @@ const FAQ_ITEMS = [
   }
 ]
 
-function FaqItem({ q, a, defaultOpen, isLast, tk }) {
-  const [open, setOpen] = useState(!!defaultOpen);
+function FaqItem({ id, q, a, open, onToggle, isLast, tk }) {
   return (
     <div style={{
       borderBottom: isLast ? "none" : `1px solid ${tk.border}`,
       padding: "20px 24px",
     }}>
       <button
-        onClick={() => setOpen(o => !o)}
+        type="button"
+        aria-expanded={open}
+        aria-controls={`${id}-answer`}
+        onClick={(e) => {
+          // A double-click fires two clicks; only act on the first so it doesn't open-then-close.
+          if (e.detail > 1) return;
+          onToggle();
+        }}
         style={{
           width: "100%",
           background: "none",
@@ -524,6 +529,8 @@ function FaqItem({ q, a, defaultOpen, isLast, tk }) {
           gap: 16,
           padding: 0,
           textAlign: "left",
+          userSelect: "none",
+          WebkitUserSelect: "none",
         }}
       >
         <span style={{ fontSize: 15, fontWeight: 600, color: tk.textPrimary }}>{q}</span>
@@ -538,7 +545,7 @@ function FaqItem({ q, a, defaultOpen, isLast, tk }) {
         </svg>
       </button>
       {open && a && (
-        <p style={{ marginTop: 12, fontSize: 14, color: tk.textSecondary, lineHeight: 1.7 }}>{a}</p>
+        <p id={`${id}-answer`} style={{ marginTop: 12, fontSize: 14, color: tk.textSecondary, lineHeight: 1.7 }}>{a}</p>
       )}
     </div>
   );
@@ -546,6 +553,8 @@ function FaqItem({ q, a, defaultOpen, isLast, tk }) {
 
 export default function Premium() {
   const [isAnnual, setIsAnnual] = useState(false);
+  // Only one FAQ answer is open at a time; the first one starts open.
+  const [openFaq, setOpenFaq] = useState(0);
   const [checkoutLoading, setCheckoutLoading] = useState(null);
   const [currentTier, setCurrentTier] = useState(null);
   const { effectiveTheme } = useTheme();
@@ -851,9 +860,11 @@ export default function Premium() {
             {FAQ_ITEMS.map((item, i) => (
               <FaqItem
                 key={i}
+                id={`premium-faq-${i}`}
                 q={item.q}
                 a={item.a}
-                defaultOpen={item.defaultOpen}
+                open={openFaq === i}
+                onToggle={() => setOpenFaq(prev => (prev === i ? null : i))}
                 isLast={i === FAQ_ITEMS.length - 1}
                 tk={tk}
               />
