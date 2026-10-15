@@ -103,11 +103,15 @@
 }
 
 .image {
+  display: block;
   width: 100%;
-  height: 160px;
+  /* Scale with the banner's own aspect ratio so it never crops; 2824/1280
+     reserves space before the image loads and is replaced by the real
+     ratio once it does (admin-uploaded ads can vary). */
+  height: auto;
+  aspect-ratio: auto 2824 / 1280;
   border-radius: 8px;
-  /* background-color: #e8e4e4; */
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .suggestion {
@@ -488,9 +492,6 @@
     gap: 16px;
   }
 
-  .image {
-    height: 140px;
-  }
 
   .suggestion {
     padding: 16px;
@@ -519,9 +520,6 @@
     height: 8px;
   }
 
-  .image {
-    height: 120px;
-  }
 
   .suggestion {
     padding: 14px;
@@ -556,9 +554,6 @@
     font-size: 12px;
   }
 
-  .image {
-    height: 100px;
-  }
 
   .suggestion {
     padding: 12px;
