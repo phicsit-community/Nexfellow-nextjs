@@ -23,6 +23,7 @@ function ProfileDropdown() {
     const [loading, setLoading] = useState(true);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [error, setError] = useState(null);
+    const [imgFailed, setImgFailed] = useState(false);
     const [moderated, setModerated] = useState([]);
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
     const logoutFn = useLogout();
@@ -33,14 +34,9 @@ function ProfileDropdown() {
             setLoading(true);
             setError(null);
             try {
-                const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
-                const userId = userData?.id;
-                const username = userData?.username;
-
-                if (!userId || !username) throw new Error("Invalid user data");
-
                 const response = await api.get(`/user/profile`);
                 setUser(response.data);
+                setImgFailed(false);
             } catch (err) {
                 setError("Failed to load user data: " + err.message);
             } finally {
@@ -91,24 +87,19 @@ function ProfileDropdown() {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <div className={styles.profileLink}>
-                    {user?.profilePhoto && !error ? (
-                        <>
-                            <img
-                                className={styles.dp}
-                                src={user.profilePhoto}
-                                alt={user.name || "User"}
-                                onError={(e) => {
-                                    e.target.parentElement.classList.add(styles.initials);
-                                    e.target.parentElement.textContent = getInitials(user.name);
-                                }}
-                            />
-                            <span className={styles.statusDot}></span>
-                        </>
+                    {user?.profilePhoto && !error && !imgFailed ? (
+                        <img
+                            className={styles.dp}
+                            src={user.profilePhoto}
+                            alt={user.name || "User"}
+                            onError={() => setImgFailed(true)}
+                        />
                     ) : (
                         <div className={styles.initials}>
                             {getInitials(user?.name)}
                         </div>
                     )}
+                    <span className={styles.statusDot}></span>
                 </div>
             </DropdownMenuTrigger>
 
@@ -121,7 +112,7 @@ function ProfileDropdown() {
                     className={styles.profileHeader}
                 >
                     <div className={styles.avatar}>
-                        {user?.profilePhoto ? (
+                        {user?.profilePhoto && !imgFailed ? (
                             <img src={user.profilePhoto} alt="Avatar" />
                         ) : (
                             <span className={styles.avatarInitials}>
