@@ -238,11 +238,13 @@ export default function Wallet() {
   const tier = profile?.subscriptionTier ?? "free";
   const plan = PLAN_INFO[tier] ?? PLAN_INFO.free;
   const nextPlan = plan.next ? PLAN_INFO[plan.next] : null;
+  const earnedThisWeek = summary?.earnedThisWeek ?? 0;
+  const spentThisWeek = summary?.spentThisWeek ?? 0;
 
   return (
-    <div style={{ background: tk.bgPage, minHeight: "100vh", padding: "32px 24px 64px" }}>
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, color: tk.textPrimary, marginBottom: 4 }}>Wallet</h1>
+    <div className="wallet-page" style={{ background: tk.bgPage, minHeight: "100vh" }}>
+      <div>
+        {/* Page title ("Wallet") is rendered by PageHeader */}
         <p style={{ fontSize: 13, color: tk.textSecondary, marginBottom: 28 }}>
           Track your credit balance, earnings, and subscription.
         </p>
@@ -281,8 +283,18 @@ export default function Wallet() {
             </div>
 
             <div className="wallet-stat-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 10 }}>
-              <StatTile label="Earned this week" value={`+${summary?.earnedThisWeek ?? 0}`} positive tk={tk} />
-              <StatTile label="Spent this week" value={`-${summary?.spentThisWeek ?? 0}`} positive={false} tk={tk} />
+              <StatTile
+                label="Earned this week"
+                value={earnedThisWeek > 0 ? `+${earnedThisWeek}` : 0}
+                positive={earnedThisWeek > 0 ? true : undefined}
+                tk={tk}
+              />
+              <StatTile
+                label="Spent this week"
+                value={spentThisWeek > 0 ? `-${spentThisWeek}` : 0}
+                positive={spentThisWeek > 0 ? false : undefined}
+                tk={tk}
+              />
               <StatTile label="All time earned" value={summary?.totalEarned ?? 0} tk={tk} />
               <StatTile label="All time spent" value={summary?.totalSpent ?? 0} tk={tk} />
             </div>
@@ -589,6 +601,17 @@ export default function Wallet() {
       </div>
 
       <style>{`
+        /* Horizontal padding mirrors PageHeader so content edges line up with the header */
+        .wallet-page { padding: 24px 30px 64px; }
+        @media (max-width: 768px) {
+          .wallet-page { padding: 20px 20px 64px; }
+        }
+        @media (max-width: 640px) {
+          .wallet-page { padding: 16px 14px 64px; }
+        }
+        @media (max-width: 480px) {
+          .wallet-page { padding: 16px 12px 64px; }
+        }
         @media (max-width: 900px) {
           .wallet-top-grid { grid-template-columns: 1fr !important; }
           .wallet-bottom-grid { grid-template-columns: 1fr !important; }
