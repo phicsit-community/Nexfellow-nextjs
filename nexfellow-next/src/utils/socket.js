@@ -9,6 +9,23 @@ if (process.env.NODE_ENV === "development") {
 }
 
 let socket = null;
+// In-flight initialization, so concurrent callers (PrivateLayout + ClientInitializer)
+// share one attempt instead of each creating their own connection.
+let pendingInit = null;
+
+// Components subscribe (via useSocket) so they re-render once the socket exists.
+// Clerk's token arrives asynchronously, so pages that mount on a hard refresh
+// render before the socket has been created.
+const listeners = new Set();
+const setSocket = (next) => {
+  socket = next;
+  listeners.forEach((listener) => listener());
+};
+
+export const subscribeSocket = (listener) => {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+};
 
 // Clerk loads asynchronously. Retry getting the token a few times
 // in case session isn't ready immediately after page hydration.
@@ -23,7 +40,16 @@ const getClerkToken = async (retries = 8, delayMs = 250) => {
   return null;
 };
 
-export const initializeSocket = async (userId) => {
+export const initializeSocket = (userId) => {
+  if (!pendingInit) {
+    pendingInit = connectSocket(userId).finally(() => {
+      pendingInit = null;
+    });
+  }
+  return pendingInit;
+};
+
+const connectSocket = async (userId) => {
   if (!userId) {
     console.warn("⚠️ No userId provided. Socket will not connect.");
     return null;
@@ -50,7 +76,7 @@ export const initializeSocket = async (userId) => {
     return null;
   }
 
-  socket = io(apiUrl, {
+  const instance = io(apiUrl, {
     autoConnect: false,
     transports: ["websocket", "polling"],
     reconnection: true,
@@ -60,87 +86,88 @@ export const initializeSocket = async (userId) => {
     auth: { token },
   });
 
-  socket.on("connect", () => {
-    console.log(`✅ Socket connected: ${socket.id}`);
-    socket.emit("joinFollowedCommunities", userId);
-    socket.emit("joinDirectMessages", userId);
+  instance.on("connect", () => {
+    console.log(`✅ Socket connected: ${instance.id}`);
+    instance.emit("joinFollowedCommunities", userId);
+    instance.emit("joinDirectMessages", userId);
   });
 
-  socket.on("disconnect", (reason) => {
-    console.log(`❌ Socket disconnected: ${socket.id}, reason: ${reason}`);
+  instance.on("disconnect", (reason) => {
+    console.log(`❌ Socket disconnected: ${instance.id}, reason: ${reason}`);
   });
 
-  socket.on("error", (error) => {
+  instance.on("error", (error) => {
     console.error(`Socket error: ${error.message}`);
   });
 
-  socket.on("connect_error", (err) => {
+  instance.on("connect_error", (err) => {
     console.error("Socket connection error:", err.message);
   });
 
-  socket.on("newNotification", (notification) => {
+  instance.on("newNotification", (notification) => {
     console.log("🔔 New notification:", notification);
   });
 
-  socket.on("notification:read", (updatedUnreadCount) => {
+  instance.on("notification:read", (updatedUnreadCount) => {
     console.log("🔔 Notification read update, unread count:", updatedUnreadCount);
   });
 
-  socket.on("newSystemNotification", (notification) => {
+  instance.on("newSystemNotification", (notification) => {
     console.log("newSystemNotification", notification);
   });
 
-  socket.on("newCommunityNotification", (notification) => {
+  instance.on("newCommunityNotification", (notification) => {
     console.log("newCommunityNotification", notification);
   });
 
-  socket.on("community:newMessage", (message) => {
+  instance.on("community:newMessage", (message) => {
     console.log("💬 New community message:", message);
   });
 
-  socket.on("community:deletedMessage", (messageId) => {
+  instance.on("community:deletedMessage", (messageId) => {
     console.log("🗑️ Community message deleted:", messageId);
   });
 
-  socket.on("community:updatedMessage", (updatedMessage) => {
+  instance.on("community:updatedMessage", (updatedMessage) => {
     console.log("✏️ Community message updated:", updatedMessage);
   });
 
-  socket.on("community:typing", (data) => {
+  instance.on("community:typing", (data) => {
     console.log("⌨️ Community typing status:", data);
   });
 
-  socket.on("dm:newMessage", (data) => {
+  instance.on("dm:newMessage", (data) => {
     console.log("📩 New direct message:", data);
   });
 
-  socket.on("dm:typing", (data) => {
+  instance.on("dm:typing", (data) => {
     console.log("⌨️ Direct message typing:", data);
   });
 
-  socket.on("dm:messageRead", (data) => {
+  instance.on("dm:messageRead", (data) => {
     console.log("✅ Direct message read receipt:", data);
   });
 
-  socket.on("comment:new", (comment) => {
+  instance.on("comment:new", (comment) => {
     console.log("💬 New comment:", comment);
   });
 
-  socket.on("comment:updated", (comment) => {
+  instance.on("comment:updated", (comment) => {
     console.log("✏️ Comment updated:", comment);
   });
 
-  socket.on("comment:liked", (comment) => {
+  instance.on("comment:liked", (comment) => {
     console.log("👍 Comment liked:", comment);
   });
 
-  socket.on("comment:reported", (comment) => {
+  instance.on("comment:reported", (comment) => {
     console.log("⚠️ Comment reported:", comment);
   });
 
-  socket.connect();
+  instance.connect();
+  setSocket(instance);
 
-  return socket;
+  return instance;
 };
 
 export const getSocket = () => socket;
@@ -148,7 +175,7 @@ export const getSocket = () => socket;
 export const disconnectSocket = () => {
   if (socket) {
     socket.disconnect();
-    socket = null;
+    setSocket(null);
     console.log("🛑 Socket fully disconnected and reset.");
   }
 };

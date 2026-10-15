@@ -15,8 +15,7 @@ import HidePostModal from "../../components/Modals/HidePostModal";
 import { toast } from "sonner";
 import { saveFeedCache, getFeedCache, clearFeedCache } from "../../utils/feedCache";
 
-import { getSocket } from "../../utils/socket";
-const socket = getSocket();
+import useSocket from "../../hooks/useSocket";
 const PAGE_SIZE = 10;
 const PULL_THRESHOLD = 50;
 
@@ -54,6 +53,7 @@ const PostSkeleton = () => (
 );
 
 const NewestFeed = () => {
+    const socket = useSocket();
     const pathname = usePathname();
     const router = useRouter();
     const [isPostsRendered, setIsPostsRendered] = useState(false);
@@ -292,7 +292,7 @@ const NewestFeed = () => {
 
         socket.on("newPost", handler);
         return () => socket.off("newPost", handler);
-    }, [isPostVisible]);
+    }, [socket, isPostVisible]);
 
     // Post actions, modals, etc.
     const handleHidePost = async () => {

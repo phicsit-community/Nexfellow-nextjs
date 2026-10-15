@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useRef, forwardRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { getSocket } from "../../utils/socket";
+import useSocket from "../../hooks/useSocket";
 import api from "../../lib/axios";
 import styles from "./Discussion.module.css";
 import SendIcon from "./assets/send.svg";
@@ -279,7 +279,7 @@ const Discussion = ({ communityId, messageIdToScroll, isModeratorView }) => {
   // auto-scroll control
   const [shouldAutoScroll, setShouldAutoScroll] = useState(false);
 
-  const socket = getSocket();
+  const socket = useSocket();
   const messageEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
   const typingTimeouts = useRef({});
@@ -527,7 +527,7 @@ const Discussion = ({ communityId, messageIdToScroll, isModeratorView }) => {
 
   const handleTyping = (communityId, userId, typingStatus) => {
     if (!userId) return;
-    socket.emit("community:typing", {
+    socket?.emit("community:typing", {
       communityId,
       userId,
       typingStatus,
@@ -538,7 +538,7 @@ const Discussion = ({ communityId, messageIdToScroll, isModeratorView }) => {
     if (typingStatus) {
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
       typingTimeoutRef.current = setTimeout(() => {
-        socket.emit("community:typing", {
+        socket?.emit("community:typing", {
           communityId,
           userId,
           typingStatus: false,
@@ -569,7 +569,7 @@ const Discussion = ({ communityId, messageIdToScroll, isModeratorView }) => {
       setMentions([]);
       setMentionQuery("");
       setMentionSuggestions([]);
-      socket.emit("community:typing", {
+      socket?.emit("community:typing", {
         communityId,
         userId: currentUserId,
         typingStatus: false,

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import api from "../../lib/axios";
-import { getSocket } from "../../utils/socket";
+import useSocket from "../../hooks/useSocket";
 import { toast } from "sonner";
 import {
   IoSearch,
@@ -33,7 +33,7 @@ import useProfileRedirect from "../../hooks/useProfileRedirect.js";
 const str = (v) => (v != null ? String(v) : v);
 
 const Inbox = () => {
-  const socket = getSocket();
+  const socket = useSocket();
   const router = useRouter();
   const pathname = usePathname();
   const redirectToProfile = useProfileRedirect();
@@ -100,15 +100,19 @@ const Inbox = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Initial load + single-time socket registration
+  // Initial data (doesn't depend on the socket being connected yet)
   useEffect(() => {
     if (!currentUserId) return;
-
-    socket.emit("joinDirectMessages", currentUserId);
-
-    // Initial data
     fetchConversations();
     fetchMessageRequests();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUserId]);
+
+  // Real-time DM events — registered once the socket exists (it's created asynchronously)
+  useEffect(() => {
+    if (!currentUserId || !socket) return;
+
+    socket.emit("joinDirectMessages", currentUserId);
 
     // Socket handlers (stable closures using refs)
     const onNewDirectMessage = (data) => {
@@ -371,9 +375,8 @@ const Inbox = () => {
       socket.off("dm:messageRead", onMessagesRead);
       socket.off("newMessageRequest", onNewMessageRequest);
     };
-    // Mount-only
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUserId]);
+  }, [currentUserId, socket]);
 
   // Scroll to bottom on messages change
   useEffect(() => {
@@ -509,7 +512,7 @@ const Inbox = () => {
         (c) => str(c._id) === str(conversationId)
       );
       if (conv && conv.otherUser) {
-        socket.emit("dm:messageRead", {
+        socket?.emit("dm:messageRead", {
           conversationId,
           userId: currentUserIdRef.current,
           recipientId: conv.otherUser._id,
@@ -626,7 +629,7 @@ const Inbox = () => {
       clearTimeout(typingTimeoutRef.current);
     }
 
-    socket.emit("dm:typing", {
+    socket?.emit("dm:typing", {
       senderId: currentUserIdRef.current,
       recipientId: sel.otherUser._id,
       typingStatus: isTyping,
@@ -636,7 +639,7 @@ const Inbox = () => {
 
     if (isTyping) {
       typingTimeoutRef.current = setTimeout(() => {
-        socket.emit("dm:typing", {
+        socket?.emit("dm:typing", {
           senderId: currentUserIdRef.current,
           recipientId: sel.otherUser._id,
           typingStatus: false,
@@ -823,7 +826,7 @@ const Inbox = () => {
   };
 
   useEffect(() => {
-    if (!currentUserId) return;
+    if (!currentUserId || !socket) return;
     const onUserBlocked = ({ by, target }) => {
       const me = String(currentUserIdRef.current);
       const other = me === String(by) ? String(target) : String(by);
@@ -864,7 +867,7 @@ const Inbox = () => {
       socket.off("dm:userBlocked", onUserBlocked);
       socket.off("dm:userUnblocked", onUserUnblocked);
     };
-  }, [currentUserId]);
+  }, [currentUserId, socket]);
 
   const formatTime = (timestamp) => {
     if (!timestamp) return "";

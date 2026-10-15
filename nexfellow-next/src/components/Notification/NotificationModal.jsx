@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import api from "../../lib/axios";
-import { getSocket } from "../../utils/socket";
+import useSocket from "../../hooks/useSocket";
 import styles from "./NotificationModal.module.css";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoClose, IoArrowBack } from "react-icons/io5";
@@ -24,7 +24,7 @@ import { getNotificationIcon } from "../../utils/notificationIcons";
 
 const NotificationModal = ({ closeModal }) => {
   const router = useRouter();
-  const socket = getSocket();
+  const socket = useSocket();
   const [mounted, setMounted] = useState(false);
   const [communityNotifications, setCommunityNotifications] = useState([]);
   const [systemNotifications, setSystemNotifications] = useState([]);
@@ -162,27 +162,34 @@ const NotificationModal = ({ closeModal }) => {
       fetchCommunityNotifications(1),
       fetchSystemNotifications(1),
     ]).finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    // Listen for real-time system notifications
-    socket.on("newSystemNotification", (notification) => {
+  // Real-time notifications — registered once the socket exists (it's created asynchronously)
+  useEffect(() => {
+    if (!socket) return;
+
+    const onSystem = (notification) => {
       setSystemNotifications((prevNotifications) => [
         ...prevNotifications,
         notification,
       ]);
-    });
-
-    socket.on("newCommunityNotification", (notification) => {
+    };
+    const onCommunity = (notification) => {
       setCommunityNotifications((prevNotifications) => [
         ...prevNotifications,
         notification,
       ]);
-    });
-
-    return () => {
-      socket.off("newSystemNotification");
-      socket.off("newCommunityNotification");
     };
-  }, []);
+    socket.on("newSystemNotification", onSystem);
+    socket.on("newCommunityNotification", onCommunity);
+
+    // Remove only our handlers — other components listen to the same events
+    return () => {
+      socket.off("newSystemNotification", onSystem);
+      socket.off("newCommunityNotification", onCommunity);
+    };
+  }, [socket]);
 
   // useEffect(() => {
   //   setCommunityPage(1);

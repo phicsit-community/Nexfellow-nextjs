@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import api from "../../lib/axios";
 import styles from "./NotificationPage.module.css";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
-import { getSocket } from "../../utils/socket";
+import useSocket from "../../hooks/useSocket";
 import DOMPurify from "dompurify";
 import defaultProfilePic from "./assets/default.jpg";
 import NoNotification from "./assets/NoNotification.svg";
@@ -18,7 +18,7 @@ const NotificationPage = () => {
   const router = useRouter();
   const [notifications, setNotifications] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
-  const socket = getSocket();
+  const socket = useSocket();
   const storedUser = typeof window !== "undefined" ? localStorage.getItem("user") : null;
   const user = storedUser ? JSON.parse(storedUser) : null;
   const loggedInUserId = user?._id || user?.id;
@@ -109,6 +109,12 @@ const NotificationPage = () => {
     setLoading(true);
     fetchNotifications();
     setPage(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Real-time notifications — registered once the socket exists (it's created asynchronously)
+  useEffect(() => {
+    if (!socket) return;
 
     const addNotification = (type) => (notif) => {
       setNotifications((prev) =>
@@ -117,15 +123,17 @@ const NotificationPage = () => {
         )
       );
     };
-    console.log("no", notifications);
-    socket.on("newSystemNotification", addNotification("system"));
-    socket.on("newCommunityNotification", addNotification("community"));
+    const onSystem = addNotification("system");
+    const onCommunity = addNotification("community");
+    socket.on("newSystemNotification", onSystem);
+    socket.on("newCommunityNotification", onCommunity);
 
+    // Remove only our handlers — other components listen to the same events
     return () => {
-      socket.off("newSystemNotification");
-      socket.off("newCommunityNotification");
+      socket.off("newSystemNotification", onSystem);
+      socket.off("newCommunityNotification", onCommunity);
     };
-  }, []);
+  }, [socket]);
 
   // Mark as read (single) - always update recipients array
   const markAsRead = async (id, type) => {

@@ -15,9 +15,7 @@ import BlockUserModal from "../../components/BlockUserModal/BlockUserModal";
 import HidePostModal from "../../components/Modals/HidePostModal";
 import { toast } from "sonner";
 import { saveFeedCache, getFeedCache, clearFeedCache } from "../../utils/feedCache";
-import { getSocket } from "../../utils/socket";
-
-const socket = getSocket();
+import useSocket from "../../hooks/useSocket";
 const PAGE_SIZE = 10;
 const PULL_THRESHOLD = 50;
 
@@ -55,6 +53,7 @@ const PostSkeleton = () => (
 );
 
 const TrendingFeed = ({ type = "trending" }) => {
+    const socket = useSocket();
     const pathname = usePathname();
     const router = useRouter();
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -313,7 +312,7 @@ const TrendingFeed = ({ type = "trending" }) => {
         };
         socket.on("newPost", handler);
         return () => socket.off("newPost", handler);
-    }, [isPostVisible]);
+    }, [socket, isPostVisible]);
 
     // Hide post
     const handleHidePost = async () => {
