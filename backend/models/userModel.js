@@ -164,6 +164,12 @@ const userSchema = new schema(
       default: null,
     },
 
+    // Set when the user's last open socket disconnects (see utils/websocket.js)
+    lastSeenAt: {
+      type: Date,
+      default: null,
+    },
+
     // Set on every SUBSCRIPTION_CREDIT_GRANT (activation, renewal, or the
     // annual-plan monthly credit cron). Dodo only fires a renewal webhook once
     // a year for annual plans, so annualCreditGrantCron uses this as the anchor
@@ -386,5 +392,42 @@ const userSchema = new schema(
   },
   { timestamps: true }
 );
+
+// Keep the admin Users page live: any write touching a field it shows pushes
+// the fresh row to connected admins, whichever code path made the change.
+// Required lazily because adminUserFeed itself loads this model.
+const ADMIN_FEED_FIELDS = [
+  "name",
+  "username",
+  "email",
+  "picture",
+  "subscriptionTier",
+  "subscriptionExpiresAt",
+  "subscriptionInterval",
+  "planBadge",
+  "onboardingProfile",
+];
+const pushAdminUser = (userId) => require("../services/adminUserFeed").pushAdminUser(userId);
+
+const updateTouchesAdminFields = (update = {}) =>
+  Object.entries(update).some(([key, value]) =>
+    key.startsWith("$")
+      ? Object.keys(value || {}).some((field) => ADMIN_FEED_FIELDS.includes(field))
+      : ADMIN_FEED_FIELDS.includes(key)
+  );
+
+userSchema.pre("save", function () {
+  this.$locals.adminFeedDirty = this.isNew || this.isModified(ADMIN_FEED_FIELDS);
+});
+
+userSchema.post("save", function (doc) {
+  if (doc.$locals.adminFeedDirty) pushAdminUser(doc._id);
+});
+
+userSchema.post(["findOneAndUpdate", "updateOne"], function (result) {
+  if (!updateTouchesAdminFields(this.getUpdate())) return;
+  const userId = result?._id || this.getFilter()?._id;
+  if (mongoose.isValidObjectId(userId)) pushAdminUser(userId);
+});
 
 module.exports = mongoose.model("User", userSchema);

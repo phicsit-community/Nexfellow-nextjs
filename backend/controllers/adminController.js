@@ -15,6 +15,11 @@ const uploadOnCloudinary = require("../utils/cloudinary");
 const { isCommunityCreator } = require("../middleware");
 const Request = require("../models/Request");
 const { getIo } = require("../utils/websocket");
+const {
+  getAdminUserRows,
+  getAdminUserDetails,
+  pushAdminUserRemoved,
+} = require("../services/adminUserFeed");
 const { deleteUserDeep } = require("../utils/userDeleteUtil");
 const Community = require("../models/communityModel");
 const Post = require("../models/postModel");
@@ -678,48 +683,18 @@ module.exports.setPlanBadge = async (req, res) => {
 
 module.exports.getRegisteredUsersByAdmin = async (req, res) => {
   try {
-    const users = await userModel
-      .find()
-      .sort({ createdAt: -1 })
-      .select(
-        "_id username name email verificationBadge premiumBadge communityBadge planBadge subscriptionTier picture profile createdCommunity createdAt onboardingProfile "
-      )
-      .populate({
-        path: "profile",
-      })
-      .populate({
-        path: "onboardingProfile",
-        select: "country",
-      })
-      .populate({
-        path: "createdCommunity",
-        select: "communityBadge accountType", // Get community badge and account type
-      })
-      .lean();
+    return res.status(200).json(await getAdminUserRows());
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
 
-    const data = users.map((user) => ({
-      _id: user._id,
-      username: user.username,
-      name: user.name,
-      email: user.email,
-      verificationBadge: user.verificationBadge,
-      premiumBadge: user.premiumBadge,
-      communityBadge: user.communityBadge,
-      planBadge: user.planBadge,
-      subscriptionTier: user.subscriptionTier,
-      picture: user.picture,
-      occupation: user.profile?.occupation,
-      phoneNumber: user.profile?.phoneNumber,
-      rating: user.profile?.rating,
-      username: user.username,
-      coins: user.profile?.coin,
-      createdCommunity: user.createdCommunity || null,
-      createdAt: user.createdAt,
-      // Country comes from the onboarding form (User.country defaults to "India")
-      country: user.onboardingProfile?.country || null,
-    }));
-
-    return res.status(200).json(data);
+module.exports.getUserDetails = async (req, res) => {
+  try {
+    const details = await getAdminUserDetails(req.params.userId);
+    if (!details) return res.status(404).json({ message: "User not found" });
+    return res.status(200).json(details);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server Error" });
@@ -766,6 +741,7 @@ module.exports.deleteUser = async (req, res) => {
     const result = await deleteUserDeep(userId);
 
     if (result.success) {
+      pushAdminUserRemoved(userId);
       return res.status(200).json({ message: result.message });
     } else {
       return res.status(500).json({ message: result.message });

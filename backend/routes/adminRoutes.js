@@ -61,6 +61,9 @@ router
   .route("/:adminId/registered-users")
   .get(isAdmin, catchAsync(admin.getRegisteredUsersByAdmin));
 router
+  .route("/users/:userId/details")
+  .get(isAdmin, catchAsync(admin.getUserDetails));
+router
   .route("/toggleCommunityCreator")
   .post(isAdmin, catchAsync(admin.toggleCommunityCreatorAccount));
 router

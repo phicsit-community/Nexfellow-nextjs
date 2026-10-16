@@ -20,6 +20,7 @@ const backendURL = process.env.BACKEND_DOMAIN;
 const isProduction = process.env.NODE_ENV === "production" || !!process.env.RENDER;
 const { uploadOnBunny, removeFromBunny } = require("../utils/attachments");
 const CreditService = require("../services/creditService");
+const { pushAdminUser } = require("../services/adminUserFeed");
 const { PLANS } = require("../constants/plans");
 const defaultProfilePicture =
   "https://nexfellow.b-cdn.net/defaults/default-profile.png";
@@ -1093,6 +1094,8 @@ module.exports.updateProfile = async (req, res) => {
 
     await user.save();
     await profile.save();
+    // Country lives on the onboarding profile, which the User model hook can't see
+    pushAdminUser(user._id);
 
     res.status(200).json({
       message: "Profile updated successfully",

@@ -83,4 +83,13 @@ const profileSchema = new schema({
   ],
 });
 
+// Credit balance changes (CreditService uses findOneAndUpdate with $inc coin)
+// refresh the user's row on the live admin Users page. Required lazily
+// because adminUserFeed loads the User model, which loads this one.
+profileSchema.post("findOneAndUpdate", function (doc) {
+  const update = this.getUpdate() || {};
+  const touchesCoin = "coin" in update || Object.values(update).some((op) => op && typeof op === "object" && "coin" in op);
+  if (touchesCoin && doc?.userId) require("../services/adminUserFeed").pushAdminUser(doc.userId);
+});
+
 module.exports = mongoose.model("Profile", profileSchema);

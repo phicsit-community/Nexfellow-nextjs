@@ -1,19 +1,85 @@
 const { Server } = require("socket.io");
 const { createClerkClient, verifyToken } = require("@clerk/backend");
+const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
+const Admin = require("../models/adminModel");
+const { isAllowedOrigin } = require("../config/allowedOrigins");
 
 const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 let io;
+let adminNs;
+
+// Required lazily: adminUserFeed itself depends on this module.
+const adminFeed = () => require("../services/adminUserFeed");
+
+// Presence: userId -> number of open sockets (a user can have several tabs/devices).
+// In-memory, so it reflects this process only — same scope as the socket rooms.
+const onlineUsers = new Map();
+
+const markOnline = (userId) => {
+  const count = (onlineUsers.get(userId) || 0) + 1;
+  onlineUsers.set(userId, count);
+  if (count === 1) adminFeed().pushAdminPresence(userId, true);
+  // Every new connection may follow a fresh sign-in, so refresh the admin row
+  adminFeed().pushAdminUser(userId);
+};
+
+const markOffline = (userId) => {
+  const remaining = (onlineUsers.get(userId) || 1) - 1;
+  if (remaining > 0) {
+    onlineUsers.set(userId, remaining);
+    return;
+  }
+  onlineUsers.delete(userId);
+  const lastSeenAt = new Date();
+  adminFeed().pushAdminPresence(userId, false, lastSeenAt);
+  User.updateOne({ _id: userId }, { $set: { lastSeenAt } }).catch((err) =>
+    console.error(`Failed to record lastSeenAt for ${userId}:`, err.message)
+  );
+};
+
+const getOnlineUserIds = () => Array.from(onlineUsers.keys());
+const isUserOnline = (userId) => onlineUsers.has(userId);
+
+// Admin panel sockets live in their own namespace so they never count as
+// online users, and authenticate with the admin JWT rather than Clerk.
+const initializeAdminNamespace = () => {
+  adminNs = io.of("/admin");
+
+  adminNs.use(async (socket, next) => {
+    try {
+      const token = socket.handshake.auth?.token;
+      if (!token) return next(new Error("Unauthorized — no token"));
+
+      const decoded = jwt.verify(token, process.env.ADMIN_SECRET);
+      const admin = await Admin.findById(decoded.adminId).select("_id");
+      if (!admin) return next(new Error("Unauthorized — not an admin"));
+
+      socket.adminId = admin._id.toString();
+      next();
+    } catch (err) {
+      console.error("Admin socket auth error:", err.message);
+      next(new Error("Unauthorized"));
+    }
+  });
+
+  adminNs.on("connection", (socket) => {
+    console.log(`Admin socket connected: ${socket.id}, adminId: ${socket.adminId}`);
+    adminFeed().sendPresenceSnapshot(socket);
+  });
+};
 
 const initializeWebsocket = (server) => {
   try {
     io = new Server(server, {
       cors: {
-        origin: process.env.SITE_URL || "http://localhost:5173",
+        origin: (origin, callback) => callback(null, isAllowedOrigin(origin)),
         methods: ["GET", "POST"],
       },
     });
+
+    initializeAdminNamespace();
 
     io.use(async (socket, next) => {
       try {
@@ -37,6 +103,7 @@ const initializeWebsocket = (server) => {
 
     io.on("connection", async (socket) => {
       console.log(`Socket connected: ${socket.id}, userId: ${socket.userId}`);
+      markOnline(socket.userId);
 
       socket.onAny((event, ...args) => {
         console.log(`Received event: '${event}' from socket ${socket.id}`, args);
@@ -140,6 +207,7 @@ const initializeWebsocket = (server) => {
 
       socket.on("disconnect", (reason) => {
         console.log(`Socket ${socket.id} disconnected. Reason: ${reason}`);
+        markOffline(socket.userId);
         socket.rooms.forEach((room) => {
           if (room !== socket.id) emitRoomCount(room);
         });
@@ -166,4 +234,7 @@ const getIo = () => {
 module.exports = {
   initializeWebsocket,
   getIo,
+  getOnlineUserIds,
+  isUserOnline,
+  getAdminNamespace: () => adminNs || null,
 };
