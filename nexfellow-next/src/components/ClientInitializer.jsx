@@ -2,11 +2,15 @@
 
 import { useEffect, useRef } from "react";
 import { useAuth, useClerk } from "@clerk/nextjs";
+import { usePathname, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import api from "@/lib/axios";
 import { initializeSocket } from "@/utils/socket";
 import { login, logout, setAuthLoading } from "@/store/slices/authSlice";
 import refreshCurrentUser from "@/utils/auth/refreshCurrentUser";
+
+// Signed-in users who haven't finished onboarding may only reach these (mirrors src/proxy.js)
+const ONBOARDING_EXEMPT = ["/onboarding", "/sign-in", "/sign-up"];
 
 /**
  * Bridges Clerk auth state into Redux and initializes the socket connection.
@@ -26,6 +30,8 @@ export default function ClientInitializer() {
     const { signOut } = useClerk();
     const user = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
+    const router = useRouter();
+    const pathname = usePathname();
     const initializedRef = useRef(false);
     // Track previous isSignedIn to detect true→false transition (sign-out event)
     const prevIsSignedIn = useRef(undefined);
@@ -67,10 +73,6 @@ export default function ClientInitializer() {
                 if (response.status === 200 && response.data.payload) {
                     const { payload } = response.data;
                     dispatch(login({ user: payload }));
-
-                    // Set isOnboarded cookie so Next.js middleware can redirect to /onboarding
-                    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
-                    document.cookie = `isOnboarded=${payload.isOnboarded ? "true" : "false"};expires=${expires};path=/;SameSite=Lax`;
                 }
             } catch (error) {
                 const isNetworkDown = !error.response; // no response = backend unreachable
@@ -99,6 +101,20 @@ export default function ClientInitializer() {
 
         initializeAuth();
     }, [isSignedIn, isLoaded, dispatch]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Keep the isOnboarded cookie (read by src/proxy.js) in sync with the user, and send
+    // users who haven't finished onboarding there right away — right after sign-up the
+    // cookie doesn't exist yet, so the first page request gets past the proxy.
+    useEffect(() => {
+        if (!isSignedIn || !user?.id || typeof user.isOnboarded !== "boolean") return;
+
+        const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
+        document.cookie = `isOnboarded=${user.isOnboarded};expires=${expires};path=/;SameSite=Lax`;
+
+        if (!user.isOnboarded && !ONBOARDING_EXEMPT.some((prefix) => pathname?.startsWith(prefix))) {
+            router.replace("/onboarding");
+        }
+    }, [isSignedIn, user?.id, user?.isOnboarded, pathname, router]);
 
     // Open socket once Redux has the MongoDB user id
     useEffect(() => {

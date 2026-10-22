@@ -1,45 +1,27 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-const isPublicRoute = createRouteMatcher([
-  "/",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/login(.*)",
-  "/signup(.*)",
-  "/forgotpassword(.*)",
-  "/auth/callback(.*)",
-  "/features(.*)",
-  "/mission(.*)",
-  "/blogs(.*)",
-  "/launches(.*)",
-  "/privacy(.*)",
-  "/terms(.*)",
-  "/help(.*)",
-  "/contact(.*)",
-  "/link/(.*)",
-  "/api/webhooks(.*)",
-  "/preview(.*)",
-]);
+// Next.js only loads proxy (formerly middleware) from next to the `app` directory —
+// with `src/app`, that means `src/proxy.js`. This file used to live at the project
+// root, where it was silently ignored, so nothing enforced onboarding.
+//
+// It intentionally does not call auth.protect(): logged-out visitors rely on
+// view-only community pages and shared post/profile links, and pages guard
+// themselves client-side.
+
+// Signed-in users who haven't finished onboarding may only reach these
+const ONBOARDING_EXEMPT = ["/onboarding", "/sign-in", "/sign-up", "/api/webhooks"];
 
 export default clerkMiddleware(async (auth, req) => {
   const { pathname } = req.nextUrl;
 
-  if (!isPublicRoute(req)) {
-    await auth.protect();
-  }
-
-  // After Clerk confirms the user is signed in, check onboarding status via cookie.
   // The isOnboarded cookie is set by ClientInitializer after fetching /auth/getDetails.
   const { userId } = await auth();
   if (userId) {
     const isOnboarded = req.cookies.get("isOnboarded")?.value;
     if (
       isOnboarded === "false" &&
-      !pathname.startsWith("/onboarding") &&
-      !pathname.startsWith("/sign-in") &&
-      !pathname.startsWith("/sign-up") &&
-      !pathname.startsWith("/api/webhooks")
+      !ONBOARDING_EXEMPT.some((prefix) => pathname.startsWith(prefix))
     ) {
       return NextResponse.redirect(new URL("/onboarding", req.url));
     }

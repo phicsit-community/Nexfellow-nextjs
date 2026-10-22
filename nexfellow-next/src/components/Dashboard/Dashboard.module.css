@@ -91,6 +91,26 @@
   background: #1a8f90;
 }
 
+.createPostBtn {
+  align-self: flex-end;
+  height: 36px;
+  padding: 0 16px;
+  /* .feedSection has no padding — keep the button off the column border */
+  margin: 16px 20px 8px 0;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.createPostBtn:hover {
+  background: #1a8f90;
+}
+
 .icon {
   font-size: 1.5rem;
   color: #007bff;

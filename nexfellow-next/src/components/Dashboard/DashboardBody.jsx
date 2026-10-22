@@ -32,8 +32,6 @@ import comments from "./assets/comments.svg";
 import pageViewsIcon from "./assets/eye.svg";
 import linkClicksIcon from "./assets/link.svg";
 import rise from "./assets/rise.svg";
-import pendingVector from "./assets/pending.svg";
-import verifyVector from "./assets/verify.svg";
 import no_posts from "./assets/no_posts.png";
 import BookmarkList from "./BookmarkList";
 
@@ -54,8 +52,6 @@ const DashboardBody = ({
   const [analytics, setAnalytics] = useState(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [verificationStatus, setVerificationStatus] = useState("");
-  const [verificationLoading, setVerificationLoading] = useState(false);
   const [analyticsFilter, setAnalyticsFilter] = useState("all"); // Changed default to "all"
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [showPinModal, setShowPinModal] = useState(false);
@@ -63,43 +59,18 @@ const DashboardBody = ({
   // Auto-open post dialog if createPost query param is present
   useEffect(() => {
     const createPost = searchParams.get('createPost');
-    if (createPost === 'true' && communityId) {
+    if (createPost === 'true') {
       setIsDialogOpen(true);
       // Remove the query param from URL without refresh
       router.replace(`/dashboard/${username}`, { scroll: false });
     }
-  }, [searchParams, communityId, username, router]);
+  }, [searchParams, username, router]);
   const [postToPin, setPostToPin] = useState(null);
   const [pinnedPostId, setPinnedPostId] = useState(null);
   const [bookmarkCategory, setBookmarkCategory] = useState(null);
 
   // New state for the Link Analytics Modal
   const [showLinkAnalyticsModal, setShowLinkAnalyticsModal] = useState(false);
-
-  useEffect(() => {
-    const fetchVerificationStatus = async () => {
-      if (!userId) return; // Extra safeguard
-
-      try {
-        setVerificationLoading(true);
-        const response = await api.get(`/requests/status/${userId}`);
-        setVerificationStatus(response.data.status);
-      } catch (err) {
-        // Only log error if it's not a 404 (user may not have any verification request)
-        if (err.response?.status !== 404) {
-          console.error("Failed to fetch verification status", err);
-        }
-        // Don't set error state for verification status failures
-      } finally {
-        setVerificationLoading(false);
-      }
-    };
-
-    // ✅ Skip fetching verification status if communityId is present
-    if (userId && !communityId) {
-      fetchVerificationStatus();
-    }
-  }, [userId, communityId]);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -117,10 +88,15 @@ const DashboardBody = ({
       formData.append("content", postData.content);
       formData.append("private", postData.private);
 
-      formData.append(
-        "community",
-        isEditing ? (postData.postCommunityId || communityId) : communityId
-      );
+      // Post where the dialog's picker says. Anyone can post to the General Feed
+      // (the backend's default when no community is sent); only community
+      // owners/content-admins can target a community.
+      const targetCommunity = isEditing
+        ? postData.postCommunityId
+        : postData.communityId;
+      if (targetCommunity && targetCommunity !== "general") {
+        formData.append("community", targetCommunity);
+      }
 
       if (postData.attachments && postData.attachments.length > 0) {
         postData.attachments.forEach((file) => {
@@ -271,10 +247,6 @@ const DashboardBody = ({
     fetchData();
   }, [communityId, userId, analyticsFilter]);
 
-  const handleVerifyClick = () => {
-    router.push(`/verification/${username}`);
-  };
-
   const handleEdit = (post) => {
     setEditingPost(post);
     setIsDialogOpen(true);
@@ -299,11 +271,16 @@ const DashboardBody = ({
         }
       },
     },
-    {
-      label: (post) => (post._id === pinnedPostId ? "Unpin Post" : "Pin Post"),
-      icon: <FaThumbtack />,
-      action: (post) => handlePinPost(post),
-    },
+    // Pinning is per-community, so only community owners get it
+    ...(communityId
+      ? [
+          {
+            label: (post) => (post._id === pinnedPostId ? "Unpin Post" : "Pin Post"),
+            icon: <FaThumbtack />,
+            action: (post) => handlePinPost(post),
+          },
+        ]
+      : []),
   ];
 
   // Get time period label based on filter
@@ -408,13 +385,16 @@ const DashboardBody = ({
         >
           Post
         </button>
-        <button
-          onClick={() => handleTabClick("Analytics")}
-          className={`${styles.tab} ${activeTab === "Analytics" ? styles.activeTab : ""
-            }`}
-        >
-          Analytics
-        </button>
+        {/* Analytics are per-community, so the tab only shows when there is one */}
+        {communityId && (
+          <button
+            onClick={() => handleTabClick("Analytics")}
+            className={`${styles.tab} ${activeTab === "Analytics" ? styles.activeTab : ""
+              }`}
+          >
+            Analytics
+          </button>
+        )}
         <button
           onClick={() => handleTabClick("Bookmark")}
           className={`${styles.tab} ${activeTab === "Bookmark" ? styles.activeTab : ""
@@ -426,10 +406,16 @@ const DashboardBody = ({
 
       <div className={styles.contentSection}>
         {loading && activeTab === "Post" && <SkeletonPost />}
-        {communityId ? (
-          <>
+        {/* Posting and bookmarks are open to everyone; Analytics only exists with a community */}
+        <>
             {activeTab === "Post" && !loading && !error && (
               <div className={styles.feedSection}>
+                <button
+                  className={styles.createPostBtn}
+                  onClick={() => setIsDialogOpen(true)}
+                >
+                  + Create post
+                </button>
                 {posts.length > 0 ? (
                   <div className={styles.feedContainer}>
                     {organizedPosts.pinnedPost && (
@@ -489,10 +475,10 @@ const DashboardBody = ({
                       Oops! Nothing To See Here Yet!
                     </p>
                     <p className={styles.noPostsMessage}>
-                      There are no posts to show at the moment.
+                      You haven&apos;t posted anything yet.
                     </p>
                     <p className={styles.noPostsMessage}>
-                      Check back later to see updates!
+                      Share what you&apos;re building — your posts show up here and in the feed.
                     </p>
                   </div>
                 )}
@@ -816,46 +802,7 @@ const DashboardBody = ({
                 <BookmarkList />
               </div>
             )}
-          </>
-        ) : (
-          ["Post", "Analytics", "Bookmark"].includes(activeTab) && (
-            <div className={styles.verifyNowMessage}>
-              {verificationLoading && <p>Loading verification status...</p>}
-
-              <img
-                src={
-                  verificationStatus === "Pending"
-                    ? (pendingVector?.src || pendingVector)
-                    : verificationStatus === "Rejected"
-                      ? (pendingVector?.src || pendingVector)
-                      : (verifyVector?.src || verifyVector)
-                }
-                alt={
-                  verificationStatus === "Pending"
-                    ? "Pending"
-                    : verificationStatus === "Rejected"
-                      ? "Rejected"
-                      : "Verify Now"
-                }
-              />
-              <p className={styles.verifyNowText}>
-                {verificationStatus === "Pending"
-                  ? "Your request has been sent, Please wait! Our admin will check your request."
-                  : verificationStatus === "Rejected"
-                    ? "Verification failed. Try again!"
-                    : "Unlock Posting Access by Verifying Your Account!"}
-              </p>
-              {verificationStatus !== "Pending" && (
-                <button
-                  className={styles.verifyNow}
-                  onClick={handleVerifyClick}
-                >
-                  {verificationStatus === "Rejected" ? "Retry" : "Proceed"}
-                </button>
-              )}
-            </div>
-          )
-        )}
+        </>
       </div>
 
       <PostDialog
