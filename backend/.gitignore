@@ -29,3 +29,6 @@ public/temp
 *.sw?
 *.env
 
+
+# Backups written by scripts/convertCommunityAccounts.js (contain user ids)
+scripts/backups/
