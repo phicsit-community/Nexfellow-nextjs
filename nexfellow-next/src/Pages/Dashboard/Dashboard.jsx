@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 import api from "../../lib/axios";
+import refreshCurrentUser from "../../utils/auth/refreshCurrentUser";
 
 // styles
 import styles from "./Dashboard.module.css";
@@ -32,6 +34,8 @@ const Dashboard = () => {
   const router = useRouter();
   const params = useParams();
   const username = params?.username;
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.auth.user);
   const [isOpen, setIsOpen] = useState(false);
   const [isFollowersModalOpen, setIsFollowersModalOpen] = useState(false);
 
@@ -46,20 +50,21 @@ const Dashboard = () => {
     router.back();
   };
 
+  // The dashboard always shows the signed-in user's own profile. Follow the Redux
+  // user (not a one-off localStorage read) so a refreshed username re-routes here.
   useEffect(() => {
-    const storedUser = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) || {} : {};
-
-    if (storedUser.username && storedUser.username !== username) {
-      router.replace(`/dashboard/${storedUser.username}`);
+    if (currentUser?.username && currentUser.username !== username) {
+      router.replace(`/dashboard/${currentUser.username}`);
       return;
     }
 
     if (username) {
       fetchData();
     }
-  }, [username, router]);
+  }, [username, currentUser?.username, router]);
 
   const fetchData = async () => {
+    let redirecting = false;
     try {
       setLoading(true);
       setError(null);
@@ -72,6 +77,7 @@ const Dashboard = () => {
         const redirect = userResponse.data.redirect;
         // Only redirect if it's a valid string path
         if (typeof redirect === "string" && redirect.startsWith("/")) {
+          redirecting = true;
           router.replace(redirect);
           return;
         }
@@ -88,11 +94,26 @@ const Dashboard = () => {
         setCommunityData(communityResponse.data.community);
       }
     } catch (err) {
+      // A 404 here usually means the cached username is stale (e.g. it was
+      // changed during onboarding). Resync and move to the real username.
+      if (err.response?.status === 404) {
+        try {
+          const fresh = await refreshCurrentUser(dispatch, currentUser);
+          if (fresh?.username && fresh.username !== username) {
+            redirecting = true;
+            router.replace(`/dashboard/${fresh.username}`);
+            return;
+          }
+        } catch {
+          // fall through to the error below
+        }
+      }
       setError(
-        "Failed to load data: " + (err.response?.data?.message || err.message)
+        "Failed to load data: " +
+          (err.response?.data?.message || err.response?.data?.error || err.message)
       );
     } finally {
-      setLoading(false);
+      if (!redirecting) setLoading(false);
     }
   };
 

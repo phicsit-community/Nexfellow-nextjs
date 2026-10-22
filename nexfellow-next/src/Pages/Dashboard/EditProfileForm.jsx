@@ -2,8 +2,11 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 
 import api from "../../lib/axios";
+import { setUser as setAuthUser } from "../../store/slices/authSlice";
+import refreshCurrentUser from "../../utils/auth/refreshCurrentUser";
 import styles from "./EditProfileForm.module.css";
 
 import { Country, State, City } from "country-state-city";
@@ -58,6 +61,9 @@ const EditProfileForm = () => {
   const params = useParams();
   const username = params?.username;
   const searchParams = useSearchParams();
+  const dispatch = useDispatch();
+  const authUser = useSelector((state) => state.auth.user);
+  const [loadError, setLoadError] = useState("");
   const [id, setId] = useState(null);
   const [communityId, setCommunityId] = useState(null);
   const [user, setUser] = useState(null);
@@ -234,8 +240,20 @@ const EditProfileForm = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
+      setLoadError("");
       try {
         const response = await api.get(`/user/profile/username/${username}`);
+
+        // Server redirects when the URL isn't the signed-in user's own username —
+        // only your own profile is editable, so go to that one.
+        if (response.data?.redirect) {
+          const fresh = await refreshCurrentUser(dispatch, authUser);
+          if (fresh?.username && fresh.username !== username) {
+            router.replace(`/edit-profile/${fresh.username}`);
+            return;
+          }
+        }
+
         const userData = response.data;
         setUser(userData);
         setId(userData._id);
@@ -290,12 +308,34 @@ const EditProfileForm = () => {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching user data:", error);
+        // A 404 usually means the cached username is stale (e.g. it was changed
+        // during onboarding). Resync and move to the real username.
+        if (error.response?.status === 404) {
+          try {
+            const fresh = await refreshCurrentUser(dispatch, authUser);
+            if (fresh?.username && fresh.username !== username) {
+              router.replace(`/edit-profile/${fresh.username}`);
+              return;
+            }
+          } catch {
+            // fall through to the error below
+          }
+        }
+        setLoadError(
+          error.response?.data?.message ||
+            error.response?.data?.error ||
+            "Couldn't load your profile. Please refresh and try again."
+        );
+        setLoading(false);
       }
     };
 
     if (username) {
       fetchUserData();
     }
+    // Only refetch when the URL username changes — a background auth-user refresh
+    // must not reload the form and wipe unsaved edits
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [username]);
 
   // Cleanup debounce timeout on unmount
@@ -484,19 +524,12 @@ const EditProfileForm = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
+      // Update Redux (which also persists to localStorage) so links built from
+      // the cached username pick up a renamed username immediately
       if (response.data && response.data.user) {
-        const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-        const updatedUser = { ...currentUser, ...response.data.user };
-        localStorage.setItem("user", JSON.stringify(updatedUser));
+        dispatch(setAuthUser({ ...(authUser || {}), ...response.data.user }));
       } else {
-        const userResponse = await api.get(
-          `/user/profile/username/${sanitizedUsername}`
-        );
-        if (userResponse.data) {
-          const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-          const updatedUser = { ...currentUser, ...userResponse.data };
-          localStorage.setItem("user", JSON.stringify(updatedUser));
-        }
+        await refreshCurrentUser(dispatch, authUser);
       }
 
       toast.success("Profile updated successfully!", { duration: 3000 });
@@ -505,7 +538,11 @@ const EditProfileForm = () => {
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      toast.error("Failed to update profile. Please try again.");
+      toast.error(
+        error.response?.data?.error ||
+          error.response?.data?.message ||
+          "Failed to update profile. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -651,7 +688,9 @@ const EditProfileForm = () => {
         </div>
       </div>
 
-      {loading ? (
+      {loadError ? (
+        <p style={{ padding: "16px" }}>{loadError}</p>
+      ) : loading ? (
         <SkeletonLoader />
       ) : (
         <form onSubmit={handleSubmit} className={styles.form}>

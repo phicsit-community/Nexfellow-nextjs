@@ -339,6 +339,16 @@ export default function Onboarding() {
         },
       });
       clearDraft();
+      // Onboarding replaces the auto-generated signup username — update the cached
+      // user now, otherwise dashboard/profile links point at the old one and 404
+      if (user) {
+        dispatch(setUser({
+          ...user,
+          username:    profile.handle.replace(/^@/, '').trim(),
+          name:        `${profile.fname.trim()} ${profile.lname.trim()}`,
+          isOnboarded: true,
+        }));
+      }
       // Immediately update cookie so routing guards don't need a reload
       document.cookie = `isOnboarded=true; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
       goTo(7);

@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import api from "@/lib/axios";
 import { initializeSocket } from "@/utils/socket";
 import { login, logout, setAuthLoading } from "@/store/slices/authSlice";
+import refreshCurrentUser from "@/utils/auth/refreshCurrentUser";
 
 /**
  * Bridges Clerk auth state into Redux and initializes the socket connection.
@@ -46,9 +47,13 @@ export default function ClientInitializer() {
             }
             prevIsSignedIn.current = true;
 
-            // Already have user data from a previous render
+            // Already have user data from a previous render — render with it, but
+            // revalidate in the background so a stale cached username gets corrected
             if (user?.id) {
                 dispatch(setAuthLoading(false));
+                refreshCurrentUser(dispatch, user).catch((error) => {
+                    console.log("ClientInitializer: background user refresh failed:", error.message);
+                });
                 return;
             }
 

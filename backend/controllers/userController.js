@@ -618,7 +618,7 @@ module.exports.getProfileByUsername = async (req, res) => {
       .lean();
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ message: "User not found", error: "User not found" });
     }
 
     // Decide redirect target based on user type
@@ -647,7 +647,7 @@ module.exports.getProfileByUsername = async (req, res) => {
     .lean();
 
   if (!user) {
-    return res.status(404).json({ error: "User not found" });
+    return res.status(404).json({ message: "User not found", error: "User not found" });
   }
 
   const op = user.onboardingProfile || {};
@@ -939,12 +939,18 @@ module.exports.updateProfile = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Check username uniqueness if changed
-    if (username && username !== user.username) {
-      const usernameExists = await User.findOne({ username });
+    // Check username uniqueness if changed — against both collections, since
+    // OnboardingProfile has its own unique index on username
+    const usernameChanged = !!username && username !== user.username;
+    if (usernameChanged) {
+      const [usernameExists, onboardingUsernameExists] = await Promise.all([
+        User.findOne({ username }),
+        OnboardingProfile.findOne({ username, userId: { $ne: user._id } }),
+      ]);
       if (
-        usernameExists &&
-        usernameExists._id.toString() !== user._id.toString()
+        (usernameExists &&
+          usernameExists._id.toString() !== user._id.toString()) ||
+        onboardingUsernameExists
       ) {
         if (req.file?.path) fs.unlinkSync(req.file.path);
         return res.status(400).json({ error: "Username already exists" });
@@ -1068,6 +1074,11 @@ module.exports.updateProfile = async (req, res) => {
     if (cofounderAvailability && VALID_COFOUND_AVAIL.includes(cofounderAvailability)) {
       opUpdate.cofounderAvailability = cofounderAvailability;
     }
+    // Profile reads prefer the onboarding bio/username, so keep them in sync
+    if (description && !(user.isCommunityAccount && user.createdCommunity)) {
+      opUpdate.bio = description;
+    }
+    if (usernameChanged) opUpdate.username = username;
 
     if (Object.keys(opUpdate).length > 0) {
       if (user.onboardingProfile) {
