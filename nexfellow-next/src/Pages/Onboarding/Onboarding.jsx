@@ -31,6 +31,25 @@ const AVAIL_MAP = {
 // Set NEXT_PUBLIC_TWITTER_ENABLED=true in .env.local once Twitter API keys are configured
 const TWITTER_ENABLED = process.env.NEXT_PUBLIC_TWITTER_ENABLED === 'true';
 
+// In-progress answers are kept in sessionStorage so they survive the full-page
+// OAuth redirect on the Connect step (and accidental refreshes).
+const DRAFT_KEY = 'nf_onboarding_draft';
+
+const loadDraft = () => {
+  try {
+    return JSON.parse(sessionStorage.getItem(DRAFT_KEY)) || null;
+  } catch {
+    return null;
+  }
+};
+
+const clearDraft = () => {
+  try { sessionStorage.removeItem(DRAFT_KEY); } catch { /* storage unavailable */ }
+};
+
+// Mirrors backend validation in onboardingController.submitOnboarding
+const USERNAME_RE = /^[a-zA-Z0-9_.-]+$/;
+
 export default function Onboarding() {
   const router       = useRouter();
   const searchParams = useSearchParams();
@@ -61,6 +80,42 @@ export default function Onboarding() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError]   = useState('');
   const [screenError, setScreenError]   = useState('');
+  const [draftLoaded, setDraftLoaded]   = useState(false);
+
+  // Restore saved answers. Declared before the other effects so the email
+  // pre-fill and OAuth-return handling below apply on top of the draft.
+  useEffect(() => {
+    const draft = loadDraft();
+    if (draft) {
+      if (typeof draft.currentScreen === 'number' && draft.currentScreen < 7) setCurrentScreen(draft.currentScreen);
+      if (draft.accountType)  setAccountType(draft.accountType);
+      if (draft.availability) setAvailability(draft.availability);
+      if (Array.isArray(draft.skills))    setSkills(draft.skills);
+      if (Array.isArray(draft.cofounder)) setCofounder(draft.cofounder);
+      if (Array.isArray(draft.interests)) setInterests(draft.interests);
+      if (draft.profile)      setProfile(prev => ({ ...prev, ...draft.profile }));
+      if (draft.countryIso)   setCountryIso(draft.countryIso);
+      if (draft.stateIso)     setStateIso(draft.stateIso);
+      if (draft.cityName)     setCityName(draft.cityName);
+      if (draft.portfolioUrl) {
+        setPortfolioUrl(draft.portfolioUrl);
+        setSocialState(prev => ({ ...prev, portfolio: true }));
+      }
+    }
+    setDraftLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!draftLoaded || currentScreen === 7) return;
+    try {
+      sessionStorage.setItem(DRAFT_KEY, JSON.stringify({
+        currentScreen, accountType, availability, skills, cofounder, interests,
+        profile, countryIso, stateIso, cityName,
+        portfolioUrl: socialState.portfolio === true ? portfolioUrl : '',
+      }));
+    } catch { /* storage unavailable — draft just won't persist */ }
+  }, [draftLoaded, currentScreen, accountType, availability, skills, cofounder, interests,
+      profile, countryIso, stateIso, cityName, portfolioUrl, socialState.portfolio]);
 
   // Pre-fill email for email/password and Google users (email is known at login)
   const emailDisabled = (user?.provider === 'email' || user?.provider === 'google') && !!user?.email;
@@ -103,7 +158,8 @@ export default function Onboarding() {
       newHandles.twitter = user.connectedAccounts.twitter.handle || newHandles.twitter;
     }
 
-    setSocialState(newState);
+    // Portfolio isn't tied to the user record — keep whatever was entered/restored
+    setSocialState(prev => ({ ...newState, portfolio: prev.portfolio }));
     setSocialHandles(newHandles);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
@@ -160,6 +216,7 @@ export default function Onboarding() {
       try {
         const { data } = await api.get('/api/onboarding');
         if (data.isOnboardingComplete) {
+          clearDraft();
           document.cookie = `isOnboarded=true; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
           router.replace('/feed');
         }
@@ -200,17 +257,32 @@ export default function Onboarding() {
     }
   };
 
-  // Screen 2 validation — called instead of goTo(3)
-  const continueFromProfile = () => {
+  // Returns the first problem with the Screen 2 fields, or '' if they're valid
+  const getProfileError = () => {
     const { fname, lname, handle, email, bio } = profile;
     const clean = handle.replace(/^@/, '').trim();
-    if (!fname.trim())           return setScreenError('First name is required.');
-    if (!lname.trim())           return setScreenError('Last name is required.');
-    if (!clean)                  return setScreenError('Username is required.');
-    if (usernameAvailable === false) return setScreenError('That username is already taken — choose another.');
-    if (!email.trim())           return setScreenError('Email address is required.');
-    if (!/\S+@\S+\.\S+/.test(email)) return setScreenError('Please enter a valid email address.');
-    if (!bio.trim())              return setScreenError('Short bio is required.');
+    if (!fname.trim())           return 'First name is required.';
+    if (!lname.trim())           return 'Last name is required.';
+    if (!clean)                  return 'Username is required.';
+    if (clean.length < 3 || clean.length > 30) return 'Username must be between 3 and 30 characters.';
+    if (!USERNAME_RE.test(clean)) return 'Username may only contain letters, numbers, underscores, dots, and hyphens.';
+    if (usernameAvailable === false) return 'That username is already taken — choose another.';
+    if (!email.trim())           return 'Email address is required.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return 'Please enter a valid email address.';
+    if (!bio.trim())             return 'Short bio is required.';
+    return '';
+  };
+
+  // Send the user back to the profile step with the error shown next to the fields
+  const showProfileError = (message) => {
+    goTo(2);
+    setScreenError(message);
+  };
+
+  // Screen 2 validation — called instead of goTo(3)
+  const continueFromProfile = () => {
+    const error = getProfileError();
+    if (error) return setScreenError(error);
     goTo(3);
   };
 
@@ -236,15 +308,20 @@ export default function Onboarding() {
   };
 
   const handleSubmit = async () => {
-    setIsSubmitting(true);
     setSubmitError('');
+    // Re-check before submitting so a gap is reported on the step that owns it
+    // rather than as a generic error on this screen.
+    const profileError = getProfileError();
+    if (profileError) return showProfileError(profileError);
+
+    setIsSubmitting(true);
     try {
       await api.post('/api/onboarding', {
         accountType,
-        firstName:  profile.fname,
-        lastName:   profile.lname,
-        username:   profile.handle.replace(/^@/, ''),
-        email:      profile.email,
+        firstName:  profile.fname.trim(),
+        lastName:   profile.lname.trim(),
+        username:   profile.handle.replace(/^@/, '').trim(),
+        email:      profile.email.trim(),
         city:       cityName,
         state:      State.getStateByCodeAndCountry(stateIso, countryIso)?.name || '',
         country:    Country.getCountryByCode(countryIso)?.name || '',
@@ -255,17 +332,24 @@ export default function Onboarding() {
         cofounderLookingFor:    cofounder,
         reviewInterests:        interests,
         socialLinks: {
-          twitter:   socialState.twitter   ? profile.handle.replace(/^@/, '') : '',
-          github:    socialState.github    ? profile.handle.replace(/^@/, '') : '',
-          linkedin:  socialState.linkedin  ? profile.handle.replace(/^@/, '') : '',
-          portfolio: socialState.portfolio ? profile.handle.replace(/^@/, '') : '',
+          twitter:   socialState.twitter   ? socialHandles.twitter  : '',
+          github:    socialState.github    ? socialHandles.github   : '',
+          linkedin:  socialState.linkedin  ? socialHandles.linkedin : '',
+          portfolio: socialState.portfolio === true ? portfolioUrl.trim() : '',
         },
       });
+      clearDraft();
       // Immediately update cookie so routing guards don't need a reload
       document.cookie = `isOnboarded=true; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
       goTo(7);
     } catch (err) {
-      if (err.response?.status === 429) {
+      const status  = err.response?.status;
+      const message = err.response?.data?.message || '';
+      if (status === 409 || /username|email|name|missing required/i.test(message)) {
+        // Profile-field problems belong on the profile step
+        if (status === 409) setUsernameAvailable(false);
+        showProfileError(message || 'Please check your profile details.');
+      } else if (status === 429) {
         const secs = Number(err.response?.data?.retryAfter) || 0;
         const wait = secs >= 60 ? `${Math.ceil(secs / 60)} minute(s)` : `${secs || 30} seconds`;
         setSubmitError(`Too many attempts. Your details are saved on this page — please try again in ${wait}.`);

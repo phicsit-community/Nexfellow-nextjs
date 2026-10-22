@@ -55,10 +55,15 @@ module.exports.submitOnboarding = async (req, res) => {
       socialLinks,
     } = req.body;
 
-    if (!accountType || !firstName || !lastName || !username || !email) {
-      return res
-        .status(400)
-        .json({ message: "Missing required onboarding fields" });
+    const REQUIRED_FIELDS = { accountType, firstName, lastName, username, email };
+    const missing = Object.keys(REQUIRED_FIELDS).filter(
+      (key) => !String(REQUIRED_FIELDS[key] ?? "").trim()
+    );
+    if (missing.length) {
+      return res.status(400).json({
+        message: `Missing required onboarding fields: ${missing.join(", ")}`,
+        missingFields: missing,
+      });
     }
 
     // Validate email format
