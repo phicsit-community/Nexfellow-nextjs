@@ -449,6 +449,11 @@ const Community = () => {
                       onClick={() => {
                         const owner = community?.owner;
                         if (!owner?._id) return;
+                        const me = JSON.parse(localStorage.getItem("user") || "null");
+                        if (String(me?.id || me?._id) === String(owner._id)) {
+                          toast.info("You can't message yourself");
+                          return;
+                        }
                         // Next's router has no history state; Inbox reads the target from query params
                         const params = new URLSearchParams({
                           userId: owner._id,
