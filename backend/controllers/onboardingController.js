@@ -29,12 +29,18 @@ async function usernameTakenByOther(username, userId) {
   return !!(userHit || profileHit);
 }
 
-// Bring the User record in line with a completed onboarding profile. The two
+// Repair a User that never received its completed onboarding profile. The two
 // are written separately, so an earlier failure (or a crash between the writes)
 // can leave the profile complete while the User still says not onboarded and
-// still carries the name Clerk copied from Google. Every read of onboarding
-// state goes through here so that gap closes itself instead of leaving the
-// user bouncing between /feed and /onboarding.
+// still carries the name Clerk copied from Google. Reads of onboarding state
+// go through here so that gap closes itself instead of leaving the user
+// bouncing between /feed and /onboarding.
+//
+// ONLY for users whose isOnboarded flag is still false. Once a user is
+// onboarded the User record is the live one — edit-profile changes user.name
+// and user.username without touching the profile's firstName/lastName — so
+// copying the profile over an onboarded User would undo their later edits.
+// For onboarded users use ensureProfileRef instead.
 //
 // Returns the username that could not be applied (held by another User), or
 // null when the User now fully matches the profile.
@@ -71,6 +77,13 @@ async function syncUserToProfile(user, profile) {
   return usernameConflict;
 }
 
+// For an onboarded user the only thing worth fixing is a missing or wrong
+// onboardingProfile reference; name and username are left alone (see above).
+async function ensureProfileRef(user, profile) {
+  if (String(user.onboardingProfile || "") === String(profile._id)) return;
+  await User.findByIdAndUpdate(user._id, { $set: { onboardingProfile: profile._id } });
+}
+
 /**
  * @route   POST /api/onboarding
  * @desc    Submit the full onboarding profile and mark user as onboarded
@@ -92,7 +105,7 @@ module.exports.submitOnboarding = async (req, res) => {
       isOnboardingComplete: true,
     });
     if (existing && req.user.isOnboarded) {
-      await syncUserToProfile(req.user, existing);
+      await ensureProfileRef(req.user, existing);
       setOnboardedCookie(res);
       return res.status(200).json({
         message: "Onboarding completed successfully",
@@ -295,9 +308,9 @@ module.exports.getOnboardingStatus = async (req, res) => {
   if (onboardingProfile?.isOnboardingComplete) {
     if (user.isOnboarded) {
       isOnboardingComplete = true;
-      // Cheap self-heal for name/username/ref drift — never blocks the user.
-      syncUserToProfile(user, onboardingProfile).catch((err) =>
-        console.error("[onboarding] status sync failed:", err.message)
+      // Cheap self-heal for a missing profile reference — never blocks the user.
+      ensureProfileRef(user, onboardingProfile).catch((err) =>
+        console.error("[onboarding] status ref sync failed:", err.message)
       );
     } else {
       usernameConflict = await syncUserToProfile(user, onboardingProfile);
@@ -353,3 +366,4 @@ module.exports.checkUsername = async (req, res) => {
 };
 
 module.exports.syncUserToProfile = syncUserToProfile;
+module.exports.ensureProfileRef = ensureProfileRef;
