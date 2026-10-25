@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/hooks/useTheme";
 import { ConfigProvider, App as AntdApp } from "antd";
 import dynamic from "next/dynamic";
 import ClientInitializer from "@/components/ClientInitializer";
+import ChunkErrorRecovery from "@/components/ChunkErrorRecovery";
 import "react-toastify/dist/ReactToastify.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
@@ -33,6 +34,7 @@ export function Providers({ children }) {
                 >
                     <AntdApp>
                         <ClientInitializer />
+                        <ChunkErrorRecovery />
                         {children}
                         <ToastContainer />
                         <Toaster />
