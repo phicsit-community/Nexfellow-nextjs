@@ -47,9 +47,12 @@ const User = () => {
   const [showModal, setShowModal] = useState(false);
   const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
 
-  const fetchUserDetails = async () => {
-    setLoading(true);
-    setError(null);
+  // silent: refresh data in place without swapping the page for the loader
+  const fetchUserDetails = async ({ silent = false } = {}) => {
+    if (!silent) {
+      setLoading(true);
+      setError(null);
+    }
     try {
       const response = await api.get(`/user/publicprofile/username/${username}`);
       setUserDetails(response.data);
@@ -62,9 +65,13 @@ const User = () => {
         setFollowStatus(followResponse.data.isFollowing);
       }
     } catch (err) {
+      if (silent) {
+        console.error("Silent profile refresh failed:", err);
+        return;
+      }
       setError("Failed to load user data: " + err.message);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -95,12 +102,11 @@ const User = () => {
 
       if (response.status === 200) {
         setFollowStatus(!followStatus);
-        fetchUserDetails();
+        fetchUserDetails({ silent: true });
       }
     } catch (err) {
       console.error("Follow/Unfollow Error:", err);
-      setError(err.response?.data?.message || "Error toggling follow status.");
-      setShowModal(true);
+      toast.error(err.response?.data?.message || "Error toggling follow status.");
     } finally {
       setIsButtonLoading(false);
     }

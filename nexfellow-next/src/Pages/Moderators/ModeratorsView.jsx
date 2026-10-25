@@ -112,9 +112,12 @@ const ModeratorsView = () => {
     };
   }, []);
 
-  const fetchCommunity = async () => {
-    setLoading(true);
-    setError(null);
+  // silent: refresh data in place without swapping the page for the skeleton
+  const fetchCommunity = async ({ silent = false } = {}) => {
+    if (!silent) {
+      setLoading(true);
+      setError(null);
+    }
     try {
       const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") || "null") : null;
       const currentUserId = userData?.id || userData?._id;
@@ -155,6 +158,10 @@ const ModeratorsView = () => {
         setFollowStatus(followResponse.data.isFollowing);
       }
     } catch (err) {
+      if (silent) {
+        console.error("Silent community refresh failed:", err);
+        return;
+      }
       setError("Failed to load community data: " + err.message);
     } finally {
       setLoading(false);
@@ -224,12 +231,11 @@ const ModeratorsView = () => {
       if (response.status === 200) {
         setFollowStatus(!followStatus);
 
-        fetchCommunity();
+        fetchCommunity({ silent: true });
       }
     } catch (err) {
       console.error("Follow/Unfollow Error:", err);
-      setError(err.response?.data?.message || "Error toggling follow status.");
-      setShowModal(true);
+      toast.error(err.response?.data?.message || "Error toggling follow status.");
     } finally {
       setIsButtonLoading(false);
     }
