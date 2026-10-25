@@ -16,6 +16,7 @@ import styles from "./PostDialog.module.css";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "../../lib/axios";
+import { getSupportedEmojiVersion } from "../../utils/emojiSupport";
 import {
   saveDraftFiles,
   loadDraftFiles,
@@ -143,6 +144,8 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
   const [attachedProduct, setAttachedProduct] = useState(null);
   const [productSearch, setProductSearch] = useState("");
   const textareaRef = useRef(null);
+  const emojiContainerRef = useRef(null);
+  const [emojiVersion, setEmojiVersion] = useState(null);
   const videoInputRef = useRef(null);
   const autosaveTimeoutRef = useRef(null);
   const lastSavedSignatureRef = useRef(null);
@@ -294,7 +297,9 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
     if (!isOpen) return;
     const handleEsc = (e) => {
       if (e.key === "Escape") {
-        if (showDrafts) {
+        if (showEmojiPicker) {
+          setShowEmojiPicker(false);
+        } else if (showDrafts) {
           setShowDrafts(false);
         } else if (showProductPicker) {
           setShowProductPicker(false);
@@ -308,7 +313,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
 
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
-  }, [isOpen, showDrafts, showProductPicker, isOpenModal, handleClose]);
+  }, [isOpen, showEmojiPicker, showDrafts, showProductPicker, isOpenModal, handleClose]);
   useEffect(() => {
     if (post) {
       setTitle(post.title || "");
@@ -349,6 +354,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
       setSelectedOption("General Feed");
       setAttachedProduct(null);
       setShowProductPicker(false);
+      setShowEmojiPicker(false);
       setProductSearch("");
     }
   }, [post, isOpen]);
@@ -462,12 +468,39 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
   };
 
   const handleEmojiClick = (emojiObject) => {
-    setContent((prev) => prev + emojiObject.emoji);
+    const el = textareaRef.current;
+    const emoji = emojiObject.emoji;
+    const start = el?.selectionStart ?? content.length;
+    const end = el?.selectionEnd ?? content.length;
+    const next = content.slice(0, start) + emoji + content.slice(end);
+    if (next.length > charLimit) return;
+    setContent(next);
 
-    if (textareaRef.current) {
-      textareaRef.current.focus();
+    if (el) {
+      const caret = start + emoji.length;
+      el.focus();
+      requestAnimationFrame(() => el.setSelectionRange(caret, caret));
     }
   };
+
+  // Probe which emoji versions this device can draw before the picker is shown
+  useEffect(() => {
+    if (showEmojiPicker) setEmojiVersion(getSupportedEmojiVersion());
+  }, [showEmojiPicker]);
+
+  // Close the emoji picker on any click outside it
+  useEffect(() => {
+    if (!showEmojiPicker) return;
+    const onPointerDown = (e) => {
+      if (!emojiContainerRef.current?.contains(e.target)) setShowEmojiPicker(false);
+    };
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("touchstart", onPointerDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("touchstart", onPointerDown);
+    };
+  }, [showEmojiPicker]);
 
   const handleSubmit = async () => {
     if (!content && attachments.length === 0) return;
@@ -1105,7 +1138,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                       <TbBox />
                     </button>
 
-                    <div className={styles.emojiContainer}>
+                    <div className={styles.emojiContainer} ref={emojiContainerRef}>
                       <button
                         className={styles.iconButton}
                         onClick={() => setShowEmojiPicker(!showEmojiPicker)}
@@ -1123,7 +1156,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.15 }}
                           >
-                            <Picker onEmojiClick={handleEmojiClick} theme={isDark ? "dark" : "light"} />
+                            <Picker onEmojiClick={handleEmojiClick} theme={isDark ? "dark" : "light"} emojiVersion={emojiVersion} />
                           </motion.div>
                         )}
                       </AnimatePresence>
