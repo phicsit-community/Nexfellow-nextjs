@@ -16,6 +16,52 @@ import styles from "./PostDialog.module.css";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "../../lib/axios";
+import {
+  saveDraftFiles,
+  loadDraftFiles,
+  deleteDraftFiles,
+  pruneDraftFiles,
+} from "../../utils/postDraftFiles";
+
+const DRAFTS_KEY = "postDrafts";
+const MAX_DRAFTS = 20;
+const MIN_DRAFT_TEXT_LENGTH = 3;
+
+// A draft is worth keeping if it has some real text or any attachment (image-only posts are valid)
+const hasDraftableContent = (text, attachments) =>
+  text.trim().length >= MIN_DRAFT_TEXT_LENGTH || attachments.length > 0;
+
+// Identifies what's in the editor so unchanged content isn't saved again
+const getDraftSignature = (text, attachments, channel) =>
+  JSON.stringify([text.trim(), channel, attachments.map((att) => att.url)]);
+
+const formatAttachmentCount = (attachments) => {
+  const videos = attachments.filter((att) => att.type === "video").length;
+  const images = attachments.length - videos;
+  return [
+    images && `${images} ${images === 1 ? "image" : "images"}`,
+    videos && `${videos} ${videos === 1 ? "video" : "videos"}`,
+  ]
+    .filter(Boolean)
+    .join(", ");
+};
+
+const readStoredDrafts = () => {
+  try {
+    const stored = JSON.parse(localStorage.getItem(DRAFTS_KEY) || "[]");
+    if (!Array.isArray(stored)) return [];
+    // Older drafts stored attachments as { file, url } with a blob: URL that's dead after a
+    // reload and a File that JSON turned into {}; they can't be restored, so drop them
+    return stored.map((draft) => ({
+      ...draft,
+      content: draft.content || "",
+      attachments: (draft.attachments || []).filter((att) => !att.url),
+    }));
+  } catch (e) {
+    console.error("Error parsing drafts from localStorage:", e);
+    return [];
+  }
+};
 
 // Mirrors backend/constants/plans.js postCharLimit for display purposes only.
 // The backend is the source of truth and enforces the real limit.
@@ -85,20 +131,27 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
   const textareaRef = useRef(null);
   const videoInputRef = useRef(null);
   const autosaveTimeoutRef = useRef(null);
-  const lastSavedContentRef = useRef("");
+  const lastSavedSignatureRef = useRef(null);
+  // The draft this compose session writes to, so edits update one draft instead of adding more
+  const draftIdRef = useRef(null);
+  // Drafts posted or deleted while a save was in flight, so that save doesn't bring them back
+  const discardedDraftIdsRef = useRef(new Set());
   const MAX_FILE_SIZE = 3 * 1024 * 1024;
   const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
 
   useEffect(() => {
-    const savedDrafts = localStorage.getItem("postDrafts");
-    if (savedDrafts) {
-      try {
-        setDrafts(JSON.parse(savedDrafts));
-      } catch (e) {
-        console.error("Error parsing drafts from localStorage:", e);
-        setDrafts([]);
-      }
-    }
+    const storedDrafts = readStoredDrafts();
+    setDrafts(storedDrafts);
+    pruneDraftFiles(storedDrafts.map((d) => d.id)).catch((e) =>
+      console.error("Error pruning draft attachments:", e)
+    );
+  }, []);
+
+  // localStorage is the source of truth so a save that finishes after the dialog closes still lands
+  const updateStoredDrafts = useCallback((update) => {
+    const updatedDrafts = update(readStoredDrafts());
+    localStorage.setItem(DRAFTS_KEY, JSON.stringify(updatedDrafts));
+    setDrafts(updatedDrafts);
   }, []);
 
   useEffect(() => {
@@ -110,47 +163,68 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
   }, [isOpen, post, content]);
 
   const saveDraft = useCallback(
-    (showToast = true) => {
+    async (showToast = true) => {
+      // Drafts are only for new posts, not edits of a published one
+      if (post || !hasDraftableContent(content, attachments)) return;
+
+      const signature = getDraftSignature(content, attachments, selectedOption);
+      if (lastSavedSignatureRef.current === signature) {
+        // Autosave got there first; still confirm a manual "Save as draft"
+        if (showToast) toast("Draft saved");
+        return;
+      }
+      lastSavedSignatureRef.current = signature;
+
+      const draftId = draftIdRef.current || Date.now().toString();
+      draftIdRef.current = draftId;
       const trimmedContent = content.trim();
-      if (!trimmedContent || trimmedContent.length < 3) return;
 
-      // Don't save if content hasn't changed since last save
-      if (lastSavedContentRef.current === trimmedContent) return;
+      let savedAttachments = attachments;
+      try {
+        if (attachments.length > 0) {
+          await saveDraftFiles(
+            draftId,
+            attachments.map(({ file, type }) => ({ file, type }))
+          );
+        } else {
+          await deleteDraftFiles(draftId);
+        }
+      } catch (e) {
+        console.error("Error saving draft attachments:", e);
+        if (!trimmedContent) {
+          lastSavedSignatureRef.current = null;
+          toast.error("Couldn't save your draft. Please try again.");
+          return;
+        }
+        savedAttachments = [];
+        toast("Draft saved without its attachments");
+      }
 
-      const newDraft = {
-        id: Date.now().toString(),
+      if (discardedDraftIdsRef.current.has(draftId)) {
+        deleteDraftFiles(draftId).catch(() => {});
+        return;
+      }
+
+      const draft = {
+        id: draftId,
         content: trimmedContent,
-        attachments,
+        attachments: savedAttachments.map(({ type }) => ({ type })),
         timestamp: new Date().toISOString(),
         channel: selectedOption !== "Select Channel" ? selectedOption : "Feed",
       };
 
-      setDrafts((currentDrafts) => {
-        const similarDraft = currentDrafts.find(
-          (d) => d.content.trim() === trimmedContent
-        );
-
-        let updatedDrafts;
-        if (similarDraft) {
-          updatedDrafts = currentDrafts.map((d) =>
-            d.id === similarDraft.id
-              ? { ...d, timestamp: new Date().toISOString() }
-              : d
-          );
-          if (showToast) toast("Draft updated");
-        } else {
-          updatedDrafts = [newDraft, ...currentDrafts].slice(0, 20);
-          toast("Draft saved");
-        }
-
-        localStorage.setItem("postDrafts", JSON.stringify(updatedDrafts));
-        return updatedDrafts;
+      let isNewDraft = false;
+      updateStoredDrafts((currentDrafts) => {
+        isNewDraft = !currentDrafts.some((d) => d.id === draftId);
+        return isNewDraft
+          ? [draft, ...currentDrafts].slice(0, MAX_DRAFTS)
+          : currentDrafts.map((d) => (d.id === draftId ? draft : d));
       });
 
-      // Update the last saved content reference
-      lastSavedContentRef.current = trimmedContent;
+      if (isNewDraft) toast("Draft saved");
+      else if (showToast) toast("Draft updated");
     },
-    [content, attachments, selectedOption]
+    [post, content, attachments, selectedOption, updateStoredDrafts]
   );
 
   useEffect(() => {
@@ -160,14 +234,17 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
       autosaveTimeoutRef.current = null;
     }
 
-    // Only set up autosave if dialog is open, there's meaningful content, and it's not editing an existing post
-    if (isOpen && content.trim() && content.trim().length > 2 && !post) {
-      // Only autosave if content has actually changed from last saved
-      if (lastSavedContentRef.current !== content.trim()) {
-        autosaveTimeoutRef.current = setTimeout(() => {
-          saveDraft(false);
-        }, 3000);
-      }
+    // Autosave new posts once the text, attachments or channel settle
+    if (
+      isOpen &&
+      !post &&
+      hasDraftableContent(content, attachments) &&
+      lastSavedSignatureRef.current !==
+        getDraftSignature(content, attachments, selectedOption)
+    ) {
+      autosaveTimeoutRef.current = setTimeout(() => {
+        saveDraft(false);
+      }, 3000);
     }
 
     // Cleanup function to clear timeout
@@ -177,9 +254,16 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
         autosaveTimeoutRef.current = null;
       }
     };
-  }, [content, isOpen, post, saveDraft]);
+  }, [content, attachments, selectedOption, isOpen, post, saveDraft]);
+
+  // Closing must not drop changes made since the last autosave (or before the first one)
+  const handleClose = useCallback(() => {
+    saveDraft(false);
+    onClose();
+  }, [saveDraft, onClose]);
 
   useEffect(() => {
+    if (!isOpen) return;
     const handleEsc = (e) => {
       if (e.key === "Escape") {
         if (showDrafts) {
@@ -189,14 +273,14 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
         } else if (isOpenModal) {
           setIsOpenModal(false);
         } else {
-          onClose();
+          handleClose();
         }
       }
     };
 
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
-  }, [showDrafts, showProductPicker, isOpenModal, onClose]);
+  }, [isOpen, showDrafts, showProductPicker, isOpenModal, handleClose]);
   useEffect(() => {
     if (post) {
       setTitle(post.title || "");
@@ -220,15 +304,15 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
       setContent("");
       setAttachments([]);
       setPrivacy("Public");
-      // Reset the last saved content reference when creating a new post
-      lastSavedContentRef.current = "";
     }
 
-    // Clear autosave timeout when dialog closes
+    // Each time the dialog opens or closes, the next new post starts a fresh draft
+    // (handleClose has already saved anything pending before this runs)
+    draftIdRef.current = null;
+    lastSavedSignatureRef.current = null;
     if (!isOpen && autosaveTimeoutRef.current) {
       clearTimeout(autosaveTimeoutRef.current);
       autosaveTimeoutRef.current = null;
-      lastSavedContentRef.current = "";
     }
 
     // Reset community selection on close
@@ -375,12 +459,10 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
       ...(attachedProduct && { productId: attachedProduct._id }),
     };
 
-    if (!post) {
-      removeDraftsByContent(content);
-    }
-
     try {
       await onSubmit(postData);
+      // Only drop the draft once the post went through, so a failed post can still be saved
+      if (!post) discardCurrentDraft();
       setAttachments([]);
       setRemovedAttachments([]);
       setAttachedProduct(null);
@@ -392,27 +474,59 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
     }
   };
 
-  const removeDraftsByContent = (contentToRemove) => {
-    const updatedDrafts = drafts.filter(
-      (d) => d.content.trim() !== contentToRemove.trim()
+  // Removes a draft and its stored files; a save still in flight for it is dropped too
+  const removeDraft = (draftId) => {
+    discardedDraftIdsRef.current.add(draftId);
+    updateStoredDrafts((currentDrafts) =>
+      currentDrafts.filter((d) => d.id !== draftId)
     );
-    setDrafts(updatedDrafts);
-    localStorage.setItem("postDrafts", JSON.stringify(updatedDrafts));
+    deleteDraftFiles(draftId).catch((e) =>
+      console.error("Error deleting draft attachments:", e)
+    );
+    if (draftIdRef.current === draftId) draftIdRef.current = null;
   };
-  const loadDraft = (draft) => {
-    setContent(draft.content);
-    setAttachments(draft.attachments || []);
-    if (draft.channel && draft.channel !== "Select Channel") {
-      setSelectedOption(draft.channel);
+
+  const discardCurrentDraft = () => {
+    if (draftIdRef.current) removeDraft(draftIdRef.current);
+  };
+
+  const loadDraft = async (draft) => {
+    // Keep whatever is in the editor before replacing it
+    await saveDraft(false);
+
+    let storedFiles = [];
+    if (draft.attachments.length > 0) {
+      try {
+        storedFiles = await loadDraftFiles(draft.id);
+      } catch (e) {
+        console.error("Error loading draft attachments:", e);
+      }
+      if (storedFiles.length < draft.attachments.length) {
+        toast("Some attachments in this draft couldn't be restored");
+      }
     }
+    const restoredAttachments = storedFiles.map(({ file, type }) => ({
+      file,
+      type,
+      url: URL.createObjectURL(file),
+    }));
 
-    // Reset the last saved content reference when loading a draft
-    lastSavedContentRef.current = draft.content.trim();
+    const channel =
+      draft.channel && draft.channel !== "Select Channel"
+        ? draft.channel
+        : selectedOption;
 
-    // Remove the draft from localStorage once it's loaded
-    const updatedDrafts = drafts.filter((d) => d.id !== draft.id);
-    setDrafts(updatedDrafts);
-    localStorage.setItem("postDrafts", JSON.stringify(updatedDrafts));
+    setContent(draft.content);
+    setAttachments(restoredAttachments);
+    setSelectedOption(channel);
+
+    // Keep editing the same draft; it stays in the list until it's posted or deleted
+    draftIdRef.current = draft.id;
+    lastSavedSignatureRef.current = getDraftSignature(
+      draft.content,
+      restoredAttachments,
+      channel
+    );
 
     setShowDrafts(false);
 
@@ -423,22 +537,23 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
       }
     }, 100);
 
-    // Notify the user that the draft was loaded and removed
     toast("Draft loaded successfully");
   };
 
   const deleteDraft = (e, draftId) => {
     e.stopPropagation();
-    const updatedDrafts = drafts.filter((d) => d.id !== draftId);
-    setDrafts(updatedDrafts);
-    localStorage.setItem("postDrafts", JSON.stringify(updatedDrafts));
+    removeDraft(draftId);
     toast("Draft deleted");
   };
 
   const clearAllDrafts = () => {
     if (confirm("Are you sure you want to delete all drafts?")) {
-      setDrafts([]);
-      localStorage.removeItem("postDrafts");
+      drafts.forEach((d) => discardedDraftIdsRef.current.add(d.id));
+      updateStoredDrafts(() => []);
+      pruneDraftFiles([]).catch((e) =>
+        console.error("Error deleting draft attachments:", e)
+      );
+      draftIdRef.current = null;
       toast("All drafts deleted");
     }
   };
@@ -602,24 +717,26 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                               <span>{draft.channel}</span>
                             )}
                           </p>
-                          <p className={styles.draftContent}>{draft.content}</p>
-                          {draft.attachments &&
-                            draft.attachments.length > 0 && (
-                              <div
-                                className={styles.draftAttachmentInfo}
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: "5px",
-                                }}
-                              >
-                                <MdPhotoLibrary />
-                                {draft.attachments.length}{" "}
-                                {draft.attachments.length === 1
-                                  ? "image"
-                                  : "images"}
-                              </div>
-                            )}
+                          <p
+                            className={`${styles.draftContent} ${
+                              draft.content ? "" : styles.draftContentEmpty
+                            }`}
+                          >
+                            {draft.content || "No text"}
+                          </p>
+                          {draft.attachments.length > 0 && (
+                            <div
+                              className={styles.draftAttachmentInfo}
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "5px",
+                              }}
+                            >
+                              <MdPhotoLibrary />
+                              {formatAttachmentCount(draft.attachments)}
+                            </div>
+                          )}
                         </div>
                         <div className={styles.draftButtons}>
                           <button
@@ -644,7 +761,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
               transition={{ duration: 0.2 }}
             >
               <div className={styles.header}>
-                <button onClick={onClose} className={styles.closeButton}>
+                <button onClick={handleClose} className={styles.closeButton}>
                   <IoClose />
                 </button>
                 <div
@@ -986,7 +1103,7 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                   </div>
 
                   <div className={styles.actionButtons}>
-                    {!post && content.trim() && (
+                    {!post && hasDraftableContent(content, attachments) && (
                       <button
                         onClick={() => saveDraft(true)}
                         className={styles.saveAsDraftBtn}

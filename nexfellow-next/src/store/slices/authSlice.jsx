@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { disconnectSocket } from "../../utils/socket";
+import { clearAllDraftFiles } from "../../utils/postDraftFiles";
 
 // SSR-safe helpers
 const getLocalStorage = (key) => {
@@ -17,6 +18,8 @@ const clearAllStorage = () => {
   if (typeof window !== "undefined") {
     localStorage.clear();
     sessionStorage.clear();
+    // Post draft attachments live in IndexedDB, outside localStorage
+    clearAllDraftFiles();
   }
 };
 

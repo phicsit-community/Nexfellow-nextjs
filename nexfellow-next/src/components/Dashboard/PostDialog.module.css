@@ -617,6 +617,12 @@
   line-height: 1.4;
 }
 
+/* Attachment-only drafts have no text to preview */
+.draftContentEmpty {
+  font-style: italic;
+  opacity: 0.6;
+}
+
 .draftDate {
   font-size: 12px;
   color: #888;
