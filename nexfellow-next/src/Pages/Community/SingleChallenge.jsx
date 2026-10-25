@@ -63,6 +63,7 @@ import badgeIcon from "./assets/badge3.png";
 
 // styles
 import styles from "./SingleChallenge.module.css";
+import { getProfilePath } from "../../utils/profilePath";
 import {
   Trophy,
   Hand,
@@ -1024,7 +1025,7 @@ const Participants = ({ challenge }) => {
           onClick={() => {
             try {
               if (record.user?.username) {
-                window.open(`/explore/${record.user.username}`, "_blank");
+                window.open(getProfilePath(record.user), "_blank");
               }
             } catch {
               // ignore

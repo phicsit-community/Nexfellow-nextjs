@@ -148,10 +148,15 @@ const Community = () => {
         setFollowStatus(followResponse.data.isFollowing);
       }
     } catch (err) {
+      // No community under this username (every account is a normal one now), so this
+      // is a person: show their profile. Stays on the skeleton until the redirect lands.
+      if (err.response?.status === 404) {
+        router.replace(`/user/${username}`);
+        return;
+      }
       setError("Failed to load community data: " + err.message);
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   useEffect(() => {

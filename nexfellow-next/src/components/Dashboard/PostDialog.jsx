@@ -35,6 +35,20 @@ const hasDraftableContent = (text, attachments) =>
 const getDraftSignature = (text, attachments, channel) =>
   JSON.stringify([text.trim(), channel, attachments.map((att) => att.url)]);
 
+// What a draft stores about each attachment (the File itself goes to IndexedDB)
+const toAttachmentMeta = ({ type, file }) => ({
+  type,
+  name: file?.name,
+  size: file?.size,
+});
+
+// Same text and same files = same draft, whichever compose session wrote it
+const getDraftFingerprint = (text, attachmentMetas) =>
+  JSON.stringify([
+    text.trim(),
+    attachmentMetas.map(({ type, name, size }) => [type, name, size]),
+  ]);
+
 const formatAttachmentCount = (attachments) => {
   const videos = attachments.filter((att) => att.type === "video").length;
   const images = attachments.length - videos;
@@ -157,7 +171,8 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
   useEffect(() => {
     if (isOpen && textareaRef.current && !post && !content) {
       setTimeout(() => {
-        textareaRef.current.focus();
+        // The dialog may have closed within the delay
+        textareaRef.current?.focus();
       }, 300);
     }
   }, [isOpen, post, content]);
@@ -208,20 +223,33 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
       const draft = {
         id: draftId,
         content: trimmedContent,
-        attachments: savedAttachments.map(({ type }) => ({ type })),
+        attachments: savedAttachments.map(toAttachmentMeta),
         timestamp: new Date().toISOString(),
         channel: selectedOption !== "Select Channel" ? selectedOption : "Feed",
       };
 
+      // Another draft that now has the exact same text and files is a copy of this one
+      // (e.g. the same post started again in a new session), so it's merged into this one
+      const fingerprint = getDraftFingerprint(draft.content, draft.attachments);
+      const duplicateIds = [];
       let isNewDraft = false;
       updateStoredDrafts((currentDrafts) => {
         isNewDraft = !currentDrafts.some((d) => d.id === draftId);
-        return isNewDraft
-          ? [draft, ...currentDrafts].slice(0, MAX_DRAFTS)
-          : currentDrafts.map((d) => (d.id === draftId ? draft : d));
+        const otherDrafts = currentDrafts.filter((d) => {
+          if (d.id === draftId) return false;
+          if (getDraftFingerprint(d.content, d.attachments) !== fingerprint) return true;
+          duplicateIds.push(d.id);
+          return false;
+        });
+        return [draft, ...otherDrafts].slice(0, MAX_DRAFTS);
       });
+      duplicateIds.forEach((id) =>
+        deleteDraftFiles(id).catch((e) =>
+          console.error("Error deleting duplicate draft attachments:", e)
+        )
+      );
 
-      if (isNewDraft) toast("Draft saved");
+      if (isNewDraft && duplicateIds.length === 0) toast("Draft saved");
       else if (showToast) toast("Draft updated");
     },
     [post, content, attachments, selectedOption, updateStoredDrafts]

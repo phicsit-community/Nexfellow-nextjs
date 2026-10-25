@@ -33,6 +33,7 @@ import ReportModal from "../../components/ReportModal/ReportModal";
 import MuteUserModal from "../../components/MuteUserModal/MuteUserModal";
 import BlockUserModal from "../../components/BlockUserModal/BlockUserModal";
 import { toast } from "sonner";
+import { getProfilePath } from "../../utils/profilePath";
 import { useSwipeable } from "react-swipeable";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
 
@@ -734,7 +735,7 @@ const PostFullScreen = () => {
                           <div
                             className={styles.name}
                             onClick={() =>
-                              router.push(`/explore/${post.author.username}`)
+                              router.push(getProfilePath(post.author))
                             }
                           >
                             {post.author.name}
@@ -955,7 +956,7 @@ const PostFullScreen = () => {
             <div className={styles.authorDetails}>
               <div
                 className={styles.name}
-                onClick={() => router.push(`/explore/${post.author.username}`)}
+                onClick={() => router.push(getProfilePath(post.author))}
               >
                 {post.author.name}
                 {post.author.planBadge === "orange" ? (

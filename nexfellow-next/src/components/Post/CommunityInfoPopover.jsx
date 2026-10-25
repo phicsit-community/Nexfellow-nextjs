@@ -8,6 +8,7 @@ import api from "../../lib/axios";
 import VERIFY from "./assets/Verify.svg";
 import VERIFY_ORANGE from "./assets/VerifyOrange.svg";
 import communityBadgeIcon from "./assets/badge3.svg";
+import { getProfilePath } from "../../utils/profilePath";
 
 const Spinner = ({ variant }) => (
   <div className={`${styles.spinner} ${styles[variant]}`} />
@@ -100,7 +101,13 @@ const CommunityInfoPopover = ({
   };
 
   const handleViewProfile = () => {
-    router.push(`/explore/${community.username}`);
+    router.push(
+      getProfilePath({
+        username: community.username,
+        isCommunityAccount: community.isCommunityAccount,
+        createdCommunity: community.communityId,
+      })
+    );
   };
 
   const getBadgeIcon = () => {

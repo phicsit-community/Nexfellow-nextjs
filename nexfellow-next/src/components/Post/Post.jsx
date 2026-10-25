@@ -31,6 +31,7 @@ import VERIFY_ORANGE from "./assets/VerifyOrange.svg";
 import communityBadge from "./assets/badge3.svg";
 import api from "../../lib/axios";
 import ShareIcon from "../ShareIcon/ShareIcon";
+import { getProfilePath } from "../../utils/profilePath";
 import { Bookmark, BookMarked, Heart, MessageCircle } from "lucide-react";
 
 function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverBelow = false, onNavigateToPost }) {
@@ -363,7 +364,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
               alt="profile"
               className={styles.profilePic}
               loading="lazy"
-              onClick={() => router.push(`/explore/${post.author.username}`)}
+              onClick={() => router.push(getProfilePath(post.author))}
               onMouseOver={handleMouseOver}
               onMouseLeave={handleMouseLeave}
             />
@@ -409,7 +410,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
                 <div className={styles.author}>
                   <div
                     className={styles.name}
-                    onClick={() => router.push(`/explore/${post.author.username}`)}
+                    onClick={() => router.push(getProfilePath(post.author))}
                     title={post.author.name}
                   >
                     <div style={{
