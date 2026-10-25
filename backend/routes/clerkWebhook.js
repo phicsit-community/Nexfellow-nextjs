@@ -48,11 +48,14 @@ router.post(
       const { id: clerkId, email_addresses } = event.data;
       const email = email_addresses?.[0]?.email_address;
 
-      const existingUser = await User.findOne({ $or: [{ clerkId }, { email }] });
+      const existingUser = await User.findOne({ $or: [{ clerkId }, { email }] }).select("+clerkId");
       if (existingUser) {
-        if (!existingUser.clerkId) {
+        // Same verified email, no or stale clerkId (pre-Clerk account, or the
+        // Clerk user was deleted and re-created): point it at the new identity.
+        if (existingUser.clerkId !== clerkId) {
           existingUser.clerkId = clerkId;
           await existingUser.save();
+          console.log(`[clerkWebhook] Linked clerkId ${clerkId} → existing user ${existingUser._id}`);
         }
         return res.status(200).json({ received: true });
       }

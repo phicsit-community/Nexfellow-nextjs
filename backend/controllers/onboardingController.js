@@ -2,8 +2,77 @@ const User = require("../models/userModel");
 const OnboardingProfile = require("../models/OnboardingProfile");
 const CreditService = require("../services/creditService");
 
+const isProduction = () =>
+  process.env.NODE_ENV === "production" || !!process.env.RENDER;
+
+const setOnboardedCookie = (res) => {
+  res.cookie("isOnboarded", "true", {
+    httpOnly: false,
+    secure: isProduction(),
+    sameSite: isProduction() ? "none" : "lax",
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+  });
+};
+
+const fullName = (firstName, lastName) =>
+  [firstName, lastName].map((s) => String(s || "").trim()).filter(Boolean).join(" ");
+
+// A username is only usable if neither collection holds it for someone else.
+// The users collection matters most: it has its own unique index and holds the
+// auto-generated signup usernames of everyone who hasn't onboarded yet, which
+// never appear in OnboardingProfile.
+async function usernameTakenByOther(username, userId) {
+  const [userHit, profileHit] = await Promise.all([
+    User.exists({ username, _id: { $ne: userId } }),
+    OnboardingProfile.exists({ username, userId: { $ne: userId } }),
+  ]);
+  return !!(userHit || profileHit);
+}
+
+// Bring the User record in line with a completed onboarding profile. The two
+// are written separately, so an earlier failure (or a crash between the writes)
+// can leave the profile complete while the User still says not onboarded and
+// still carries the name Clerk copied from Google. Every read of onboarding
+// state goes through here so that gap closes itself instead of leaving the
+// user bouncing between /feed and /onboarding.
+//
+// Returns the username that could not be applied (held by another User), or
+// null when the User now fully matches the profile.
+async function syncUserToProfile(user, profile) {
+  const update = {};
+  const name = fullName(profile.firstName, profile.lastName);
+  if (name && user.name !== name) update.name = name;
+  if (!user.isOnboarded) update.isOnboarded = true;
+  if (String(user.onboardingProfile || "") !== String(profile._id)) {
+    update.onboardingProfile = profile._id;
+  }
+
+  let usernameConflict = null;
+  if (profile.username && user.username !== profile.username) {
+    const held = await User.exists({ username: profile.username, _id: { $ne: user._id } });
+    if (held) usernameConflict = profile.username;
+    else update.username = profile.username;
+  }
+
+  if (Object.keys(update).length) {
+    try {
+      await User.findByIdAndUpdate(user._id, { $set: update });
+    } catch (err) {
+      // Lost a race for the username — keep everything else in sync.
+      if (err.code !== 11000 || !update.username) throw err;
+      usernameConflict = update.username;
+      delete update.username;
+      if (Object.keys(update).length) {
+        await User.findByIdAndUpdate(user._id, { $set: update });
+      }
+    }
+  }
+
+  return usernameConflict;
+}
+
 /**
- * @route   POST /api/onboarding/submit
+ * @route   POST /api/onboarding
  * @desc    Submit the full onboarding profile and mark user as onboarded
  * @access  Private
  * @body    { accountType, firstName, lastName, username, email, location, bio,
@@ -14,22 +83,17 @@ module.exports.submitOnboarding = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // If onboarding is already complete, treat resubmission as idempotent
-    // rather than erroring — the client may retry after a stale redirect.
+    // Already done: treat resubmission as idempotent rather than erroring —
+    // the client may retry after a stale redirect. Only short-circuit when the
+    // User record agrees; if the profile is complete but the User isn't marked
+    // onboarded, fall through and let this submission repair it.
     const existing = await OnboardingProfile.findOne({
       userId,
       isOnboardingComplete: true,
     });
-    if (existing) {
-      res.cookie("isOnboarded", "true", {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === "production" || !!process.env.RENDER,
-        sameSite:
-          process.env.NODE_ENV === "production" || !!process.env.RENDER
-            ? "none"
-            : "lax",
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-      });
+    if (existing && req.user.isOnboarded) {
+      await syncUserToProfile(req.user, existing);
+      setOnboardedCookie(res);
       return res.status(200).json({
         message: "Onboarding completed successfully",
         onboardingProfile: existing,
@@ -97,7 +161,7 @@ module.exports.submitOnboarding = async (req, res) => {
     }
 
     // Strip leading @ from username and validate length
-    const cleanUsername = username.replace(/^@/, "").trim();
+    const cleanUsername = String(username).replace(/^@/, "").trim();
     if (cleanUsername.length < 3 || cleanUsername.length > 30) {
       return res.status(400).json({ message: "Username must be between 3 and 30 characters" });
     }
@@ -115,6 +179,13 @@ module.exports.submitOnboarding = async (req, res) => {
     const safeState     = stripHtml(state);
     const safeCountry   = stripHtml(country);
 
+    if (!safeFirstName || !safeLastName) {
+      return res.status(400).json({
+        message: "Missing required onboarding fields: firstName, lastName",
+        missingFields: ["firstName", "lastName"].filter((f) => (f === "firstName" ? !safeFirstName : !safeLastName)),
+      });
+    }
+
     const safeSocialLinks = socialLinks && typeof socialLinks === "object" ? {
       twitter:   stripHtml(socialLinks.twitter),
       github:    stripHtml(socialLinks.github),
@@ -122,16 +193,21 @@ module.exports.submitOnboarding = async (req, res) => {
       portfolio: stripHtml(socialLinks.portfolio),
     } : { twitter: "", github: "", linkedin: "", portfolio: "" };
 
-    // Check username uniqueness against OnboardingProfile (same collection as the unique index)
-    const usernameTaken = await OnboardingProfile.findOne({
-      username: cleanUsername,
-      userId: { $ne: userId },
-    });
-    if (usernameTaken) {
+    if (await usernameTakenByOther(cleanUsername, userId)) {
       return res.status(409).json({ message: "Username is already taken" });
     }
 
-    // Upsert the onboarding profile
+    // Write order matters. The User's name/username go first: that write is
+    // the one that can fail on the users.username unique index, and failing
+    // here leaves the account exactly as it was (still not onboarded). Only
+    // once it succeeds is the profile marked complete and the User flagged
+    // onboarded, so there is never a window where the profile says "done"
+    // but the User says otherwise.
+    const displayName = fullName(safeFirstName, safeLastName);
+    await User.findByIdAndUpdate(userId, {
+      $set: { name: displayName, username: cleanUsername },
+    });
+
     const onboardingProfile = await OnboardingProfile.findOneAndUpdate(
       { userId },
       {
@@ -158,12 +234,8 @@ module.exports.submitOnboarding = async (req, res) => {
       { upsert: true, new: true, runValidators: true, context: "query" }
     );
 
-    // Update the User document
     await User.findByIdAndUpdate(userId, {
-      isOnboarded: true,
-      onboardingProfile: onboardingProfile._id,
-      name: `${firstName} ${lastName}`,
-      username: cleanUsername,
+      $set: { isOnboarded: true, onboardingProfile: onboardingProfile._id },
     });
 
     // One-time profile completion bonus (idempotency key prevents re-award on retry)
@@ -185,15 +257,7 @@ module.exports.submitOnboarding = async (req, res) => {
     }
 
     // Set isOnboarded cookie so the frontend can check without an API call
-    const isProduction =
-      process.env.NODE_ENV === "production" || !!process.env.RENDER;
-
-    res.cookie("isOnboarded", "true", {
-      httpOnly: false,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    });
+    setOnboardedCookie(res);
 
     return res.status(201).json({
       message: "Onboarding completed successfully",
@@ -209,17 +273,55 @@ module.exports.submitOnboarding = async (req, res) => {
 };
 
 /**
- * @route   GET /api/onboarding/status
+ * @route   GET /api/onboarding
  * @desc    Get onboarding status and saved profile data
  * @access  Private
+ *
+ * `isOnboardingComplete` is only true once the User record is marked
+ * onboarded too, so this endpoint and /auth/getDetails can never disagree.
+ * A complete profile with an un-flagged User is repaired here; if that fails
+ * because the profile's username has since been taken by another account,
+ * the user is sent back through onboarding with `usernameConflict` set so the
+ * client can ask for a new one.
  */
 module.exports.getOnboardingStatus = async (req, res) => {
-  const userId = req.user._id;
+  const user = req.user;
 
-  const onboardingProfile = await OnboardingProfile.findOne({ userId });
+  const onboardingProfile = await OnboardingProfile.findOne({ userId: user._id });
+
+  let isOnboardingComplete = false;
+  let usernameConflict = null;
+
+  if (onboardingProfile?.isOnboardingComplete) {
+    if (user.isOnboarded) {
+      isOnboardingComplete = true;
+      // Cheap self-heal for name/username/ref drift — never blocks the user.
+      syncUserToProfile(user, onboardingProfile).catch((err) =>
+        console.error("[onboarding] status sync failed:", err.message)
+      );
+    } else {
+      usernameConflict = await syncUserToProfile(user, onboardingProfile);
+      isOnboardingComplete = !usernameConflict;
+      if (usernameConflict) {
+        // Undo the completion marker so the next submit goes through the
+        // full path and the user picks a free username.
+        await User.findByIdAndUpdate(user._id, { $set: { isOnboarded: false } });
+        onboardingProfile.isOnboardingComplete = false;
+        await onboardingProfile.save();
+        console.warn(
+          `[onboarding] user ${user._id}: profile username "${usernameConflict}" is held by another account; re-opening onboarding`
+        );
+      } else {
+        console.log(`[onboarding] repaired User ${user._id} from completed profile`);
+      }
+    }
+  }
+
+  if (isOnboardingComplete) setOnboardedCookie(res);
 
   return res.status(200).json({
-    isOnboardingComplete: onboardingProfile?.isOnboardingComplete || false,
+    isOnboardingComplete,
+    usernameConflict,
     onboardingProfile: onboardingProfile || null,
   });
 };
@@ -243,13 +345,11 @@ module.exports.checkUsername = async (req, res) => {
     return res.status(400).json({ available: false, message: "Username contains invalid characters" });
   }
 
-  const existing = await OnboardingProfile.findOne({
-    username: cleanUsername,
-  });
-
-  // Available if not taken, or if it belongs to the current user
-  const available =
-    !existing || existing.userId.toString() === req.user._id.toString();
+  // Available only if no other account holds it in either collection; the
+  // user's own current username (auto-generated or previously chosen) is fine.
+  const available = !(await usernameTakenByOther(cleanUsername, req.user._id));
 
   return res.status(200).json({ available });
 };
+
+module.exports.syncUserToProfile = syncUserToProfile;

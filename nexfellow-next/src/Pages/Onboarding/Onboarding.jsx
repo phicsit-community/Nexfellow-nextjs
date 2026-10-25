@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../../store/slices/authSlice';
 import api from '../../lib/axios';
+import refreshCurrentUser from '../../utils/auth/refreshCurrentUser';
 import styles from './Onboarding.module.css';
 import { Country, State, City } from 'country-state-city';
 import nexfellowLogo from '@/assets/NexFellowLogo.svg';
@@ -82,10 +83,18 @@ export default function Onboarding() {
   const [screenError, setScreenError]   = useState('');
   const [draftLoaded, setDraftLoaded]   = useState(false);
 
+  // Latest cached user for effects that must not re-run when it changes
+  const userRef = useRef(user);
+  useEffect(() => { userRef.current = user; }, [user]);
+  // Whether an in-progress draft existed when the page opened (the autosave
+  // below writes one right away, so this can't be re-derived later)
+  const hadDraftRef = useRef(false);
+
   // Restore saved answers. Declared before the other effects so the email
   // pre-fill and OAuth-return handling below apply on top of the draft.
   useEffect(() => {
     const draft = loadDraft();
+    hadDraftRef.current = !!draft;
     if (draft) {
       if (typeof draft.currentScreen === 'number' && draft.currentScreen < 7) setCurrentScreen(draft.currentScreen);
       if (draft.accountType)  setAccountType(draft.accountType);
@@ -211,21 +220,74 @@ export default function Onboarding() {
     }
   };
 
+  // The server decides whether onboarding is done — the same User flag that
+  // ClientInitializer and the proxy act on — so this page and the rest of the
+  // app can never disagree and bounce the user back and forth.
   useEffect(() => {
+    if (!draftLoaded) return;
+    let cancelled = false;
+
     const checkOnboarded = async () => {
       try {
         const { data } = await api.get('/api/onboarding');
+        if (cancelled) return;
+
         if (data.isOnboardingComplete) {
           clearDraft();
+          // Refresh the cached user first so its isOnboarded/name/username match
+          // the server before /feed mounts; otherwise a stale cached user would
+          // send us straight back here.
+          try {
+            await refreshCurrentUser(dispatch, userRef.current);
+          } catch {
+            // Fall back to the optimistic cookie below
+          }
+          if (cancelled) return;
           document.cookie = `isOnboarded=true; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
           router.replace('/feed');
+          return;
+        }
+
+        // Not complete: put whatever the server already has back into the form
+        // so a user sent back here (failed submit, username conflict) doesn't
+        // start from scratch. The in-progress draft wins when there is one.
+        const saved = data.onboardingProfile;
+        if (saved && !hadDraftRef.current) {
+          setProfile(prev => ({
+            ...prev,
+            fname:  saved.firstName || prev.fname,
+            lname:  saved.lastName  || prev.lname,
+            handle: saved.username  || prev.handle,
+            email:  saved.email     || prev.email,
+            bio:    saved.bio       || prev.bio,
+          }));
+          if (saved.accountType) setAccountType(saved.accountType);
+          if (Array.isArray(saved.skills) && saved.skills.length) setSkills(saved.skills);
+          if (Array.isArray(saved.cofounderLookingFor) && saved.cofounderLookingFor.length) setCofounder(saved.cofounderLookingFor);
+          if (Array.isArray(saved.reviewInterests) && saved.reviewInterests.length) setInterests(saved.reviewInterests);
+          const availLabel = Object.keys(AVAIL_MAP).find(k => AVAIL_MAP[k] === saved.cofounderAvailability);
+          if (availLabel) setAvailability(availLabel);
+          const country = saved.country && Country.getAllCountries().find(c => c.name === saved.country);
+          if (country) {
+            setCountryIso(country.isoCode);
+            const state = saved.state && State.getStatesOfCountry(country.isoCode).find(s => s.name === saved.state);
+            if (state) setStateIso(state.isoCode);
+          }
+          if (saved.city) setCityName(saved.city);
+        }
+
+        if (data.usernameConflict) {
+          setUsernameAvailable(false);
+          showProfileError(`The username @${data.usernameConflict} is no longer available — please choose another.`);
         }
       } catch {
         // Not onboarded or not logged in — stay on page
       }
     };
     checkOnboarded();
-  }, [router]);
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draftLoaded, router, dispatch]);
 
   // Debounced username availability check
   useEffect(() => {
@@ -339,19 +401,24 @@ export default function Onboarding() {
         },
       });
       clearDraft();
-      // Onboarding replaces the auto-generated signup username — update the cached
-      // user now, otherwise dashboard/profile links point at the old one and 404
-      if (user) {
-        dispatch(setUser({
-          ...user,
-          username:    profile.handle.replace(/^@/, '').trim(),
-          name:        `${profile.fname.trim()} ${profile.lname.trim()}`,
-          isOnboarded: true,
-        }));
-      }
+      // Onboarding replaces the auto-generated signup username and the name Clerk
+      // copied from the OAuth provider — update the cached user now, otherwise
+      // dashboard/profile links point at the old one and 404
+      const optimisticUser = user
+        ? {
+            ...user,
+            username:    profile.handle.replace(/^@/, '').trim(),
+            name:        `${profile.fname.trim()} ${profile.lname.trim()}`,
+            isOnboarded: true,
+          }
+        : null;
+      if (optimisticUser) dispatch(setUser(optimisticUser));
       // Immediately update cookie so routing guards don't need a reload
       document.cookie = `isOnboarded=true; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
       goTo(7);
+      // Then confirm against the server so the cached user is exactly what the
+      // backend stored (and so the cache is populated if it was empty).
+      refreshCurrentUser(dispatch, optimisticUser).catch(() => {});
     } catch (err) {
       const status  = err.response?.status;
       const message = err.response?.data?.message || '';

@@ -431,11 +431,20 @@ const requireAuth = async (req, res, next) => {
         const clerkUser = await clerkClient.users.getUser(clerkUserId);
         email = clerkUser.emailAddresses?.[0]?.emailAddress;
         if (email) {
-          user = await User.findOne({ email });
-          if (user && !user.clerkId) {
+          user = await User.findOne({ email }).select("+clerkId");
+          // Link when the account has no clerkId (pre-Clerk account) or a
+          // stale one (the Clerk user was deleted and the same verified email
+          // signed up again — Clerk never holds two users for one email).
+          // Without this the stale id never matches and every request repeats
+          // this Clerk lookup.
+          if (user && user.clerkId !== clerkUserId) {
+            const previous = user.clerkId;
             user.clerkId = clerkUserId;
             await user.save();
-            console.log(`[requireAuth] Auto-linked clerkId ${clerkUserId} → user ${user._id}`);
+            console.log(
+              `[requireAuth] Auto-linked clerkId ${clerkUserId} → user ${user._id}` +
+                (previous ? ` (replaced stale clerkId ${previous})` : "")
+            );
           }
         }
 
