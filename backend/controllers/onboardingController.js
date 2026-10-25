@@ -77,6 +77,17 @@ async function syncUserToProfile(user, profile) {
   return usernameConflict;
 }
 
+// A completed profile whose username is held by another User can't be applied.
+// Re-open onboarding so the user picks a free one, and point the profile at
+// the User's current username so it stops reserving a name it doesn't own
+// (otherwise the rightful owner would be told their own username is taken).
+async function reopenOnboardingForUsername(user, profile) {
+  await User.findByIdAndUpdate(user._id, { $set: { isOnboarded: false } });
+  profile.isOnboardingComplete = false;
+  profile.username = user.username;
+  await profile.save();
+}
+
 // For an onboarded user the only thing worth fixing is a missing or wrong
 // onboardingProfile reference; name and username are left alone (see above).
 async function ensureProfileRef(user, profile) {
@@ -318,9 +329,7 @@ module.exports.getOnboardingStatus = async (req, res) => {
       if (usernameConflict) {
         // Undo the completion marker so the next submit goes through the
         // full path and the user picks a free username.
-        await User.findByIdAndUpdate(user._id, { $set: { isOnboarded: false } });
-        onboardingProfile.isOnboardingComplete = false;
-        await onboardingProfile.save();
+        await reopenOnboardingForUsername(user, onboardingProfile);
         console.warn(
           `[onboarding] user ${user._id}: profile username "${usernameConflict}" is held by another account; re-opening onboarding`
         );
@@ -367,3 +376,4 @@ module.exports.checkUsername = async (req, res) => {
 
 module.exports.syncUserToProfile = syncUserToProfile;
 module.exports.ensureProfileRef = ensureProfileRef;
+module.exports.reopenOnboardingForUsername = reopenOnboardingForUsername;

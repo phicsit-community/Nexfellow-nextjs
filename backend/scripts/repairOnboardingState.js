@@ -10,9 +10,14 @@
 //
 // What it changes with --apply:
 //   1. Users NOT marked onboarded whose profile is complete: full repair
-//      (flag, name, username, profile reference) from the profile.
-//   2. Onboarded users missing the onboardingProfile reference: set it.
-//   3. Onboarded users whose name differs from the profile only by whitespace
+//      (flag, name, username, profile reference) from the profile. If the
+//      profile's username is held by another account, onboarding is re-opened
+//      instead so the user picks a free one, and the profile is pointed at the
+//      User's current username so it stops reserving someone else's.
+//   2. Onboarded users whose profile reserves a username that another User
+//      owns: same re-open as above.
+//   3. Onboarded users missing the onboardingProfile reference: set it.
+//   4. Onboarded users whose name differs from the profile only by whitespace
 //      (the old controller stored untrimmed names): collapse the whitespace
 //      in the User's own name. Nothing is copied from the profile.
 //
@@ -28,7 +33,11 @@ require("dotenv").config({ path: require("path").join(__dirname, "../.env") });
 const mongoose = require("mongoose");
 const User = require("../models/userModel");
 const OnboardingProfile = require("../models/OnboardingProfile");
-const { syncUserToProfile, ensureProfileRef } = require("../controllers/onboardingController");
+const {
+  syncUserToProfile,
+  ensureProfileRef,
+  reopenOnboardingForUsername,
+} = require("../controllers/onboardingController");
 
 const apply = process.argv.includes("--apply");
 
@@ -42,6 +51,7 @@ async function main() {
   const byId = new Map(users.map((u) => [String(u._id), u]));
 
   const split = [];      // not onboarded: the bug
+  const squatting = [];  // onboarded, profile reserves another User's username
   const missingRef = []; // onboarded, no/incorrect profile reference
   const whitespace = []; // onboarded, name differs only by spacing
   const reportOnly = []; // onboarded, real name/username difference
@@ -62,6 +72,15 @@ async function main() {
 
     const nameDiffers = user.name !== profileName;
     const usernameDiffers = user.username !== profile.username;
+
+    if (usernameDiffers) {
+      const owner = await User.findOne({ username: profile.username, _id: { $ne: user._id } }).select("_id");
+      if (owner) {
+        squatting.push({ user, profile, owner });
+        continue;
+      }
+    }
+
     if (nameDiffers && collapse(user.name) === profileName && !usernameDiffers) {
       whitespace.push({ user, from: user.name, to: collapse(user.name) });
     } else if (nameDiffers || usernameDiffers) {
@@ -81,6 +100,15 @@ async function main() {
     );
   }
 
+  console.log(
+    `\n${squatting.length} onboarded user(s) whose profile reserves another account's username (will re-open onboarding)`
+  );
+  for (const { user, profile, owner } of squatting) {
+    console.log(
+      `  ${user._id}  profile username "${profile.username}" belongs to user ${owner._id}; User keeps "${user.username}" until they choose a new one`
+    );
+  }
+
   console.log(`\n${missingRef.length} onboarded user(s) missing the onboardingProfile reference (will set)`);
   for (const { user } of missingRef) console.log(`  ${user._id}`);
 
@@ -90,33 +118,37 @@ async function main() {
   console.log(`\n${reportOnly.length} onboarded user(s) whose User and profile differ (report only, User is live)`);
   for (const { user, notes } of reportOnly) console.log(`  ${user._id}  ${notes.join("; ")}`);
 
-  const total = split.length + missingRef.length + whitespace.length;
+  const total = split.length + squatting.length + missingRef.length + whitespace.length;
   if (!apply) {
     console.log(total ? "\nDry run. Re-run with --apply to write changes." : "\nNothing to do.");
     return;
   }
 
-  let fixed = 0;
+  let applied = 0;
   for (const { user, profile } of split) {
     const conflict = await syncUserToProfile(user, profile);
     if (conflict) {
+      await reopenOnboardingForUsername(user, profile);
       console.warn(
-        `  ${user._id}: flag/name/ref synced, but username "${conflict}" is held by another account. ` +
-          "The user will be asked to pick a new username on their next visit."
+        `  ${user._id}: name/ref synced, but username "${conflict}" is held by another account — ` +
+          "onboarding re-opened so they can pick a new one on their next visit."
       );
-    } else {
-      fixed++;
     }
+    applied++;
+  }
+  for (const { user, profile } of squatting) {
+    await reopenOnboardingForUsername(user, profile);
+    applied++;
   }
   for (const { user, profile } of missingRef) {
     await ensureProfileRef(user, profile);
-    fixed++;
+    applied++;
   }
   for (const { user, to } of whitespace) {
     await User.findByIdAndUpdate(user._id, { $set: { name: to } });
-    fixed++;
+    applied++;
   }
-  console.log(`\nApplied ${fixed}/${total} change(s).`);
+  console.log(`\nApplied ${applied}/${total} change(s).`);
 }
 
 main()
