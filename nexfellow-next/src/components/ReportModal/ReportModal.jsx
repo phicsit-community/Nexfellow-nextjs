@@ -4,6 +4,7 @@ import styles from "./ReportModal.module.css";
 import { IoClose } from "react-icons/io5";
 import { MdReport, MdUploadFile } from "react-icons/md";
 import { toast } from "sonner";
+import ModalPortal from "../Modals/ModalPortal";
 
 const reportCategories = [
   "Spam",
@@ -91,98 +92,100 @@ const ReportModal = ({ isOpen, onClose, postId, authorId }) => {
   };
 
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
-      <div
-        className={styles.modalContainer}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button className={styles.closeButton} onClick={onClose}>
-          <IoClose size={24} />
-        </button>
-
-        <div className={styles.modalHeader}>
-          <h3 className={styles.title}>Report Post</h3>
-        </div>
-
-        <form onSubmit={handleSubmit} className={styles.reportForm}>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Category (required)</label>
-            <select
-              className={styles.select}
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
-            >
-              <option value="">Select a category</option>
-              {reportCategories.map((cat, index) => (
-                <option key={index} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Description (optional)</label>
-            <textarea
-              className={styles.textarea}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Please provide additional details about the issue"
-              rows={4}
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Images (optional, max 3)</label>
-
-            {imagePreview.length > 0 && (
-              <div className={styles.previewContainer}>
-                {imagePreview.map((src, index) => (
-                  <div key={index} className={styles.imagePreview}>
-                    <img src={src} alt={`Preview ${index}`} />
-                    <button
-                      type="button"
-                      className={styles.removeButton}
-                      onClick={() => removeImage(index)}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {images.length < 3 && (
-              <div className={styles.uploadContainer}>
-                <label className={styles.uploadButton}>
-                  <MdUploadFile className={styles.uploadIcon} />
-                  <span>Upload Images</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageChange}
-                    style={{ display: "none" }}
-                  />
-                </label>
-                <span className={styles.uploadHint}>
-                  {images.length}/3 images
-                </span>
-              </div>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            className={styles.submitButton}
-            disabled={isSubmitting || !category}
-          >
-            {isSubmitting ? "Submitting..." : "Submit Report"}
+    <ModalPortal>
+      <div className={styles.modalOverlay} onClick={onClose}>
+        <div
+          className={styles.modalContainer}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button className={styles.closeButton} onClick={onClose}>
+            <IoClose size={24} />
           </button>
-        </form>
+
+          <div className={styles.modalHeader}>
+            <h3 className={styles.title}>Report Post</h3>
+          </div>
+
+          <form onSubmit={handleSubmit} className={styles.reportForm}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Category (required)</label>
+              <select
+                className={styles.select}
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                required
+              >
+                <option value="">Select a category</option>
+                {reportCategories.map((cat, index) => (
+                  <option key={index} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Description (optional)</label>
+              <textarea
+                className={styles.textarea}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Please provide additional details about the issue"
+                rows={4}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Images (optional, max 3)</label>
+
+              {imagePreview.length > 0 && (
+                <div className={styles.previewContainer}>
+                  {imagePreview.map((src, index) => (
+                    <div key={index} className={styles.imagePreview}>
+                      <img src={src} alt={`Preview ${index}`} />
+                      <button
+                        type="button"
+                        className={styles.removeButton}
+                        onClick={() => removeImage(index)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {images.length < 3 && (
+                <div className={styles.uploadContainer}>
+                  <label className={styles.uploadButton}>
+                    <MdUploadFile className={styles.uploadIcon} />
+                    <span>Upload Images</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageChange}
+                      style={{ display: "none" }}
+                    />
+                  </label>
+                  <span className={styles.uploadHint}>
+                    {images.length}/3 images
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={isSubmitting || !category}
+            >
+              {isSubmitting ? "Submitting..." : "Submit Report"}
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    </ModalPortal>
   );
 };
 
