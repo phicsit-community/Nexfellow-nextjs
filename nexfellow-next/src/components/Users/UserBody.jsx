@@ -9,6 +9,7 @@ import noPosts from "./assets/no_posts.png";
 
 // styles
 import styles from './User.module.css';
+import { isSelf } from '../../utils/currentUser';
 
 const UserCommunityBody = ({ userId, otherUserId }) => {
     const [activeTab, setActiveTab] = useState('Posts');
@@ -158,7 +159,8 @@ const UserCommunityBody = ({ userId, otherUserId }) => {
                                             </p>
                                         </div>
                                     </div>
-                                    <button
+                                    {!isSelf(connection._id) && (
+<button
                                         className={styles.followButton}
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -168,6 +170,7 @@ const UserCommunityBody = ({ userId, otherUserId }) => {
                                     >
                                         {loadingFollow[connection._id] ? "Loading..." : followingStatus[connection._id] ? "Unfollow" : "Follow"}
                                     </button>
+)}
                                 </div>
                             ))
                         ) : (

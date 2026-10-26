@@ -8,6 +8,7 @@ import styles from "./FollowersModal.module.css";
 import ProfileImage from "./assets/profile_image.svg";
 import { useRouter } from "next/navigation";
 import Skeleton from "../common/Skeleton";
+import { isSelf } from "../../utils/currentUser";
 
 const FollowersModal = ({ isOpen, onClose, communityId, userId }) => {
   const [followers, setFollowers] = useState([]);
@@ -214,7 +215,8 @@ const FollowersModal = ({ isOpen, onClose, communityId, userId }) => {
                   </div>
 
                   {/* Follow Button */}
-                  <button
+                  {!isSelf(follower._id) && (
+<button
                     className={`${styles.followButton} ${followStatus[follower._id] ? styles.following : ""
                       }`}
                     onClick={(e) => {
@@ -229,6 +231,7 @@ const FollowersModal = ({ isOpen, onClose, communityId, userId }) => {
                         ? "Unfollow"
                         : "Follow"}
                   </button>
+)}
 
                   {/* Error message */}
                   {errors[follower._id] && (

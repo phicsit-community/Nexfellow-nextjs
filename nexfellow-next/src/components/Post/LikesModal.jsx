@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { IoSearchOutline } from "react-icons/io5";
 import api from "../../lib/axios";
 import styles from "./LikesModal.module.css";
+import { isSelf } from "../../utils/currentUser";
 
 const LikesModal = ({ profiles, onClose }) => {
   const modalRef = useRef(null);
@@ -154,7 +155,8 @@ const LikesModal = ({ profiles, onClose }) => {
                   </div>
                 </div>
                 {/* Follow Button */}
-                <button
+                {!isSelf(member._id) && (
+<button
                   className={`${styles.followButton} ${followStatus[member._id] ? styles.following : ""
                     }`}
                   onClick={(e) => {
@@ -169,6 +171,7 @@ const LikesModal = ({ profiles, onClose }) => {
                       ? "Unfollow"
                       : "Follow"}
                 </button>
+)}
                 {/* Error message */}
                 {errors[member._id] && (
                   <div className={styles.errorMessage}>

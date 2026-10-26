@@ -1342,6 +1342,8 @@ module.exports.toggleFollowUser = async (req, res) => {
     if (!userId) throw new ExpressError("Unauthorized: No user ID found.", 401);
     if (!targetUserId)
       throw new ExpressError("Target user ID is missing.", 400);
+    if (String(userId) === String(targetUserId))
+      throw new ExpressError("You cannot follow yourself.", 400);
 
     const user = await User.findById(userId).session(session);
     const targetUser = await User.findById(targetUserId).session(session);
@@ -1401,7 +1403,7 @@ module.exports.toggleFollowUser = async (req, res) => {
       await Promise.all(updates);
       await session.commitTransaction();
 
-      message = `Successfully followed ${userId === targetUserId ? "yourself" : "the user"}.`;
+      message = "Successfully followed the user.";
 
       // Post-commit side-effects — isolated so they cannot affect the HTTP response.
       setImmediate(async () => {
@@ -1522,7 +1524,7 @@ module.exports.toggleFollowUser = async (req, res) => {
       await Promise.all(updates);
       await session.commitTransaction();
 
-      message = `Successfully unfollowed ${userId === targetUserId ? "yourself" : "the user"}.`;
+      message = "Successfully unfollowed the user.";
 
       setImmediate(async () => {
         try { await syncCommunityMembersWithFollowers(targetUserId); } catch (e) { console.error("syncCommunityMembers error:", e.message); }
@@ -1559,9 +1561,10 @@ module.exports.checkFollowStatus = async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    const isFollowing = targetUser.followers.some(
-      (id) => id.toString() === currentUserId.toString()
-    );
+    // Nobody follows themselves; also masks any legacy self-follow rows
+    const isFollowing =
+      String(userId) !== String(currentUserId) &&
+      targetUser.followers.some((id) => id.toString() === currentUserId.toString());
     return res.status(200).json({ isFollowing });
   } catch (error) {
     console.error(error);
@@ -2053,6 +2056,12 @@ module.exports.follow = async (req, res) => {
     const user = await User.findById(currentUserId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.createdCommunity && String(user.createdCommunity) === String(communityId)) {
+      return res
+        .status(400)
+        .json({ message: "You cannot follow your own community" });
     }
 
     // Check if user is already following

@@ -33,6 +33,7 @@ import ProfileImagePreview from "../../components/Preview/ProfileImagePreview";
 import BackButton from "../../components/BackButton/BackButton";
 import { toast } from "sonner";
 import UserSkeleton from "./ViewUserSkeleton";
+import { isSelf } from "../../utils/currentUser";
 
 const User = () => {
   const params = useParams();
@@ -279,6 +280,7 @@ const User = () => {
                         className={styles.svgIcon}
                       />
                     </button>
+                    {!isSelf(userDetails.userId) && (
                     <button
                       className={styles.followButton}
                       onClick={toggleFollow}
@@ -298,6 +300,7 @@ const User = () => {
                         "Follow"
                       )}
                     </button>
+                    )}
                   </div>
                 </div>
               </div>

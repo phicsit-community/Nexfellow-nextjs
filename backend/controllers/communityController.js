@@ -287,6 +287,15 @@ module.exports.toggleCommunityMembership = async (req, res) => {
       throw new ExpressError("Community not found", 404);
     }
 
+    // The owner is a built-in member of their own community: they can neither follow nor leave it
+    if (String(community.owner) === String(userId)) {
+      await session.abortTransaction();
+      session.endSession();
+      return res
+        .status(400)
+        .json({ message: "You cannot follow or unfollow your own community." });
+    }
+
     let message;
     if (action === "follow") {
       // Use String() comparison to handle ObjectId vs string mismatch

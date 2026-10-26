@@ -27,6 +27,7 @@ import Discussion from "../Discussion/Discussion";
 import communityBadge from "./assets/badge3.svg";
 import verificationBadge from "./assets/badge2.svg";
 import verifyOrangeBadge from "./assets/badge2-orange.svg";
+import { isSelf } from "../../utils/currentUser";
 
 const CommunityBody = ({ communityId, ownerId, messageIdToScroll }) => {
   const [activeTab, setActiveTab] = useState(() => {
@@ -496,7 +497,8 @@ const CommunityBody = ({ communityId, ownerId, messageIdToScroll }) => {
                         </div>
                       </div>
 
-                      <button
+                      {!isSelf(follower._id) && (
+<button
                         className={
                           !followingStatus[follower._id]
                             ? styles.followButton
@@ -511,6 +513,7 @@ const CommunityBody = ({ communityId, ownerId, messageIdToScroll }) => {
                             ? "Unfollow"
                             : "Follow"}
                       </button>
+)}
                     </div>
                   );
                 })}

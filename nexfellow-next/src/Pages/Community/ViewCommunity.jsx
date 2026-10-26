@@ -47,6 +47,7 @@ import {
 } from "../../components/ui/dialog";
 import { Share2 } from "lucide-react";
 import { UserCircle2 } from "lucide-react";
+import { isSelf } from "../../utils/currentUser";
 
 const Community = () => {
   const params = useParams();
@@ -485,6 +486,7 @@ const Community = () => {
                     </button>
 
                     {/* Share icon removed from here; Share is now in 3-dots menu */}
+                    {!isSelf(communityOwnerId) && (
                     <button
                       className={styles.followButton}
                       onClick={toggleFollow}
@@ -506,6 +508,7 @@ const Community = () => {
                         "Follow"
                       )}
                     </button>
+                    )}
                   </div>
                 </div>
               </div>
