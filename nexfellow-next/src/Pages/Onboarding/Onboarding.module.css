@@ -191,6 +191,11 @@
   outline:none;transition:border .2s,box-shadow .2s;
   -webkit-appearance:none;
 }
+.req{color:var(--coral);font-weight:700;}
+.req-note{font-size:12px;color:var(--t3);margin:-16px 0 20px;}
+.field-error{color:var(--coral);font-size:12px;margin-top:6px;}
+.onboardingWrapper [aria-invalid=true]{border-color:var(--coral);}
+.onboardingWrapper [aria-invalid=true]:focus{border-color:var(--coral);box-shadow:0 0 0 3px rgba(225,112,85,.15);}
 .onboardingWrapper input:focus,
 .onboardingWrapper textarea:focus,
 .onboardingWrapper select:focus{

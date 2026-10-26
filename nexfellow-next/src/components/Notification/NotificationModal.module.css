@@ -246,6 +246,156 @@
   transform: translateY(-50%);
 }
 
+/* Dark mode: every surface/text color that is hardcoded for light mode above */
+:global(.dark) .headerCloseButton {
+  color: var(--color-muted-foreground);
+}
+
+:global(.dark) .headerCloseButton:hover {
+  background-color: var(--color-accent);
+  color: var(--color-foreground);
+}
+
+:global(.dark) .filter {
+  background-color: var(--color-card);
+  border-bottom-color: var(--color-border);
+}
+
+:global(.dark) .filterButton {
+  color: var(--color-muted-foreground);
+}
+
+:global(.dark) .filterButton:hover {
+  color: var(--color-foreground);
+}
+
+:global(.dark) .activeFilter {
+  background-color: var(--color-accent);
+  color: var(--color-foreground);
+}
+
+:global(.dark) .modalBody {
+  background-color: var(--color-card);
+}
+
+:global(.dark) .notificationItem {
+  border-bottom-color: var(--color-border);
+}
+
+:global(.dark) .unreadNotification {
+  background-color: rgba(36, 178, 180, 0.12);
+}
+
+:global(.dark) .readNotification {
+  background-color: var(--color-card);
+}
+
+:global(.dark) .notificationItem:hover {
+  background-color: var(--color-accent);
+}
+
+:global(.dark) .notificationText {
+  color: var(--color-muted-foreground);
+}
+
+:global(.dark) .notificationText strong {
+  color: var(--color-foreground);
+}
+
+:global(.dark) .timestamp {
+  color: var(--color-muted-foreground);
+}
+
+:global(.dark) .itemMenuButton {
+  color: var(--color-muted-foreground);
+}
+
+:global(.dark) .itemMenuButton:hover {
+  background-color: var(--color-accent);
+  color: var(--color-foreground);
+}
+
+:global(.dark) .modalFooter {
+  background-color: var(--color-card);
+  border-top-color: var(--color-border);
+}
+
+:global(.dark) .noNotificationsContainer p {
+  color: var(--color-muted-foreground);
+}
+
+/* Details view (back arrow + selected notification) */
+.notificationDetailsHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notificationDetailsHeader p {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #000;
+}
+
+.backButton,
+.moreButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.notificationDetails {
+  padding: 20px 24px;
+}
+
+.notificationDetailsTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notificationDetailsTop h3 {
+  flex: 1;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.notificationDetailsDescription {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #374151;
+}
+
+.detailsTimestamp {
+  margin: 16px 0 0;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+:global(.dark) .notificationDetailsHeader p,
+:global(.dark) .notificationDetailsTop h3 {
+  color: var(--color-foreground);
+}
+
+:global(.dark) .backButton,
+:global(.dark) .moreButton,
+:global(.dark) .detailsTimestamp {
+  color: var(--color-muted-foreground);
+}
+
+:global(.dark) .notificationDetailsDescription {
+  color: var(--color-muted-foreground);
+}
+
 @media (max-width: 640px) {
   .notificationModal {
     width: 100%;

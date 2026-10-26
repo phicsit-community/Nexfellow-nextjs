@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useAuth } from '@clerk/nextjs';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../../store/slices/authSlice';
@@ -56,6 +57,7 @@ export default function Onboarding() {
   const searchParams = useSearchParams();
   const user         = useSelector(state => state.auth.user);
   const dispatch     = useDispatch();
+  const { isLoaded: authLoaded, userId: authUserId } = useAuth();
 
   const [currentScreen, setCurrentScreen] = useState(0);
   const [accountType, setAccountType]     = useState('individual');
@@ -81,6 +83,7 @@ export default function Onboarding() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError]   = useState('');
   const [screenError, setScreenError]   = useState('');
+  const [fieldErrors, setFieldErrors]   = useState({});
   const [draftLoaded, setDraftLoaded]   = useState(false);
 
   // Latest cached user for effects that must not re-run when it changes
@@ -92,8 +95,15 @@ export default function Onboarding() {
 
   // Restore saved answers. Declared before the other effects so the email
   // pre-fill and OAuth-return handling below apply on top of the draft.
+  // A draft belongs to the Clerk user who wrote it. One left behind by a different
+  // account (logout + re-register in the same tab) is discarded, never restored.
   useEffect(() => {
-    const draft = loadDraft();
+    if (!authLoaded || draftLoaded) return;
+    let draft = loadDraft();
+    if (draft && draft.ownerId !== authUserId) {
+      clearDraft();
+      draft = null;
+    }
     hadDraftRef.current = !!draft;
     if (draft) {
       if (typeof draft.currentScreen === 'number' && draft.currentScreen < 7) setCurrentScreen(draft.currentScreen);
@@ -112,18 +122,19 @@ export default function Onboarding() {
       }
     }
     setDraftLoaded(true);
-  }, []);
+  }, [authLoaded, authUserId, draftLoaded]);
 
   useEffect(() => {
-    if (!draftLoaded || currentScreen === 7) return;
+    if (!draftLoaded || !authUserId || currentScreen === 7) return;
     try {
       sessionStorage.setItem(DRAFT_KEY, JSON.stringify({
+        ownerId: authUserId,
         currentScreen, accountType, availability, skills, cofounder, interests,
         profile, countryIso, stateIso, cityName,
         portfolioUrl: socialState.portfolio === true ? portfolioUrl : '',
       }));
     } catch { /* storage unavailable — draft just won't persist */ }
-  }, [draftLoaded, currentScreen, accountType, availability, skills, cofounder, interests,
+  }, [draftLoaded, authUserId, currentScreen, accountType, availability, skills, cofounder, interests,
       profile, countryIso, stateIso, cityName, portfolioUrl, socialState.portfolio]);
 
   // Pre-fill email for email/password and Google users (email is known at login)
@@ -312,6 +323,7 @@ export default function Onboarding() {
 
   const goTo = (n) => {
     setScreenError('');
+    setFieldErrors({});
     setCurrentScreen(n);
     if (typeof document !== 'undefined') {
       const rightContainer = document.querySelector(`.${styles.right}`);
@@ -319,32 +331,61 @@ export default function Onboarding() {
     }
   };
 
-  // Returns the first problem with the Screen 2 fields, or '' if they're valid
-  const getProfileError = () => {
+  const clearFieldError = (key) =>
+    setFieldErrors(prev => {
+      if (!prev[key]) return prev;
+      const { [key]: _removed, ...rest } = prev;
+      return rest;
+    });
+  const invalid = (key) => (fieldErrors[key] ? { 'aria-invalid': true, 'aria-describedby': `err-${key}` } : {});
+  const fieldError = (key) => fieldErrors[key]
+    ? <div id={`err-${key}`} role="alert" className={styles["field-error"]}>{fieldErrors[key]}</div>
+    : null;
+  const req = <span className={styles["req"]} aria-hidden="true"> *</span>;
+
+  // Problems with the Screen 2 fields, keyed by field, in on-screen order
+  const getProfileFieldErrors = () => {
     const { fname, lname, handle, email, bio } = profile;
     const clean = handle.replace(/^@/, '').trim();
-    if (!fname.trim())           return 'First name is required.';
-    if (!lname.trim())           return 'Last name is required.';
-    if (!clean)                  return 'Username is required.';
-    if (clean.length < 3 || clean.length > 30) return 'Username must be between 3 and 30 characters.';
-    if (!USERNAME_RE.test(clean)) return 'Username may only contain letters, numbers, underscores, dots, and hyphens.';
-    if (usernameAvailable === false) return 'That username is already taken — choose another.';
-    if (!email.trim())           return 'Email address is required.';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return 'Please enter a valid email address.';
-    if (!bio.trim())             return 'Short bio is required.';
-    return '';
+    const errors = {};
+    if (!fname.trim()) errors.fname = 'First name is required.';
+    if (!lname.trim()) errors.lname = 'Last name is required.';
+    if (!clean)                                    errors.handle = 'Username is required.';
+    else if (clean.length < 3 || clean.length > 30) errors.handle = 'Username must be between 3 and 30 characters.';
+    else if (!USERNAME_RE.test(clean))             errors.handle = 'Username may only contain letters, numbers, underscores, dots, and hyphens.';
+    else if (usernameAvailable === false)          errors.handle = 'That username is already taken — choose another.';
+    if (!email.trim())                                          errors.email = 'Email address is required.';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errors.email = 'Please enter a valid email address.';
+    if (!countryIso) errors.country = 'Country is required.';
+    // Some countries have no states / cities in the dataset, so only require them when there is something to pick
+    else {
+      const states = State.getStatesOfCountry(countryIso);
+      if (states.length && !stateIso) errors.state = 'State / region is required.';
+      else if (stateIso && City.getCitiesOfState(countryIso, stateIso).length && !cityName) errors.city = 'City is required.';
+    }
+    if (!bio.trim()) errors.bio = 'Short bio is required.';
+    return errors;
   };
+
+  // The first problem with the Screen 2 fields, or '' if they're valid
+  const getProfileError = () => Object.values(getProfileFieldErrors())[0] || '';
 
   // Send the user back to the profile step with the error shown next to the fields
   const showProfileError = (message) => {
     goTo(2);
+    setFieldErrors(getProfileFieldErrors());
     setScreenError(message);
   };
 
   // Screen 2 validation — called instead of goTo(3)
   const continueFromProfile = () => {
-    const error = getProfileError();
-    if (error) return setScreenError(error);
+    const errors = getProfileFieldErrors();
+    if (Object.keys(errors).length) {
+      setFieldErrors(errors);
+      setScreenError('Please fill in the highlighted required fields.');
+      return;
+    }
+    setFieldErrors({});
     goTo(3);
   };
 
@@ -566,19 +607,22 @@ export default function Onboarding() {
               <div className={styles["screen-step"]}>Step 2 of 6 — Your profile</div>
               <div className={styles["screen-title"]}>Let's set up your<br />builder identity.</div>
               <div className={styles["screen-sub"]}>This is your public profile — other builders will see this on BuilderMap and in feedback threads.</div>
+              <div className={styles["req-note"]}><span className={styles["req"]}>*</span> Required field</div>
               <div className={`${styles["field"]} ${styles["field-row"]}`}>
                 <div>
-                  <label>First name</label>
-                  <input type="text" placeholder="Rahul" value={profile.fname} onChange={e => setProfile({...profile, fname: e.target.value})} />
+                  <label>First name{req}</label>
+                  <input type="text" placeholder="Rahul" value={profile.fname} required {...invalid('fname')} onChange={e => { setProfile({...profile, fname: e.target.value}); clearFieldError('fname'); }} />
+                  {fieldError('fname')}
                 </div>
                 <div>
-                  <label>Last name</label>
-                  <input type="text" placeholder="Kumar" value={profile.lname} onChange={e => setProfile({...profile, lname: e.target.value})} />
+                  <label>Last name{req}</label>
+                  <input type="text" placeholder="Kumar" value={profile.lname} required {...invalid('lname')} onChange={e => { setProfile({...profile, lname: e.target.value}); clearFieldError('lname'); }} />
+                  {fieldError('lname')}
                 </div>
               </div>
               <div className={styles["field"]}>
                 <label>
-                  Username / handle
+                  Username / handle{req}
                   {usernameChecking && <span style={{ color: 'var(--t4)', fontWeight: 400, marginLeft: 8 }}>checking…</span>}
                   {!usernameChecking && usernameAvailable === true  && <span style={{ color: 'var(--green)', fontWeight: 400, marginLeft: 8 }}>✓ available</span>}
                   {!usernameChecking && usernameAvailable === false && <span style={{ color: 'var(--coral)', fontWeight: 400, marginLeft: 8 }}>✗ taken</span>}
@@ -587,26 +631,35 @@ export default function Onboarding() {
                   type="text"
                   placeholder="@rahulkumar"
                   value={profile.handle}
-                  onChange={e => setProfile({...profile, handle: e.target.value})}
+                  required
+                  {...invalid('handle')}
+                  onChange={e => { setProfile({...profile, handle: e.target.value}); clearFieldError('handle'); }}
                 />
+                {fieldError('handle')}
               </div>
               <div className={styles["field"]}>
-                <label>Email address</label>
+                <label>Email address{req}</label>
                 <input
                   type="email"
+                  required
+                  {...invalid('email')}
                   placeholder="rahul@nexfellow.com"
                   value={profile.email}
-                  onChange={e => !emailDisabled && setProfile({...profile, email: e.target.value})}
+                  onChange={e => { if (!emailDisabled) { setProfile({...profile, email: e.target.value}); clearFieldError('email'); } }}
                   disabled={emailDisabled}
                   style={emailDisabled ? { opacity: 0.6, cursor: 'not-allowed' } : undefined}
                 />
+                {fieldError('email')}
               </div>
               <div className={`${styles["field"]} ${styles["field-row"]}`}>
                 <div>
-                  <label>Country</label>
+                  <label>Country{req}</label>
                   <select
                     value={countryIso}
+                    required
+                    {...invalid('country')}
                     onChange={(e) => {
+                      clearFieldError('country');
                       setCountryIso(e.target.value);
                       setStateIso("");
                       setCityName("");
@@ -617,12 +670,16 @@ export default function Onboarding() {
                       <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
                     ))}
                   </select>
+                  {fieldError('country')}
                 </div>
                 <div>
-                  <label>State / Region</label>
+                  <label>State / Region{req}</label>
                   <select
                     value={stateIso}
+                    required
+                    {...invalid('state')}
                     onChange={(e) => {
+                      clearFieldError('state');
                       setStateIso(e.target.value);
                       setCityName("");
                     }}
@@ -633,13 +690,16 @@ export default function Onboarding() {
                       <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
                     ))}
                   </select>
+                  {fieldError('state')}
                 </div>
               </div>
               <div className={styles["field"]}>
-                <label>City</label>
+                <label>City{req}</label>
                 <select
                   value={cityName}
-                  onChange={(e) => setCityName(e.target.value)}
+                  required
+                  {...invalid('city')}
+                  onChange={(e) => { setCityName(e.target.value); clearFieldError('city'); }}
                   disabled={!stateIso}
                 >
                   <option value="">Select City</option>
@@ -647,10 +707,12 @@ export default function Onboarding() {
                     <option key={c.name} value={c.name}>{c.name}</option>
                   ))}
                 </select>
+                {fieldError('city')}
               </div>
               <div className={styles["field"]}>
-                <label>Short bio <span style={{ color: "var(--t4)", fontWeight: "400", textTransform: "none", letterSpacing: "0" }}>(what are you building?)</span></label>
-                <textarea placeholder="Building at the intersection of productivity and AI..." value={profile.bio} onChange={e => setProfile({...profile, bio: e.target.value})}></textarea>
+                <label>Short bio{req} <span style={{ color: "var(--t4)", fontWeight: "400", textTransform: "none", letterSpacing: "0" }}>(what are you building?)</span></label>
+                <textarea placeholder="Building at the intersection of productivity and AI..." value={profile.bio} required {...invalid('bio')} onChange={e => { setProfile({...profile, bio: e.target.value}); clearFieldError('bio'); }}></textarea>
+                {fieldError('bio')}
               </div>
               {screenError && (
                 <div style={{ color: 'var(--coral)', fontSize: '13px', marginBottom: '12px', padding: '10px 14px', background: 'rgba(225,112,85,0.08)', borderRadius: '8px', border: '1px solid rgba(225,112,85,0.2)' }}>
