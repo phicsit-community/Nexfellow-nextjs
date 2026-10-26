@@ -53,6 +53,13 @@
   overflow: hidden;
 }
 
+.userPostsList {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
 .comingSoonPost {
   background-color: #fff;
   padding: 40px;

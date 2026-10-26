@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import api from '../../lib/axios';
 import ProfileImage from "./assets/profile_image.svg";
 import noPosts from "./assets/no_posts.png";
+import Post from "../Post/Post";
 
 // styles
 import styles from './User.module.css';
@@ -18,12 +19,27 @@ const UserCommunityBody = ({ userId, otherUserId }) => {
     const [error, setError] = useState(null);
     const [followingStatus, setFollowingStatus] = useState({});
     const [loadingFollow, setLoadingFollow] = useState({});
+    const [userPosts, setUserPosts] = useState([]);
+    const [postsLoading, setPostsLoading] = useState(true);
+    const [postsError, setPostsError] = useState(null);
     const router = useRouter();
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
     useEffect(() => {
         fetchMutualConnections();
     }, [userId, otherUserId]);
+
+    useEffect(() => {
+        if (!userId) return;
+        let cancelled = false;
+        setPostsLoading(true);
+        setPostsError(null);
+        api.get(`/post/user/${userId}`, { params: { limit: 50 } })
+            .then((res) => { if (!cancelled) setUserPosts(res.data.posts || []); })
+            .catch((err) => { if (!cancelled) setPostsError("Error retrieving posts: " + err.message); })
+            .finally(() => { if (!cancelled) setPostsLoading(false); });
+        return () => { cancelled = true; };
+    }, [userId]);
 
     const fetchMutualConnections = async () => {
         if (!otherUserId) return;
@@ -115,17 +131,34 @@ const UserCommunityBody = ({ userId, otherUserId }) => {
             </div>
 
             <div className={styles.contentSection}>
-                {loading && <p>Loading...</p>}
-                {error && <p className={styles.errorBox}>⚠️ {error}</p>}
+                {activeTab !== 'Posts' && loading && <p>Loading...</p>}
+                {activeTab !== 'Posts' && error && <p className={styles.errorBox}>⚠️ {error}</p>}
 
-                {/* Posts Tab - Coming Soon */}
-                {activeTab === 'Posts' && !loading && !error && (
-                    <div className={styles.noPostsContainer}>
-                        <img className={styles.noPostsImage} src={noPosts?.src || noPosts} alt="No Posts" />
-                        <p className={styles.noPostsHead}>Oops! Nothing To See Here Yet!</p>
-                        <p className={styles.noPostsMessage}>There are no posts to show at the moment.</p>
-                        <p className={styles.noPostsMessage}>Check back later to see updates!</p>
-                    </div>
+                {/* Posts Tab */}
+                {activeTab === 'Posts' && postsLoading && <p>Loading posts...</p>}
+                {activeTab === 'Posts' && postsError && <p className={styles.errorBox}>⚠️ {postsError}</p>}
+                {activeTab === 'Posts' && !postsLoading && !postsError && (
+                    userPosts.length > 0 ? (
+                        <div className={styles.userPostsList}>
+                            {userPosts.map((post) => (
+                                <Post
+                                    key={post._id}
+                                    post={post}
+                                    options={[{
+                                        label: "View post",
+                                        action: () => router.push(`/post/${post._id}`),
+                                    }]}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className={styles.noPostsContainer}>
+                            <img className={styles.noPostsImage} src={noPosts?.src || noPosts} alt="No Posts" />
+                            <p className={styles.noPostsHead}>Oops! Nothing To See Here Yet!</p>
+                            <p className={styles.noPostsMessage}>There are no posts to show at the moment.</p>
+                            <p className={styles.noPostsMessage}>Check back later to see updates!</p>
+                        </div>
+                    )
                 )}
 
                 {/* Mutual Connections Tab */}
