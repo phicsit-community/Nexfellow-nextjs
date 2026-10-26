@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import api from "../../lib/axios";
 import useSocket from "../../hooks/useSocket";
@@ -23,7 +23,7 @@ import {
 import { AiOutlineSend, AiOutlinePaperClip } from "react-icons/ai";
 import styles from "./Inbox.module.css";
 import { BiTrashAlt } from "react-icons/bi";
-import { IoCheckmarkCircle, IoCloseCircle, IoBan, IoFilterOutline, IoPin } from "react-icons/io5";
+import { IoCheckmarkCircle, IoCloseCircle, IoBan, IoFilterOutline, IoPin, IoStar, IoCheckmark } from "react-icons/io5";
 import messageIcon from "./assets/message.svg";
 import searchIcon from "./assets/searchIcon.svg";
 import newConvImg from "./assets/Overlay.svg";
@@ -57,6 +57,19 @@ const Inbox = () => {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth <= 768 : false);
   const [profileOpen, setProfileOpen] = useState(false);
+  // Chat header controls: in-conversation search and the "more" menu
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [msgSearch, setMsgSearch] = useState("");
+  const [activeMatch, setActiveMatch] = useState(0);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreMenuRef = useRef(null);
+  // Conversation list sorting + favorites (favorites are stored per browser/user)
+  const [sortMode, setSortMode] = useState("recent");
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortMenuRef = useRef(null);
+  const msgSearchInputRef = useRef(null);
+  const messagesContainerRef = useRef(null);
 
   const messagesEndRef = useRef(null);
   const messageInputRef = useRef(null);
@@ -186,6 +199,10 @@ const Inbox = () => {
             lastUpdated: message.createdAt || message.timestamp || new Date().toISOString(),
             isRead: msgSenderId === me,
           };
+        } else if (conversation.status === "pending" && msgSenderId !== me) {
+          // Incoming request: it belongs in the Requests tab (added by newMessageRequest),
+          // not in the main conversation list.
+          next = prev;
         } else {
           // Build minimal "otherUser" object if not available
           const otherUser = msgSenderId === me
@@ -223,11 +240,14 @@ const Inbox = () => {
           ...prev,
           _id: convId,
           status: conversation.status || "active",
+          requestSentBy: prev?.requestSentBy || (msgSenderId === me ? me : msgSenderId),
         }));
       }
 
       // Notification for inbound message on other conversations (not active)
-      if (msgSenderId !== me) {
+      if (msgSenderId !== me && conversation.status === "pending") {
+        toast(`New message request from ${message.sender?.name || "Someone"}`);
+      } else if (msgSenderId !== me) {
         const sel = selConv;
         if (!sel || str(sel._id) !== convId) {
           toast(`New message from ${message.sender?.name || "Someone"}`, {
@@ -267,83 +287,41 @@ const Inbox = () => {
     const onNewMessageRequest = (newRequest) => {
       if (!newRequest?._id) return;
       setMessageRequests((prev) => {
-        const exists = prev.some((r) => str(r._id) === str(newRequest._id));
-        if (exists) return prev;
-        return [newRequest, ...prev];
+        const rest = prev.filter((r) => str(r._id) !== str(newRequest._id));
+        return [newRequest, ...rest];
       });
     };
 
     const onMessageRequestUpdated = (data) => {
-      const { conversationId, status, conversation: convMeta } = data || {};
+      const { conversationId, status, conversation: convMeta, updatedBy } = data || {};
       const cid = str(conversationId);
       if (!cid || !status) return;
 
+      const me = str(currentUserIdRef.current);
+      const byMe = str(updatedBy) === me;
+      const patch = {
+        status,
+        blockedBy: convMeta?.blockedBy ? String(convMeta.blockedBy) : null,
+        ...(convMeta?.requestSentBy ? { requestSentBy: String(convMeta.requestSentBy) } : {}),
+      };
+      const patchConv = (c) => (str(c._id) === cid ? { ...c, ...patch } : c);
+
+      // The request is no longer open, whatever the outcome
+      setMessageRequests((prev) => prev.filter((r) => str(r._id) !== cid));
+
+      // Patch the status in place. Replacing the entry would drop otherUser's name/picture.
+      setConversations((prev) => prev.map(patchConv));
+      setFixedConversations((prev) => prev.map(patchConv));
+      setSelectedConversation((prev) => (prev && str(prev._id) === cid ? { ...prev, ...patch } : prev));
+
+      // Accepted conversation the recipient doesn't have in their list yet: load it with full user data
+      if (status === "accepted" && !conversationsRef.current.some((c) => str(c._id) === cid)) {
+        fetchConversations();
+      }
+
       if (status === "accepted") {
-        // Remove from requests
-        setMessageRequests((prev) => prev.filter((r) => str(r._id) !== cid));
-
-        // Add/Upsert to conversations using enriched payload if provided
-        setConversations((prev) => {
-          const exists = prev.some((c) => str(c._id) === cid);
-          if (exists && !convMeta) return prev;
-
-          const newConv = convMeta
-            ? {
-              _id: str(convMeta._id),
-              otherUser: (() => {
-                const me = str(currentUserIdRef.current);
-                const otherId =
-                  (convMeta.participants || [])
-                    .map(str)
-                    .find((id) => id !== me) || null;
-                // Optionally include more user info here if available in convMeta
-                return { _id: otherId };
-              })(),
-              lastMessage: convMeta.lastMessage || null,
-              status: convMeta.status,
-              isRead: false,
-              lastUpdatedAt: convMeta.lastUpdatedAt || new Date().toISOString(),
-              createdAt: convMeta.createdAt || new Date().toISOString(),
-            }
-            : {
-              _id: cid,
-              otherUser: null,
-              lastMessage: null,
-              status: "accepted",
-              isRead: false,
-              lastUpdatedAt: new Date().toISOString(),
-              createdAt: new Date().toISOString(),
-            };
-
-          const next = exists
-            ? prev.map((c) => (str(c._id) === cid ? { ...c, ...newConv } : c))
-            : [newConv, ...prev];
-
-          next.sort(
-            (a, b) =>
-              new Date(b.lastUpdatedAt || b.createdAt) -
-              new Date(a.lastUpdatedAt || a.createdAt)
-          );
-          return next;
-        });
-
-        // --- New part: Update selectedConversation if it matches updated conv ---
-        setSelectedConversation((prev) => {
-          if (prev && str(prev._id) === cid) {
-            return {
-              ...prev,
-              status: convMeta?.status || "accepted",
-              lastMessage: convMeta?.lastMessage || prev.lastMessage,
-              lastUpdatedAt: convMeta?.lastUpdatedAt || prev.lastUpdatedAt,
-              requestSentBy: convMeta?.requestSentBy ? String(convMeta.requestSentBy) : prev.requestSentBy || null,
-            };
-          }
-          return prev;
-        });
-
-        toast.success("Message request accepted");
-      } else if (status === "rejected" || status === "blocked") {
-        setMessageRequests((prev) => prev.filter((r) => str(r._id) !== cid));
+        toast.success(byMe ? "Message request accepted" : "Your message request was accepted");
+      } else if (byMe) {
         toast.info(`Message request ${status}`);
       }
     };
@@ -584,6 +562,7 @@ const Inbox = () => {
           ...prev,
           _id: response.data.conversation._id,
           status: response.data.conversation.status,
+          requestSentBy: str(currentUserIdRef.current),
         }));
         // Minimal refresh to include the new conversation if not inserted by socket yet
         fetchConversations();
@@ -650,47 +629,55 @@ const Inbox = () => {
     }
   };
 
-  const handleAcceptRequest = async (requestId) => {
+  // Resolve a request through the API and mirror the outcome locally, so the UI
+  // is correct even if the socket event is slow or missed.
+  const resolveRequest = async (conversationId, action) => {
+    const statusByAction = { accept: "accepted", reject: "rejected", block: "blocked" };
+    const status = statusByAction[action];
     try {
-      await api.post("/direct-messages/requests/handle", {
-        conversationId: requestId,
-        action: "accept",
+      const res = await api.post("/direct-messages/requests/handle", {
+        conversationId,
+        action,
       });
-      // Controllers now emit enriched socket event to upsert; no heavy refetch needed
-      fetchConversations(); // optional light refresh
-      fetchMessageRequests(); // optional
+      const newStatus = res.data?.conversation?.status || status;
+      const cid = str(conversationId);
+      setMessageRequests((prev) => prev.filter((r) => str(r._id) !== cid));
+      const patchConv = (c) => (str(c._id) === cid ? { ...c, status: newStatus } : c);
+      setConversations((prev) => prev.map(patchConv));
+      setFixedConversations((prev) => prev.map(patchConv));
+      setSelectedConversation((prev) =>
+        prev && str(prev._id) === cid ? { ...prev, status: newStatus } : prev
+      );
+      if (action === "accept") {
+        fetchConversations(); // brings the accepted chat into the list with full user data
+        toast.success("Message request accepted");
+      } else if (action === "reject") {
+        toast.success("Request rejected");
+      } else {
+        toast.success("User blocked");
+      }
     } catch (error) {
-      console.error("Error accepting request:", error);
-      toast.error("Failed to accept request");
+      console.error(`Error handling request (${action}):`, error);
+      toast.error(error.response?.data?.message || `Failed to ${action} request`);
     }
   };
 
-  const handleRejectRequest = async (requestId) => {
-    try {
-      await api.post("/direct-messages/requests/handle", {
-        conversationId: requestId,
-        action: "reject",
-      });
-      fetchMessageRequests();
-      toast.success("Request rejected");
-    } catch (error) {
-      console.error("Error rejecting request:", error);
-      toast.error("Failed to reject request");
-    }
-  };
+  const handleAcceptRequest = (requestId) => resolveRequest(requestId, "accept");
+  const handleRejectRequest = (requestId) => resolveRequest(requestId, "reject");
+  const handleBlockRequest = (requestId) => resolveRequest(requestId, "block");
 
-  const handleBlockRequest = async (requestId) => {
-    try {
-      await api.post("/direct-messages/requests/handle", {
-        conversationId: requestId,
-        action: "block",
-      });
-      fetchMessageRequests();
-      toast.success("User blocked");
-    } catch (error) {
-      console.error("Error blocking user:", error);
-      toast.error("Failed to block user");
-    }
+  // Open a request from the Requests tab so its message can be read before deciding
+  const openRequest = (request) => {
+    if (!request?._id || !request.requester) return;
+    setSelectedConversation({
+      _id: request._id,
+      otherUser: request.requester,
+      lastMessage: request.lastMessage || null,
+      status: "pending",
+      requestSentBy: str(request.requestSentBy || request.requester._id),
+      createdAt: request.createdAt,
+    });
+    if (isMobile) setSidebarVisible(false);
   };
 
   const handleSearchUsers = async () => {
@@ -766,7 +753,7 @@ const Inbox = () => {
   };
 
   const deleteConversation = async (conversationId, e) => {
-    e.stopPropagation();
+    e?.stopPropagation?.();
     setDeleteConversationId(conversationId);
     setShowDeleteModal(true);
   };
@@ -896,12 +883,201 @@ const Inbox = () => {
 
   })();
   const effectiveRequestSentBy = selectedConversation?.requestSentBy || derivedRequestSender;
+  // A request somebody else sent me: only I can accept or reject it
+  const isIncomingRequest =
+    !!selectedConversation?._id &&
+    ["pending", "rejected"].includes(selectedConversation.status) &&
+    !!effectiveRequestSentBy &&
+    String(effectiveRequestSentBy) !== String(currentUserId);
   const canSend = selectedConversation && (
     selectedConversation.status === "accepted" ||
     !selectedConversation._id ||
     (selectedConversation.status === "rejected" &&
       String(effectiveRequestSentBy) === String(currentUserId))
   );
+
+  // ---- In-conversation search -------------------------------------------------
+  const searchTerm = msgSearch.trim().toLowerCase();
+  const matchIds = searchOpen && searchTerm
+    ? messages
+        .filter((m) => !m.fileUrl && (m.content || "").toLowerCase().includes(searchTerm))
+        .map((m) => str(m._id))
+    : [];
+  const safeActive = matchIds.length ? Math.min(activeMatch, matchIds.length - 1) : 0;
+  const activeMatchId = matchIds[safeActive] || null;
+
+  const openMessageSearch = () => {
+    setMoreOpen(false);
+    setProfileOpen(false);
+    setSearchOpen(true);
+    setTimeout(() => msgSearchInputRef.current?.focus(), 0);
+  };
+
+  const closeMessageSearch = () => {
+    setSearchOpen(false);
+    setMsgSearch("");
+    setActiveMatch(0);
+  };
+
+  const stepMatch = (dir) => {
+    if (!matchIds.length) return;
+    setActiveMatch((safeActive + dir + matchIds.length) % matchIds.length);
+  };
+
+  // Wrap occurrences of the search term in <mark>
+  const renderMessageText = (text, messageId) => {
+    if (!searchOpen || !searchTerm || !text) return text;
+    const lower = text.toLowerCase();
+    const parts = [];
+    let from = 0;
+    let idx = lower.indexOf(searchTerm, from);
+    while (idx !== -1) {
+      if (idx > from) parts.push(text.slice(from, idx));
+      parts.push(
+        <mark
+          key={`${idx}`}
+          className={`${styles.searchHit} ${str(messageId) === activeMatchId ? styles.searchHitActive : ""}`}
+        >
+          {text.slice(idx, idx + searchTerm.length)}
+        </mark>
+      );
+      from = idx + searchTerm.length;
+      idx = lower.indexOf(searchTerm, from);
+    }
+    if (from < text.length) parts.push(text.slice(from));
+    return parts;
+  };
+
+  // Scroll the current match into view
+  useEffect(() => {
+    if (!activeMatchId || !messagesContainerRef.current) return;
+    const el = messagesContainerRef.current.querySelector(
+      `[data-mid="${CSS.escape(activeMatchId)}"]`
+    );
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [activeMatchId]);
+
+  // Switching conversation resets the header tools
+  useEffect(() => {
+    setSearchOpen(false);
+    setMsgSearch("");
+    setActiveMatch(0);
+    setMoreOpen(false);
+  }, [selectedConversation?._id, selectedConversation?.otherUser?._id]);
+
+  // Close the "more" menu on outside click / Escape
+  useEffect(() => {
+    if (!moreOpen) return;
+    const onDown = (e) => {
+      if (!moreMenuRef.current?.contains(e.target)) setMoreOpen(false);
+    };
+    const onKey = (e) => e.key === "Escape" && setMoreOpen(false);
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [moreOpen]);
+
+  // Favorites live on the server (per user); update optimistically, roll back on failure
+  const toggleFavorite = async (conversationId) => {
+    if (!conversationId) {
+      toast.error("Send a message first to favorite this conversation");
+      return;
+    }
+    const id = str(conversationId);
+    const current =
+      conversationsRef.current.find((c) => str(c._id) === id) ||
+      (str(selectedConversationRef.current?._id) === id ? selectedConversationRef.current : null);
+    const next = !current?.isFavorite;
+    const apply = (value) => {
+      const patch = (c) => (str(c._id) === id ? { ...c, isFavorite: value } : c);
+      setConversations((prev) => prev.map(patch));
+      setFixedConversations((prev) => prev.map(patch));
+      setSelectedConversation((prev) => (prev && str(prev._id) === id ? { ...prev, isFavorite: value } : prev));
+    };
+    apply(next);
+    try {
+      await api.patch(`/direct-messages/conversations/${id}/favorite`, { favorite: next });
+      toast.success(next ? "Added to favorites" : "Removed from favorites");
+    } catch (error) {
+      console.error("Error updating favorite:", error);
+      apply(!next);
+      toast.error("Couldn't update favorites");
+    }
+  };
+
+  const handleShareProfile = async () => {
+    const u = selectedConversation?.otherUser;
+    const handle = u?.username || u?._id;
+    if (!handle) return;
+    const section = u.isCommunityAccount && u.createdCommunity ? "explore" : "user";
+    const url = `${window.location.origin}/${section}/${encodeURIComponent(String(handle))}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // Clipboard API unavailable (insecure context / permissions): legacy fallback
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = url;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        if (!ok) throw new Error("copy failed");
+      } catch {
+        toast.error("Couldn't copy the link");
+        return;
+      }
+    }
+    toast.success("Profile link copied");
+  };
+
+  const SORT_OPTIONS = [
+    { key: "recent", label: "Most recent" },
+    { key: "oldest", label: "Oldest first" },
+    { key: "unread", label: "Unread first" },
+    { key: "name", label: "Name (A–Z)" },
+  ];
+
+  const displayedConversations = useMemo(() => {
+    const time = (c) => new Date(c.lastUpdated || c.lastUpdatedAt || c.createdAt || 0).getTime();
+    const isUnread = (c) =>
+      !c.isRead && c.lastMessage?.sender?._id !== currentUserId;
+    let list = favoritesOnly
+      ? conversations.filter((c) => c.isFavorite)
+      : [...conversations];
+    const cmp = {
+      recent: (a, b) => time(b) - time(a),
+      oldest: (a, b) => time(a) - time(b),
+      unread: (a, b) => Number(isUnread(b)) - Number(isUnread(a)) || time(b) - time(a),
+      name: (a, b) =>
+        String(a.otherUser?.name || a.otherUser?.username || "").localeCompare(
+          String(b.otherUser?.name || b.otherUser?.username || ""),
+          undefined,
+          { sensitivity: "base" }
+        ),
+    }[sortMode];
+    return list.sort(cmp);
+  }, [conversations, sortMode, favoritesOnly, currentUserId]);
+
+  // Close the sort menu on outside click / Escape
+  useEffect(() => {
+    if (!sortOpen) return;
+    const onDown = (e) => {
+      if (!sortMenuRef.current?.contains(e.target)) setSortOpen(false);
+    };
+    const onKey = (e) => e.key === "Escape" && setSortOpen(false);
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [sortOpen]);
 
   const handleViewProfile = async () => {
     const userToView = selectedConversation?.otherUser;
@@ -989,9 +1165,48 @@ const Inbox = () => {
               )}
             </button>
           </div>
-          <button className={styles.filterButton}>
-            <IoFilterOutline size={18} />
-          </button>
+          <div className={styles.sortWrapper} ref={sortMenuRef}>
+            <button
+              type="button"
+              className={`${styles.filterButton} ${sortMode !== "recent" || favoritesOnly ? styles.filterActive : ""}`}
+              onClick={() => setSortOpen((v) => !v)}
+              aria-label="Sort and filter conversations"
+              aria-haspopup="menu"
+              aria-expanded={sortOpen}
+              title="Sort and filter"
+            >
+              <IoFilterOutline size={18} />
+            </button>
+            {sortOpen && (
+              <div className={styles.sortMenu} role="menu">
+                <p className={styles.sortMenuLabel}>Sort by</p>
+                {SORT_OPTIONS.map((o) => (
+                  <button
+                    key={o.key}
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked={sortMode === o.key}
+                    className={styles.moreItem}
+                    onClick={() => { setSortMode(o.key); setSortOpen(false); }}
+                  >
+                    <span className={styles.sortCheck}>{sortMode === o.key && <IoCheckmark />}</span>
+                    {o.label}
+                  </button>
+                ))}
+                <div className={styles.sortDivider} />
+                <button
+                  type="button"
+                  role="menuitemcheckbox"
+                  aria-checked={favoritesOnly}
+                  className={styles.moreItem}
+                  onClick={() => { setFavoritesOnly((v) => !v); setSortOpen(false); }}
+                >
+                  <span className={styles.sortCheck}>{favoritesOnly && <IoCheckmark />}</span>
+                  Favorites only
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className={styles.conversationsList}>
@@ -1005,6 +1220,14 @@ const Inbox = () => {
                 </div>
                 <p>Loading conversations...</p>
               </div>
+            ) : displayedConversations.length === 0 && conversations.length > 0 ? (
+              <div className={styles.emptyState}>
+                <div className={styles.emptyStateIcon}>
+                  <IoStar size={40} />
+                </div>
+                <h4>No favorites yet</h4>
+                <p>Star a conversation from the user's profile panel to see it here.</p>
+              </div>
             ) : conversations.length === 0 ? (
               <div className={styles.emptyState}>
                 <div className={styles.emptyStateIcon}>
@@ -1014,7 +1237,7 @@ const Inbox = () => {
                 <p>Tap <strong>+</strong> above to message someone.</p>
               </div>
             ) : (
-              conversations.map((conversation) => (
+              displayedConversations.map((conversation) => (
                 <div
                   key={conversation._id}
                   className={`${styles.conversationItem} ${selectedConversation &&
@@ -1049,6 +1272,7 @@ const Inbox = () => {
                       <h3>
                         {conversation.otherUser.name}
                         {conversation.isPinned && <IoPin className={styles.pinIcon} />}
+                        {conversation.isFavorite && <IoStar className={styles.favIcon} />}
                       </h3>
                       <span className={styles.timeStamp}>
                         {formatTime(conversation.lastUpdatedAt)}
@@ -1124,7 +1348,12 @@ const Inbox = () => {
               </div>
             ) : (
               messageRequests.map((request) => (
-                <div key={request._id} className={styles.requestItem}>
+                <div
+                  key={request._id}
+                  className={`${styles.requestItem} ${selectedConversation && str(selectedConversation._id) === str(request._id) ? styles.selectedConversation : ""}`}
+                  onClick={() => openRequest(request)}
+                  style={{ cursor: "pointer" }}
+                >
                   <div className={styles.userAvatar}>
                     <img
                       src={
@@ -1132,7 +1361,7 @@ const Inbox = () => {
                         request.requester?.profile?.profilePhoto ||
                         "/default-avatar.png"
                       }
-                      alt={request.requester.name}
+                      alt={request.requester?.name || "User"}
                     />
                     <div className={styles.newRequestIndicator}></div>
                     {/* {request.requester.verified && (
@@ -1141,7 +1370,7 @@ const Inbox = () => {
                   </div>
                   <div className={styles.requestInfo}>
                     <div className={styles.requestHeader}>
-                      <h3>{request.requester.name}</h3>
+                      <h3>{request.requester?.name || request.requester?.username || "Someone"}</h3>
                       <span className={styles.timeStamp}>
                         {formatTime(request.createdAt)}
                       </span>
@@ -1157,21 +1386,21 @@ const Inbox = () => {
                   <div className={styles.requestActions}>
                     <button
                       className={styles.acceptButton}
-                      onClick={() => handleAcceptRequest(request._id)}
+                      onClick={(e) => { e.stopPropagation(); handleAcceptRequest(request._id); }}
                       aria-label="Accept request"
                     >
                       <IoCheckmarkCircle color="#22c55e" size={20} />
                     </button>
                     <button
                       className={styles.rejectButton}
-                      onClick={() => handleRejectRequest(request._id)}
+                      onClick={(e) => { e.stopPropagation(); handleRejectRequest(request._id); }}
                       aria-label="Reject request"
                     >
                       <IoCloseCircle color="#ef4444" size={20} />
                     </button>
                     <button
                       className={styles.blockButton}
-                      onClick={() => handleBlockRequest(request._id)}
+                      onClick={(e) => { e.stopPropagation(); handleBlockRequest(request._id); }}
                       aria-label="Block user"
                     >
                       <IoBan color="#64748b" size={20} />
@@ -1247,16 +1476,129 @@ const Inbox = () => {
                 </div>
               </div>
               <div className={styles.headerActions}>
-                <button className={styles.headerIconButton}><IoSearch /></button>
-                <button className={styles.headerIconButton}><IoInformationCircleOutline /></button>
-                <button className={styles.headerIconButton}><IoEllipsisVertical /></button>
+                <button
+                  type="button"
+                  className={`${styles.headerIconButton} ${searchOpen ? styles.headerIconActive : ""}`}
+                  onClick={() => (searchOpen ? closeMessageSearch() : openMessageSearch())}
+                  aria-label="Search in conversation"
+                  aria-pressed={searchOpen}
+                  title="Search in conversation"
+                >
+                  <IoSearch />
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.headerIconButton} ${profileOpen ? styles.headerIconActive : ""}`}
+                  onClick={() => {
+                    if (!profileOpen) closeMessageSearch();
+                    setProfileOpen((v) => !v);
+                  }}
+                  aria-label="Conversation info"
+                  aria-pressed={profileOpen}
+                  title="Conversation info"
+                >
+                  <IoInformationCircleOutline />
+                </button>
+                <div className={styles.moreWrapper} ref={moreMenuRef}>
+                  <button
+                    type="button"
+                    className={`${styles.headerIconButton} ${moreOpen ? styles.headerIconActive : ""}`}
+                    onClick={() => setMoreOpen((v) => !v)}
+                    aria-label="More options"
+                    aria-haspopup="menu"
+                    aria-expanded={moreOpen}
+                    title="More options"
+                  >
+                    <IoEllipsisVertical />
+                  </button>
+                  {moreOpen && (
+                    <div className={styles.moreMenu} role="menu">
+                      <button type="button" role="menuitem" className={styles.moreItem} onClick={() => { setMoreOpen(false); handleViewProfile(); }}>
+                        View profile
+                      </button>
+                      <button type="button" role="menuitem" className={styles.moreItem} onClick={openMessageSearch}>
+                        Search in conversation
+                      </button>
+                      {selectedConversation.status === "blocked" ? (
+                        String(selectedConversation.blockedBy) === String(currentUserId) && (
+                          <button type="button" role="menuitem" className={styles.moreItem} onClick={() => { setMoreOpen(false); unblockUser(selectedConversation.otherUser._id); }}>
+                            Unblock user
+                          </button>
+                        )
+                      ) : (
+                        <button type="button" role="menuitem" className={`${styles.moreItem} ${styles.moreItemDanger}`} onClick={() => { setMoreOpen(false); blockUser(selectedConversation.otherUser._id); }}>
+                          Block user
+                        </button>
+                      )}
+                      {selectedConversation._id && (
+                        <button type="button" role="menuitem" className={`${styles.moreItem} ${styles.moreItemDanger}`} onClick={() => { setMoreOpen(false); deleteConversation(selectedConversation._id); }}>
+                          Delete conversation
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className={styles.messagesContainer}>
-              {selectedConversation.status === "pending" && (
+            {searchOpen && (
+              <div className={styles.chatSearchBar}>
+                <IoSearch className={styles.chatSearchIcon} />
+                <input
+                  ref={msgSearchInputRef}
+                  type="text"
+                  value={msgSearch}
+                  onChange={(e) => { setMsgSearch(e.target.value); setActiveMatch(0); }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") { e.preventDefault(); stepMatch(e.shiftKey ? -1 : 1); }
+                    if (e.key === "Escape") closeMessageSearch();
+                  }}
+                  placeholder="Search in this conversation"
+                  aria-label="Search messages"
+                />
+                <span className={styles.chatSearchCount}>
+                  {searchTerm ? (matchIds.length ? `${safeActive + 1} of ${matchIds.length}` : "No results") : ""}
+                </span>
+                <button type="button" className={styles.chatSearchBtn} onClick={() => stepMatch(-1)} disabled={!matchIds.length} aria-label="Previous match">↑</button>
+                <button type="button" className={styles.chatSearchBtn} onClick={() => stepMatch(1)} disabled={!matchIds.length} aria-label="Next match">↓</button>
+                <button type="button" className={styles.chatSearchBtn} onClick={closeMessageSearch} aria-label="Close search"><IoClose /></button>
+              </div>
+            )}
+
+            <div className={styles.messagesContainer} ref={messagesContainerRef}>
+              {selectedConversation.status === "pending" && selectedConversation._id && (
+                isIncomingRequest ? (
+                  <div className={styles.pendingMessageBanner}>
+                    <p>
+                      {selectedConversation.otherUser?.name || "This user"} wants to message you.
+                      Accept to start chatting.
+                    </p>
+                    <div className={styles.bannerActions}>
+                      <button
+                        type="button"
+                        className={styles.bannerAccept}
+                        onClick={() => handleAcceptRequest(selectedConversation._id)}
+                      >
+                        Accept
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.bannerReject}
+                        onClick={() => handleRejectRequest(selectedConversation._id)}
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className={styles.pendingMessageBanner}>
+                    <p>This user has not accepted your message request yet.</p>
+                  </div>
+                )
+              )}
+              {selectedConversation.status === "rejected" && selectedConversation._id && !isIncomingRequest && (
                 <div className={styles.pendingMessageBanner}>
-                  <p>This user has not accepted your message request yet.</p>
+                  <p>This user declined your message request. You can send a new one.</p>
                 </div>
               )}
 
@@ -1285,6 +1627,7 @@ const Inbox = () => {
                         </div>
                       )}
                       <div
+                        data-mid={str(message._id)}
                         className={`${styles.messageItem} ${isCurrentUser
                           ? styles.outgoingMessage
                           : styles.incomingMessage
@@ -1317,7 +1660,7 @@ const Inbox = () => {
                                 </a>
                               </div>
                             ) : (
-                              <p>{message.content}</p>
+                              <p>{renderMessageText(message.content, message._id)}</p>
                             )}
                           </div>
                           <div className={styles.messageFooter}>
@@ -1489,6 +1832,10 @@ const Inbox = () => {
               deleteConversation(cid);
             }}
             onViewProfile={handleViewProfile}
+            onShare={handleShareProfile}
+            isFavorite={!!selectedConversation?.isFavorite}
+            onToggleFavorite={() => toggleFavorite(selectedConversation?._id)}
+            onSearchConversation={openMessageSearch}
             messagesCount={messages.length}
             mediaPreviews={messages
               .filter((m) => m.fileUrl && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(m.fileUrl))

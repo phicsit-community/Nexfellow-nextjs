@@ -17,6 +17,8 @@ const conversationSchema = new Schema(
       of: Boolean,
       default: new Map(),
     },
+    // Participants who starred this conversation (per-user, private to each)
+    favoritedBy: [{ type: Schema.Types.ObjectId, ref: "User" }],
     blockedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
     previousStatus: {
       type: String,

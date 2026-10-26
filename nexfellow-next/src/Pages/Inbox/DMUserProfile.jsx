@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import {
     IoClose,
     IoStarOutline,
+    IoStar,
     IoLocationOutline,
     IoTimeOutline,
     IoShareSocialOutline,
@@ -56,6 +57,10 @@ const DMUserProfile = ({
     conversationStatus,
     blockedBy,
     onViewProfile,
+    onShare,
+    isFavorite = false,
+    onToggleFavorite,
+    onSearchConversation,
     onAcceptRequest,
     onRejectRequest,
     onBlock,
@@ -94,7 +99,9 @@ const DMUserProfile = ({
     const status           = String(conversationStatus || conversation?.status || "");
     const isBlocked        = status === "blocked";
     const iBlocked         = isBlocked && blockedBy && String(blockedBy) === String(currentUserId);
-    const canAcceptReject  = !!conversation?._id && !!status && status !== "accepted" && !isBlocked;
+    // Only the person who RECEIVED the request can accept or reject it
+    const sentBy           = conversation?.requestSentBy ? String(conversation.requestSentBy) : null;
+    const canAcceptReject  = !!conversation?._id && ["pending", "rejected"].includes(status) && !!sentBy && sentBy !== String(currentUserId);
 
     useEffect(() => {
         const onKey = (e) => { if (e.key === "Escape") onClose?.(); };
@@ -115,8 +122,14 @@ const DMUserProfile = ({
             <div className={styles.hero}>
                 {/* floating top-bar buttons sit on the gradient */}
                 <div className={styles.heroBar}>
-                    <button className={styles.heroIconBtn} aria-label="Star">
-                        <IoStarOutline size={17} />
+                    <button
+                        className={`${styles.heroIconBtn} ${isFavorite ? styles.heroIconActive : ""}`}
+                        onClick={onToggleFavorite}
+                        aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                        aria-pressed={isFavorite}
+                        title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                    >
+                        {isFavorite ? <IoStar size={17} /> : <IoStarOutline size={17} />}
                     </button>
                     <button
                         ref={closeBtnRef}
@@ -170,7 +183,7 @@ const DMUserProfile = ({
                         </span>
                     )}
 
-                    <button className={styles.shareBtn} onClick={onViewProfile}>
+                    <button className={styles.shareBtn} onClick={onShare || onViewProfile}>
                         <IoShareSocialOutline size={15} />
                         Share
                     </button>
@@ -362,7 +375,7 @@ const DMUserProfile = ({
                     )}
 
                     {/* Search in Conversation — card box */}
-                    <button className={styles.settingCard}>
+                    <button className={styles.settingCard} onClick={onSearchConversation}>
                         <div className={styles.settingIcon} style={{ background: "#e8f0ff" }}>
                             <IoSearchOutline size={16} style={{ color: "#4a7bf7" }} />
                         </div>

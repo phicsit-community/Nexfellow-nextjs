@@ -37,6 +37,13 @@ router.patch(
   directMessageController.markMessagesAsRead
 );
 
+// Star / unstar a conversation (per-user)
+router.patch(
+  "/conversations/:conversationId/favorite",
+  isClient,
+  directMessageController.setConversationFavorite
+);
+
 // Delete a message (soft delete for the current user only)
 router.delete(
   "/messages/:messageId",

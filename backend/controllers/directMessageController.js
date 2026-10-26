@@ -72,6 +72,39 @@ const compactUserWithCommunity = (u) => {
   };
 };
 
+// Shape of one entry in the recipient's "Requests" list. Shared by the REST
+// endpoint and the realtime event so the client can render either the same way.
+const populateForRequest = (query) =>
+  query
+    .populate({
+      path: "participants",
+      select:
+        "name username picture banner verified verificationBadge communityBadge " +
+        "isCommunityAccount createdCommunity country themePreference privacySettings followers following createdAt",
+      populate: [
+        {
+          path: "createdCommunity",
+          model: "Community",
+          select:
+            "link description category accountType isPrivate isApproved dateCreated bookmarkCounter " +
+            "members posts events challenges quiz moderators topMembers appraisals pageViews",
+        },
+      ],
+    })
+    .populate({ path: "lastMessage", select: "content sender isRead createdAt" });
+
+const formatRequestFor = (doc, userId) => {
+  const requesterDoc = doc.participants.find((p) => str(p._id) !== str(userId));
+  return {
+    _id: doc._id,
+    requester: compactUserWithCommunity(requesterDoc),
+    requestSentBy: doc.requestSentBy ? str(doc.requestSentBy) : null,
+    status: doc.status,
+    lastMessage: doc.lastMessage,
+    createdAt: doc.createdAt,
+  };
+};
+
 // Get all conversations for a user
 exports.getUserConversations = async (req, res) => {
   try {
@@ -115,6 +148,7 @@ exports.getUserConversations = async (req, res) => {
         blockedBy: conv.blockedBy || null,
         requestSentBy: conv.requestSentBy ? str(conv.requestSentBy) : null,
         isRead: isReadByUser,
+        isFavorite: (conv.favoritedBy || []).some((id) => str(id) === str(userId)),
         lastUpdatedAt: conv.lastUpdatedAt,
         createdAt: conv.createdAt,
       };
@@ -134,45 +168,17 @@ exports.getMessageRequests = async (req, res) => {
   try {
     const userId = req.userId;
 
-    const requests = await Conversation.find({
-      participants: userId,
-      status: "pending",
-      requestSentBy: { $ne: userId },
-    })
-      .populate({
-        path: "participants",
-        select:
-          "name username picture banner verified verificationBadge communityBadge " +
-          "isCommunityAccount createdCommunity country themePreference privacySettings followers following createdAt",
-        populate: [
-          {
-            path: "createdCommunity",
-            model: "Community",
-            select:
-              "link description category accountType isPrivate isApproved dateCreated bookmarkCounter " +
-              "members posts events challenges quiz moderators topMembers appraisals pageViews",
-          },
-        ],
+    const requests = await populateForRequest(
+      Conversation.find({
+        participants: userId,
+        status: "pending",
+        requestSentBy: { $ne: userId },
       })
-      .populate({
-        path: "lastMessage",
-        select: "content sender isRead createdAt",
-      })
-      .sort({ createdAt: -1 });
+    ).sort({ createdAt: -1 });
 
-    const formattedRequests = requests.map((doc) => {
-      const requesterDoc = doc.participants.find((p) => str(p._id) !== str(req.userId));
-      const requester = compactUserWithCommunity(requesterDoc);
-
-      return {
-        _id: doc._id,
-        requester,
-        lastMessage: doc.lastMessage,
-        createdAt: doc.createdAt,
-      };
-    });
-
-    res.status(200).json({ requests: formattedRequests });
+    res
+      .status(200)
+      .json({ requests: requests.map((doc) => formatRequestFor(doc, userId)) });
   } catch (error) {
     console.error("Error fetching message requests:", error);
     res.status(500).json({
@@ -277,6 +283,7 @@ exports.sendMessage = async (req, res) => {
     }).session(session);
 
     const isNewConversation = !conversation;
+    let reopenedRequest = false; // rejected request resent by its original sender
 
     // A BuilderMap "Message" click is a warm-intro request — charge credits once
     // per (sender, recipient) pair, only the first time a conversation is opened.
@@ -317,6 +324,7 @@ exports.sendMessage = async (req, res) => {
           conversation.isRead.set(str(recipientId), false);
           conversation.isRead.set(str(senderId), true);
           conversation.requestSentBy = senderId;
+          reopenedRequest = true;
         } else {
           // other participant (the rejecter) cannot send when status is 'rejected'
           return res
@@ -366,6 +374,9 @@ exports.sendMessage = async (req, res) => {
       ],
     });
 
+    // The message is already committed. Realtime delivery and notifications are
+    // best-effort and must never turn a stored message into a failed request.
+    try {
     const leanConversation = await Conversation.findById(conversation._id)
       .select("_id participants status lastUpdatedAt createdAt")
       .lean();
@@ -385,15 +396,9 @@ exports.sendMessage = async (req, res) => {
       io.to(str(uid)).emit("dm:newMessage", eventData);
     });
 
-    if (isNewConversation) {
-      io.to(str(recipientId)).emit("newMessageRequest", {
-        _id: conversation._id,
-        participants: conversation.participants,
-        status: conversation.status,
-        requestSentBy: conversation.requestSentBy ? str(conversation.requestSentBy) : null,
-        lastUpdatedAt: conversation.lastUpdatedAt,
-        createdAt: conversation.createdAt,
-      });
+    if (isNewConversation || reopenedRequest) {
+      const requestDoc = await populateForRequest(Conversation.findById(conversation._id));
+      io.to(str(recipientId)).emit("newMessageRequest", formatRequestFor(requestDoc, recipientId));
 
       await NotificationService.createAndSendNotification({
         title: "New Message Request",
@@ -416,6 +421,10 @@ exports.sendMessage = async (req, res) => {
       });
     }
 
+    } catch (sideEffectError) {
+      console.error("Post-send side effects failed:", sideEffectError);
+    }
+
     res.status(201).json({
       message: populatedMessage,
       conversation: {
@@ -426,11 +435,14 @@ exports.sendMessage = async (req, res) => {
       },
     });
   } catch (error) {
-    await session.abortTransaction();
+    // abortTransaction throws if the transaction already committed or aborted
+    if (session.inTransaction()) await session.abortTransaction();
     console.error("Error sending message:", error);
-    res
-      .status(500)
-      .json({ message: "Error sending message", error: error.message });
+    if (!res.headersSent) {
+      res
+        .status(500)
+        .json({ message: "Error sending message", error: error.message });
+    }
   } finally {
     session.endSession();
   }
@@ -462,13 +474,25 @@ exports.handleMessageRequest = async (req, res) => {
         .json({ message: "Not authorized to update this conversation" });
     }
 
+    // The sender can never accept or reject their own request, including after
+    // it was rejected (otherwise they could undo the recipient's decision).
     if (
-      conversation.status === "pending" &&
+      action !== "block" &&
       str(conversation.requestSentBy) === str(userId)
     ) {
       return res
         .status(400)
         .json({ message: "Cannot handle your own message request" });
+    }
+
+    // Accept/reject only apply to requests that are still open or were rejected
+    if (
+      action !== "block" &&
+      !["pending", "rejected"].includes(conversation.status)
+    ) {
+      return res
+        .status(400)
+        .json({ message: `This request is already ${conversation.status}` });
     }
 
     const requester = conversation.participants.find((p) => str(p._id) !== str(userId));
@@ -585,6 +609,49 @@ exports.markMessagesAsRead = async (req, res) => {
     console.error("Error marking messages as read:", error);
     res.status(500).json({
       message: "Error marking messages as read",
+      error: error.message,
+    });
+  }
+};
+
+// Star / unstar a conversation for the current user only
+exports.setConversationFavorite = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    const { favorite } = req.body || {};
+    const userId = req.userId;
+
+    if (typeof favorite !== "boolean") {
+      return res.status(400).json({ message: "`favorite` must be a boolean" });
+    }
+    if (!mongoose.Types.ObjectId.isValid(conversationId)) {
+      return res.status(400).json({ message: "Invalid conversation id" });
+    }
+
+    const conversation = await Conversation.findById(conversationId).select("participants");
+    if (!conversation) {
+      return res.status(404).json({ message: "Conversation not found" });
+    }
+    if (!isParticipant(conversation.participants, userId)) {
+      return res
+        .status(403)
+        .json({ message: "Not authorized to access this conversation" });
+    }
+
+    // Atomic update; timestamps disabled so favoriting doesn't bump updatedAt
+    await Conversation.updateOne(
+      { _id: conversationId },
+      favorite
+        ? { $addToSet: { favoritedBy: userId } }
+        : { $pull: { favoritedBy: userId } },
+      { timestamps: false }
+    );
+
+    res.status(200).json({ conversationId, isFavorite: favorite });
+  } catch (error) {
+    console.error("Error updating favorite:", error);
+    res.status(500).json({
+      message: "Error updating favorite",
       error: error.message,
     });
   }

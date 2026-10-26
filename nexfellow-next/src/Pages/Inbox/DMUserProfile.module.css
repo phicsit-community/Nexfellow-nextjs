@@ -690,3 +690,5 @@ button:focus-visible {
         to   { transform: translateY(0);    opacity: 1; }
     }
 }
+
+.heroIconActive { color: #f59e0b; }
