@@ -67,6 +67,131 @@ function isRecent(dateStr) {
   return Date.now() - new Date(dateStr).getTime() < 24 * 60 * 60 * 1000;
 }
 
+// ── Submission form helpers ───────────────────────────────────────────────────
+
+const EMPTY_FORM = {
+  name: '', tagline: '', description: '', category: '', buildStage: '',
+  focusAreas: [], specificQuestion: '', reviewerType: '',
+  productUrl: '', demoVideo: '', githubUrl: '', productHuntUrl: '', screenshots: [],
+  logo: null, logoPreview: null,
+};
+
+// URL inputs render a fixed "https://" prefix, so people often paste it twice.
+const stripProtocol = (v) => (v || '').trim().replace(/^https?:\/\//i, '');
+const toHttpsUrl    = (v) => (stripProtocol(v) ? `https://${stripProtocol(v)}` : '');
+
+function isValidUrl(v) {
+  try {
+    return new URL(toHttpsUrl(v)).hostname.includes('.');
+  } catch {
+    return false;
+  }
+}
+
+function formFromProduct(p) {
+  return {
+    ...EMPTY_FORM,
+    name:             p.name || '',
+    tagline:          p.tagline || '',
+    description:      p.description || '',
+    category:         p.category || '',
+    buildStage:       p.buildStage || '',
+    focusAreas:       p.feedbackFocus || [],
+    specificQuestion: p.specificQuestion || '',
+    productUrl:       stripProtocol(p.productUrl),
+    demoVideo:        stripProtocol(p.demoVideo),
+    logoPreview:      p.logo || null,
+  };
+}
+
+// Category/build stage are enums on the backend, so leave them out until picked.
+function buildPayload(form) {
+  return {
+    name:             form.name.trim(),
+    tagline:          form.tagline.trim(),
+    description:      form.description.trim(),
+    ...(form.category   && { category:   form.category }),
+    ...(form.buildStage && { buildStage: form.buildStage }),
+    feedbackFocus:    form.focusAreas,
+    specificQuestion: form.specificQuestion.trim(),
+    productUrl:       toHttpsUrl(form.productUrl),
+    demoVideo:        toHttpsUrl(form.demoVideo),
+  };
+}
+
+function validateStep(step, form) {
+  const errors = {};
+  if (step === 1) {
+    if (!form.name.trim())    errors.name       = 'Product name is required.';
+    if (!form.tagline.trim()) errors.tagline    = 'Tagline is required.';
+    if (!form.category)       errors.category   = 'Choose a category.';
+    if (!form.buildStage)     errors.buildStage = 'Choose a build stage.';
+  }
+  if (step === 2 && form.focusAreas.length === 0) {
+    errors.focusAreas = 'Choose at least one focus area.';
+  }
+  if (step === 3) {
+    if (!stripProtocol(form.productUrl))  errors.productUrl = 'Product URL is required.';
+    else if (!isValidUrl(form.productUrl)) errors.productUrl = 'Enter a valid URL, like focusdock.app';
+    if (stripProtocol(form.demoVideo) && !isValidUrl(form.demoVideo)) {
+      errors.demoVideo = 'Enter a valid URL, like loom.com/share/…';
+    }
+  }
+  return errors;
+}
+
+function firstInvalidStep(form) {
+  return [1, 2, 3].find(s => Object.keys(validateStep(s, form)).length > 0) || null;
+}
+
+// Unsent form progress lives in localStorage (one slot per draft, "new" for a
+// fresh submission). Logo/screenshot Files can't be serialised, so they're skipped.
+const LOCAL_DRAFT_FIELDS = [
+  'name', 'tagline', 'description', 'category', 'buildStage',
+  'specificQuestion', 'reviewerType', 'productUrl', 'demoVideo',
+];
+const localDraftKey = (productId) => `mpSubmissionDraft:${productId || 'new'}`;
+
+function hasDraftContent(form) {
+  return form.focusAreas.length > 0 || LOCAL_DRAFT_FIELDS.some(k => form[k].trim());
+}
+
+function readLocalDraft(productId) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(localDraftKey(productId)));
+    if (!saved?.form) return null;
+    const form = {};
+    for (const k of LOCAL_DRAFT_FIELDS) {
+      if (typeof saved.form[k] === 'string') form[k] = saved.form[k];
+    }
+    if (Array.isArray(saved.form.focusAreas)) {
+      form.focusAreas = saved.form.focusAreas.filter(id => FOCUS_AREAS.some(fa => fa.id === id)).slice(0, 3);
+    }
+    return { form, savedAt: Number(saved.savedAt) || 0 };
+  } catch {
+    return null;
+  }
+}
+
+function writeLocalDraft(productId, form) {
+  try {
+    const data = { focusAreas: form.focusAreas };
+    for (const k of LOCAL_DRAFT_FIELDS) data[k] = form[k];
+    localStorage.setItem(localDraftKey(productId), JSON.stringify({ form: data, savedAt: Date.now() }));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function clearLocalDraft(productId) {
+  try { localStorage.removeItem(localDraftKey(productId)); } catch {}
+}
+
+function FieldError({ msg }) {
+  return msg ? <span className="mp-field-error" role="alert">{msg}</span> : null;
+}
+
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function StatCard({ label, value, sub, iconBg, icon }) {
@@ -247,7 +372,7 @@ function FeedbackCard({ fb, productId, onReplyAdded }) {
   );
 }
 
-function ProductRow({ product, expanded, onToggle, onProductUpdate, onDeleteRequest }) {
+function ProductRow({ product, expanded, onToggle, onProductUpdate, onDeleteRequest, onEditRequest }) {
   const [activeTag,      setActiveTag]      = useState('All');
   const [reviews,        setReviews]        = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
@@ -376,6 +501,11 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate, onDeleteRequ
         <td className="mp-td mp-td-action" onClick={e => e.stopPropagation()}>
           <div className="mp-action-cell">
             <div className="mp-action-btns">
+              {product.status === 'draft' && (
+                <button className="mp-action-edit" onClick={e => { e.stopPropagation(); onEditRequest?.(product); }}>
+                  Edit
+                </button>
+              )}
               {product.status === 'draft' && (
                 <button className="mp-action-submit" onClick={handleSubmit} disabled={actionLoading}>
                   {actionLoading ? '…' : 'Submit'}
@@ -609,7 +739,7 @@ function GtmReportModal({ product, onClose }) {
 
 // ── New Submission Modal steps ────────────────────────────────────────────────
 
-function StepBasics({ form, setForm }) {
+function StepBasics({ form, setForm, errors }) {
   return (
     <div className="mp-step">
       <h3 className="mp-step-title">Tell us about your product</h3>
@@ -618,24 +748,28 @@ function StepBasics({ form, setForm }) {
       <div className="mp-form-group">
         <label className="mp-label">PRODUCT NAME <span className="mp-req">*</span></label>
         <input
-          className="mp-input"
+          className={`mp-input${errors.name ? ' mp-input--error' : ''}`}
           placeholder="FocusDock"
           value={form.name}
           onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
           maxLength={40}
+          aria-invalid={!!errors.name}
         />
+        <FieldError msg={errors.name} />
         <span className="mp-char-count">{form.name.length} / 40 characters</span>
       </div>
 
       <div className="mp-form-group">
         <label className="mp-label">TAGLINE <span className="mp-req">*</span></label>
         <input
-          className="mp-input"
+          className={`mp-input${errors.tagline ? ' mp-input--error' : ''}`}
           placeholder="A distraction-free workspace for solo builders"
           value={form.tagline}
           onChange={e => setForm(f => ({ ...f, tagline: e.target.value }))}
           maxLength={80}
+          aria-invalid={!!errors.tagline}
         />
+        <FieldError msg={errors.tagline} />
         <span className="mp-char-count">{form.tagline.length} / 80 characters</span>
       </div>
 
@@ -663,6 +797,7 @@ function StepBasics({ form, setForm }) {
             </button>
           ))}
         </div>
+        <FieldError msg={errors.category} />
       </div>
 
       <div className="mp-form-group">
@@ -676,13 +811,14 @@ function StepBasics({ form, setForm }) {
             >{s}</button>
           ))}
         </div>
+        <FieldError msg={errors.buildStage} />
         <p className="mp-hint">This helps reviewers calibrate — a beta gets different feedback than a live product.</p>
       </div>
     </div>
   );
 }
 
-function StepFocus({ form, setForm }) {
+function StepFocus({ form, setForm, errors }) {
   const toggle = (id) => {
     setForm(f => {
       const selected = f.focusAreas.includes(id)
@@ -715,6 +851,7 @@ function StepFocus({ form, setForm }) {
             </label>
           ))}
         </div>
+        <FieldError msg={errors.focusAreas} />
         <p className="mp-char-count">Select up to 3 areas. {form.focusAreas.length} selected</p>
       </div>
 
@@ -744,7 +881,7 @@ function StepFocus({ form, setForm }) {
   );
 }
 
-function StepLinks({ form, setForm }) {
+function StepLinks({ form, setForm, errors }) {
   const fileInputRef = React.useRef(null);
   const logoInputRef = React.useRef(null);
 
@@ -818,27 +955,31 @@ function StepLinks({ form, setForm }) {
       <div className="mp-links-grid">
         <div className="mp-form-group">
           <label className="mp-label">PRODUCT URL <span className="mp-req">*</span></label>
-          <div className="mp-input-prefix">
+          <div className={`mp-input-prefix${errors.productUrl ? ' mp-input--error' : ''}`}>
             <span className="mp-prefix">https://</span>
             <input
               className= "mp-input-prefixed"
               placeholder="focusdock.app"
               value={form.productUrl}
               onChange={e => setForm(f => ({ ...f, productUrl: e.target.value }))}
+              aria-invalid={!!errors.productUrl}
             />
           </div>
+          <FieldError msg={errors.productUrl} />
         </div>
         <div className="mp-form-group">
           <label className="mp-label">DEMO VIDEO <span className="mp-optional">(recommended)</span></label>
-          <div className="mp-input-prefix">
+          <div className={`mp-input-prefix${errors.demoVideo ? ' mp-input--error' : ''}`}>
             <span className="mp-prefix">https://</span>
             <input
               className="mp-input mp-input-prefixed"
               placeholder="loom.com/share/..."
               value={form.demoVideo}
               onChange={e => setForm(f => ({ ...f, demoVideo: e.target.value }))}
+              aria-invalid={!!errors.demoVideo}
             />
           </div>
+          <FieldError msg={errors.demoVideo} />
           <span className="mp-hint">Loom, YouTube, or any public link.</span>
         </div>
       </div>
@@ -958,14 +1099,14 @@ function StepReview({ form, onEdit }) {
         )}
         <div className="mp-review-field">
           <span className="mp-review-label">PRODUCT URL</span>
-          <span className={`mp-review-val ${form.productUrl ? 'mp-link' : 'mp-not-set'}`}>
-            {form.productUrl ? `https://${form.productUrl}` : 'Not provided'}
+          <span className={`mp-review-val ${toHttpsUrl(form.productUrl) ? 'mp-link' : 'mp-not-set'}`}>
+            {toHttpsUrl(form.productUrl) || 'Not provided'}
           </span>
         </div>
         <div className="mp-review-field">
           <span className="mp-review-label">DEMO VIDEO</span>
-          <span className={`mp-review-val ${form.demoVideo ? 'mp-link' : 'mp-not-set'}`}>
-            {form.demoVideo ? `https://${form.demoVideo}` : 'Not provided'}
+          <span className={`mp-review-val ${toHttpsUrl(form.demoVideo) ? 'mp-link' : 'mp-not-set'}`}>
+            {toHttpsUrl(form.demoVideo) || 'Not provided'}
           </span>
         </div>
       </div>
@@ -995,25 +1136,86 @@ function StepReview({ form, onEdit }) {
 
 // ── Submission Modal ──────────────────────────────────────────────────────────
 
-function NewSubmissionModal({ onClose, onCreated }) {
-  const [step,       setStep]       = useState(1);
-  const [submitting, setSubmitting] = useState(false);
-  const [error,      setError]      = useState('');
-  const [form,       setForm]       = useState({
-    name: '', tagline: '', description: '', category: '', buildStage: '',
-    focusAreas: [], specificQuestion: '', reviewerType: '',
-    productUrl: '', demoVideo: '', githubUrl: '', productHuntUrl: '', screenshots: [],
-    logo: null, logoPreview: null,
+function NewSubmissionModal({ product, onClose, onSaved }) {
+  const baseForm = () => (product ? formFromProduct(product) : EMPTY_FORM);
+
+  // Restore progress autosaved on this device, unless the server copy is newer.
+  const [initial] = useState(() => {
+    const local = readLocalDraft(product?._id);
+    const serverTime = product ? new Date(product.updatedAt).getTime() : 0;
+    if (local && local.savedAt > serverTime) {
+      const restoredForm = { ...baseForm(), ...local.form };
+      if (hasDraftContent(restoredForm)) return { form: restoredForm, restored: true };
+    }
+    return { form: baseForm(), restored: false };
   });
+
+  const [step,      setStep]      = useState(1);
+  const [productId, setProductId] = useState(product?._id || null);
+  const [saving,    setSaving]    = useState(null); // 'draft' | 'submit' | null
+  const [error,     setError]     = useState('');
+  const [flagged,   setFlagged]   = useState([]);   // fields flagged by the last Continue/Save attempt
+  const [autosave,  setAutosave]  = useState(initial.restored ? 'restored' : 'idle');
+  const [form,      setForm]      = useState(initial.form);
+  const editedRef = useRef(false);
+  const bodyRef   = useRef(null);
 
   const STEPS = ['Basics', 'Focus', 'Links', 'Review'];
 
-  const uploadLogoIfPresent = async (productId) => {
+  // Flagged fields stay red only until they're fixed.
+  const stepErrors = validateStep(step, form);
+  const errors = Object.fromEntries(flagged.filter(k => stepErrors[k]).map(k => [k, stepErrors[k]]));
+
+  // Only the user's own edits are autosaved — not the prefill, a restore or a discard.
+  const editForm = (updater) => {
+    editedRef.current = true;
+    setForm(updater);
+  };
+
+  useEffect(() => {
+    if (!editedRef.current) return;
+    if (!hasDraftContent(form)) {
+      clearLocalDraft(productId);
+      setAutosave('idle');
+      return;
+    }
+    setAutosave(writeLocalDraft(productId, form) ? 'saved' : 'idle');
+  }, [form, productId]);
+
+  const scrollToFirstError = () => requestAnimationFrame(() => {
+    bodyRef.current?.querySelector('.mp-field-error')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  });
+
+  const goToStep = (n) => {
+    setFlagged([]);
+    setStep(n);
+  };
+
+  const flagStep = (n) => {
+    setStep(n);
+    setFlagged(Object.keys(validateStep(n, form)));
+    scrollToFirstError();
+  };
+
+  const handleContinue = () => {
+    if (Object.keys(stepErrors).length > 0) return flagStep(step);
+    goToStep(step + 1);
+  };
+
+  const handleDiscard = () => {
+    clearLocalDraft(productId);
+    editedRef.current = false;
+    setForm(baseForm());
+    setFlagged([]);
+    setAutosave('idle');
+  };
+
+  const uploadLogoIfPresent = async (id) => {
     if (!form.logo) return null;
     const fd = new FormData();
     fd.append('logo', form.logo);
     try {
-      const res = await api.post(`/products/${productId}/logo`, fd, {
+      const res = await api.post(`/products/${id}/logo`, fd, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       return res.data.logo;
@@ -1023,63 +1225,64 @@ function NewSubmissionModal({ onClose, onCreated }) {
     }
   };
 
+  // Creates the draft on first save and updates it after that, so retrying a
+  // failed submit never creates a second product.
+  const persist = async () => {
+    const payload = buildPayload(form);
+    const res = productId
+      ? await api.put(`/products/${productId}`, payload)
+      : await api.post('/products', payload);
+    let saved = res.data;
+    clearLocalDraft(productId);
+    editedRef.current = false;
+    setAutosave('idle');
+    setProductId(saved._id);
+    const logo = await uploadLogoIfPresent(saved._id);
+    if (logo) {
+      saved = { ...saved, logo };
+      setForm(f => ({ ...f, logo: null, logoPreview: logo }));
+    }
+    return saved;
+  };
+
   const handleSubmitForFeedback = async () => {
     setError('');
-    if (!form.name || !form.tagline || !form.productUrl) {
-      setError('Product name, tagline, and URL are required.');
-      return;
-    }
-    setSubmitting(true);
+    const invalidStep = firstInvalidStep(form);
+    if (invalidStep) return flagStep(invalidStep);
+    setSaving('submit');
+    let saved = null;
     try {
-      const payload = {
-        name:             form.name,
-        tagline:          form.tagline,
-        description:      form.description,
-        category:         form.category,
-        buildStage:       form.buildStage,
-        feedbackFocus:    form.focusAreas,
-        specificQuestion: form.specificQuestion,
-        productUrl:       `https://${form.productUrl}`,
-        ...(form.demoVideo && { demoVideo: `https://${form.demoVideo}` }),
-      };
-      // Step 1: create as draft
-      const createRes = await api.post('/products', payload);
-      const productId = createRes.data._id;
-      // Step 2: upload logo if provided
-      await uploadLogoIfPresent(productId);
-      // Step 3: submit for review (sets status → in_review and launchedAt)
-      const submitRes = await api.post(`/products/${productId}/submit`);
-      onCreated?.(submitRes.data.product);
+      saved = await persist();
+      // Sets status → in_review and launchedAt
+      const submitRes = await api.post(`/products/${saved._id}/submit`);
+      onSaved?.({ ...saved, ...submitRes.data.product });
       onClose();
     } catch (err) {
-      setError(err?.response?.data?.message || 'Submission failed. Please try again.');
+      // The save itself went through, so the product exists as a draft now.
+      if (saved) onSaved?.(saved);
+      const msg = err?.response?.data?.message || 'Submission failed. Please try again.';
+      setError(saved ? `${msg} Your submission was saved as a draft.` : msg);
     } finally {
-      setSubmitting(false);
+      setSaving(null);
     }
   };
 
   const handleSaveDraft = async () => {
-    if (!form.name || !form.tagline || !form.productUrl) return;
+    setError('');
+    if (!form.name.trim()) {
+      setStep(1);
+      setFlagged(['name']);
+      scrollToFirstError();
+      return;
+    }
+    setSaving('draft');
     try {
-      const payload = {
-        name:             form.name,
-        tagline:          form.tagline,
-        description:      form.description,
-        category:         form.category,
-        buildStage:       form.buildStage,
-        feedbackFocus:    form.focusAreas,
-        specificQuestion: form.specificQuestion,
-        productUrl:       `https://${form.productUrl}`,
-        ...(form.demoVideo && { demoVideo: `https://${form.demoVideo}` }),
-        status:           'draft',
-      };
-      const res = await api.post('/products', payload);
-      const productId = res.data._id;
-      await uploadLogoIfPresent(productId);
-      onCreated?.({ ...res.data });
+      onSaved?.(await persist());
       onClose();
     } catch (err) {
-      console.error('Save draft failed', err);
+      setError(err?.response?.data?.message || 'Could not save your draft. Please try again.');
+    } finally {
+      setSaving(null);
     }
   };
 
@@ -1087,7 +1290,7 @@ function NewSubmissionModal({ onClose, onCreated }) {
     <div className="mp-modal-overlay" onClick={onClose}>
       <div className="mp-modal" onClick={e => e.stopPropagation()}>
         <div className="mp-modal-header">
-          <span className="mp-modal-title">New submission</span>
+          <span className="mp-modal-title">{product ? 'Edit draft' : 'New submission'}</span>
           <span className="mp-modal-step-info">Step {step} of 4</span>
           <button className="mp-modal-close" onClick={onClose}>✕</button>
         </div>
@@ -1097,7 +1300,7 @@ function NewSubmissionModal({ onClose, onCreated }) {
             <React.Fragment key={s}>
               <div
                 className={`mp-step-item ${i + 1 < step ? 'done' : ''} ${i + 1 === step ? 'active' : ''}`}
-                onClick={() => i + 1 < step && setStep(i + 1)}
+                onClick={() => i + 1 < step && goToStep(i + 1)}
               >
                 <div className="mp-step-circle">{i + 1 < step ? '✓' : i + 1}</div>
                 <span className="mp-step-label">{s}</span>
@@ -1109,25 +1312,36 @@ function NewSubmissionModal({ onClose, onCreated }) {
           ))}
         </div>
 
-        <div className="mp-modal-body">
-          {step === 1 && <StepBasics form={form} setForm={setForm} />}
-          {step === 2 && <StepFocus  form={form} setForm={setForm} />}
-          {step === 3 && <StepLinks  form={form} setForm={setForm} />}
-          {step === 4 && <StepReview form={form} onEdit={setStep} />}
-          {error && <p className="mp-submit-error">{error}</p>}
+        <div className="mp-modal-body" ref={bodyRef}>
+          {step === 1 && <StepBasics form={form} setForm={editForm} errors={errors} />}
+          {step === 2 && <StepFocus  form={form} setForm={editForm} errors={errors} />}
+          {step === 3 && <StepLinks  form={form} setForm={editForm} errors={errors} />}
+          {step === 4 && <StepReview form={form} onEdit={goToStep} />}
         </div>
 
+        {error && <p className="mp-modal-error" role="alert">{error}</p>}
+
         <div className="mp-modal-footer">
-          <span className="mp-autosave">Auto-saved</span>
+          <span className="mp-autosave">
+            {autosave === 'saved' && 'Auto-saved on this device'}
+            {autosave === 'restored' && (
+              <>
+                Restored your unsaved progress ·{' '}
+                <button className="mp-autosave-discard" onClick={handleDiscard}>Discard</button>
+              </>
+            )}
+          </span>
           {step > 1 && (
-            <button className="mp-btn-ghost" onClick={() => setStep(s => s - 1)}>Back</button>
+            <button className="mp-btn-ghost" onClick={() => goToStep(step - 1)} disabled={!!saving}>Back</button>
           )}
-          <button className="mp-btn-ghost" onClick={handleSaveDraft}>Save draft</button>
+          <button className="mp-btn-ghost" onClick={handleSaveDraft} disabled={!!saving}>
+            {saving === 'draft' ? 'Saving…' : 'Save draft'}
+          </button>
           {step < 4 ? (
-            <button className="mp-btn-primary" onClick={() => setStep(s => s + 1)}>Continue</button>
+            <button className="mp-btn-primary" onClick={handleContinue} disabled={!!saving}>Continue</button>
           ) : (
-            <button className="mp-btn-submit" onClick={handleSubmitForFeedback} disabled={submitting}>
-              {submitting ? 'Submitting…' : 'Submit for feedback'}
+            <button className="mp-btn-submit" onClick={handleSubmitForFeedback} disabled={!!saving}>
+              {saving === 'submit' ? 'Submitting…' : 'Submit for feedback'}
             </button>
           )}
         </div>
@@ -1138,7 +1352,7 @@ function NewSubmissionModal({ onClose, onCreated }) {
 
 // ── Mobile Product Card ───────────────────────────────────────────────────────
 
-function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDeleteRequest }) {
+function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDeleteRequest, onEditRequest }) {
   const [activeTag,      setActiveTag]      = useState('All');
   const [reviews,        setReviews]        = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
@@ -1328,6 +1542,11 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
             </button>
           )}
           {product.status === 'draft' && (
+            <button className="mp-mobile-btn mp-mobile-btn--ghost" onClick={() => onEditRequest?.(product)}>
+              Edit
+            </button>
+          )}
+          {product.status === 'draft' && (
             <button className="mp-mobile-btn mp-mobile-btn--primary" onClick={handleSubmit} disabled={actionLoading}>
               {actionLoading ? '…' : 'Submit'}
             </button>
@@ -1415,7 +1634,7 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
 export default function MyProductsPage() {
   const [activeTab,   setActiveTab]   = useState('all');
   const [expandedId,  setExpandedId]  = useState(null);
-  const [showModal,   setShowModal]   = useState(false);
+  const [submissionModal, setSubmissionModal] = useState(null); // { product } — null product = new submission
   const [products,    setProducts]    = useState([]);
   const [stats,       setStats]       = useState({
     totalProducts: 0, totalReviews: 0, avgRating: 0,
@@ -1450,12 +1669,17 @@ export default function MyProductsPage() {
     setProducts(prev => prev.map(p => p._id === updated._id ? { ...p, ...updated } : p));
   };
 
-  const handleProductCreated = (newProduct) => {
-    setProducts(prev => [newProduct, ...prev]);
+  const handleProductSaved = (saved) => {
+    if (products.some(p => p._id === saved._id)) {
+      handleProductUpdate(saved);
+      return;
+    }
+    setProducts(prev => [saved, ...prev]);
     setStats(prev => ({ ...prev, totalProducts: prev.totalProducts + 1 }));
   };
 
   const handleProductDelete = (productId) => {
+    clearLocalDraft(productId);
     setProducts(prev => prev.filter(p => p._id !== productId));
     setStats(prev => ({ ...prev, totalProducts: Math.max(0, prev.totalProducts - 1) }));
     if (expandedId === productId) setExpandedId(null);
@@ -1542,7 +1766,7 @@ export default function MyProductsPage() {
               </svg>
               Export
             </button> */}
-            <button className="mp-action-btn-primary" onClick={() => setShowModal(true)}>
+            <button className="mp-action-btn-primary" onClick={() => setSubmissionModal({ product: null })}>
               + New<span className="mp-btn-label-full"> submission</span>
             </button>
           </div>
@@ -1611,6 +1835,7 @@ export default function MyProductsPage() {
                     onToggle={() => setExpandedId(expandedId === p._id ? null : p._id)}
                     onProductUpdate={handleProductUpdate}
                     onDeleteRequest={setPendingDelete}
+                    onEditRequest={p => setSubmissionModal({ product: p })}
                   />
                 ))}
               </tbody>
@@ -1636,14 +1861,17 @@ export default function MyProductsPage() {
               onToggle={() => setExpandedId(expandedId === p._id ? null : p._id)}
               onProductUpdate={handleProductUpdate}
               onDeleteRequest={setPendingDelete}
+              onEditRequest={p => setSubmissionModal({ product: p })}
             />
           ))}
         </div>
 
-        {showModal && (
+        {submissionModal && (
           <NewSubmissionModal
-            onClose={() => setShowModal(false)}
-            onCreated={handleProductCreated}
+            key={submissionModal.product?._id || 'new'}
+            product={submissionModal.product}
+            onClose={() => setSubmissionModal(null)}
+            onSaved={handleProductSaved}
           />
         )}
 

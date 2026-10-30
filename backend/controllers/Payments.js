@@ -22,6 +22,30 @@ const getDodo = () => {
   return _dodo;
 };
 
+// Left to itself, Dodo's hosted checkout asks for an email, and a typo there
+// (ekta@gmal.com) sends receipts and renewal notices nowhere. Checkout uses the
+// account email instead, which Clerk verified at sign-up, and the page locks it.
+// req.user can't be used directly: email and dodoCustomerId are select: false.
+const CHECKOUT_FLAGS = { allow_customer_editing_email: false };
+
+const getCheckoutCustomer = async (userId) => {
+  const user = await User.findById(userId).select("+email +dodoCustomerId");
+  if (user.dodoCustomerId) {
+    try {
+      // Customers created before the lock hold whatever was typed at checkout
+      await getDodo().customers.update(user.dodoCustomerId, { email: user.email });
+      return { customer_id: user.dodoCustomerId };
+    } catch (err) {
+      console.error(
+        `Could not sync email to Dodo customer ${user.dodoCustomerId}; checking out by email instead:`,
+        err.message
+      );
+    }
+  }
+  // Dodo attaches the session to an existing customer with this email, or creates one
+  return { email: user.email };
+};
+
 // POST /payments/checkout
 // Creates a Dodo Payments hosted checkout session for a subscription plan.
 // The client receives a checkoutUrl to redirect the user to.
@@ -45,16 +69,14 @@ module.exports.createCheckoutSession = async (req, res) => {
 
   const checkoutPayload = {
     product_cart: [{ product_id: productId, quantity: 1 }],
+    customer: await getCheckoutCustomer(req.user._id),
+    feature_flags: CHECKOUT_FLAGS,
     metadata: {
       userId: req.user._id.toString(),
       planId,
       interval,
     },
   };
-
-  if (req.user.dodoCustomerId) {
-    checkoutPayload.customer = { customer_id: req.user.dodoCustomerId };
-  }
 
   const checkout = await getDodo().checkoutSessions.create(checkoutPayload);
   return res.json({ checkoutUrl: checkout.checkout_url });
@@ -77,15 +99,13 @@ module.exports.createCreditPackCheckoutSession = async (req, res) => {
 
   const checkoutPayload = {
     product_cart: [{ product_id: productId, quantity: 1 }],
+    customer: await getCheckoutCustomer(req.user._id),
+    feature_flags: CHECKOUT_FLAGS,
     metadata: {
       userId: req.user._id.toString(),
       packId,
     },
   };
-
-  if (req.user.dodoCustomerId) {
-    checkoutPayload.customer = { customer_id: req.user.dodoCustomerId };
-  }
 
   const checkout = await getDodo().checkoutSessions.create(checkoutPayload);
   return res.json({ checkoutUrl: checkout.checkout_url });

@@ -28,6 +28,11 @@ const PRODUCT_STATUSES = ["draft", "in_review", "launched", "archived"];
 
 const LAUNCH_FIELDS = ["launchedAt", "upvotes", "upvoteCount"];
 
+// Drafts can be saved half-finished; everything else needs the full listing.
+function requiredUnlessDraft() {
+  return this.status !== "draft";
+}
+
 const productSchema = new Schema(
   {
     name: {
@@ -38,7 +43,7 @@ const productSchema = new Schema(
     },
     tagline: {
       type: String,
-      required: [true, "Tagline is required"],
+      required: [requiredUnlessDraft, "Tagline is required"],
       trim: true,
       maxlength: [80, "Tagline cannot exceed 80 characters"],
     },
@@ -75,7 +80,7 @@ const productSchema = new Schema(
     },
     productUrl: {
       type: String,
-      required: [true, "Product URL is required"],
+      required: [requiredUnlessDraft, "Product URL is required"],
       match: [/^https?:\/\/.+/, "Please provide a valid URL"],
     },
     demoVideo: {

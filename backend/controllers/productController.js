@@ -310,6 +310,18 @@ const submitProduct = async (req, res) => {
   if (!["draft", "launched"].includes(product.status))
     throw new ExpressError("Only draft or launched products can be submitted", 400);
 
+  // Drafts may be partial — check completeness before any credits are spent.
+  if (product.status === "draft") {
+    const missing = [];
+    if (!product.tagline) missing.push("tagline");
+    if (!product.productUrl) missing.push("product URL");
+    if (!product.category) missing.push("category");
+    if (!product.buildStage) missing.push("build stage");
+    if (!product.feedbackFocus?.length) missing.push("feedback focus");
+    if (missing.length)
+      throw new ExpressError(`Finish your draft before submitting — missing ${missing.join(", ")}`, 400);
+  }
+
   // Credit gate: submitting for feedback costs 20 credits
   const creditBalance = await CreditService.getBalance(req.userId);
   if (creditBalance < 20) {

@@ -528,6 +528,22 @@
 }
 .mp-action-submit:hover { opacity: 0.85; }
 
+.mp-action-edit {
+  padding: 6px 14px;
+  border: 1px solid var(--mp-border);
+  border-radius: 6px;
+  background: var(--mp-bg);
+  color: var(--mp-text-2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+  height: 32px;
+  line-height: 1;
+}
+.mp-action-edit:hover { background: var(--mp-bg2); }
+
 .mp-status-label {
   font-size: 11px;
   font-weight: 600;
@@ -878,6 +894,9 @@
   transition: opacity 0.15s;
 }
 .mp-btn-submit:hover { opacity: 0.9; }
+.mp-btn-ghost:disabled,
+.mp-btn-primary:disabled,
+.mp-btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
 /* ══════════════════════════════════════════
    NEW SUBMISSION MODAL
@@ -989,6 +1008,25 @@
   background: var(--mp-bg);
 }
 .mp-autosave { font-size: 11px; color: var(--mp-text-3); flex: 1; }
+.mp-autosave-discard {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--mp-primary);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.mp-modal-error {
+  margin: 0;
+  padding: 10px 20px;
+  border-top: 1px solid var(--mp-border);
+  background: var(--mp-bg);
+  font-size: 12px;
+  color: var(--mp-red);
+  flex-shrink: 0;
+}
 
 /* ── Form elements ── */
 .mp-step-title {
@@ -1069,6 +1107,11 @@
   font-family: inherit;
   outline: none;
 }
+
+/* validation */
+.mp-field-error { font-size: 11px; color: var(--mp-red); }
+.mp-input.mp-input--error,
+.mp-input-prefix.mp-input--error { border-color: var(--mp-red); }
 
 /* category pills */
 .mp-category-pills { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -1555,6 +1598,9 @@
 
   .mp-alert-banner { margin: 12px 16px; }
   .mp-modal { width: 100vw; }
+  .mp-modal-footer { flex-wrap: wrap; justify-content: flex-end; }
+  .mp-autosave { flex-basis: 100%; }
+  .mp-autosave:empty { display: none; }
   .mp-category-pills { gap: 6px; }
   .mp-focus-grid { grid-template-columns: 1fr; }
 }
