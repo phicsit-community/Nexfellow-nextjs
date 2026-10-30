@@ -820,6 +820,14 @@
   }
 }
 
+/* ViewUser tightens the banner spacing at 640px; the -12% pull-up then slides the
+   tabs over the profile action buttons (Message/Follow), making them untappable. */
+@media (max-width: 640px) {
+  .CommunityBodyContainer {
+    margin-top: 0;
+  }
+}
+
 /* Skeleton loading styles */
 .skeletonPost {
   background-color: white;

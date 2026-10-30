@@ -40,6 +40,7 @@ const Inbox = () => {
   const [conversations, setConversations] = useState([]);
   const [fixedConversations, setFixedConversations] = useState([]);
   const [messageRequests, setMessageRequests] = useState([]);
+  const [requestsLoaded, setRequestsLoaded] = useState(false);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -406,6 +407,8 @@ const Inbox = () => {
     } catch (error) {
       console.error("Error fetching message requests:", error);
       toast.error("Failed to load message requests");
+    } finally {
+      setRequestsLoaded(true);
     }
   };
 
@@ -424,6 +427,17 @@ const Inbox = () => {
       setSelectedConversation(existing);
       setActiveTab("conversations");
       if (isMobile) setSidebarVisible(false);
+      return;
+    }
+
+    // They already sent me a request (not in the conversation list): open it so it can be
+    // accepted. A blank chat here would reply into the request and leave it pending.
+    const request = (messageRequestsRef.current || []).find(
+      (r) => r?.requester && String(r.requester._id) === String(target._id)
+    );
+    if (request) {
+      openRequest(request);
+      setActiveTab("requests");
       return;
     }
 
@@ -448,7 +462,7 @@ const Inbox = () => {
 
   useEffect(() => {
     if (handledDeepLinkRef.current) return;
-    if (isLoading) return; // wait until conversations fetched
+    if (isLoading || !requestsLoaded) return; // wait until conversations and requests are fetched
 
     // Deep-link target comes from query params (e.g. /inbox?userId=...&name=...)
     const qpUserId = searchParams.get("userId");
@@ -465,7 +479,7 @@ const Inbox = () => {
       openDMTarget(target);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, conversations, searchParams]);
+  }, [isLoading, requestsLoaded, conversations, searchParams]);
 
   const fetchMessages = async (conversationId) => {
     if (!conversationId) return;

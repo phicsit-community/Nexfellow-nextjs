@@ -16,6 +16,7 @@ import verificationBadge from "./assets/badge2.svg";
 import verifyOrangeBadge from "./assets/badge2-orange.svg";
 import Webicon from "./assets/web.svg";
 import Shareicon from "./assets/share.svg";
+import Msgicon from "./assets/message.svg";
 import { UserCircle2 } from "lucide-react";
 import { ImSpinner2 } from "react-icons/im";
 
@@ -111,6 +112,23 @@ const User = () => {
     } finally {
       setIsButtonLoading(false);
     }
+  };
+
+  const handleMessage = () => {
+    if (!userDetails?.userId) return;
+    // Same check the backend applies on send; the setting lives on the User doc
+    if (userDetails.privacySettings?.allowDirectMessages === false) {
+      toast.info("This user is not accepting direct messages.");
+      return;
+    }
+    // Next's router has no history state; Inbox reads the target from query params
+    const params = new URLSearchParams({
+      userId: userDetails.userId,
+      name: userDetails.name || "",
+      username: userDetails.username || "",
+      picture: userDetails.picture || "",
+    });
+    router.push(`/inbox?${params.toString()}`);
   };
 
   const handleBackButtonClick = () => {
@@ -244,6 +262,20 @@ const User = () => {
                     </span>
                   </div>
                   <div className={styles.actionButtons}>
+                    {!isSelf(userDetails.userId) && (
+                    <button
+                      className={styles.iconButton}
+                      onClick={handleMessage}
+                      aria-label="Message"
+                      title="Message"
+                    >
+                      <img
+                        src={Msgicon?.src || Msgicon}
+                        alt="Message"
+                        className={styles.svgIcon}
+                      />
+                    </button>
+                    )}
                     <button
                       className={styles.iconButton}
                       onClick={() => {
