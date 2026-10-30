@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { SignIn, useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import EmailDomainGuard from "@/components/EmailDomainGuard";
 
 const clerkAppearance = {
   variables: {
@@ -227,7 +228,9 @@ export default function SignInPage() {
             Sign up with the email address associated with your account to access your existing profile and data.
           </p>
         </div>
-        <SignIn appearance={clerkAppearance} />
+        <EmailDomainGuard>
+          <SignIn appearance={clerkAppearance} />
+        </EmailDomainGuard>
       </div>
     </div>
   );

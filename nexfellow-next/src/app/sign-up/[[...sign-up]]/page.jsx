@@ -1,6 +1,7 @@
 "use client";
 import { SignUp, useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import EmailDomainGuard from "@/components/EmailDomainGuard";
 
 const clerkAppearance = {
   variables: {
@@ -223,7 +224,9 @@ export default function SignUpPage() {
             Enter your <strong style={{ color: "#f1f5f9" }}>registered email</strong> — your existing account, posts, and data will be linked automatically.
           </p>
         </div>
-        <SignUp appearance={clerkAppearance} />
+        <EmailDomainGuard>
+          <SignUp appearance={clerkAppearance} />
+        </EmailDomainGuard>
       </div>
     </div>
   );
