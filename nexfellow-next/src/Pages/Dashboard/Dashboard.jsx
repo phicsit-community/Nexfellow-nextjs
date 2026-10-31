@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import api from "../../lib/axios";
 import refreshCurrentUser from "../../utils/auth/refreshCurrentUser";
+import { hasCustomAvatar, getAvatarInitial } from "../../utils/avatar";
 
 // styles
 import styles from "./Dashboard.module.css";
@@ -169,6 +170,7 @@ const Dashboard = () => {
                 <div className={styles.profileImageContainer}>
                   <ProfileImagePreview
                     src={userData?.picture || (ProfileImage?.src || ProfileImage)}
+                    initial={hasCustomAvatar(userData?.picture) ? null : getAvatarInitial(userData)}
                     alt="Profile"
                     className={styles.profileImage}
                   />

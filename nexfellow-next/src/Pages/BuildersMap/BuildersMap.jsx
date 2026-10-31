@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { Map as MapGL, MapClusterLayer, MapControls } from "@/components/ui/map";
 import { MapPin, X, Menu } from "lucide-react";
 import api from "@/lib/axios";
+import { hasCustomAvatar } from "@/utils/avatar";
 import styles from "./BuildersMap.module.css";
 
 // ─── Config ───────────────────────────────────────────────────────────────────
@@ -555,7 +556,7 @@ function BuilderPopup({ builder, detail, myUserId, onClose }) {
                 <X size={13} />
             </button>
             <div className={styles.popupTop}>
-                {profile.picture ? (
+                {hasCustomAvatar(profile.picture) ? (
                     <img src={profile.picture} alt="" className={styles.popupAvatarImg} />
                 ) : (
                     <div className={styles.popupAvatar} style={{ background: builder.color }}>
@@ -726,7 +727,7 @@ function MatchesPanel({ topMatches, selectedMatch, myUserId, onSelect }) {
                 <div className={styles.matchCard}>
                     <div className={styles.cardTop}>
                         <div className={styles.avatarWrap}>
-                            {match.picture ? (
+                            {hasCustomAvatar(match.picture) ? (
                                 <img src={match.picture} alt="" className={styles.bigAvatarImg} />
                             ) : (
                                 <div className={styles.bigAvatar} style={{ background: match.color }}>
@@ -825,7 +826,7 @@ function MatchesPanel({ topMatches, selectedMatch, myUserId, onSelect }) {
                         onClick={() => onSelect(m)}
                     >
                         <div className={styles.miniAvaWrap}>
-                            {m.picture ? (
+                            {hasCustomAvatar(m.picture) ? (
                                 <img src={m.picture} alt="" className={styles.miniAvaImg} />
                             ) : (
                                 <div className={styles.miniAva} style={{ background: m.color }}>

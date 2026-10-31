@@ -3,6 +3,7 @@ const Profile = require("../models/profileModel");
 const randomStringGenerator = require("randomstring");
 const CreditService = require("./creditService");
 const { PLANS } = require("../constants/plans");
+const { isPlaceholderAvatar } = require("../utils/placeholderAvatar");
 
 const defaultProfilePicture = "https://nexfellow.b-cdn.net/defaults/default-profile.png";
 const defaultBanner = "https://nexfellow.b-cdn.net/defaults/default-banner.png";
@@ -43,12 +44,16 @@ async function provisionUserFromClerk(clerkUser) {
   const name = [firstName, lastName].filter(Boolean).join(" ") || email.split("@")[0];
   const username = await generateUsername(name);
 
+  // Google's letter monogram / Clerk's silhouette aren't real photos — store
+  // our default so the UI shows the initial of the name chosen in onboarding.
+  const hasRealPhoto = imageUrl && !(await isPlaceholderAvatar(imageUrl));
+
   const user = await User.create({
     clerkId,
     email,
     name,
     username,
-    picture: imageUrl || defaultProfilePicture,
+    picture: hasRealPhoto ? imageUrl : defaultProfilePicture,
     banner: defaultBanner,
     verified: true,
   });

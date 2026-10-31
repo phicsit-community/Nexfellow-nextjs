@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import api from "../../lib/axios";
+import { hasCustomAvatar, getAvatarInitial } from "../../utils/avatar";
 
 // styles
 import styles from "./ViewUser.module.css";
@@ -189,6 +190,7 @@ const User = () => {
                 <div className={styles.profileImageContainer}>
                   <ProfileImagePreview
                     src={userDetails?.picture || (ProfileImage?.src || ProfileImage)}
+                    initial={hasCustomAvatar(userDetails?.picture) ? null : getAvatarInitial(userDetails)}
                     alt="Profile"
                     className={styles.profileImage}
                   />

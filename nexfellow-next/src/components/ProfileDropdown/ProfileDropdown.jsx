@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import Link from "next/link";
 import api from "../../lib/axios";
 import useLogout from "../../utils/auth/useLogout";
+import { hasCustomAvatar, getAvatarInitial } from "../../utils/avatar";
 import ThemeToggleButton from "../ThemeToggle/ThemeToggleButton";
 import ModeratedDropdown from "../Header/ModeratedDropdown";
 
@@ -87,7 +88,7 @@ function ProfileDropdown() {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <div className={styles.profileLink}>
-                    {user?.profilePhoto && !error && !imgFailed ? (
+                    {hasCustomAvatar(user?.profilePhoto) && !error && !imgFailed ? (
                         <img
                             className={styles.dp}
                             src={user.profilePhoto}
@@ -96,7 +97,7 @@ function ProfileDropdown() {
                         />
                     ) : (
                         <div className={styles.initials}>
-                            {getInitials(user?.name)}
+                            {getAvatarInitial(user)}
                         </div>
                     )}
                     <span className={styles.statusDot}></span>
@@ -112,11 +113,11 @@ function ProfileDropdown() {
                     className={styles.profileHeader}
                 >
                     <div className={styles.avatar}>
-                        {user?.profilePhoto && !imgFailed ? (
+                        {hasCustomAvatar(user?.profilePhoto) && !imgFailed ? (
                             <img src={user.profilePhoto} alt="Avatar" />
                         ) : (
                             <span className={styles.avatarInitials}>
-                                {getInitials(user?.name)}
+                                {getAvatarInitial(user)}
                             </span>
                         )}
                     </div>

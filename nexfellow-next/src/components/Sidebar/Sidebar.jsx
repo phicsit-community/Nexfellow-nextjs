@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import Link from "next/link";
 import api from "../../lib/axios";
 import useLogout from "../../utils/auth/useLogout";
+import { hasCustomAvatar, getAvatarInitial } from "../../utils/avatar";
 import { useMediaQuery } from "react-responsive";
 import { useTheme } from "../../hooks/useTheme";
 
@@ -193,10 +194,6 @@ function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
     </Link>
   );
 
-  const getInitials = (name) => {
-    return name?.charAt(0).toUpperCase() || "U";
-  };
-
   return (
     <div className={`${style.sidebar}${isDrawerOpen ? ` ${style.drawerMode}` : ''}`}>
       {/* Logo at top of sidebar */}
@@ -300,18 +297,18 @@ function Sidebar({ isDrawerOpen = false, onClose, onMenuOpen }) {
               router.push(user?.username ? `/dashboard/${user.username}` : "#");
             }}
           >
-            {user?.profilePhoto && !error ? (
+            {hasCustomAvatar(user?.profilePhoto) && !error ? (
               <img
                 src={user.profilePhoto}
                 alt="Avatar"
                 className={style.avatar}
                 onError={(e) => {
-                  e.target.parentElement.innerHTML = `<div class="${style.initials}">${getInitials(user.name)}</div>` + e.target.parentElement.innerHTML.replace(e.target.outerHTML, '');
+                  e.target.parentElement.innerHTML = `<div class="${style.initials}">${getAvatarInitial(user)}</div>` + e.target.parentElement.innerHTML.replace(e.target.outerHTML, '');
                 }}
               />
             ) : (
               <div className={style.initials}>
-                {getInitials(user?.name)}
+                {getAvatarInitial(user)}
               </div>
             )}
             <div className={style.userInfo}>

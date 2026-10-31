@@ -7,6 +7,7 @@ import ProfileDropdown from "../../components/ProfileDropdown/ProfileDropdown";
 import TrendingFeed from "./TrendingFeed";
 import PostDialog from "../../components/Dashboard/PostDialog";
 import api from "../../lib/axios";
+import { hasCustomAvatar, getAvatarInitial } from "../../utils/avatar";
 import { Image, Video, Package, Smile } from "lucide-react";
 import fireIcon from "../../assets/Icons/fire.png";
 import trendingIcon from "../../assets/Icons/trending.png";
@@ -133,7 +134,7 @@ const FeedPage = () => {
           <div className={styles.createPostBox}>
             <div className={styles.inputRow} onClick={handleCreatePostClick}>
               <div className={styles.avatarWrapper}>
-                {user?.picture ? (
+                {hasCustomAvatar(user?.picture) ? (
                   <img
                     src={user.picture}
                     alt="User Avatar"
@@ -141,7 +142,7 @@ const FeedPage = () => {
                   />
                 ) : (
                   <div className={styles.avatarPlaceholder}>
-                    {user?.name?.charAt(0) || "U"}
+                    {getAvatarInitial(user)}
                   </div>
                 )}
               </div>

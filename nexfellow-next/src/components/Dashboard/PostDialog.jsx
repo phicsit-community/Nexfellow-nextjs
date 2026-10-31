@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "../../lib/axios";
 import { getSupportedEmojiVersion } from "../../utils/emojiSupport";
+import { hasCustomAvatar, getAvatarInitial } from "../../utils/avatar";
 import {
   saveDraftFiles,
   loadDraftFiles,
@@ -839,10 +840,10 @@ const PostDialog = ({ isOpen, onClose, onSubmit, post }) => {
                 <div className={styles.body}>
                   <div className={styles.profileSection}>
                     <div className={styles.userAvatar}>
-                      {user?.picture ? (
+                      {hasCustomAvatar(user?.picture) ? (
                         <img src={user.picture} alt={user.name} className={styles.avatarImage} />
                       ) : (
-                        <span className={styles.avatarFallback}>{user?.name?.charAt(0) || "U"}</span>
+                        <span className={styles.avatarFallback}>{getAvatarInitial(user)}</span>
                       )}
                     </div>
                     <div className={styles.userInfo}>
