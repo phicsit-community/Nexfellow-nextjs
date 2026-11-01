@@ -51,6 +51,14 @@ const clearDraft = () => {
 
 // Mirrors backend validation in onboardingController.submitOnboarding
 const USERNAME_RE = /^[a-zA-Z0-9_.-]+$/;
+// Mirrors OnboardingProfile.bio maxlength
+const BIO_MAX = 500;
+
+// Backend field name → Screen 2 field key, for errors the server reports
+const PROFILE_FIELD_KEYS = {
+  firstName: 'fname', lastName: 'lname', username: 'handle', email: 'email',
+  bio: 'bio', country: 'country', state: 'state', city: 'city', location: 'city',
+};
 
 export default function Onboarding() {
   const router       = useRouter();
@@ -364,16 +372,18 @@ export default function Onboarding() {
       else if (stateIso && City.getCitiesOfState(countryIso, stateIso).length && !cityName) errors.city = 'City is required.';
     }
     if (!bio.trim()) errors.bio = 'Short bio is required.';
+    else if (bio.trim().length > BIO_MAX) errors.bio = `Bio must be ${BIO_MAX} characters or fewer (yours is ${bio.trim().length}).`;
     return errors;
   };
 
   // The first problem with the Screen 2 fields, or '' if they're valid
   const getProfileError = () => Object.values(getProfileFieldErrors())[0] || '';
 
-  // Send the user back to the profile step with the error shown next to the fields
-  const showProfileError = (message) => {
+  // Send the user back to the profile step with the error shown next to the fields.
+  // `field` marks an input the server rejected that the checks above didn't catch.
+  const showProfileError = (message, field) => {
     goTo(2);
-    setFieldErrors(getProfileFieldErrors());
+    setFieldErrors({ ...getProfileFieldErrors(), ...(field ? { [field]: message } : {}) });
     setScreenError(message);
   };
 
@@ -382,7 +392,7 @@ export default function Onboarding() {
     const errors = getProfileFieldErrors();
     if (Object.keys(errors).length) {
       setFieldErrors(errors);
-      setScreenError('Please fill in the highlighted required fields.');
+      setScreenError('Please fix the highlighted fields.');
       return;
     }
     setFieldErrors({});
@@ -462,17 +472,24 @@ export default function Onboarding() {
       refreshCurrentUser(dispatch, optimisticUser).catch(() => {});
     } catch (err) {
       const status  = err.response?.status;
-      const message = err.response?.data?.message || '';
-      if (status === 409 || /username|email|name|missing required/i.test(message)) {
+      const data    = err.response?.data;
+      // The backend's global error handler sends a bare string, not { message }
+      const message = (typeof data === 'string' ? data : data?.message) || '';
+      const field   = PROFILE_FIELD_KEYS[data?.field] || (status === 409 ? 'handle' : undefined);
+      if (!err.response) {
+        setSubmitError("We couldn't reach NexFellow. Check your connection and try again — your answers are saved.");
+      } else if (field || (status < 500 && /username|email|name|missing required/i.test(message))) {
         // Profile-field problems belong on the profile step
         if (status === 409) setUsernameAvailable(false);
-        showProfileError(message || 'Please check your profile details.');
+        showProfileError(message || 'Please check your profile details.', field);
       } else if (status === 429) {
-        const secs = Number(err.response?.data?.retryAfter) || 0;
+        const secs = Number(data?.retryAfter) || 0;
         const wait = secs >= 60 ? `${Math.ceil(secs / 60)} minute(s)` : `${secs || 30} seconds`;
         setSubmitError(`Too many attempts. Your details are saved on this page — please try again in ${wait}.`);
+      } else if (status >= 500) {
+        setSubmitError('Something went wrong on our side. Your answers are saved — please try again in a moment.');
       } else {
-        setSubmitError(err.response?.data?.message || 'Something went wrong. Please try again.');
+        setSubmitError(message || 'Something went wrong. Please try again.');
       }
     } finally {
       setIsSubmitting(false);
@@ -712,6 +729,9 @@ export default function Onboarding() {
               <div className={styles["field"]}>
                 <label>Short bio{req} <span style={{ color: "var(--t4)", fontWeight: "400", textTransform: "none", letterSpacing: "0" }}>(what are you building?)</span></label>
                 <textarea placeholder="Building at the intersection of productivity and AI..." value={profile.bio} required {...invalid('bio')} onChange={e => { setProfile({...profile, bio: e.target.value}); clearFieldError('bio'); }}></textarea>
+                <div className={`${styles["char-count"]} ${profile.bio.trim().length > BIO_MAX ? styles["over"] : ""}`} aria-live="polite">
+                  {profile.bio.trim().length}/{BIO_MAX}
+                </div>
                 {fieldError('bio')}
               </div>
               {screenError && (
@@ -957,20 +977,28 @@ export default function Onboarding() {
                 </div>
 
                 {/* ── Portfolio / website ── */}
-                <div className={`${styles["social-item"]} ${socialState.portfolio ? styles["connected"] : ""}`} style={{ flexWrap: 'wrap', gap: '8px' }}>
+                <div className={`${styles["social-item"]} ${socialState.portfolio === true ? styles["connected"] : ""}`} style={{ flexWrap: 'wrap', gap: '8px' }}>
                   <div className={styles["si-icon"]} style={{ background: "#374151", borderRadius: "10px" }}>
                     <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.5" stroke="#fff" strokeWidth="1.3"/><path d="M9 2.5C7 5 6 7 6 9s1 4 3 6.5M9 2.5C11 5 12 7 12 9s-1 4-3 6.5M2.5 9h13" stroke="#fff" strokeWidth="1.3"/></svg>
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div className={styles["si-name"]}>Portfolio / website</div>
-                    <div className={styles["si-handle"]}>{socialState.portfolio ? portfolioUrl : "Not added"}</div>
+                    <div className={styles["si-handle"]}>{socialState.portfolio === true ? portfolioUrl : "Not added"}</div>
                   </div>
-                  {socialState.portfolio ? (
+                  {/* portfolio is true once saved, 'editing' while the URL input is open */}
+                  {socialState.portfolio === true ? (
                     <button
                       className={`${styles["si-btn"]} ${styles["done"]}`}
                       onClick={() => { setSocialState(prev => ({ ...prev, portfolio: false })); setPortfolioUrl(''); }}
                     >
                       Added ✓
+                    </button>
+                  ) : socialState.portfolio === 'editing' ? (
+                    <button
+                      className={`${styles["si-btn"]} ${styles["connect"]}`}
+                      onClick={() => { setSocialState(prev => ({ ...prev, portfolio: false })); setPortfolioUrl(''); }}
+                    >
+                      Cancel
                     </button>
                   ) : (
                     <button className={`${styles["si-btn"]} ${styles["connect"]}`} onClick={() => setSocialState(prev => ({ ...prev, portfolio: 'editing' }))}>

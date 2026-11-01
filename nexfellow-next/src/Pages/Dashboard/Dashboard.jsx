@@ -224,6 +224,18 @@ const Dashboard = () => {
                     : communityData?.description ||
                     userData?.bio ||
                     "No description is available at the moment. Please check back later or update your profile/community information to provide more details."}
+                  {(communityData?.description || userData?.bio || "").length > 150 && (
+                    <>
+                      {" "}
+                      <button
+                        type="button"
+                        className={styles.toggleDescriptionButton}
+                        onClick={toggleDescription}
+                      >
+                        {isDescriptionTruncated ? "Show more" : "Show less"}
+                      </button>
+                    </>
+                  )}
                 </p>
                 <div className={styles.communityActions}>
                   <div

@@ -32,6 +32,11 @@ const AVAIL_MAP = {
   "No — building solo": "building-solo",
   "Advisor / mentor": "advisor-mentor",
 };
+// Mirror the backend limits: OnboardingProfile.bio for builders,
+// Community.description for legacy community accounts
+const BIO_MAX = 500;
+const COMMUNITY_DESCRIPTION_MAX = 150;
+
 const AVAIL_REVERSE_MAP = {
   "actively-looking": "Yes — actively looking",
   "open-to-conversations": "Maybe — open to conversations",
@@ -142,13 +147,17 @@ const EditProfileForm = () => {
 
   const accountTypeOptions = ["Individual", "Organization"];
 
+  const descriptionMax = user?.isCommunityAccount && user?.createdCommunity
+    ? COMMUNITY_DESCRIPTION_MAX
+    : BIO_MAX;
+
   const formFields = {
     name: { label: "Name", type: "text", required: true },
     description: {
       label: "Description",
       type: "textarea",
       required: true,
-      maxLength: 150,
+      maxLength: descriptionMax,
     },
     country: {
       label: "Country",
@@ -268,9 +277,11 @@ const EditProfileForm = () => {
           name: userData.name || "",
           username: userData.username || "",
           email: userData.email || "",
+          // Never cut the saved text here: a silent slice was saved back on the
+          // next submit. `bio` is the server-resolved bio public profiles show.
           description: isCommunity
-            ? (userData.createdCommunity?.description || "").slice(0, 150)
-            : (userData.description || userData.profile?.bio || userData.bio || "").slice(0, 150),
+            ? userData.createdCommunity?.description || ""
+            : userData.bio || userData.profile?.bio || "",
           country: userData.country || "",
           category: userData.category || userData.createdCommunity?.category || "",
           dob: userData.dateOfBirth
@@ -378,7 +389,7 @@ const EditProfileForm = () => {
     setFormData((prev) => ({
       ...prev,
       [name]: name === "description"
-        ? value.slice(0, 150)
+        ? value.slice(0, descriptionMax)
         : name === "name"
           ? value.slice(0, 20)
           : value,
@@ -460,6 +471,13 @@ const EditProfileForm = () => {
       const sanitizedUsername = formData.username.replace(/\s/g, "");
       if (sanitizedUsername !== formData.username) {
         toast.error("Username cannot contain spaces.");
+        setLoading(false);
+        return;
+      }
+
+      // An older saved bio can be over the limit until it's edited
+      if (formData.description.trim().length > descriptionMax) {
+        toast.error(`Description must be ${descriptionMax} characters or fewer.`);
         setLoading(false);
         return;
       }
@@ -838,10 +856,10 @@ const EditProfileForm = () => {
                             value={formData[key] || ""}
                             onChange={handleChange}
                             required={field.required}
-                            maxLength={150}
+                            maxLength={field.maxLength}
                           />
                           <span className={styles.charCount}>
-                            {150 - (formData[key] ? formData[key].length : 0)}{" "}
+                            {field.maxLength - (formData[key] ? formData[key].length : 0)}{" "}
                             characters left
                           </span>
                         </div>

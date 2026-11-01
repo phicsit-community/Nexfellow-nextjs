@@ -17,6 +17,40 @@ const setOnboardedCookie = (res) => {
 const fullName = (firstName, lastName) =>
   [firstName, lastName].map((s) => String(s || "").trim()).filter(Boolean).join(" ");
 
+const FIELD_LABELS = {
+  accountType: "Account type",
+  firstName: "First name",
+  lastName: "Last name",
+  username: "Username",
+  email: "Email",
+  bio: "Bio",
+  skills: "Skills",
+  productStage: "Product stage",
+  cofounderAvailability: "Co-founder availability",
+  cofounderLookingFor: "Co-founder preferences",
+  reviewInterests: "Review interests",
+};
+
+// Turn a Mongoose ValidationError into { message, field } the client can show
+// next to the offending input. Left to the global error handler it becomes a
+// bare 500 string, which the onboarding page can only report as "Something
+// went wrong" — and the user resubmits the same data forever.
+function validationErrorBody(err) {
+  const [path] = Object.keys(err.errors);
+  const error = err.errors[path];
+  const field = path.split(".")[0];
+  const label = FIELD_LABELS[field] || field;
+  let message;
+  if (error.kind === "maxlength") {
+    message = `${label} must be ${error.properties.maxlength} characters or fewer (yours is ${String(error.value).length}).`;
+  } else if (error.kind === "enum") {
+    message = `"${error.value}" is not a valid ${label.toLowerCase()} option.`;
+  } else {
+    message = `${label} is invalid.`;
+  }
+  return { message, field };
+}
+
 // A username is only usable if neither collection holds it for someone else.
 // The users collection matters most: it has its own unique index and holds the
 // auto-generated signup usernames of everyone who hasn't onboarded yet, which
@@ -217,8 +251,38 @@ module.exports.submitOnboarding = async (req, res) => {
       portfolio: stripHtml(socialLinks.portfolio),
     } : { twitter: "", github: "", linkedin: "", portfolio: "" };
 
+    const profileFields = {
+      userId,
+      accountType,
+      firstName: safeFirstName,
+      lastName:  safeLastName,
+      username:  cleanUsername,
+      email,
+      location:  safeLocation,
+      city:      safeCity    || '',
+      state:     safeState   || '',
+      country:   safeCountry || '',
+      bio:       safeBio,
+      skills,
+      productStage,
+      cofounderAvailability,
+      cofounderLookingFor,
+      reviewInterests,
+      socialLinks: safeSocialLinks,
+    };
+
+    // Check the whole profile against the schema before writing anything. The
+    // upsert below validates too, but only after the User's name/username have
+    // already been changed.
+    try {
+      await new OnboardingProfile(profileFields).validate();
+    } catch (err) {
+      if (err.name !== "ValidationError") throw err;
+      return res.status(400).json(validationErrorBody(err));
+    }
+
     if (await usernameTakenByOther(cleanUsername, userId)) {
-      return res.status(409).json({ message: "Username is already taken" });
+      return res.status(409).json({ message: "Username is already taken", field: "username" });
     }
 
     // Write order matters. The User's name/username go first: that write is
@@ -235,23 +299,7 @@ module.exports.submitOnboarding = async (req, res) => {
     const onboardingProfile = await OnboardingProfile.findOneAndUpdate(
       { userId },
       {
-        userId,
-        accountType,
-        firstName: safeFirstName,
-        lastName:  safeLastName,
-        username:  cleanUsername,
-        email,
-        location:  safeLocation,
-        city:      safeCity    || '',
-        state:     safeState   || '',
-        country:   safeCountry || '',
-        bio:       safeBio,
-        skills,
-        productStage,
-        cofounderAvailability,
-        cofounderLookingFor,
-        reviewInterests,
-        socialLinks: safeSocialLinks,
+        ...profileFields,
         isOnboardingComplete: true,
         completedAt: new Date(),
       },
@@ -290,7 +338,10 @@ module.exports.submitOnboarding = async (req, res) => {
   } catch (err) {
     // Handle duplicate key errors for username conflicts
     if (err.code === 11000) {
-      return res.status(409).json({ message: "Username is already taken" });
+      return res.status(409).json({ message: "Username is already taken", field: "username" });
+    }
+    if (err.name === "ValidationError") {
+      return res.status(400).json(validationErrorBody(err));
     }
     throw err;
   }

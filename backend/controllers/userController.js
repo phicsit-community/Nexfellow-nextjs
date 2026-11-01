@@ -916,6 +916,11 @@ const getBunnyStoragePath = (cdnUrl) => {
   }
 };
 
+// The bio is written to OnboardingProfile with validators off (and the Profile
+// copy has no length limit), so enforce the schema limits here.
+const BIO_MAX = OnboardingProfile.schema.path("bio").options.maxlength;
+const COMMUNITY_DESCRIPTION_MAX = Community.schema.path("description").options.maxlength;
+
 module.exports.updateProfile = async (req, res) => {
   try {
     const {
@@ -937,6 +942,17 @@ module.exports.updateProfile = async (req, res) => {
     if (!user) {
       if (req.file?.path) fs.unlinkSync(req.file.path);
       return res.status(404).json({ error: "User not found" });
+    }
+
+    const descriptionMax = user.isCommunityAccount && user.createdCommunity
+      ? COMMUNITY_DESCRIPTION_MAX
+      : BIO_MAX;
+    const descriptionLength = String(description || "").trim().length;
+    if (descriptionLength > descriptionMax) {
+      for (const file of Object.values(req.files || {}).flat()) fs.unlink(file.path, () => {});
+      return res.status(400).json({
+        error: `Description must be ${descriptionMax} characters or fewer (yours is ${descriptionLength}).`,
+      });
     }
 
     // Check username uniqueness if changed — against both collections, since
