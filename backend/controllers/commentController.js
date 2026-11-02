@@ -116,12 +116,21 @@ exports.createComment = async (req, res) => {
     }
 
     // Update post with new comment
-    await Post.findByIdAndUpdate(postId, { $push: { comments: comment._id } });
+    const updatedPost = await Post.findByIdAndUpdate(
+      postId,
+      { $push: { comments: comment._id } },
+      { new: true, projection: { comments: 1 } }
+    );
 
     const io = getIo();
     io.emit("commentAdded", comment);
 
-    res.status(201).json({ message: "Comment created successfully", comment });
+    res.status(201).json({
+      message: "Comment created successfully",
+      comment,
+      // post.comments holds replies too, so this is the count the post card shows
+      commentCount: updatedPost?.comments.length,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error creating comment", error });
@@ -254,11 +263,17 @@ exports.deleteComment = async (req, res) => {
     }
 
     await deleteCommentAndReplies(commentId);
+    // Replies go with the comment, and the client may not have loaded all of
+    // them, so send the post's new count rather than letting it guess.
+    const updatedPost = await Post.findById(post._id).select("comments").lean();
 
     const io = getIo();
     io.emit("commentDeleted", { commentId });
 
-    res.status(200).json({ message: "Comment deleted successfully" });
+    res.status(200).json({
+      message: "Comment deleted successfully",
+      commentCount: updatedPost?.comments?.length ?? 0,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error deleting comment", error });

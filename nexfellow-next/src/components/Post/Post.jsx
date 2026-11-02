@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useSwipeable } from "react-swipeable";
 import FeedImageGrid from "./FeedImageGrid";
+import UserAvatar from "../UserAvatar/UserAvatar";
 import { LinkPreview } from "../../components/ui/link-preview";
 import { useMediaQuery } from "react-responsive";
 import CommunityInfoPopover from "./CommunityInfoPopover";
@@ -36,6 +37,7 @@ import { Bookmark, BookMarked, Heart, MessageCircle } from "lucide-react";
 
 function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverBelow = false, onNavigateToPost }) {
   const [likeCount, setLikeCount] = useState(post.likeCount);
+  const [commentCount, setCommentCount] = useState(post.comments?.length ?? 0);
   const [isLiked, setIsLiked] = useState(false);
   const [animateLike, setAnimateLike] = useState(false);
   const [showInfoPopover, setShowInfoPopover] = useState(false);
@@ -45,7 +47,6 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [communityDescription, setCommunityDescription] = useState("");
-  const [isFollowing, setIsFollowing] = useState(false);
   const [shareCount, setShareCount] = useState(post.shares);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [bookmarked, setBookmarked] = useState(post.isBookmarked || false); // Adjust based on your API
@@ -73,51 +74,25 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
       }
     }
     checkIfLiked();
-
-    // Check if the user is following this community/author
-    async function checkIfFollowing() {
-      if (!isLoggedIn) return;
-      try {
-        if (post?.author?._id) {
-          // Use the author's ID or community ID if available
-          const communityId = post.author.createdCommunity || post.author._id;
-          const res = await api.get(`/user/checkFollowing/${communityId}`);
-          setIsFollowing(res.data.isFollowing);
-        }
-      } catch (error) {
-        console.error("Error checking following status:", error);
-        // Set default to false on error
-        setIsFollowing(false);
-      }
-    }
-    checkIfFollowing();
   }, [isLoggedIn]);
 
   useEffect(() => {
-    async function fetchFollowers() {
+    async function fetchFollowCounts() {
       try {
         const res = await api.get(`/user/publicprofile/${post.author._id}`);
-        setFollowers(res.data.followers);
-        setFollowerCount(res.data.followers.length);
+        // A list the author hides (Settings → Privacy) is left out; null hides its count
+        setFollowers(res.data.followers || []);
+        setFollowerCount(res.data.followersHidden ? null : res.data.followers.length);
+        setFollowings(res.data.following || []);
+        setFollowingCount(res.data.followingHidden ? null : res.data.following.length);
         setCommunityDescription(res.data.description || "");
       } catch (error) {
-        console.error("Error fetching followers:", error);
-      }
-    }
-
-    async function fetchFollowings() {
-      try {
-        const res = await api.get(`/user/publicprofile/${post.author._id}`);
-        setFollowings(res.data.following);
-        setFollowingCount(res.data.following.length);
-      } catch (error) {
-        console.error("Error fetching followings:", error);
+        console.error("Error fetching follow counts:", error);
       }
     }
 
     if (post?.author?._id) {
-      fetchFollowers();
-      fetchFollowings();
+      fetchFollowCounts();
     }
   }, [post.author]);
 
@@ -359,9 +334,8 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
       <div className={styles.postHeader}>
         <div className={styles.left}>
           <div className={styles.imgContainer}>
-            <img
-              src={post.author?.picture || "/src/assets/default-profile.jpg"}
-              alt="profile"
+            <UserAvatar
+              user={post.author}
               className={styles.profilePic}
               loading="lazy"
               onClick={() => router.push(getProfilePath(post.author))}
@@ -372,7 +346,10 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
               <div ref={popoverRef}>
                 <CommunityInfoPopover
                   alwaysPopoverBelow={alwaysPopoverBelow}
-                  isFollowing={isFollowing}
+                  // Keep the card's follower count in step with its follow button
+                  onFollowChange={(nowFollowing) =>
+                    setFollowerCount((count) => (count == null ? count : count + (nowFollowing ? 1 : -1)))
+                  }
                   community={{
                     name: post.author.name,
                     username: post.author.username,
@@ -612,7 +589,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
             <div className={styles.chatIcon}>
               <MessageCircle className={styles.icon} color="#64748B" />
             </div>
-            <div className={` dark:text-white ${styles.info}`}>{post.comments?.length ?? 0}</div>
+            <div className={` dark:text-white ${styles.info}`}>{commentCount}</div>
           </div>
 
           {/* <div className={styles.iconContainer}>
@@ -659,6 +636,7 @@ function Post({ post, isModeratorView, options, isPinned = false, alwaysPopoverB
           postId={post._id}
           author={post.author}
           isModeratorView={isModeratorView}
+          onCountChange={setCommentCount}
         />
       )}
     </div>

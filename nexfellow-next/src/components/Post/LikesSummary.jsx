@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./LikesSummary.module.css";
 import api from "../../lib/axios";
 import LikesModal from "./LikesModal";
+import UserAvatar from "../UserAvatar/UserAvatar";
 
 const SummaryContent = ({ likeCount, profiles, onClick }) => {
   const totalCount = likeCount;
@@ -17,11 +18,7 @@ const SummaryContent = ({ likeCount, profiles, onClick }) => {
             className={styles.profileImageWrapper}
             style={{ zIndex: 3 - index }}
           >
-            <img
-              src={profile.picture}
-              alt={profile.name}
-              className={styles.profileImage}
-            />
+            <UserAvatar user={profile} className={styles.profileImage} />
           </div>
         ))}
       </div>

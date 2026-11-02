@@ -15,6 +15,7 @@ import {
 import api from "../../lib/axios";
 import Comment from "../../components/Post/Comment";
 import styles from "./PostFullScreen.module.css";
+import UserAvatar from "../../components/UserAvatar/UserAvatar";
 import VERIFY from "./assets/Verify.svg";
 import VERIFY_ORANGE from "./assets/VerifyOrange.svg";
 import communityBadge from "./assets/badge3.svg";
@@ -43,6 +44,7 @@ const PostFullScreen = () => {
   const router = useRouter();
   const [post, setPost] = useState(null);
   const [likeCount, setLikeCount] = useState(0);
+  const [commentCount, setCommentCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [animateLike, setAnimateLike] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -67,6 +69,7 @@ const PostFullScreen = () => {
         const post = res.data.post;
         setPost(post);
         setLikeCount(post.likeCount);
+        setCommentCount(post.comments?.length ?? 0);
         setShareCount(post.shares);
         checkIfLiked(post._id);
         checkIfHidden(post._id);
@@ -698,7 +701,7 @@ const PostFullScreen = () => {
                 </div>
                 <div className={styles.iconContainer}>
                   <MessageCircle className={styles.icon} />
-                  <span>{post?.comments?.length}</span>
+                  <span>{commentCount}</span>
                 </div>
                 <ShareIcon
                   url={`${window.location.origin}/post/${post._id}`}
@@ -719,11 +722,8 @@ const PostFullScreen = () => {
               <div className={styles.postHeader}>
                 <div className={styles.left}>
                   <div className={styles.imgContainer}>
-                    <img
-                      src={
-                        post.author.picture || "/src/assets/default-profile.jpg"
-                      }
-                      alt="profile"
+                    <UserAvatar
+                      user={post.author}
                       className={styles.profilePic}
                       loading="lazy"
                     />
@@ -918,6 +918,7 @@ const PostFullScreen = () => {
               commentsData={post?.comments}
               postId={post?._id}
               author={post?.author}
+              onCountChange={setCommentCount}
             />
           </div>
         </>
@@ -947,9 +948,8 @@ const PostFullScreen = () => {
             </div>
           </div>
           <div className={styles.authorInfoTOC}>
-            <img
-              src={post.author.picture || "/src/assets/default-profile.jpg"}
-              alt="profile"
+            <UserAvatar
+              user={post.author}
               className={styles.profilePic}
               loading="lazy"
             />
@@ -1133,7 +1133,7 @@ const PostFullScreen = () => {
 
             <div className={styles.iconContainer}>
               <MessageCircle className={styles.icon} />
-              <span>{post?.comments?.length}</span>
+              <span>{commentCount}</span>
             </div>
 
             <ShareIcon
@@ -1167,6 +1167,7 @@ const PostFullScreen = () => {
             commentsData={post?.comments}
             postId={post?._id}
             author={post?.author}
+            onCountChange={setCommentCount}
           />
         </div>
       )}

@@ -1202,3 +1202,18 @@
         font-size: 11px;
     }
 }
+
+/* Builder names and avatars open the builder's profile */
+.nameLink {
+    color: inherit;
+    text-decoration: none;
+}
+
+.nameLink:hover {
+    text-decoration: underline;
+}
+
+.avatarLink {
+    display: block;
+    flex-shrink: 0;
+}

@@ -8,6 +8,7 @@ const { getIo } = require("../utils/websocket");
 const NotificationService = require("../utils/notificationService");
 const CreditService = require("../services/creditService");
 const ExpressError = require("../utils/ExpressError");
+const { hiddenFollowLists, withoutSelf } = require("../utils/followPrivacy");
 
 // Helpers
 const str = (v) => (v != null ? String(v) : v);
@@ -51,6 +52,9 @@ const compactUserWithCommunity = (u) => {
     };
   }
 
+  // Always shown to the other participant, never to its owner
+  const hidden = hiddenFollowLists(o, null);
+
   return {
     _id: o._id,
     name: o.name,
@@ -64,8 +68,9 @@ const compactUserWithCommunity = (u) => {
     isCommunityAccount: !!o.isCommunityAccount,
     country: o.country,
     themePreference: o.themePreference,
-    followersCount: Array.isArray(o.followers) ? o.followers.length : 0,
-    followingCount: Array.isArray(o.following) ? o.following.length : 0,
+    // null hides the stat in the inbox profile panel
+    followersCount: hidden.followers ? null : withoutSelf(o.followers, o._id).length,
+    followingCount: hidden.following ? null : withoutSelf(o.following, o._id).length,
     joinedAt: o.createdAt,
     hasCommunity: !!community,
     community: communityCompact,

@@ -21,6 +21,7 @@ const isProduction = process.env.NODE_ENV === "production" || !!process.env.REND
 const { uploadOnBunny, removeFromBunny } = require("../utils/attachments");
 const CreditService = require("../services/creditService");
 const { pushAdminUser } = require("../services/adminUserFeed");
+const { prepareFollowLists, hiddenFollowLists, withoutSelf } = require("../utils/followPrivacy");
 const { PLANS } = require("../constants/plans");
 const defaultProfilePicture =
   "https://nexfellow.b-cdn.net/defaults/default-profile.png";
@@ -597,7 +598,7 @@ module.exports.getPublicProfile = async (req, res) => {
       ...(user.followers || {}),
     };
 
-    res.status(200).json(userFullDetails);
+    res.status(200).json(prepareFollowLists(userFullDetails, user, req.userId));
   } catch (error) {
     res
       .status(500)
@@ -679,7 +680,7 @@ module.exports.getProfileByUsername = async (req, res) => {
     },
   };
 
-  res.status(200).json(userFullDetails);
+  res.status(200).json(prepareFollowLists(userFullDetails, user, req.userId));
 };
 
 module.exports.getPublicProfileByUsername = async (req, res) => {
@@ -716,7 +717,8 @@ module.exports.getPublicProfileByUsername = async (req, res) => {
     followers: user.followers || [],
   };
 
-  res.status(200).json(userFullDetails);
+  // req.userId is set only for signed-in viewers (setUserIfLoggedIn)
+  res.status(200).json(prepareFollowLists(userFullDetails, user, req.userId));
 };
 
 module.exports.resetPassword = async (req, res) => {
@@ -1580,15 +1582,43 @@ module.exports.checkFollowStatus = async (req, res) => {
     }
 
     // Nobody follows themselves; also masks any legacy self-follow rows
+    const isSelf = String(userId) === String(currentUserId);
     const isFollowing =
-      String(userId) !== String(currentUserId) &&
+      !isSelf &&
       targetUser.followers.some((id) => id.toString() === currentUserId.toString());
-    return res.status(200).json({ isFollowing });
+    // Follows are one-way; this is the other direction, for "Follow back"
+    const followsYou =
+      !isSelf &&
+      targetUser.following.some((id) => id.toString() === currentUserId.toString());
+    return res.status(200).json({ isFollowing, followsYou });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error." });
   }
 };
+
+// A user's followers or the people they follow, for the lists on their
+// profile. `field` is "followers" or "following".
+const getFollowList = (field) => async (req, res) => {
+  const { userId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    throw new ExpressError("Invalid user ID", 400);
+  }
+
+  const user = await User.findById(userId)
+    .select(`${field} privacySettings`)
+    .populate(field, "name username picture isCommunityAccount createdCommunity")
+    .lean();
+  if (!user) throw new ExpressError("User not found", 404);
+
+  if (hiddenFollowLists(user, req.userId)[field]) {
+    return res.status(200).json({ [field]: [], [`${field}Hidden`]: true });
+  }
+  res.status(200).json({ [field]: withoutSelf(user[field], user._id) });
+};
+
+module.exports.getFollowersList = getFollowList("followers");
+module.exports.getFollowingList = getFollowList("following");
 
 module.exports.getMutualConnections = async (req, res) => {
   try {
@@ -1600,6 +1630,11 @@ module.exports.getMutualConnections = async (req, res) => {
 
     if (!user1 || !user2) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    // The result is part of user1's following list, so it obeys their privacy setting
+    if (hiddenFollowLists(user1, req.userId).following) {
+      return res.status(200).json({ mutualConnections: [], followingHidden: true });
     }
 
     // Convert following lists to sets for quick lookup

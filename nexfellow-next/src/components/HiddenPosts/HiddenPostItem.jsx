@@ -2,6 +2,7 @@
 
 import React from "react";
 import styles from "./HiddenPostItem.module.css";
+import UserAvatar from "../UserAvatar/UserAvatar";
 import { formatDistanceToNow } from "date-fns";
 import { FaEyeSlash, FaEye } from "react-icons/fa";
 import { useRouter } from "next/navigation";
@@ -70,11 +71,7 @@ const HiddenPostItem = ({ post, onUnhide }) => {
     <div className={styles.hiddenPostItem} onClick={handlePostClick}>
       <div className={styles.postContent}>
         <div className={styles.authorInfo}>
-          <img
-            src={post.author?.picture || "/src/assets/default-profile.jpg"}
-            alt={post.author?.name || "Author"}
-            className={styles.authorAvatar}
-          />
+          <UserAvatar user={post.author} className={styles.authorAvatar} />
           <div className={styles.authorDetails}>
             <span className={styles.authorName}>
               {post.author?.name || "Unknown Author"}

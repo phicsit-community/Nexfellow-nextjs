@@ -3,13 +3,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./CommunityInfoPopover.module.css";
-import profile from "../../assets/profile.jpg";
-import api from "../../lib/axios";
+import UserAvatar from "../UserAvatar/UserAvatar";
 import VERIFY from "./assets/Verify.svg";
 import VERIFY_ORANGE from "./assets/VerifyOrange.svg";
 import communityBadgeIcon from "./assets/badge3.svg";
 import { getProfilePath } from "../../utils/profilePath";
 import { isSelf } from "../../utils/currentUser";
+import useFollow from "../../hooks/useFollow";
 
 const Spinner = ({ variant }) => (
   <div className={`${styles.spinner} ${styles[variant]}`} />
@@ -20,24 +20,19 @@ const CommunityInfoPopover = ({
   setShowPopover,
   postRef,
   alwaysPopoverBelow = false,
-  isFollowing = false,
+  onFollowChange,
 }) => {
   const popoverRef = useRef(null);
   const [position, setPosition] = useState({ top: "50px", left: "0px" });
   const [visible, setVisible] = useState(true);
-  const [followStatus, setFollowStatus] = useState(isFollowing);
+  const follow = useFollow(community.communityOwnerId, { onChange: onFollowChange });
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) : null;
-  const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [error, setError] = useState(null);
   console.log("User ID:", user?.id);
   console.log("Community Owner ID:", community.communityOwnerId);
   console.log("Community:", community);
-
-  useEffect(() => {
-    setFollowStatus(isFollowing);
-  }, [isFollowing]);
 
   useEffect(() => {
     if (!postRef?.current || !popoverRef?.current) return;
@@ -119,51 +114,12 @@ const CommunityInfoPopover = ({
   };
   const badgeIcon = getBadgeIcon();
 
-  useEffect(() => {
-    const fetchFollowStatus = async () => {
-      try {
-        const userData = JSON.parse(localStorage.getItem("user"));
-        if (!userData || !userData.id) {
-          setError("User ID missing");
-          return;
-        }
-
-        if (community.communityOwnerId) {
-          const response = await api.get(
-            `/user/followStatus/${community.communityOwnerId}`
-          );
-          setFollowStatus(response.data.isFollowing);
-        }
-      } catch (err) {
-        setError("Failed to fetch follow status.");
-        console.error(err);
-      }
-    };
-
-    fetchFollowStatus();
-  }, [community.communityOwnerId]);
-
   const toggleFollow = async () => {
-    setIsButtonLoading(true);
     try {
-      const action = followStatus ? "unfollow" : "follow";
-
-      if (community.communityOwnerId) {
-        await api.post(`/user/toggleFollow/${community.communityOwnerId}`, {
-          action,
-        });
-
-        // Fetch updated follow status
-        const response = await api.get(
-          `/user/followStatus/${community.communityOwnerId}`
-        );
-        setFollowStatus(response.data.isFollowing);
-      }
+      await follow.toggle();
     } catch (err) {
       setError(err.response?.data?.message || "Error toggling follow status.");
       console.error(err);
-    } finally {
-      setIsButtonLoading(false);
     }
   };
 
@@ -180,9 +136,8 @@ const CommunityInfoPopover = ({
       }}
     >
       <div className={styles.header}>
-        <img
-          src={community.profilePic || profile}
-          alt="Community Profile"
+        <UserAvatar
+          user={{ picture: community.profilePic, name: community.name, username: community.username }}
           className={styles.profilePic}
           loading="lazy"
         />
@@ -190,15 +145,13 @@ const CommunityInfoPopover = ({
           {community.communityOwnerId && !isSelf(community.communityOwnerId) && (
             <>
               <div
-                className={followStatus ? styles.unfollowBtn : styles.followBtn}
-                onClick={!isButtonLoading ? toggleFollow : undefined}
+                className={follow.isFollowing ? styles.unfollowBtn : styles.followBtn}
+                onClick={!follow.loading ? toggleFollow : undefined}
               >
-                {isButtonLoading ? (
-                  <Spinner variant={followStatus ? "unfollow" : "follow"} />
-                ) : followStatus ? (
-                  "Unfollow"
+                {follow.loading ? (
+                  <Spinner variant={follow.isFollowing ? "unfollow" : "follow"} />
                 ) : (
-                  "Follow"
+                  follow.label
                 )}
               </div>
             </>
@@ -217,14 +170,19 @@ const CommunityInfoPopover = ({
       </div>
       <div className={styles.username}>@{community.username}</div>
       <div className={styles.stats}>
-        <div>
-          {community.followers}{" "}
-          <span className={styles.followNo}>Followers</span>
-        </div>
-        <div>
-          {community.following}{" "}
-          <span className={styles.followNo}>Following</span>
-        </div>
+        {/* null: the owner hides that list */}
+        {community.followers != null && (
+          <div>
+            {community.followers}{" "}
+            <span className={styles.followNo}>Followers</span>
+          </div>
+        )}
+        {community.following != null && (
+          <div>
+            {community.following}{" "}
+            <span className={styles.followNo}>Following</span>
+          </div>
+        )}
       </div>
       <p className={styles.bio}>{community.bio || "No bio available."}</p>
       <button className={styles.viewProfileButton} onClick={handleViewProfile}>

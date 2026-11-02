@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { IoSearchOutline } from "react-icons/io5";
 import api from "../../lib/axios";
 import styles from "./LikesModal.module.css";
+import UserAvatar from "../UserAvatar/UserAvatar";
 import { isSelf } from "../../utils/currentUser";
 
 const LikesModal = ({ profiles, onClose }) => {
@@ -140,11 +141,7 @@ const LikesModal = ({ profiles, onClose }) => {
                 onClick={() => handleProfileClick(member)}
               >
                 <div className={styles.profileSection}>
-                  <img
-                    src={member.picture || "/default-profile.png"}
-                    alt={member.name || "User"}
-                    className={styles.avatar}
-                  />
+                  <UserAvatar user={member} className={styles.avatar} />
                   <div className={styles.memberInfo}>
                     <div className={styles.memberName}>
                       {member.name || "Unknown User"}

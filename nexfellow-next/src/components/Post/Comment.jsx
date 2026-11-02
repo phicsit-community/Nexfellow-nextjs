@@ -8,6 +8,13 @@ import Modal from "../ShareModal/MoreModal";
 import { formatDistanceToNow } from "date-fns";
 import { useRouter } from "next/navigation";
 import { BsThreeDots } from "react-icons/bs";
+import UserAvatar from "../UserAvatar/UserAvatar";
+
+// Adding or deleting a comment returns the post's new total (replies included);
+// pass it up so the post's comment count stays in step.
+const reportCommentCount = (onCountChange, data) => {
+  if (typeof data?.commentCount === "number") onCountChange?.(data.commentCount);
+};
 
 const Comment = ({
   comment,
@@ -22,6 +29,7 @@ const Comment = ({
   currentUserId,
   myCommunityRole,
   isModeratorView = false,
+  onCountChange,
 }) => {
   const router = useRouter();
   const currentUser = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")) || {} : {};
@@ -87,7 +95,7 @@ const Comment = ({
       return;
     setLoadingDelete(true);
     try {
-      await api.delete(`/comment/comments/${comment.id}`, {
+      const { data } = await api.delete(`/comment/comments/${comment.id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
@@ -95,6 +103,7 @@ const Comment = ({
       setComments((prevComments) =>
         removeCommentFromState(prevComments, comment.id)
       );
+      reportCommentCount(onCountChange, data);
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error deleting comment:", error);
@@ -351,6 +360,7 @@ const Comment = ({
       setComments((prevComments) =>
         addReplyToNestedComments(prevComments, parentId, response.data.comment)
       );
+      reportCommentCount(onCountChange, response.data);
       setReplyComment("");
       setMentionQuery("");
       setMentionSuggestions([]);
@@ -433,9 +443,8 @@ const Comment = ({
         {showReplyLine && isViewReplies && !isReplyOpen && (
           <div className={styles.replyLine}></div>
         )}
-        <img
-          src={comment.img || "https://via.placeholder.com/40"}
-          alt="User"
+        <UserAvatar
+          user={{ picture: comment.img, name: comment.community, username: comment.user }}
           className={styles.userImage}
           onClick={handleProfileClick}
         />
@@ -642,11 +651,7 @@ const Comment = ({
         >
           <div className={styles.commentContent} style={{ width: "100%" }}>
             <div className={styles.addCommentContainer} style={{ position: "relative" }}>
-              <img
-                src={currentUser.picture || "https://via.placeholder.com/40"}
-                alt="User"
-                className={styles.userImage}
-              />
+              <UserAvatar user={currentUser} className={styles.userImage} />
               <div className={styles.inputWrapper}>
                 <textarea
                   placeholder="Add a reply..."
@@ -673,11 +678,7 @@ const Comment = ({
                   <ul className={styles.mentionSuggestions}>
                     {mentionSuggestions.map((user) => (
                       <li key={user._id} onClick={() => addMentionToReply(user)}>
-                        <img
-                          src={user.picture || "/default-profile.png"}
-                          alt={user.name || user.username || "User"}
-                          className={styles.mentionAvatar}
-                        />
+                        <UserAvatar user={user} className={styles.mentionAvatar} />
                         <span>{user.username || user.name}</span>
                       </li>
                     ))}
@@ -704,6 +705,7 @@ const Comment = ({
               currentUserId={currentUserId}
               myCommunityRole={myCommunityRole}
               isModeratorView={isModeratorView}
+              onCountChange={onCountChange}
               author={author}
               className={className}
             />
@@ -714,7 +716,7 @@ const Comment = ({
   );
 };
 
-const CommentSection = ({ postId, author, className, isModeratorView = false }) => {
+const CommentSection = ({ postId, author, className, isModeratorView = false, onCountChange }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
@@ -853,6 +855,7 @@ const CommentSection = ({ postId, author, className, isModeratorView = false }) 
           mentions: response.data.comment.mentions || [],
         };
         setComments((prevComments) => [newData, ...prevComments]);
+        reportCommentCount(onCountChange, response.data);
         setNewComment("");
         setMentionQuery("");
         setMentionSuggestions([]);
@@ -902,11 +905,7 @@ const CommentSection = ({ postId, author, className, isModeratorView = false }) 
   return (
     <div className={`${styles.commentSection} ${className || ""}`}>
       <div className={styles.addCommentContainer} style={{ position: "relative" }}>
-        <img
-          src={currentUser.picture || "https://via.placeholder.com/40"}
-          alt="User"
-          className={styles.userImage}
-        />
+        <UserAvatar user={currentUser} className={styles.userImage} />
         <div className={styles.inputWrapper}>
           <textarea
             placeholder="Add a comment..."
@@ -932,11 +931,7 @@ const CommentSection = ({ postId, author, className, isModeratorView = false }) 
             <ul className={styles.mentionSuggestions}>
               {mentionSuggestions.map((user) => (
                 <li key={user._id} onClick={() => addMentionToNewComment(user)}>
-                  <img
-                    src={user.picture || "/default-profile.png"}
-                    alt={user.name || user.username || "User"}
-                    className={styles.mentionAvatar}
-                  />
+                  <UserAvatar user={user} className={styles.mentionAvatar} />
                   <span>{user.username || user.name}</span>
                 </li>
               ))}
@@ -957,6 +952,7 @@ const CommentSection = ({ postId, author, className, isModeratorView = false }) 
             currentUserId={currentUserId}
             myCommunityRole={myCommunityRole}
             isModeratorView={isModeratorView}
+            onCountChange={onCountChange}
             author={author}
             className={className}
           />

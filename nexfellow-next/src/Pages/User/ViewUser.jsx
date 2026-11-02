@@ -30,25 +30,31 @@ import {
 
 // components
 import UserBody from "../../components/Users/UserBody";
+import FollowListModal from "../../components/FollowList/FollowListModal";
+import UserAvatar from "../../components/UserAvatar/UserAvatar";
 import UserSidebar from "../../components/Users/UserSidebar";
 import ProfileImagePreview from "../../components/Preview/ProfileImagePreview";
 import BackButton from "../../components/BackButton/BackButton";
 import { toast } from "sonner";
 import UserSkeleton from "./ViewUserSkeleton";
 import { isSelf } from "../../utils/currentUser";
+import useFollow from "../../hooks/useFollow";
 
 const User = () => {
   const params = useParams();
   const username = params?.username;
   const router = useRouter();
   const [userDetails, setUserDetails] = useState(null);
-  const [currentUserId, setCurrentUserId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [followStatus, setFollowStatus] = useState(false);
-  const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  // Which follow list is open: "followers", "following" or null
+  const [followList, setFollowList] = useState(null);
   const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
+  // A follow changes this profile's follower count, so refresh it after one
+  const follow = useFollow(userDetails?.userId, {
+    onChange: () => fetchUserDetails({ silent: true }),
+  });
 
   // silent: refresh data in place without swapping the page for the loader
   const fetchUserDetails = async ({ silent = false } = {}) => {
@@ -60,14 +66,6 @@ const User = () => {
       const response = await api.get(`/user/publicprofile/username/${username}`);
       setUserDetails(response.data);
       console.log("User Details:", response);
-
-      if (response.data.userId) {
-        // Needs auth; a signed-out visitor of a shared link should still see the profile.
-        const followResponse = await api
-          .get(`/user/followStatus/${response.data.userId}`)
-          .catch(() => null);
-        setFollowStatus(Boolean(followResponse?.data?.isFollowing));
-      }
     } catch (err) {
       if (silent) {
         console.error("Silent profile refresh failed:", err);
@@ -80,39 +78,15 @@ const User = () => {
   };
 
   useEffect(() => {
-    const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") || "null") : null;
-    setCurrentUserId(userData?.id || userData?._id || null);
-
     fetchUserDetails();
   }, [username]);
 
   const toggleFollow = async () => {
-    if (!userDetails?._id) {
-      setError("Unable to follow user.");
-      return;
-    }
-
-    if (isButtonLoading) return; // Prevent duplicate requests
-
-    setIsButtonLoading(true);
-    setError(null);
-
     try {
-      const action = followStatus ? "unfollow" : "follow";
-      const response = await api.post(
-        `/user/toggleFollow/${userDetails.userId}`,
-        { action }
-      );
-
-      if (response.status === 200) {
-        setFollowStatus(!followStatus);
-        fetchUserDetails({ silent: true });
-      }
+      await follow.toggle();
     } catch (err) {
       console.error("Follow/Unfollow Error:", err);
       toast.error(err.response?.data?.message || "Error toggling follow status.");
-    } finally {
-      setIsButtonLoading(false);
     }
   };
 
@@ -156,6 +130,7 @@ const User = () => {
   }
 
   const totalCount = userDetails?.followers?.length || 0;
+  const followingCount = userDetails?.following?.length || 0;
   const visibleProfiles = userDetails?.followers?.slice(0, 3) || [];
   const othersCount = totalCount > 3 ? totalCount - 3 : totalCount - 1;
 
@@ -238,30 +213,44 @@ const User = () => {
                   {userDetails?.bio || "No bio available."}
                 </p>
                 <div className={styles.communityActions}>
+                  {/* Each count opens its list; the owner can hide either one
+                      (Settings → Privacy). The block stays to keep the buttons' layout. */}
                   <div className={styles.members}>
-                    <div className={styles.memberImages}>
-                      {visibleProfiles.length > 0 ? (
-                        visibleProfiles.map((profile, index) => (
-                          <div
-                            key={profile._id}
-                            className={styles.memberImageWrapper}
-                            style={{ zIndex: 3 - index }}
-                          >
-                            <img
-                              src={profile?.picture || (ProfileImage?.src || ProfileImage)}
-                              alt={profile?.name || "Follower"}
-                              className={styles.memberImage}
-                            />
-                          </div>
-                        ))
-                      ) : (
-                        <UserCircle2 className="w-5 h-5 text-gray-500" />
-                      )}
-                    </div>
+                    {!userDetails.followersHidden && (
+                      <div
+                        className={styles.memberImages}
+                        onClick={() => setFollowList("followers")}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {visibleProfiles.length > 0 ? (
+                          visibleProfiles.map((profile, index) => (
+                            <div
+                              key={profile._id}
+                              className={styles.memberImageWrapper}
+                              style={{ zIndex: 3 - index }}
+                            >
+                              <UserAvatar user={profile} className={styles.memberImage} />
+                            </div>
+                          ))
+                        ) : (
+                          <UserCircle2 className="w-5 h-5 text-gray-500" />
+                        )}
+                      </div>
+                    )}
                     <span className={styles.membersCount}>
-                      {totalCount > 0
-                        ? ` +${totalCount} Members`
-                        : "No members yet"}
+                      {!userDetails.followersHidden && (
+                        <button type="button" className={styles.countButton} onClick={() => setFollowList("followers")}>
+                          <strong>{totalCount}</strong> {totalCount === 1 ? "Follower" : "Followers"}
+                        </button>
+                      )}
+                      {!userDetails.followersHidden && !userDetails.followingHidden && (
+                        <span aria-hidden="true">·</span>
+                      )}
+                      {!userDetails.followingHidden && (
+                        <button type="button" className={styles.countButton} onClick={() => setFollowList("following")}>
+                          <strong>{followingCount}</strong> Following
+                        </button>
+                      )}
                     </span>
                   </div>
                   <div className={styles.actionButtons}>
@@ -319,20 +308,18 @@ const User = () => {
                     <button
                       className={styles.followButton}
                       onClick={toggleFollow}
-                      disabled={isButtonLoading}
+                      disabled={follow.loading}
                     >
-                      {isButtonLoading ? (
+                      {follow.loading ? (
                         windowWidth < 480 ? (
                           <ImSpinner2 className={styles.spinner} />
                         ) : (
                           "Loading..."
                         )
                       ) : windowWidth < 480 ? (
-                        followStatus ? <BsPersonCheck /> : <BsPersonPlus />
-                      ) : followStatus ? (
-                        "Unfollow"
+                        follow.isFollowing ? <BsPersonCheck /> : <BsPersonPlus />
                       ) : (
-                        "Follow"
+                        follow.label
                       )}
                     </button>
                     )}
@@ -343,13 +330,28 @@ const User = () => {
           </div>
           <UserBody
             userId={userDetails.userId}
-            otherUserId={currentUserId}
             posts={userDetails.posts}
             members={userDetails.followers}
           />
         </div>
         <UserSidebar userId={userDetails.userId} />
       </div>
+
+      {followList && (
+        <FollowListModal
+          initialTab={followList}
+          onClose={() => setFollowList(null)}
+          userId={userDetails.userId}
+          // On your own profile, your Following count moves as you follow from a list
+          onFollowChange={(person, nowFollowing) => {
+            if (!isSelf(userDetails.userId)) return;
+            setUserDetails((prev) => {
+              const following = (prev.following || []).filter((id) => String(id) !== String(person._id));
+              return { ...prev, following: nowFollowing ? [...following, person._id] : following };
+            });
+          }}
+        />
+      )}
 
       {showModal && (
         <div className={styles.modal}>

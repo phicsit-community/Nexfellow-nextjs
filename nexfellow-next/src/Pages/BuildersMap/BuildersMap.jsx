@@ -5,6 +5,9 @@ import { Map as MapGL, MapClusterLayer, MapControls } from "@/components/ui/map"
 import { MapPin, X, Menu } from "lucide-react";
 import api from "@/lib/axios";
 import { hasCustomAvatar } from "@/utils/avatar";
+import useFollow from "@/hooks/useFollow";
+import Link from "next/link";
+import { getProfilePath } from "@/utils/profilePath";
 import styles from "./BuildersMap.module.css";
 
 // ─── Config ───────────────────────────────────────────────────────────────────
@@ -472,7 +475,13 @@ export default function BuildersMap() {
                                             background: item.type === "launch" ? "#22C55E" : "#F97316",
                                         }}
                                     />
-                                    {item.actor.name}{" "}
+                                    {item.actor.username ? (
+                                        <Link href={getProfilePath(item.actor)} className={styles.nameLink}>
+                                            {item.actor.name}
+                                        </Link>
+                                    ) : (
+                                        item.actor.name
+                                    )}{" "}
                                     {item.type === "launch" ? "just launched" : "submitted"}{" "}
                                     {item.productName}
                                 </span>
@@ -494,8 +503,7 @@ function BuilderPopup({ builder, detail, myUserId, onClose }) {
     const location = [profile.city, profile.state].filter(Boolean).join(", ");
     const isSelf = myUserId && profile.userId && String(myUserId) === String(profile.userId);
 
-    const [isConnected, setIsConnected] = useState(false);
-    const [connectLoading, setConnectLoading] = useState(false);
+    const follow = useFollow(isSelf ? null : profile.userId);
 
     const [showComposer, setShowComposer] = useState(false);
     const [introText, setIntroText] = useState("");
@@ -503,26 +511,8 @@ function BuilderPopup({ builder, detail, myUserId, onClose }) {
     const [introError, setIntroError] = useState(null);
     const [introSent, setIntroSent] = useState(false);
 
-    useEffect(() => {
-        if (!profile.userId || isSelf) return;
-        api.get(`/user/followStatus/${profile.userId}`)
-            .then((res) => setIsConnected(res.data.isFollowing))
-            .catch(() => {});
-    }, [profile.userId]);
-
-    const handleConnect = async () => {
-        if (connectLoading || !profile.userId) return;
-        setConnectLoading(true);
-        try {
-            const action = isConnected ? "unfollow" : "follow";
-            await api.post(`/user/toggleFollow/${profile.userId}`, { action });
-            setIsConnected((prev) => !prev);
-        } catch (err) {
-            console.error("Connect error:", err);
-        } finally {
-            setConnectLoading(false);
-        }
-    };
+    const handleFollow = () =>
+        follow.toggle().catch((err) => console.error("Follow error:", err));
 
     const toggleComposer = () => {
         setIntroError(null);
@@ -556,15 +546,19 @@ function BuilderPopup({ builder, detail, myUserId, onClose }) {
                 <X size={13} />
             </button>
             <div className={styles.popupTop}>
-                {hasCustomAvatar(profile.picture) ? (
-                    <img src={profile.picture} alt="" className={styles.popupAvatarImg} />
-                ) : (
-                    <div className={styles.popupAvatar} style={{ background: builder.color }}>
-                        {builder.initials}
-                    </div>
-                )}
+                <Link href={getProfilePath(profile)} className={styles.avatarLink} aria-label={`${displayName}'s profile`}>
+                    {hasCustomAvatar(profile.picture) ? (
+                        <img src={profile.picture} alt="" className={styles.popupAvatarImg} />
+                    ) : (
+                        <div className={styles.popupAvatar} style={{ background: builder.color }}>
+                            {builder.initials}
+                        </div>
+                    )}
+                </Link>
                 <div className={styles.popupBody}>
-                    <div className={styles.popupName}>{displayName}</div>
+                    <div className={styles.popupName}>
+                        <Link href={getProfilePath(profile)} className={styles.nameLink}>{displayName}</Link>
+                    </div>
                     {location && <div className={styles.popupCity}>{location}</div>}
                     <div className={styles.popupMeta}>
                         <span className={styles.popupMatch}>{builder.match}% match</span>
@@ -600,11 +594,11 @@ function BuilderPopup({ builder, detail, myUserId, onClose }) {
                     <div className={styles.actionRow}>
                         <button
                             className={styles.connectBtn}
-                            onClick={handleConnect}
-                            disabled={connectLoading}
-                            style={{ opacity: connectLoading ? 0.7 : 1 }}
+                            onClick={handleFollow}
+                            disabled={follow.loading}
+                            style={{ opacity: follow.loading ? 0.7 : 1 }}
                         >
-                            {isConnected ? "Following" : "Connect"}
+                            {follow.label}
                         </button>
                         <button className={styles.messageBtn} onClick={toggleComposer}>
                             Message
@@ -652,8 +646,7 @@ function MatchesPanel({ topMatches, selectedMatch, myUserId, onSelect }) {
     const match = topMatches.length > 0 ? (selectedMatch || topMatches[0]) : null;
     const isSelf = myUserId && match?.userId && String(myUserId) === String(match.userId);
 
-    const [isConnected, setIsConnected] = useState(false);
-    const [connectLoading, setConnectLoading] = useState(false);
+    const follow = useFollow(isSelf ? null : match?.userId);
 
     const [showComposer, setShowComposer] = useState(false);
     const [introText, setIntroText] = useState("");
@@ -663,29 +656,14 @@ function MatchesPanel({ topMatches, selectedMatch, myUserId, onSelect }) {
 
     useEffect(() => {
         if (!match?.userId || isSelf) return;
-        setIsConnected(false);
         setShowComposer(false);
         setIntroText("");
         setIntroError(null);
         setIntroSent(false);
-        api.get(`/user/followStatus/${match.userId}`)
-            .then((res) => setIsConnected(res.data.isFollowing))
-            .catch(() => {});
     }, [match?.userId]);
 
-    const handleConnect = async () => {
-        if (connectLoading || !match?.userId) return;
-        setConnectLoading(true);
-        try {
-            const action = isConnected ? "unfollow" : "follow";
-            await api.post(`/user/toggleFollow/${match.userId}`, { action });
-            setIsConnected((prev) => !prev);
-        } catch (err) {
-            console.error("Connect error:", err);
-        } finally {
-            setConnectLoading(false);
-        }
-    };
+    const handleFollow = () =>
+        follow.toggle().catch((err) => console.error("Follow error:", err));
 
     const toggleComposer = () => {
         setIntroError(null);
@@ -726,7 +704,7 @@ function MatchesPanel({ topMatches, selectedMatch, myUserId, onSelect }) {
             {match && (
                 <div className={styles.matchCard}>
                     <div className={styles.cardTop}>
-                        <div className={styles.avatarWrap}>
+                        <Link href={getProfilePath(match)} className={`${styles.avatarWrap} ${styles.avatarLink}`} aria-label={`${match.name || match.username}'s profile`}>
                             {hasCustomAvatar(match.picture) ? (
                                 <img src={match.picture} alt="" className={styles.bigAvatarImg} />
                             ) : (
@@ -734,10 +712,12 @@ function MatchesPanel({ topMatches, selectedMatch, myUserId, onSelect }) {
                                     {match.initials}
                                 </div>
                             )}
-                        </div>
+                        </Link>
                         <div>
                             <div className={styles.cardName}>
-                                {match.name || `${match.firstName} ${match.lastName}`}
+                                <Link href={getProfilePath(match)} className={styles.nameLink}>
+                                    {match.name || `${match.firstName} ${match.lastName}`}
+                                </Link>
                                 <span className={styles.plusChip}>+</span>
                             </div>
                             <div className={styles.cardRole}>
@@ -770,11 +750,11 @@ function MatchesPanel({ topMatches, selectedMatch, myUserId, onSelect }) {
                             <div className={styles.actionRow}>
                                 <button
                                     className={styles.connectBtn}
-                                    onClick={handleConnect}
-                                    disabled={connectLoading}
-                                    style={{ opacity: connectLoading ? 0.7 : 1 }}
+                                    onClick={handleFollow}
+                                    disabled={follow.loading}
+                                    style={{ opacity: follow.loading ? 0.7 : 1 }}
                                 >
-                                    {isConnected ? "Following" : "Connect"}
+                                    {follow.label}
                                 </button>
                                 <button className={styles.messageBtn} onClick={toggleComposer}>
                                     Message
@@ -825,7 +805,12 @@ function MatchesPanel({ topMatches, selectedMatch, myUserId, onSelect }) {
                         className={`${styles.miniCard} ${m.userId === match?.userId ? styles.miniCardSel : ""}`}
                         onClick={() => onSelect(m)}
                     >
-                        <div className={styles.miniAvaWrap}>
+                        <Link
+                            href={getProfilePath(m)}
+                            className={`${styles.miniAvaWrap} ${styles.avatarLink}`}
+                            aria-label={`${m.name || m.username}'s profile`}
+                            onClick={(e) => e.stopPropagation()}
+                        >
                             {hasCustomAvatar(m.picture) ? (
                                 <img src={m.picture} alt="" className={styles.miniAvaImg} />
                             ) : (
@@ -833,10 +818,16 @@ function MatchesPanel({ topMatches, selectedMatch, myUserId, onSelect }) {
                                     {m.initials}
                                 </div>
                             )}
-                        </div>
+                        </Link>
                         <div className={styles.miniInfo}>
                             <div className={styles.miniName}>
-                                {m.name || `${m.firstName} ${m.lastName}`}
+                                <Link
+                                    href={getProfilePath(m)}
+                                    className={styles.nameLink}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    {m.name || `${m.firstName} ${m.lastName}`}
+                                </Link>
                             </div>
                             <div className={styles.miniRole}>
                                 {[m.city, m.state].filter(Boolean).join(", ")}

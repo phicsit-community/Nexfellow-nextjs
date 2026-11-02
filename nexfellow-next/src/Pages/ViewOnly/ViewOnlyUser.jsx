@@ -136,6 +136,8 @@ const ViewOnlyUser = () => {
 
           {/* Stats */}
           <div className={styles.statsRow}>
+            {/* The owner can hide either list (Settings → Privacy) */}
+            {!user?.followersHidden && (
             <div className={styles.statCard}>
               <div className={styles.statIconBox}>
                 <FaUsers className={styles.statIcon} />
@@ -147,6 +149,8 @@ const ViewOnlyUser = () => {
                 </div>
               </div>
             </div>
+            )}
+            {!user?.followingHidden && (
             <div className={styles.statCard}>
               <div className={styles.statIconBox}>
                 <FaUserPlus className={styles.statIcon} />
@@ -158,6 +162,7 @@ const ViewOnlyUser = () => {
                 </div>
               </div>
             </div>
+            )}
             {/* Add more stats if needed */}
           </div>
 

@@ -1,0 +1,18 @@
+/* Size and shape come from the caller's className; this paints the letter. */
+.initial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  container-type: inline-size;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), #1a8486);
+  color: #fff;
+  font-weight: 700;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.letter {
+  font-size: 45cqi;
+  line-height: 1;
+}

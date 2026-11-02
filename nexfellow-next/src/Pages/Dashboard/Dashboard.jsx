@@ -26,7 +26,8 @@ import DashboardBody from "../../components/Dashboard/DashboardBody";
 import DashboardSidebar from "../../components/Dashboard/DashboardSidebar";
 import ShareModal from "../../components/ShareModal/ShareModal";
 import ProfileImagePreview from "../../components/Preview/ProfileImagePreview";
-import FollowersModal from "../../components/Dashboard/FollowersModal";
+import FollowListModal from "../../components/FollowList/FollowListModal";
+import UserAvatar from "../../components/UserAvatar/UserAvatar";
 import BackButton from "../../components/BackButton/BackButton";
 import { Settings, UserCircle2 } from "lucide-react";
 import DashboardSkeletonLoader from "./DashboardSkeletonLoader";
@@ -38,7 +39,8 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.auth.user);
   const [isOpen, setIsOpen] = useState(false);
-  const [isFollowersModalOpen, setIsFollowersModalOpen] = useState(false);
+  // Which follow list is open: "followers", "following" or null
+  const [followList, setFollowList] = useState(null);
 
   const [userData, setUserData] = useState(null);
   const [communityData, setCommunityData] = useState(null);
@@ -51,18 +53,32 @@ const Dashboard = () => {
     router.back();
   };
 
-  // The dashboard always shows the signed-in user's own profile. Follow the Redux
-  // user (not a one-off localStorage read) so a refreshed username re-routes here.
+  // The dashboard always shows the signed-in user's own profile, and the server
+  // decides who that is. Re-routing to the cached username first sent a stale
+  // cache (another account, an old username) to that person's public profile.
   useEffect(() => {
-    if (currentUser?.username && currentUser.username !== username) {
-      router.replace(`/dashboard/${currentUser.username}`);
-      return;
-    }
-
     if (username) {
       fetchData();
     }
+  }, [username]);
+
+  // /dashboard has no username: go to the signed-in user's own dashboard.
+  useEffect(() => {
+    if (!username && currentUser?.username) {
+      router.replace(`/dashboard/${currentUser.username}`);
+    }
   }, [username, currentUser?.username, router]);
+
+  // Resync the cached user and move to the real username's dashboard.
+  // Returns whether it navigated.
+  const goToOwnDashboard = async () => {
+    const fresh = await refreshCurrentUser(dispatch, currentUser);
+    if (fresh?.username && fresh.username !== username) {
+      router.replace(`/dashboard/${fresh.username}`);
+      return true;
+    }
+    return false;
+  };
 
   const fetchData = async () => {
     let redirecting = false;
@@ -75,6 +91,12 @@ const Dashboard = () => {
       );
 
       if (userResponse.data.redirect) {
+        // The server redirects when the URL isn't the signed-in user's username.
+        // The dashboard is always your own, so go to yours, not their profile.
+        if (await goToOwnDashboard()) {
+          redirecting = true;
+          return;
+        }
         const redirect = userResponse.data.redirect;
         // Only redirect if it's a valid string path
         if (typeof redirect === "string" && redirect.startsWith("/")) {
@@ -99,10 +121,8 @@ const Dashboard = () => {
       // changed during onboarding). Resync and move to the real username.
       if (err.response?.status === 404) {
         try {
-          const fresh = await refreshCurrentUser(dispatch, currentUser);
-          if (fresh?.username && fresh.username !== username) {
+          if (await goToOwnDashboard()) {
             redirecting = true;
-            router.replace(`/dashboard/${fresh.username}`);
             return;
           }
         } catch {
@@ -132,6 +152,7 @@ const Dashboard = () => {
 
   const isCommunityAccount = userData?.isCommunityAccount;
   const totalCount = userData?.followers?.length || 0;
+  const followingCount = userData?.following?.length || 0;
   const visibleProfiles = userData?.followers?.slice(0, 3) || [];
   const othersCount = totalCount > 3 ? totalCount - 3 : totalCount - 1;
 
@@ -238,11 +259,12 @@ const Dashboard = () => {
                   )}
                 </p>
                 <div className={styles.communityActions}>
-                  <div
-                    className={styles.members}
-                    onClick={() => setIsFollowersModalOpen(true)}
-                  >
-                    <div className={styles.memberImages}>
+                  <div className={styles.members}>
+                    <div
+                      className={styles.memberImages}
+                      onClick={() => setFollowList("followers")}
+                      style={{ cursor: "pointer" }}
+                    >
                       {visibleProfiles?.length > 0 &&
                         userData?.followers?.length > 0 ? (
                         visibleProfiles.map((profile, index) => (
@@ -251,11 +273,7 @@ const Dashboard = () => {
                             className={styles.memberImageWrapper}
                             style={{ zIndex: 3 - index }}
                           >
-                            <img
-                              src={profile?.picture || (ProfileImage?.src || ProfileImage)}
-                              alt={profile?.name || "Member"}
-                              className={styles.memberImage}
-                            />
+                            <UserAvatar user={profile} className={styles.memberImage} />
                           </div>
                         ))
                       ) : (
@@ -263,9 +281,13 @@ const Dashboard = () => {
                       )}
                     </div>
                     <span className={styles.membersCount}>
-                      {userData?.followers?.length > 0
-                        ? `+${userData.followers.length} Followers`
-                        : "No Followers"}
+                      <button type="button" className={styles.countButton} onClick={() => setFollowList("followers")}>
+                        <strong>{totalCount}</strong> {totalCount === 1 ? "Follower" : "Followers"}
+                      </button>
+                      <span aria-hidden="true">·</span>
+                      <button type="button" className={styles.countButton} onClick={() => setFollowList("following")}>
+                        <strong>{followingCount}</strong> Following
+                      </button>
                     </span>
                   </div>
                   <div className={styles.actionButtons}>
@@ -326,12 +348,20 @@ const Dashboard = () => {
           community={communityData}
         />
       </div>
-      <FollowersModal
-        isOpen={isFollowersModalOpen}
-        onClose={() => setIsFollowersModalOpen(false)}
-        communityId={communityData?._id}
-        userId={userData?.id || userData?._id}
-      />
+      {followList && (
+        <FollowListModal
+          initialTab={followList}
+          onClose={() => setFollowList(null)}
+          userId={userData?.id || userData?._id}
+          // Your own Following count moves when you follow or unfollow from a list
+          onFollowChange={(person, nowFollowing) =>
+            setUserData((prev) => {
+              const following = (prev.following || []).filter((id) => String(id) !== String(person._id));
+              return { ...prev, following: nowFollowing ? [...following, person._id] : following };
+            })
+          }
+        />
+      )}
     </div>
   );
 };

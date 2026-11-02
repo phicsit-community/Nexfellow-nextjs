@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const user = require("../controllers/userController");
 const catchAsync = require("../utils/CatchAsync");
-const { isClient, upload } = require("../middleware.js");
+const { isClient, upload, setUserIfLoggedIn } = require("../middleware.js");
 const { registerLimiter, resendOtpLimiter } = require("../utils/rateLimiters");
 
 router.route("/sendProfileDetails").get(isClient, catchAsync(user.profile));
@@ -66,7 +66,8 @@ router
 
 router
   .route("/publicprofile/username/:username")
-  .get(catchAsync(user.getPublicProfileByUsername));
+  // Public, but a signed-in owner still sees their own hidden follow lists
+  .get(setUserIfLoggedIn, catchAsync(user.getPublicProfileByUsername));
 
 router
   .route("/check-username/:username")
@@ -118,6 +119,14 @@ router
 router
   .route("/followStatus/:userId")
   .get(isClient, catchAsync(user.checkFollowStatus));
+
+router
+  .route("/followers/:userId")
+  .get(isClient, catchAsync(user.getFollowersList));
+
+router
+  .route("/following/:userId")
+  .get(isClient, catchAsync(user.getFollowingList));
 
 router
   .route("/mutual-connections/:userId/:otherUserId")

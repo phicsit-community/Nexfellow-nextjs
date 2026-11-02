@@ -159,7 +159,7 @@ function ProfileDropdown() {
                         </DropdownMenuItem>
                     ) : (
                         <DropdownMenuItem asChild className={styles.menuItem}>
-                            <Link href={`/user/${user?.username}`}>
+                            <Link href={user?.username ? `/user/${user.username}` : "#"}>
                                 <Users className={`dark:text-white ${styles.icon}`} />
                                 My Profile
                             </Link>
