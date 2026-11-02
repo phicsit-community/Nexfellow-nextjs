@@ -227,17 +227,19 @@ exports.deleteComment = async (req, res) => {
       populate: { path: "owner moderators.user" },
     });
     if (!post) return res.status(404).json({ message: "Post not found" });
-    if (!post.community)
-      return res.status(404).json({ message: "Community not found" });
 
+    // General Feed posts have no community, so only the community roles depend on one.
+    const community = post.community;
     const isCommentAuthor = comment.author.equals(req.user._id);
     const isPostAuthor = post.author.equals(req.user._id);
-    const isCommunityOwner = post.community.owner.equals(req.user._id);
-    const isContentAdmin = post.community.moderators.some(
-      (mod) =>
-        mod.user &&
-        mod.user._id.equals(req.user._id) &&
-        mod.role === "content-admin"
+    const isCommunityOwner = Boolean(community?.owner?.equals(req.user._id));
+    const isContentAdmin = Boolean(
+      community?.moderators?.some(
+        (mod) =>
+          mod.user &&
+          mod.user._id.equals(req.user._id) &&
+          mod.role === "content-admin"
+      )
     );
 
     if (
@@ -388,10 +390,12 @@ exports.userRoleInCommunity = async (req, res) => {
     }
 
     const post = await Post.findById(postId).select("community");
-    if (!post || !post.community) {
-      return res
-        .status(404)
-        .json({ message: "Post or its community not found" });
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    // General Feed posts have no community, so nobody has a community role on them.
+    if (!post.community) {
+      return res.status(200).json({ role: null });
     }
 
     const community = await Community.findById(post.community)

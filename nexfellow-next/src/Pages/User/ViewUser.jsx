@@ -62,10 +62,11 @@ const User = () => {
       console.log("User Details:", response);
 
       if (response.data.userId) {
-        const followResponse = await api.get(
-          `/user/followStatus/${response.data.userId}`
-        );
-        setFollowStatus(followResponse.data.isFollowing);
+        // Needs auth; a signed-out visitor of a shared link should still see the profile.
+        const followResponse = await api
+          .get(`/user/followStatus/${response.data.userId}`)
+          .catch(() => null);
+        setFollowStatus(Boolean(followResponse?.data?.isFollowing));
       }
     } catch (err) {
       if (silent) {

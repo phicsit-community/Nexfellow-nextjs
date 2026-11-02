@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import Link from 'next/link';
 import PrivateLayout from '../../layouts/PrivateLayout';
 import api from '@/lib/axios';
 import './my-products.css';
@@ -34,6 +35,12 @@ const REVIEWER_TYPES = ['Founders', 'Designers', 'Developers', 'Marketers', 'Any
 const FEEDBACK_TAGS  = ['All', 'UX', 'PRICING', 'MOBILE', 'POSITIVE', 'PERFORMANCE', 'FEATURE REQ'];
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
+
+// ExpressErrors reach the client as a bare JSON string, not { message }.
+function getErrorMessage(err, fallback) {
+  const data = err?.response?.data;
+  return (typeof data === 'string' ? data : data?.message) || fallback;
+}
 
 function getStageBadge(product) {
   if (product.status === 'launched')       return { text: 'LAUNCHED', color: 'green'  };
@@ -422,7 +429,7 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate, onDeleteRequ
       const res = await api.post(`/products/${product._id}/submit`);
       onProductUpdate?.({ ...product, ...res.data.product });
     } catch (err) {
-      setActionError(err?.response?.data?.message || 'Submit failed');
+      setActionError(getErrorMessage(err, 'Submit failed'));
     } finally {
       setActionLoading(false);
     }
@@ -436,7 +443,7 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate, onDeleteRequ
       const res = await api.post(`/products/${product._id}/submit`);
       onProductUpdate?.({ ...product, ...res.data.product });
     } catch (err) {
-      setActionError(err?.response?.data?.message || 'Re-submit failed');
+      setActionError(getErrorMessage(err, 'Re-submit failed'));
     } finally {
       setActionLoading(false);
     }
@@ -450,7 +457,7 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate, onDeleteRequ
       const res = await api.post(`/products/${product._id}/boost`);
       onProductUpdate?.({ ...product, ...res.data.product });
     } catch (err) {
-      setActionError(err?.response?.data?.message || 'Boost failed');
+      setActionError(getErrorMessage(err, 'Boost failed'));
     } finally {
       setActionLoading(false);
     }
@@ -656,12 +663,17 @@ function GtmReportModal({ product, onClose }) {
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState('');
   const [report,  setReport]  = useState(null);
+  const [needsCredits, setNeedsCredits] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     api.get(`/products/${product._id}/gtm-report`)
       .then(res => { if (!cancelled) setReport(res.data); })
-      .catch(err => { if (!cancelled) setError(err?.response?.data?.message || 'Failed to load GTM report'); })
+      .catch(err => {
+        if (cancelled) return;
+        setNeedsCredits(err?.response?.status === 402);
+        setError(getErrorMessage(err, 'Failed to load GTM report'));
+      })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, [product._id]);
@@ -676,6 +688,12 @@ function GtmReportModal({ product, onClose }) {
         <div className="mp-modal-body">
           {loading && <div className="mp-feedback-empty"><span>Generating report…</span></div>}
           {error && <div className="mp-action-error">{error}</div>}
+          {needsCredits && (
+            <p className="mp-gtm-credits-hint">
+              Unlocking is one-time per product, so reopening the report later is free.{' '}
+              <Link href="/wallet" className="mp-gtm-credits-link">Get credits →</Link>
+            </p>
+          )}
           {report && (
             <div className="mp-gtm-body">
               <div className="mp-gtm-stats-grid">
@@ -695,8 +713,11 @@ function GtmReportModal({ product, onClose }) {
 
               {report.benchmark.sampleSize > 0 && (
                 <p className="mp-gtm-benchmark">
-                  Category benchmark ({report.product.category}, {report.benchmark.sampleSize} products):{' '}
-                  {report.benchmark.avgRating}★ avg rating · {report.benchmark.avgUpvotes} avg upvotes
+                  Category benchmark ({report.product.category}, {report.benchmark.sampleSize} product{report.benchmark.sampleSize === 1 ? '' : 's'}):{' '}
+                  {report.benchmark.avgRating != null
+                    ? `${report.benchmark.avgRating}★ avg rating (${report.benchmark.ratedCount} rated)`
+                    : 'no ratings yet'}
+                  {' · '}{report.benchmark.avgUpvotes} avg upvotes
                 </p>
               )}
 
@@ -1260,7 +1281,7 @@ function NewSubmissionModal({ product, onClose, onSaved }) {
     } catch (err) {
       // The save itself went through, so the product exists as a draft now.
       if (saved) onSaved?.(saved);
-      const msg = err?.response?.data?.message || 'Submission failed. Please try again.';
+      const msg = getErrorMessage(err, 'Submission failed. Please try again.');
       setError(saved ? `${msg} Your submission was saved as a draft.` : msg);
     } finally {
       setSaving(null);
@@ -1280,7 +1301,7 @@ function NewSubmissionModal({ product, onClose, onSaved }) {
       onSaved?.(await persist());
       onClose();
     } catch (err) {
-      setError(err?.response?.data?.message || 'Could not save your draft. Please try again.');
+      setError(getErrorMessage(err, 'Could not save your draft. Please try again.'));
     } finally {
       setSaving(null);
     }
@@ -1398,7 +1419,7 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
       const res = await api.post(`/products/${product._id}/submit`);
       onProductUpdate?.({ ...product, ...res.data.product });
     } catch (err) {
-      setActionError(err?.response?.data?.message || 'Submit failed');
+      setActionError(getErrorMessage(err, 'Submit failed'));
     } finally { setActionLoading(false); }
   };
 
@@ -1409,7 +1430,7 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
       const res = await api.post(`/products/${product._id}/submit`);
       onProductUpdate?.({ ...product, ...res.data.product });
     } catch (err) {
-      setActionError(err?.response?.data?.message || 'Re-submit failed');
+      setActionError(getErrorMessage(err, 'Re-submit failed'));
     } finally { setActionLoading(false); }
   };
 
@@ -1420,7 +1441,7 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
       const res = await api.post(`/products/${product._id}/boost`);
       onProductUpdate?.({ ...product, ...res.data.product });
     } catch (err) {
-      setActionError(err?.response?.data?.message || 'Boost failed');
+      setActionError(getErrorMessage(err, 'Boost failed'));
     } finally { setActionLoading(false); }
   };
 

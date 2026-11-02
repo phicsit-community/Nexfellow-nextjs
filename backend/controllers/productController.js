@@ -474,17 +474,7 @@ const getGtmReport = async (req, res) => {
   if (!["in_review", "launched"].includes(product.status))
     throw new ExpressError("GTM reports are only available for submitted or launched products", 400);
 
-  const idempotencyKey = `ACCESS_GTM_REPORT:${req.userId}:${product._id}`;
-  const alreadyUnlocked = await CreditTransaction.findOne({ idempotencyKey }).lean();
-  if (!alreadyUnlocked) {
-    await CreditService.spend({
-      userId: req.userId,
-      eventCode: "ACCESS_GTM_REPORT",
-      idempotencyKey,
-      entityRef: { model: "Product", id: product._id },
-    });
-  }
-
+  // The report is built before credits are spent, so a failed build never charges.
   const [reviewAgg, tagAgg, topReview, categoryBenchmark] = await Promise.all([
     ProductReview.aggregate([
       { $match: { product: product._id } },
@@ -541,7 +531,9 @@ const getGtmReport = async (req, res) => {
         $group: {
           _id: null,
           sampleSize: { $sum: 1 },
+          ratedCount: { $sum: { $cond: [{ $gt: [{ $size: "$reviews" }, 0] }, 1, 0] } },
           avgUpvotes: { $avg: "$upvoteCount" },
+          // Unreviewed products have no rating, so the inner $avg is null and the outer $avg skips them.
           avgRating: { $avg: { $avg: "$reviews.rating" } },
         },
       },
@@ -549,8 +541,10 @@ const getGtmReport = async (req, res) => {
         $project: {
           _id: 0,
           sampleSize: 1,
+          ratedCount: 1,
           avgUpvotes: { $round: [{ $ifNull: ["$avgUpvotes", 0] }, 1] },
-          avgRating: { $round: [{ $ifNull: ["$avgRating", 0] }, 1] },
+          // null, not 0, when no product in the category has a review yet.
+          avgRating: { $cond: [{ $gt: ["$ratedCount", 0] }, { $round: ["$avgRating", 1] }, null] },
         },
       },
     ]),
@@ -559,18 +553,22 @@ const getGtmReport = async (req, res) => {
   const stats = reviewAgg[0] ?? {
     totalReviews: 0, avgRating: 0, dist5: 0, dist4: 0, dist3: 0, dist2: 0, dist1: 0,
   };
-  const benchmark = categoryBenchmark[0] ?? { sampleSize: 0, avgUpvotes: 0, avgRating: 0 };
+  const benchmark = categoryBenchmark[0] ?? { sampleSize: 0, ratedCount: 0, avgUpvotes: 0, avgRating: null };
 
   const insights = [];
   if (stats.totalReviews === 0) {
     insights.push("No reviews yet — insights will get sharper once feedback comes in.");
   } else {
-    if (benchmark.sampleSize > 0) {
+    if (benchmark.ratedCount > 0) {
       insights.push(
         stats.avgRating >= benchmark.avgRating
           ? `Your average rating (${stats.avgRating}) is at or above the ${product.category} category average (${benchmark.avgRating}).`
           : `Your average rating (${stats.avgRating}) is below the ${product.category} category average (${benchmark.avgRating}) — worth digging into your lowest-rated reviews.`
       );
+    } else if (benchmark.sampleSize > 0) {
+      insights.push(`No other ${product.category} product has been rated yet, so there's no rating benchmark to compare against.`);
+    }
+    if (benchmark.sampleSize > 0) {
       insights.push(
         product.upvoteCount >= benchmark.avgUpvotes
           ? `Your upvotes (${product.upvoteCount}) are at or above the category average (${benchmark.avgUpvotes}).`
@@ -580,6 +578,17 @@ const getGtmReport = async (req, res) => {
     if (tagAgg.length > 0) {
       insights.push(`Most common feedback theme: "${tagAgg[0].tag}" (${tagAgg[0].count} mention${tagAgg[0].count === 1 ? "" : "s"}).`);
     }
+  }
+
+  const idempotencyKey = `ACCESS_GTM_REPORT:${req.userId}:${product._id}`;
+  const alreadyUnlocked = await CreditTransaction.findOne({ idempotencyKey }).lean();
+  if (!alreadyUnlocked) {
+    await CreditService.spend({
+      userId: req.userId,
+      eventCode: "ACCESS_GTM_REPORT",
+      idempotencyKey,
+      entityRef: { model: "Product", id: product._id },
+    });
   }
 
   res.status(200).json({

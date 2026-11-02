@@ -700,6 +700,8 @@ module.exports.getPublicProfileByUsername = async (req, res) => {
   const userFullDetails = {
     ...user,
     ...(user.profile || {}),
+    // Set explicitly: the Profile spread is the only other source, and some users have no Profile.
+    userId: user._id,
     bio: op.bio || user.profile?.bio || "",
     skills: op.skills || [],
     location: op.location || "",

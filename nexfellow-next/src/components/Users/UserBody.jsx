@@ -22,6 +22,7 @@ const UserCommunityBody = ({ userId, otherUserId }) => {
     const [userPosts, setUserPosts] = useState([]);
     const [postsLoading, setPostsLoading] = useState(true);
     const [postsError, setPostsError] = useState(null);
+    const [postsNeedSignIn, setPostsNeedSignIn] = useState(false);
     const router = useRouter();
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
@@ -34,9 +35,15 @@ const UserCommunityBody = ({ userId, otherUserId }) => {
         let cancelled = false;
         setPostsLoading(true);
         setPostsError(null);
+        setPostsNeedSignIn(false);
         api.get(`/post/user/${userId}`, { params: { limit: 50 } })
             .then((res) => { if (!cancelled) setUserPosts(res.data.posts || []); })
-            .catch((err) => { if (!cancelled) setPostsError("Error retrieving posts: " + err.message); })
+            .catch((err) => {
+                if (cancelled) return;
+                // Posts are members-only; signed-out visitors of a shared profile link land here.
+                if (err?.response?.status === 401) setPostsNeedSignIn(true);
+                else setPostsError("Error retrieving posts: " + err.message);
+            })
             .finally(() => { if (!cancelled) setPostsLoading(false); });
         return () => { cancelled = true; };
     }, [userId]);
@@ -137,7 +144,16 @@ const UserCommunityBody = ({ userId, otherUserId }) => {
                 {/* Posts Tab */}
                 {activeTab === 'Posts' && postsLoading && <p>Loading posts...</p>}
                 {activeTab === 'Posts' && postsError && <p className={styles.errorBox}>⚠️ {postsError}</p>}
-                {activeTab === 'Posts' && !postsLoading && !postsError && (
+                {activeTab === 'Posts' && !postsLoading && postsNeedSignIn && (
+                    <div className={styles.noPostsContainer}>
+                        <p className={styles.noPostsHead}>Sign in to see posts</p>
+                        <p className={styles.noPostsMessage}>Posts on NexFellow are visible to members.</p>
+                        <button className={styles.followButton} onClick={() => router.push('/sign-in')}>
+                            Sign in
+                        </button>
+                    </div>
+                )}
+                {activeTab === 'Posts' && !postsLoading && !postsError && !postsNeedSignIn && (
                     userPosts.length > 0 ? (
                         <div className={styles.userPostsList}>
                             {userPosts.map((post) => (
