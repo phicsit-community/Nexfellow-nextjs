@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from "react";
@@ -18,563 +17,255 @@ import {
   GroupIcon as Communities,
   Inbox,
   Calendar,
-  X,
+  Search as SearchIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import api from "../../lib/axios";
-
 import { BsArrowReturnLeft } from "react-icons/bs";
+import api from "../../lib/axios";
+import styles from "./SearchCommand.module.css";
 
-export default function SearchCommand() {
-  const [open, setOpen] = React.useState(false);
-  const [query, setQuery] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
-  const [user, setUser] = React.useState(null);
-  const [error, setError] = React.useState(null);
-  const router = useRouter();
+// ── Platform-aware shortcut labels ──────────────────────────────────────────
+// Both ⌘K and Ctrl+K open search, but the hint should name the key the user
+// actually has. The server snapshot is "not Mac" so hydration never mismatches.
+const noopSubscribe = () => () => {};
+const detectMac = () =>
+  /mac|iphone|ipad|ipod/i.test(
+    navigator.userAgentData?.platform || navigator.platform || ""
+  );
 
+function useIsMac() {
+  return React.useSyncExternalStore(noopSubscribe, detectMac, () => false);
+}
+
+function Kbd({ children, className = "" }) {
+  return <kbd className={`${styles.kbd} ${className}`}>{children}</kbd>;
+}
+
+function ShortcutKbd({ keyLabel, className }) {
+  const isMac = useIsMac();
+  return (
+    <Kbd className={className}>
+      <span>{isMac ? "⌘" : "Ctrl"}</span>
+      <span>{keyLabel}</span>
+    </Kbd>
+  );
+}
+
+// ── ⌘K / Ctrl+K ─────────────────────────────────────────────────────────────
+// Several triggers can be mounted at once (e.g. a hidden desktop bar plus a
+// mobile icon). The first handler claims the event via preventDefault and the
+// rest skip it, so a single keypress never stacks two dialogs.
+function useOpenShortcut(setOpen) {
   React.useEffect(() => {
-    const down = (e) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+    const onKeyDown = (e) => {
+      if (e.defaultPrevented) return;
+      if (e.key?.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
       }
     };
-
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
-
-  const handleSearch = (type) => {
-    if (!query.trim()) return;
-
-    const searchUrl = type
-      ? `/search?q=${encodeURIComponent(query)}&type=${type}`
-      : `/search?q=${encodeURIComponent(query)}`;
-
-    router.push(searchUrl);
-    setOpen(false);
-  };
-  React.useEffect(() => {
-    if (open) {
-      const down = (e) => {
-        if (e.ctrlKey || e.metaKey) {
-          if (e.key === "p") {
-            e.preventDefault();
-            if (user?.username) router.push(`/dashboard/${user.username}`);
-            setOpen(false);
-          } else if (e.key === "i") {
-            e.preventDefault();
-            router.push("/inbox");
-            setOpen(false);
-          }
-        }
-      };
-      document.addEventListener("keydown", down);
-      return () => document.removeEventListener("keydown", down);
-    }
-  }, [open, router, user?.username]);
-
-  React.useEffect(() => {
-    const fetchUserData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") || "null") : null;
-        const userId = userData?.id || userData?._id;
-
-        if (!userId) {
-          // User not logged in yet, skip fetching
-          setLoading(false);
-          return;
-        }
-
-        // Fetch user profile
-        const response = await api.get(`/user/profile`);
-        setUser(response.data);
-      } catch (err) {
-        setError("Failed to load user data: " + err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUserData();
-  }, []);
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.nativeEvent.isComposing) {
-      handleSearch();
-    }
-  };
-
-  return (
-    <>
-      <button
-        style={{
-          padding: "8px 20px",
-          height: "40px",
-          borderRadius: "10px",
-        }}
-        onClick={() => setOpen(true)}
-        className="sm:flex hidden items-center w-full gap-2 text-[16px] bg-background hover:bg-accent/50 border border-[#E6E6E6] dark:border-[#3A3A3A] focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 transition-all duration-200 cursor-pointer"
-      >
-        <span className="sr-only">Open search</span>
-        <Search className="h-4 w-4 text-[#6A6A6A] dark:text-[#9A9A9A]" />
-        <span className="flex-1 text-left text-[#6A6A6A] dark:text-[#9A9A9A]" style={{ fontFamily: "'Inter', sans-serif", fontSize: "16px" }}>Search</span>
-        <kbd
-          className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 font-mono text-[10px] font-medium bg-[#F5F5F5] dark:bg-[#2A2A2A] text-[#6A6A6A] dark:text-[#9A9A9A] border border-[#E0E0E0] dark:border-[#4A4A4A]"
-          style={{ padding: "0.375rem 0.5rem", borderRadius: "4px" }}
-        >
-          <span className="text-xs">⌘</span>K
-        </kbd>
-      </button>
-      <CommandDialog
-        open={open}
-        onOpenChange={setOpen}
-        className="w-full max-w-2xl z-9999"
-        style={{
-          padding: "2rem",
-        }}
-      >
-        <div
-          className="flex items-center border-b px-3"
-          style={{ padding: "0.75rem" }}
-        >
-          <CommandInput
-            placeholder="Type to search..."
-            value={query}
-            onValueChange={setQuery}
-            onKeyDown={handleKeyDown}
-            className="border-0 focus:ring-0 focus:outline-none"
-          />
-        </div>
-        <CommandList style={{ padding: "0.5rem" }}>
-          <CommandEmpty>No results found.</CommandEmpty>
-          {!query && (
-            <>
-              <CommandGroup heading="Navigation">
-                <CommandItem
-                  onSelect={() => {
-                    if (user?.username) router.push(`/dashboard/${user.username}`);
-                    setOpen(false);
-                  }}
-                  className="cursor-pointer flex items-center gap-2 justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <Users className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </div>
-                  <CommandShortcut>
-                    <kbd
-                      className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-                      style={{ padding: "0.375rem 0.5rem" }}
-                    >
-                      <span className="text-xs">⌘</span>P
-                    </kbd>
-                  </CommandShortcut>
-                </CommandItem>
-                <CommandItem
-                  onSelect={() => {
-                    router.push("/inbox");
-                    setOpen(false);
-                  }}
-                  className="cursor-pointer flex items-center gap-2 justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <Inbox className="mr-2 h-4 w-4" />
-                    <span>Inbox</span>
-                  </div>
-                  <CommandShortcut>
-                    <kbd
-                      className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-                      style={{ padding: "0.375rem 0.5rem" }}
-                    >
-                      <span className="text-xs">⌘</span>I
-                    </kbd>
-                  </CommandShortcut>
-                </CommandItem>
-              </CommandGroup>
-            </>
-          )}
-
-          {query && (
-            <>
-              <CommandGroup heading="Search Options">
-                <CommandItem onSelect={() => handleSearch()}>
-                  <Search className="mr-2 h-4 w-4" />
-                  <span>
-                    Search{" "}
-                    <span className="font-medium">&quot;{query}&quot;</span>{" "}
-                    everywhere
-                  </span>
-                  <CommandShortcut>
-                    <BsArrowReturnLeft />
-                  </CommandShortcut>
-                </CommandItem>
-              </CommandGroup>
-              <CommandSeparator />
-              <CommandGroup heading="Filter By">
-                <CommandItem onSelect={() => handleSearch("users")}>
-                  <Users className="mr-2 h-4 w-4" />
-                  <span>
-                    Search{" "}
-                    <span className="font-medium">&quot;{query}&quot;</span> in
-                    Users
-                  </span>
-                </CommandItem>
-                <CommandItem onSelect={() => handleSearch("posts")}>
-                  <FileText className="mr-2 h-4 w-4" />
-                  <span>
-                    Search{" "}
-                    <span className="font-medium">&quot;{query}&quot;</span> in
-                    Posts
-                  </span>
-                </CommandItem>
-                <CommandItem onSelect={() => handleSearch("communities")}>
-                  <Communities className="mr-2 h-4 w-4" />
-                  <span>
-                    Search{" "}
-                    <span className="font-medium">&quot;{query}&quot;</span> in
-                    Communities
-                  </span>
-                </CommandItem>
-                <CommandItem onSelect={() => handleSearch("events")}>
-                  <Calendar className="mr-2 h-4 w-4" />
-                  <span>
-                    Search{" "}
-                    <span className="font-medium">&quot;{query}&quot;</span> in
-                    Events
-                  </span>
-                </CommandItem>
-                <CommandItem onSelect={() => handleSearch("contests")}>
-                  <Calendar className="mr-2 h-4 w-4" />
-                  <span>
-                    Search{" "}
-                    <span className="font-medium">&quot;{query}&quot;</span> in
-                    Contests
-                  </span>
-                </CommandItem>
-                <CommandItem onSelect={() => handleSearch("challenges")}>
-                  <Calendar className="mr-2 h-4 w-4" />
-                  <span>
-                    Search{" "}
-                    <span className="font-medium">&quot;{query}&quot;</span> in
-                    Challenges
-                  </span>
-                </CommandItem>
-              </CommandGroup>
-            </>
-          )}
-        </CommandList>
-        <div className="flex items-center justify-center gap-1 py-2 text-xs text-muted-foreground border-t">
-          <kbd
-            className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-            style={{ padding: "0.375rem 0.5rem" }}
-          >
-            <span>↑↓</span>
-          </kbd>{" "}
-          <span className="px-1" style={{ padding: "0.25rem 0" }}>
-            to navigate
-          </span>
-          <kbd
-            className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-            style={{ padding: "0.375rem 0.5rem" }}
-          >
-            <span>↵</span>
-          </kbd>{" "}
-          <span className="px-1" style={{ padding: "0.25rem 0" }}>
-            to select
-          </span>
-          <kbd
-            className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-            style={{ padding: "0.375rem 0.5rem" }}
-          >
-            <span style={{ fontSize: "0.5rem" }}>esc</span>
-          </kbd>{" "}
-          <span className="px-1" style={{ padding: "0.25rem 0" }}>
-            to close
-          </span>
-        </div>
-      </CommandDialog>
-    </>
-  );
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [setOpen]);
 }
 
-function Search(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.3-4.3" />
-    </svg>
-  );
-}
+const FILTERS = [
+  { type: "users", label: "Users", Icon: Users },
+  { type: "posts", label: "Posts", Icon: FileText },
+  { type: "communities", label: "Communities", Icon: Communities },
+  { type: "events", label: "Events", Icon: Calendar },
+  { type: "contests", label: "Contests", Icon: Calendar },
+  { type: "challenges", label: "Challenges", Icon: Calendar },
+];
 
-export function SearchCommandMobile() {
-  const [open, setOpen] = React.useState(false);
+function SearchDialog({ open, onOpenChange }) {
   const [query, setQuery] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
   const [user, setUser] = React.useState(null);
-  const [error, setError] = React.useState(null);
   const router = useRouter();
 
+  // Fetch the fresh username the first time the dialog opens (for the Profile
+  // shortcut) instead of on every page load for every mounted trigger.
   React.useEffect(() => {
-    const down = (e) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setOpen((open) => !open);
-      }
+    if (!open || user) return;
+    let cancelled = false;
+    const cached =
+      typeof window !== "undefined"
+        ? JSON.parse(localStorage.getItem("user") || "null")
+        : null;
+    if (!(cached?.id || cached?._id)) return;
+    api
+      .get("/user/profile")
+      .then((res) => !cancelled && setUser(res.data))
+      .catch(() => {});
+    return () => {
+      cancelled = true;
     };
+  }, [open, user]);
 
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
+  const close = () => onOpenChange(false);
+
+  const goToProfile = () => {
+    if (user?.username) router.push(`/dashboard/${user.username}`);
+    close();
+  };
+
+  const goToInbox = () => {
+    router.push("/inbox");
+    close();
+  };
 
   const handleSearch = (type) => {
     if (!query.trim()) return;
-
-    const searchUrl = type
-      ? `/search?q=${encodeURIComponent(query)}&type=${type}`
-      : `/search?q=${encodeURIComponent(query)}`;
-
-    router.push(searchUrl);
-    setOpen(false);
+    const q = encodeURIComponent(query);
+    router.push(type ? `/search?q=${q}&type=${type}` : `/search?q=${q}`);
+    close();
   };
+
+  // ⌘P / ⌘I only while the palette is open
   React.useEffect(() => {
-    if (open) {
-      const down = (e) => {
-        if (e.ctrlKey || e.metaKey) {
-          if (e.key === "p") {
-            e.preventDefault();
-            if (user?.username) router.push(`/dashboard/${user.username}`);
-            setOpen(false);
-          } else if (e.key === "i") {
-            e.preventDefault();
-            router.push("/inbox");
-            setOpen(false);
-          }
-        }
-      };
-      document.addEventListener("keydown", down);
-      return () => document.removeEventListener("keydown", down);
-    }
-  }, [open, router, user?.username]);
-
-  React.useEffect(() => {
-    const fetchUserData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const userData = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") || "null") : null;
-        const userId = userData?.id || userData?._id;
-
-        if (!userId) {
-          // User not logged in yet, skip fetching
-          setLoading(false);
-          return;
-        }
-
-        // Fetch user profile
-        const response = await api.get(`/user/profile`);
-        setUser(response.data);
-      } catch (err) {
-        setError("Failed to load user data: " + err.message);
-      } finally {
-        setLoading(false);
+    if (!open) return;
+    const onKeyDown = (e) => {
+      if (!(e.ctrlKey || e.metaKey)) return;
+      const key = e.key?.toLowerCase();
+      if (key === "p") {
+        e.preventDefault();
+        goToProfile();
+      } else if (key === "i") {
+        e.preventDefault();
+        goToInbox();
       }
     };
-    fetchUserData();
-  }, []);
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, user?.username]);
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.nativeEvent.isComposing) {
-      handleSearch();
-    }
+    if (e.key === "Enter" && !e.nativeEvent.isComposing) handleSearch();
   };
 
   return (
-    <>
-      <button onClick={() => setOpen(true)}>
-        <Search className="h-5 w-5 " style={{ marginRight: "5px" }} />
-      </button>
-      <CommandDialog
-        open={open}
-        onOpenChange={setOpen}
-        className="w-full max-w-2xl z-9999"
-        style={{
-          padding: "2rem",
-        }}
-      >
-        <div
-          className="flex items-center border-b px-3"
-          style={{ padding: "0.75rem" }}
-        >
-          <CommandInput
-            placeholder="Type to search..."
-            value={query}
-            onValueChange={setQuery}
-            onKeyDown={handleKeyDown}
-            className="border-0 focus:ring-0 focus:outline-none w-full"
-          />
-        </div>
-        <CommandList style={{ padding: "0.5rem" }}>
-          <CommandEmpty>No results found.</CommandEmpty>
-          {!query && (
-            <>
-              <CommandGroup heading="Navigation">
-                <CommandItem
-                  onSelect={() => {
-                    if (user?.username) router.push(`/dashboard/${user.username}`);
-                    setOpen(false);
-                  }}
-                  className="cursor-pointer flex items-center gap-2 justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <Users className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </div>
-                  <CommandShortcut>
-                    <kbd
-                      className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-                      style={{ padding: "0.375rem 0.5rem" }}
-                    >
-                      <span className="text-xs">⌘</span>P
-                    </kbd>
-                  </CommandShortcut>
-                </CommandItem>
-                <CommandItem
-                  onSelect={() => {
-                    router.push("/inbox");
-                    setOpen(false);
-                  }}
-                  className="cursor-pointer flex items-center gap-2 justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <Inbox className="mr-2 h-4 w-4" />
-                    <span>Inbox</span>
-                  </div>
-                  <CommandShortcut>
-                    <kbd
-                      className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-                      style={{ padding: "0.375rem 0.5rem" }}
-                    >
-                      <span className="text-xs">⌘</span>I
-                    </kbd>
-                  </CommandShortcut>
-                </CommandItem>
-              </CommandGroup>
-            </>
-          )}
+    <CommandDialog open={open} onOpenChange={onOpenChange} title="Search" description="Search people, posts and more">
+      <div className="flex items-center border-b" style={{ padding: "0.75rem" }}>
+        <CommandInput
+          placeholder="Type to search..."
+          value={query}
+          onValueChange={setQuery}
+          onKeyDown={handleKeyDown}
+          className="w-full border-0 focus:outline-none focus:ring-0"
+        />
+      </div>
+      <CommandList style={{ padding: "0.5rem" }}>
+        <CommandEmpty>No results found.</CommandEmpty>
+        {!query && (
+          <CommandGroup heading="Navigation">
+            <CommandItem onSelect={goToProfile} className="flex cursor-pointer items-center justify-between gap-2">
+              <div className="flex items-center gap-3">
+                <Users className="h-4 w-4" />
+                <span>Profile</span>
+              </div>
+              <CommandShortcut>
+                <ShortcutKbd keyLabel="P" className={styles.hideOnTouch} />
+              </CommandShortcut>
+            </CommandItem>
+            <CommandItem onSelect={goToInbox} className="flex cursor-pointer items-center justify-between gap-2">
+              <div className="flex items-center gap-3">
+                <Inbox className="h-4 w-4" />
+                <span>Inbox</span>
+              </div>
+              <CommandShortcut>
+                <ShortcutKbd keyLabel="I" className={styles.hideOnTouch} />
+              </CommandShortcut>
+            </CommandItem>
+          </CommandGroup>
+        )}
 
-          {query && (
-            <>
-              <CommandGroup heading="Search Options">
-                <CommandItem onSelect={() => handleSearch()}>
-                  <Search className="mr-2 h-4 w-4" />
+        {query && (
+          <>
+            <CommandGroup heading="Search Options">
+              <CommandItem onSelect={() => handleSearch()} className="cursor-pointer gap-3">
+                <SearchIcon className="h-4 w-4" />
+                <span>
+                  Search <span className="font-medium">&quot;{query}&quot;</span> everywhere
+                </span>
+                <CommandShortcut>
+                  <BsArrowReturnLeft />
+                </CommandShortcut>
+              </CommandItem>
+            </CommandGroup>
+            <CommandSeparator />
+            <CommandGroup heading="Filter By">
+              {FILTERS.map(({ type, label, Icon }) => (
+                <CommandItem key={type} onSelect={() => handleSearch(type)} className="cursor-pointer gap-3">
+                  <Icon className="h-4 w-4" />
                   <span>
-                    Search{" "}
-                    <span className="font-medium">&quot;{query}&quot;</span>{" "}
-                    everywhere
-                  </span>
-                  <CommandShortcut>
-                    <BsArrowReturnLeft />
-                  </CommandShortcut>
-                </CommandItem>
-              </CommandGroup>
-              <CommandSeparator />
-              <CommandGroup heading="Filter By">
-                <CommandItem onSelect={() => handleSearch("users")}>
-                  <Users className="mr-2 h-4 w-4" />
-                  <span>
-                    Search{" "}
-                    <span className="font-medium">&quot;{query}&quot;</span> in
-                    Users
+                    Search <span className="font-medium">&quot;{query}&quot;</span> in {label}
                   </span>
                 </CommandItem>
-                <CommandItem onSelect={() => handleSearch("posts")}>
-                  <FileText className="mr-2 h-4 w-4" />
-                  <span>
-                    Search{" "}
-                    <span className="font-medium">&quot;{query}&quot;</span> in
-                    Posts
-                  </span>
-                </CommandItem>
-                <CommandItem onSelect={() => handleSearch("communities")}>
-                  <Communities className="mr-2 h-4 w-4" />
-                  <span>
-                    Search{" "}
-                    <span className="font-medium">&quot;{query}&quot;</span> in
-                    Communities
-                  </span>
-                </CommandItem>
-                <CommandItem onSelect={() => handleSearch("events")}>
-                  <Calendar className="mr-2 h-4 w-4" />
-                  <span>
-                    Search{" "}
-                    <span className="font-medium">&quot;{query}&quot;</span> in
-                    Events
-                  </span>
-                </CommandItem>
-                <CommandItem onSelect={() => handleSearch("contests")}>
-                  <Calendar className="mr-2 h-4 w-4" />
-                  <span>
-                    Search{" "}
-                    <span className="font-medium">&quot;{query}&quot;</span> in
-                    Contests
-                  </span>
-                </CommandItem>
-                <CommandItem onSelect={() => handleSearch("challenges")}>
-                  <Calendar className="mr-2 h-4 w-4" />
-                  <span>
-                    Search{" "}
-                    <span className="font-medium">&quot;{query}&quot;</span> in
-                    Challenges
-                  </span>
-                </CommandItem>
-              </CommandGroup>
-            </>
-          )}
-        </CommandList>
-        <div className="flex items-center justify-center gap-1 py-2 text-xs text-muted-foreground border-t">
-          <kbd
-            className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-            style={{ padding: "0.375rem 0.5rem" }}
-          >
-            <span>↑↓</span>
-          </kbd>{" "}
-          <span className="px-1" style={{ padding: "0.25rem 0" }}>
-            to navigate
-          </span>
-          <kbd
-            className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-            style={{ padding: "0.375rem 0.5rem" }}
-          >
-            <span>↵</span>
-          </kbd>{" "}
-          <span className="px-1" style={{ padding: "0.25rem 0" }}>
-            to select
-          </span>
-          <kbd
-            className="pointer-events-none portrait:hidden inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
-            style={{ padding: "0.375rem 0.5rem" }}
-          >
-            <span style={{ fontSize: "0.5rem" }}>esc</span>
-          </kbd>{" "}
-          <span className="px-1" style={{ padding: "0.25rem 0" }}>
-            to close
-          </span>
-        </div>
-      </CommandDialog>
+              ))}
+            </CommandGroup>
+          </>
+        )}
+      </CommandList>
+      {/* Keyboard legend — meaningless on touch screens, so hidden there */}
+      <div className={`${styles.legend} ${styles.hideOnTouch} border-t text-muted-foreground`}>
+        <Kbd>↑↓</Kbd>
+        <span>to navigate</span>
+        <Kbd>↵</Kbd>
+        <span>to select</span>
+        <Kbd>esc</Kbd>
+        <span>to close</span>
+      </div>
+    </CommandDialog>
+  );
+}
+
+/**
+ * Search trigger + command palette.
+ *
+ * variant:
+ *  - "responsive" (default): full search bar from 640px up, icon button below.
+ *  - "bar":  always the full bar.
+ *  - "icon": always the icon button.
+ */
+export default function SearchCommand({ variant = "responsive", className = "" }) {
+  const [open, setOpen] = React.useState(false);
+  const isMac = useIsMac();
+  useOpenShortcut(setOpen);
+
+  const shortcut = isMac ? "Meta+K" : "Control+K";
+
+  return (
+    <>
+      {variant !== "icon" && (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label="Search"
+          aria-keyshortcuts={shortcut}
+          className={`${styles.bar} ${variant === "responsive" ? styles.barResponsive : ""} ${className}`}
+        >
+          <SearchIcon className={styles.barIcon} aria-hidden="true" />
+          <span className={styles.barPlaceholder}>Search</span>
+          <ShortcutKbd keyLabel="K" className={styles.barKbd} />
+        </button>
+      )}
+      {variant !== "bar" && (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label="Search"
+          aria-keyshortcuts={shortcut}
+          className={`${styles.iconButton} ${variant === "responsive" ? styles.iconResponsive : ""} ${className}`}
+        >
+          <SearchIcon className={styles.iconButtonIcon} aria-hidden="true" />
+        </button>
+      )}
+      <SearchDialog open={open} onOpenChange={setOpen} />
     </>
   );
+}
+
+export function SearchCommandMobile(props) {
+  return <SearchCommand {...props} variant="icon" />;
 }

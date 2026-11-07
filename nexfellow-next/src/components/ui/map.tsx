@@ -2,6 +2,7 @@
 
 import MapLibreGL, { type PopupOptions, type MarkerOptions } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import "./map.css";
 import {
   createContext,
   forwardRef,
@@ -156,6 +157,80 @@ function DefaultLoader() {
   );
 }
 
+/**
+ * The basemap's OpenStreetMap / CARTO credit is a licence requirement, so it
+ * can't be removed — but a permanent pill wastes map space. The OSMF
+ * attribution guideline (§1.5.2 "Interactive maps") lets it collapse to an
+ * (i) button "automatically after five seconds" or "on map interaction such
+ * as panning, clicking, or zooming". MapLibre's compact control only collapses
+ * on drag, so this adds the timer and the other interactions.
+ * Returns a cleanup function.
+ */
+const ATTRIBUTION_VISIBLE_MS = 5000;
+
+function autoCollapseAttribution(map: MapLibreGL.Map): () => void {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+
+  const onUserMove = (e: { originalEvent?: unknown }) => {
+    // Programmatic moves (flyTo, zoom buttons) have no originalEvent.
+    if (e.originalEvent) collapse();
+  };
+
+  const disarm = () => {
+    if (timer) clearTimeout(timer);
+    timer = null;
+    map.off("mousedown", collapse);
+    map.off("touchstart", collapse);
+    map.off("wheel", collapse);
+    map.off("movestart", onUserMove);
+  };
+
+  function collapse() {
+    disarm();
+    map
+      .getContainer()
+      .querySelector(".maplibregl-ctrl-attrib.maplibregl-compact-show")
+      ?.classList.remove("maplibregl-compact-show");
+  }
+
+  // The five seconds must count from when people can actually read the credit:
+  // its text arrives with the style/source metadata, but until "load" the map
+  // sits under <DefaultLoader />'s blurred overlay. Arm once both are true.
+  let loaded = false;
+
+  const armWhenReadable = () => {
+    const shown = map
+      .getContainer()
+      .querySelector(".maplibregl-ctrl-attrib.maplibregl-compact-show");
+    if (!loaded || !shown) return;
+    map.off("styledata", armWhenReadable);
+    map.off("sourcedata", armWhenReadable);
+    timer = setTimeout(collapse, ATTRIBUTION_VISIBLE_MS);
+    map.on("mousedown", collapse); // click
+    map.on("touchstart", collapse); // tap / pinch
+    // Mouse-wheel zoom runs as an eased camera move whose movestart carries
+    // no originalEvent, so listen for the wheel itself.
+    map.on("wheel", collapse);
+    map.on("movestart", onUserMove); // pan / zoom / rotate by drag or keyboard
+  };
+
+  const onLoad = () => {
+    loaded = true;
+    armWhenReadable();
+  };
+
+  map.once("load", onLoad);
+  map.on("styledata", armWhenReadable);
+  map.on("sourcedata", armWhenReadable);
+
+  return () => {
+    map.off("load", onLoad);
+    map.off("styledata", armWhenReadable);
+    map.off("sourcedata", armWhenReadable);
+    disarm();
+  };
+}
+
 function getViewport(map: MapLibreGL.Map): MapViewport {
   const center = map.getCenter();
   return {
@@ -261,9 +336,11 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     map.on("load", loadHandler);
     map.on("styledata", styleDataHandler);
     map.on("move", handleMove);
+    const cleanupAttribution = autoCollapseAttribution(map);
     setMapInstance(map);
 
     return () => {
+      cleanupAttribution();
       clearStyleTimeout();
       map.off("load", loadHandler);
       map.off("styledata", styleDataHandler);

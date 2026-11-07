@@ -52,58 +52,6 @@
 }
 
 
-.searchButton {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  gap: 10px;
-  padding: 8px 20px;
-  height: 40px;
-  border-radius: 10px;
-  border: 1px solid #E6E6E6;
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-}
-
-.searchButton:hover {
-  border-color: #ccc;
-  background: #f5f5f5;
-}
-
-:global(.dark) .searchButton {
-  border-color: var(--color-border);
-  background-color: var(--color-input);
-}
-
-:global(.dark) .searchButton:hover {
-  border-color: var(--color-ring);
-  background-color: var(--color-accent);
-}
-
-.searchIcon {
-  color: #6A6A6A;
-  flex-shrink: 0;
-}
-
-:global(.dark) .searchIcon {
-  color: var(--color-muted-foreground);
-}
-
-.searchPlaceholder {
-  color: #6A6A6A;
-  font-size: 16px;
-  font-family: "Inter", sans-serif;
-  font-weight: 500;
-  flex: 1;
-  text-align: left;
-  line-height: 24px;
-}
-
-:global(.dark) .searchPlaceholder {
-  color: var(--color-muted-foreground);
-}
 
 /* Right side icons */
 .rightSection {
@@ -111,54 +59,6 @@
   align-items: center;
   gap: 24px;
   flex-shrink: 0;
-}
-
-/* Notification bell icon */
-.notificationIcon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.2s ease-in-out;
-}
-
-.notificationIcon:hover {
-  background-color: #f0f0f0;
-}
-
-:global(.dark) .notificationIcon {
-  background-color: transparent;
-}
-
-:global(.dark) .notificationIcon:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-:global(.dark) .notificationIcon>div {
-  filter: invert(1) brightness(1.1);
-  transition: filter 0.3s ease;
-}
-
-.notificationBadge {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  background-color: var(--primary);
-  color: white;
-  font-size: 10px;
-  font-weight: bold;
-  border-radius: 50%;
-  padding: 2px;
-  min-width: 16px;
-  min-height: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  line-height: 1;
 }
 
 /* Hamburger button — hidden on desktop, shown on mobile */
@@ -213,6 +113,19 @@
 }
 
 /* Responsive */
+
+/* The desktop formula (calc(34.426% - 103px)) only works next to the feed's
+   wide layout; below 1024px it squeezes the search to a stub ("S…"), so
+   title pages give it the free space instead, right-aligned and capped. */
+@media (max-width: 1024px) {
+  .searchWrapperRight {
+    flex: 1;
+    width: auto;
+    max-width: 320px;
+    margin-left: auto;
+  }
+}
+
 @media (max-width: 768px) {
   .mobileLogo {
     display: flex;
@@ -233,13 +146,9 @@
     max-width: none;
   }
 
+
   .rightSection {
     gap: 12px;
-  }
-
-  .notificationIcon {
-    width: 34px;
-    height: 34px;
   }
 }
 
@@ -248,20 +157,20 @@
     padding: 10px 12px;
     gap: 8px;
   }
-
-  .searchPlaceholder {
-    font-size: 14px;
-  }
-
-  .searchButton {
-    height: 38px;
-    padding: 8px 14px;
-  }
 }
 
 @media (max-width: 640px) {
   .pageHeader {
     padding: 10px 14px;
     height: auto;
+  }
+}
+
+/* Phones: SearchCommand shows an icon button — keep it beside the avatar */
+@media (max-width: 639.98px) {
+  .searchWrapper {
+    display: flex;
+    justify-content: flex-end;
+    min-width: 0;
   }
 }

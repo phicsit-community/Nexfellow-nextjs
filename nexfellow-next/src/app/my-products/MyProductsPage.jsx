@@ -3,6 +3,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import PrivateLayout from '../../layouts/PrivateLayout';
+import {
+  Plus, Rocket, FileBarChart, Trash2, ChevronDown, MoreHorizontal,
+  Package, MessageSquare, Star, Reply, ThumbsUp, Check,
+} from 'lucide-react';
 import api from '@/lib/axios';
 import './my-products.css';
 
@@ -42,22 +46,53 @@ function getErrorMessage(err, fallback) {
   return (typeof data === 'string' ? data : data?.message) || fallback;
 }
 
-function getStageBadge(product) {
-  if (product.status === 'launched')       return { text: 'LAUNCHED', color: 'green'  };
-  if (product.buildStage === 'MVP')        return { text: 'MVP',       color: 'purple' };
-  if (product.buildStage === 'Beta')       return { text: 'BETA',      color: 'purple' };
-  if (product.buildStage === 'Prototype')  return { text: 'PROTOTYPE', color: 'gray'   };
-  if (product.buildStage === 'Idea')       return { text: 'IDEA',      color: 'gray'   };
-  if (product.buildStage === 'Launched')   return { text: 'LAUNCHED',  color: 'green'  };
-  return { text: 'DRAFT', color: 'gray' };
+// Stage is plain text and status is the only pill, so a row carries one badge.
+function getStageLabel(product) {
+  if (product.status === 'launched') return 'Launched';
+  return product.buildStage || '—';
 }
 
-function getStatusBadge(status) {
-  if (status === 'in_review') return { text: 'IN REVIEW', color: 'orange' };
-  if (status === 'launched')  return { text: 'LIVE',      color: 'teal'   };
-  if (status === 'draft')     return { text: 'DRAFT',     color: 'gray'   };
-  if (status === 'archived')  return { text: 'ARCHIVED',  color: 'gray'   };
-  return { text: '—', color: 'gray' };
+const STATUS_META = {
+  in_review: { text: 'In review', tone: 'amber' },
+  launched:  { text: 'Live',      tone: 'green' },
+  draft:     { text: 'Draft',     tone: 'neutral' },
+  archived:  { text: 'Archived',  tone: 'neutral' },
+};
+
+function StatusPill({ status }) {
+  const meta = STATUS_META[status] || { text: '—', tone: 'neutral' };
+  return (
+    <span className={`mp-status mp-status--${meta.tone}`}>
+      <span className="mp-status-dot" aria-hidden="true" />
+      {meta.text}
+    </span>
+  );
+}
+
+function ProductAvatar({ product, large = false }) {
+  const src = product.logoUrl
+    || (typeof product.logo === 'string' ? product.logo : product.logo?.url)
+    || null;
+  const [failed, setFailed] = useState(false);
+  if (src && !failed) {
+    return <img className={`mp-prod-avatar${large ? ' mp-prod-avatar--lg' : ''}`} src={src} alt="" onError={() => setFailed(true)} />;
+  }
+  return <span className={`mp-prod-avatar mp-prod-avatar--initial${large ? ' mp-prod-avatar--lg' : ''}`} aria-hidden="true">{(product.name || '?').charAt(0).toUpperCase()}</span>;
+}
+
+function noFeedbackCopy(status) {
+  return status === 'draft'
+    ? 'Submit this product to start getting feedback from the community.'
+    : 'Reviews from the community will show up here.';
+}
+
+function BoostedTag() {
+  return (
+    <span className="mp-boosted" title="Pinned at the top of Launches for 24h">
+      <Rocket size={12} strokeWidth={2.2} aria-hidden="true" />
+      Boosted
+    </span>
+  );
 }
 
 function timeAgo(dateStr) {
@@ -201,46 +236,18 @@ function FieldError({ msg }) {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function StatCard({ label, value, sub, iconBg, icon }) {
+function StatCell({ icon: Icon, label, value, sub }) {
   return (
-    <div className="mp-stat-card">
-      <div className="mp-stat-body">
-        <div className="mp-stat-label">{label}</div>
-        <div className="mp-stat-value">{value}</div>
-        <div className="mp-stat-sub">{sub}</div>
+    <div className="mp-stat">
+      <div className="mp-stat-label">
+        <Icon size={14} strokeWidth={2} aria-hidden="true" />
+        {label}
       </div>
-      <div className="mp-stat-icon" style={{ background: iconBg }}>{icon}</div>
+      <div className="mp-stat-value">{value}</div>
+      <div className="mp-stat-sub">{sub}</div>
     </div>
   );
 }
-
-const CubeIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-    <line x1="12" y1="22.08" x2="12" y2="12"/>
-  </svg>
-);
-
-const DollarIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="12" y1="1" x2="12" y2="23"/>
-    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-  </svg>
-);
-
-const StarOutlineIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-  </svg>
-);
-
-const TrendingUpIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0d9488" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-    <polyline points="17 6 23 6 23 12"/>
-  </svg>
-);
 
 function TagPill({ label }) {
   const colorMap = {
@@ -335,17 +342,18 @@ function FeedbackCard({ fb, productId, onReplyAdded }) {
       ))}
 
       <div className="mp-fb-actions-row">
-        <button className="mp-fb-action-btn" onClick={() => setReplyOpen(v => !v)}>↩ Reply</button>
-        <button className="mp-fb-action-btn" onClick={handleHelpful}>
-          👍 Helpful ({helpfulCount})
+        <button className="mp-fb-action-btn" onClick={() => setReplyOpen(v => !v)}>
+          <Reply size={13} aria-hidden="true" /> Reply
         </button>
-        <span
-          className="mp-fb-resolved"
-          style={resolved ? { color: 'var(--mp-green)' } : {}}
+        <button className="mp-fb-action-btn" onClick={handleHelpful}>
+          <ThumbsUp size={13} aria-hidden="true" /> Helpful ({helpfulCount})
+        </button>
+        <button
+          className={`mp-fb-action-btn mp-fb-resolve${resolved ? ' is-resolved' : ''}`}
           onClick={handleResolve}
         >
-          {resolved ? '✓ Resolved' : 'Mark resolved'}
-        </span>
+          <Check size={13} aria-hidden="true" /> {resolved ? 'Resolved' : 'Mark resolved'}
+        </button>
       </div>
 
       {replyOpen && (
@@ -391,8 +399,6 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate, onDeleteRequ
   const [showGtmModal,   setShowGtmModal]   = useState(false);
   const menuBtnRef = useRef(null);
 
-  const stageBadge  = getStageBadge(product);
-  const statusBadge = getStatusBadge(product.status);
   const rating      = product.avgRating > 0 ? product.avgRating : null;
   const isBoosted   = product.boostedUntil && new Date(product.boostedUntil) > new Date();
   const boostable   = product.status === 'in_review' || product.status === 'launched';
@@ -482,124 +488,116 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate, onDeleteRequ
         className={`mp-product-row ${expanded ? 'mp-product-row--expanded' : ''}`}
         onClick={onToggle}
       >
-        <td className="mp-td mp-td-product">
-          <div className="mp-prod-name">
-            {product.name}
-            {isBoosted && <span className="mp-boost-badge" title="Pinned at the top of Launches for 24h">🚀 Boosted</span>}
+        <td className="mp-td">
+          <div className="mp-prod">
+            <ProductAvatar product={product} />
+            <div className="mp-prod-text">
+              <div className="mp-prod-name">{product.name}</div>
+              <div className="mp-prod-meta">
+                <span className="mp-prod-cat">{product.category || 'Uncategorized'}</span>
+                {isBoosted && <BoostedTag />}
+              </div>
+            </div>
           </div>
-          <div className="mp-prod-cat">{product.category}</div>
         </td>
-        <td className="mp-td">
-          <span className={`mp-stage-badge mp-stage-${stageBadge.color}`}>{stageBadge.text}</span>
+        <td className="mp-td mp-td-secondary">{getStageLabel(product)}</td>
+        <td className="mp-td"><StatusPill status={product.status} /></td>
+        <td className="mp-td mp-td-num">
+          {product.totalReviews > 0 ? product.totalReviews : <span className="mp-muted">—</span>}
         </td>
-        <td className="mp-td">
-          <span className={`mp-status-badge mp-status-${statusBadge.color}`}>{statusBadge.text}</span>
-        </td>
-        <td className="mp-td">
-          {product.totalReviews > 0
-            ? <span className="mp-reviews-count">{product.totalReviews}</span>
-            : <span className="mp-muted">—</span>}
-        </td>
-        <td className="mp-td">
-          {rating
-            ? <div className="mp-rating-cell"><span className="mp-rating-star">★</span><span className="mp-rating-num">{rating}</span></div>
-            : <span className="mp-muted">—</span>}
+        <td className="mp-td mp-td-num">
+          {rating ? (
+            <span className="mp-rating">
+              <Star size={13} fill="currentColor" strokeWidth={0} aria-hidden="true" />
+              {rating.toFixed(1)}
+            </span>
+          ) : <span className="mp-muted">—</span>}
         </td>
         <td className="mp-td mp-td-action" onClick={e => e.stopPropagation()}>
-          <div className="mp-action-cell">
-            <div className="mp-action-btns">
-              {product.status === 'draft' && (
-                <button className="mp-action-edit" onClick={e => { e.stopPropagation(); onEditRequest?.(product); }}>
-                  Edit
+          <div className="mp-row-actions">
+            {product.status === 'draft' && (
+              <>
+                <button className="mp-btn mp-btn--ghost" onClick={() => onEditRequest?.(product)}>Edit</button>
+                <button className="mp-btn mp-btn--primary" onClick={handleSubmit} disabled={actionLoading}>
+                  {actionLoading ? 'Submitting…' : 'Submit'}
                 </button>
-              )}
-              {product.status === 'draft' && (
-                <button className="mp-action-submit" onClick={handleSubmit} disabled={actionLoading}>
-                  {actionLoading ? '…' : 'Submit'}
-                </button>
-              )}
-              {product.status === 'in_review' && (
-                <span className="mp-status-label">In Review</span>
-              )}
-              {product.status === 'launched' && (
-                <button className="mp-action-resubmit" onClick={handleResubmit} disabled={actionLoading}>
-                  {actionLoading ? '…' : 'Re-submit'}
-                </button>
-              )}
-              {(product.status === 'in_review' || product.status === 'launched') && (
-                <button className="mp-action-analysis" onClick={e => { e.stopPropagation(); onToggle(); }}>
-                  Analysis
-                </button>
-              )}
-            </div>
-            {actionError && <div className="mp-action-error">{actionError}</div>}
-            <div className="mp-action-icons">
-              <button className="mp-icon-btn" title="Analytics" onClick={e => { e.stopPropagation(); onToggle(); }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="20" x2="18" y2="10" />
-                  <line x1="12" y1="20" x2="12" y2="4" />
-                  <line x1="6"  y1="20" x2="6"  y2="14" />
-                </svg>
+              </>
+            )}
+            {product.status === 'launched' && (
+              <button className="mp-btn mp-btn--ghost" onClick={handleResubmit} disabled={actionLoading}>
+                {actionLoading ? 'Submitting…' : 'Re-submit'}
               </button>
+            )}
+            {(product.status === 'in_review' || product.status === 'launched') && (
               <button
-                ref={menuBtnRef}
-                className="mp-icon-btn"
-                title="More options"
-                onClick={e => {
-                  e.stopPropagation();
-                  const btn = menuBtnRef.current;
-                  let row = btn;
-                  while (row && row.tagName !== 'TR') row = row.parentElement;
-                  const rowRect = (row || btn).getBoundingClientRect();
-                  const btnRect = btn.getBoundingClientRect();
-                  setMenuPos({ top: rowRect.bottom + 2, right: window.innerWidth - btnRect.right });
-                  setMenuOpen(v => !v);
-                }}
+                className={`mp-btn mp-btn--ghost mp-btn--toggle${expanded ? ' is-open' : ''}`}
+                onClick={onToggle}
+                aria-expanded={expanded}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <circle cx="12" cy="5"  r="1.5" />
-                  <circle cx="12" cy="12" r="1.5" />
-                  <circle cx="12" cy="19" r="1.5" />
-                </svg>
+                Feedback
+                <ChevronDown size={14} aria-hidden="true" />
               </button>
-              {menuOpen && createPortal(
-                <div
-                  className="mp-more-menu"
-                  style={{ position: 'fixed', top: menuPos.top, right: menuPos.right, zIndex: 99999 }}
-                >
-                  {boostable && !isBoosted && (
-                    <button
-                      className="mp-more-menu-item"
-                      onMouseDown={e => { e.stopPropagation(); setMenuOpen(false); handleBoost(e); }}
-                    >
-                      🚀 Boost (30 credits)
-                    </button>
-                  )}
-                  {boostable && (
-                    <button
-                      className="mp-more-menu-item"
-                      onMouseDown={e => { e.stopPropagation(); setMenuOpen(false); setShowGtmModal(true); }}
-                    >
-                      📊 GTM report (25 credits)
-                    </button>
-                  )}
+            )}
+            <button
+              ref={menuBtnRef}
+              className="mp-icon-btn"
+              aria-label="More options"
+              aria-haspopup="menu"
+              aria-expanded={menuOpen}
+              onClick={e => {
+                e.stopPropagation();
+                const btn = menuBtnRef.current;
+                let row = btn;
+                while (row && row.tagName !== 'TR') row = row.parentElement;
+                const rowRect = (row || btn).getBoundingClientRect();
+                const btnRect = btn.getBoundingClientRect();
+                setMenuPos({ top: rowRect.bottom + 2, right: window.innerWidth - btnRect.right });
+                setMenuOpen(v => !v);
+              }}
+            >
+              <MoreHorizontal size={16} />
+            </button>
+            {menuOpen && createPortal(
+              <div
+                className="mp-more-menu"
+                role="menu"
+                style={{ position: 'fixed', top: menuPos.top, right: menuPos.right, zIndex: 99999 }}
+              >
+                {boostable && !isBoosted && (
                   <button
-                    className="mp-more-menu-item mp-more-menu-item--danger"
-                    onMouseDown={e => { e.stopPropagation(); setMenuOpen(false); onDeleteRequest?.(product); }}
+                    className="mp-more-menu-item"
+                    role="menuitem"
+                    onMouseDown={e => { e.stopPropagation(); setMenuOpen(false); handleBoost(e); }}
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="3 6 5 6 21 6"/>
-                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                      <path d="M10 11v6M14 11v6"/>
-                      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                    </svg>
-                    Delete
+                    <Rocket size={14} aria-hidden="true" />
+                    Boost
+                    <span className="mp-more-menu-cost">30 credits</span>
                   </button>
-                </div>,
-                document.body
-              )}
-            </div>
+                )}
+                {boostable && (
+                  <button
+                    className="mp-more-menu-item"
+                    role="menuitem"
+                    onMouseDown={e => { e.stopPropagation(); setMenuOpen(false); setShowGtmModal(true); }}
+                  >
+                    <FileBarChart size={14} aria-hidden="true" />
+                    GTM report
+                    <span className="mp-more-menu-cost">25 credits</span>
+                  </button>
+                )}
+                <button
+                  className="mp-more-menu-item mp-more-menu-item--danger"
+                  role="menuitem"
+                  onMouseDown={e => { e.stopPropagation(); setMenuOpen(false); onDeleteRequest?.(product); }}
+                >
+                  <Trash2 size={14} aria-hidden="true" />
+                  Delete
+                </button>
+              </div>,
+              document.body
+            )}
           </div>
+          {actionError && <div className="mp-action-error">{actionError}</div>}
         </td>
       </tr>
 
@@ -642,7 +640,7 @@ function ProductRow({ product, expanded, onToggle, onProductUpdate, onDeleteRequ
                     </svg>
                   </div>
                   <p className="mp-feedback-empty-title">No feedback yet</p>
-                  <p className="mp-feedback-empty-sub">This product hasn't received any reviews yet. Submit it to get feedback from the community.</p>
+                  <p className="mp-feedback-empty-sub">{noFeedbackCopy(product.status)}</p>
                 </div>
               )}
             </div>
@@ -1383,14 +1381,19 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
   const [menuOpen,       setMenuOpen]       = useState(false);
   const [showGtmModal,   setShowGtmModal]   = useState(false);
 
-  const stageBadge  = getStageBadge(product);
-  const statusBadge = getStatusBadge(product.status);
   const rating      = product.avgRating > 0 ? product.avgRating : null;
   const isBoosted   = product.boostedUntil && new Date(product.boostedUntil) > new Date();
   const boostable   = product.status === 'in_review' || product.status === 'launched';
-  const imgSrc      = product.logoUrl
-    || (typeof product.logo === 'string' ? product.logo : product.logo?.url)
-    || null;
+  const menuRef     = useRef(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [menuOpen]);
 
   useEffect(() => {
     if (!expanded || reviewsFetched) return;
@@ -1460,83 +1463,72 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
 
   return (
     <div className={`mp-mobile-card${expanded ? ' mp-mobile-card--expanded' : ''}`}>
-      {/* Top section: image + info + menu */}
       <div className="mp-mobile-card-main" onClick={onToggle}>
-        <div className="mp-mobile-card-img-wrap">
-          {imgSrc ? (
-            <img src={imgSrc} alt={product.name} className="mp-mobile-card-img" />
-          ) : (
-            <div className="mp-mobile-card-img-placeholder">
-              {product.name.charAt(0).toUpperCase()}
-            </div>
-          )}
-        </div>
+        <ProductAvatar product={product} large />
         <div className="mp-mobile-card-info">
-          <div className="mp-mobile-card-title-row">
-            <span className="mp-mobile-card-name">{product.name}</span>
-            {product.round && (
-              <span className="mp-mobile-card-round-badge">Round {product.round}</span>
-            )}
-            {isBoosted && <span className="mp-boost-badge" title="Pinned at the top of Launches for 24h">🚀 Boosted</span>}
+          <div className="mp-mobile-card-name">{product.name}</div>
+          <div className="mp-prod-meta">
+            <span className="mp-prod-cat">{product.category || 'Uncategorized'}</span>
+            <span className="mp-meta-sep" aria-hidden="true">·</span>
+            <span>{getStageLabel(product)}</span>
+            {isBoosted && <BoostedTag />}
           </div>
-          <div className="mp-mobile-card-cat">{product.category}</div>
-          <div className="mp-mobile-card-badges">
-            <span className={`mp-stage-badge mp-stage-${stageBadge.color}`}>{stageBadge.text}</span>
-            {product.status !== 'draft' && product.status !== 'archived' && (
-              <span className={`mp-status-badge mp-status-${statusBadge.color}`}>{statusBadge.text}</span>
-            )}
+          <div className="mp-mobile-card-stats">
+            <StatusPill status={product.status} />
             {product.totalReviews > 0 && (
               <span className="mp-mobile-card-count">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
+                <MessageSquare size={12} aria-hidden="true" />
                 {product.totalReviews}
               </span>
             )}
             {rating && (
-              <span className="mp-mobile-card-star-rating">★ {rating.toFixed(1)}</span>
+              <span className="mp-rating">
+                <Star size={12} fill="currentColor" strokeWidth={0} aria-hidden="true" />
+                {rating.toFixed(1)}
+              </span>
             )}
           </div>
         </div>
-        <div className="mp-mobile-card-menu-wrap" onClick={e => e.stopPropagation()}>
+        <div className="mp-mobile-card-menu-wrap" ref={menuRef} onClick={e => e.stopPropagation()}>
           <button
             className="mp-icon-btn"
+            aria-label="More options"
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
             onClick={() => setMenuOpen(v => !v)}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <circle cx="12" cy="5"  r="1.5" />
-              <circle cx="12" cy="12" r="1.5" />
-              <circle cx="12" cy="19" r="1.5" />
-            </svg>
+            <MoreHorizontal size={16} />
           </button>
           {menuOpen && (
-            <div className="mp-mobile-dropdown">
+            <div className="mp-more-menu mp-mobile-dropdown" role="menu">
               {boostable && !isBoosted && (
                 <button
                   className="mp-more-menu-item"
+                  role="menuitem"
                   onMouseDown={() => { setMenuOpen(false); handleBoost(); }}
                 >
-                  🚀 Boost (30 credits)
+                  <Rocket size={14} aria-hidden="true" />
+                  Boost
+                  <span className="mp-more-menu-cost">30 credits</span>
                 </button>
               )}
               {boostable && (
                 <button
                   className="mp-more-menu-item"
+                  role="menuitem"
                   onMouseDown={() => { setMenuOpen(false); setShowGtmModal(true); }}
                 >
-                  📊 GTM report (25 credits)
+                  <FileBarChart size={14} aria-hidden="true" />
+                  GTM report
+                  <span className="mp-more-menu-cost">25 credits</span>
                 </button>
               )}
               <button
                 className="mp-more-menu-item mp-more-menu-item--danger"
+                role="menuitem"
                 onMouseDown={() => { setMenuOpen(false); onDeleteRequest?.(product); }}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="3 6 5 6 21 6"/>
-                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                  <path d="M10 11v6M14 11v6"/>
-                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                </svg>
+                <Trash2 size={14} aria-hidden="true" />
                 Delete
               </button>
             </div>
@@ -1544,35 +1536,34 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
         </div>
       </div>
 
-      {/* Action buttons */}
-      {(product.status === 'draft' || product.status === 'in_review' || product.status === 'launched') && (
+      {/* Actions — same set as the desktop row. In-review products can't be
+          re-submitted (the API only accepts draft/launched). */}
+      {product.status !== 'archived' && (
         <div className="mp-mobile-card-actions" onClick={e => e.stopPropagation()}>
-          {(product.status === 'in_review' || product.status === 'launched') && (
-            <button className="mp-mobile-btn mp-mobile-btn--ghost" onClick={onToggle}>
-              Analytics
-            </button>
+          {product.status === 'draft' && (
+            <>
+              <button className="mp-btn mp-btn--ghost" onClick={() => onEditRequest?.(product)}>Edit</button>
+              <button className="mp-btn mp-btn--primary" onClick={handleSubmit} disabled={actionLoading}>
+                {actionLoading ? 'Submitting…' : 'Submit'}
+              </button>
+            </>
           )}
           {product.status === 'launched' && (
-            <button className="mp-mobile-btn mp-mobile-btn--ghost" onClick={handleResubmit} disabled={actionLoading}>
-              {actionLoading ? '…' : 'Re-submit'}
+            <button className="mp-btn mp-btn--ghost" onClick={handleResubmit} disabled={actionLoading}>
+              {actionLoading ? 'Submitting…' : 'Re-submit'}
             </button>
           )}
-          {product.status === 'in_review' && (
-            <button className="mp-mobile-btn mp-mobile-btn--ghost" onClick={handleResubmit} disabled={actionLoading}>
-              {actionLoading ? '…' : 'Re-submit'}
+          {(product.status === 'in_review' || product.status === 'launched') && (
+            <button
+              className={`mp-btn mp-btn--ghost mp-btn--toggle${expanded ? ' is-open' : ''}`}
+              onClick={onToggle}
+              aria-expanded={expanded}
+            >
+              Feedback
+              <ChevronDown size={14} aria-hidden="true" />
             </button>
           )}
-          {product.status === 'draft' && (
-            <button className="mp-mobile-btn mp-mobile-btn--ghost" onClick={() => onEditRequest?.(product)}>
-              Edit
-            </button>
-          )}
-          {product.status === 'draft' && (
-            <button className="mp-mobile-btn mp-mobile-btn--primary" onClick={handleSubmit} disabled={actionLoading}>
-              {actionLoading ? '…' : 'Submit'}
-            </button>
-          )}
-          {actionError && <span className="mp-action-error" style={{ fontSize: '11px' }}>{actionError}</span>}
+          {actionError && <span className="mp-action-error">{actionError}</span>}
         </div>
       )}
 
@@ -1580,18 +1571,18 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
       {expanded && (
         <div className="mp-mobile-feedback-panel">
           <div className="mp-mobile-fb-head">
-            <span className="mp-mobile-fb-title">Feedback Overview</span>
+            <span className="mp-mobile-fb-title">Feedback</span>
             {newCount > 0 && <span className="mp-mobile-fb-unread">{newCount} unread</span>}
           </div>
 
           <div className="mp-mobile-fb-stats-row">
             <div className="mp-mobile-fb-stat">
-              <div className="mp-mobile-fb-stat-lbl">TOTAL REVIEWS</div>
+              <div className="mp-mobile-fb-stat-lbl">Reviews</div>
               <div className="mp-mobile-fb-stat-val">{product.totalReviews || 0}</div>
             </div>
             <div className="mp-mobile-fb-divider" />
             <div className="mp-mobile-fb-stat">
-              <div className="mp-mobile-fb-stat-lbl">AVG RATING</div>
+              <div className="mp-mobile-fb-stat-lbl">Avg. rating</div>
               <div className="mp-mobile-fb-stat-val">
                 {product.avgRating > 0
                   ? <>{product.avgRating.toFixed(1)} <span className="mp-mobile-fb-star">★</span></>
@@ -1600,7 +1591,7 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
             </div>
             <div className="mp-mobile-fb-divider" />
             <div className="mp-mobile-fb-stat">
-              <div className="mp-mobile-fb-stat-lbl">TOP THEME</div>
+              <div className="mp-mobile-fb-stat-lbl">Top theme</div>
               <div className="mp-mobile-fb-stat-val">{topTheme || '—'}</div>
             </div>
           </div>
@@ -1637,7 +1628,7 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
                 </svg>
               </div>
               <p className="mp-feedback-empty-title">No feedback yet</p>
-              <p className="mp-feedback-empty-sub">This product hasn't received any reviews yet. Submit it to get feedback from the community.</p>
+              <p className="mp-feedback-empty-sub">{noFeedbackCopy(product.status)}</p>
             </div>
           )}
         </div>
@@ -1652,39 +1643,60 @@ function MobileProductCard({ product, expanded, onToggle, onProductUpdate, onDel
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
+const TABS = [
+  { id: 'all',      label: 'All',       match: p => p.status !== 'archived' },
+  { id: 'inreview', label: 'In review', match: p => p.status === 'in_review' },
+  { id: 'launched', label: 'Live',      match: p => p.status === 'launched' },
+  { id: 'draft',    label: 'Drafts',    match: p => p.status === 'draft' },
+  { id: 'archived', label: 'Archived',  match: p => p.status === 'archived' },
+];
+
+const EMPTY_TAB_COPY = {
+  inreview: 'Nothing in review right now.',
+  launched: 'No live products yet.',
+  draft:    'No drafts.',
+  archived: 'No archived products.',
+};
+
+function plural(n, word) {
+  return `${n} ${word}${n === 1 ? '' : 's'}`;
+}
+
 export default function MyProductsPage() {
   const [activeTab,   setActiveTab]   = useState('all');
   const [expandedId,  setExpandedId]  = useState(null);
   const [submissionModal, setSubmissionModal] = useState(null); // { product } — null product = new submission
   const [products,    setProducts]    = useState([]);
   const [stats,       setStats]       = useState({
-    totalProducts: 0, totalReviews: 0, avgRating: 0,
-    productsThisMonth: 0, reviewsThisMonth: 0,
-    ratingChange: 0, responseRate: 0, responseRateChange: 0,
-    alert: null, // { productName, unreadReviews, topThemeCount, topTheme }
+    totalProducts: 0, totalReviews: 0, avgRating: 0, responseRate: null,
   });
   const [loading,     setLoading]     = useState(true);
+  const [loadError,   setLoadError]   = useState('');
+  const [reloadKey,   setReloadKey]   = useState(0);
   const [pendingDelete, setPendingDelete] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     const load = async () => {
       setLoading(true);
+      setLoadError('');
       try {
         const [prodRes, statsRes] = await Promise.all([
-          api.get('/products/my'),
+          // Archived products only get a tab when there are some
+          api.get('/products/my', { params: { includeArchived: true } }),
           api.get('/products/stats'),
         ]);
         setProducts(prodRes.data  || []);
         setStats(prev => ({ ...prev, ...(statsRes.data || {}) }));
       } catch (err) {
         console.error('Failed to load products', err);
+        setLoadError("Couldn't load your products. Check your connection and try again.");
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, []);
+  }, [reloadKey]);
 
   const handleProductUpdate = (updated) => {
     setProducts(prev => prev.map(p => p._id === updated._id ? { ...p, ...updated } : p));
@@ -1720,135 +1732,120 @@ export default function MyProductsPage() {
     }
   };
 
-  const counts = {
-    all:      products.length,
-    inreview: products.filter(p => p.status === 'in_review').length,
-    launched: products.filter(p => p.status === 'launched').length,
-    draft:    products.filter(p => p.status === 'draft').length,
-    archived: products.filter(p => p.status === 'archived').length,
-  };
+  const counts = Object.fromEntries(TABS.map(t => [t.id, products.filter(t.match).length]));
+  const tabs = TABS.filter(t => t.id !== 'archived' || counts.archived > 0 || activeTab === 'archived');
+  const filteredProducts = products.filter((TABS.find(t => t.id === activeTab) || TABS[0]).match);
 
-  const tabs = [
-    { id: 'all',      label: `All (${counts.all})` },
-    { id: 'inreview', label: `In review (${counts.inreview})` },
-    { id: 'launched', label: `Launched (${counts.launched})` },
-    { id: 'draft',    label: `Draft (${counts.draft})` },
-    { id: 'archived', label: `Archived (${counts.archived})` },
-  ];
+  const productsSub = [
+    counts.launched && `${counts.launched} live`,
+    counts.inreview && `${counts.inreview} in review`,
+    counts.draft && plural(counts.draft, 'draft'),
+  ].filter(Boolean).join(' · ') || 'None yet';
 
-  const filteredProducts = products.filter(p => {
-    if (activeTab === 'all')      return p.status !== 'archived';
-    if (activeTab === 'inreview') return p.status === 'in_review';
-    if (activeTab === 'launched') return p.status === 'launched';
-    if (activeTab === 'draft')    return p.status === 'draft';
-    if (activeTab === 'archived') return p.status === 'archived';
-    return true;
-  });
+  const hasReviews = stats.totalReviews > 0;
+  const openNewSubmission = () => setSubmissionModal({ product: null });
 
-  const bannerAlert = stats.alert || null;
+  let emptyState = null;
+  if (!loading && !loadError && filteredProducts.length === 0) {
+    emptyState = products.length === 0 ? (
+      <div className="mp-empty">
+        <div className="mp-empty-icon"><Package size={22} aria-hidden="true" /></div>
+        <p className="mp-empty-title">No products yet</p>
+        <p className="mp-empty-sub">Submit your first product to get feedback from other builders.</p>
+        <button className="mp-btn mp-btn--primary" onClick={openNewSubmission}>
+          <Plus size={14} aria-hidden="true" /> New submission
+        </button>
+      </div>
+    ) : (
+      <div className="mp-empty mp-empty--compact">
+        <p className="mp-empty-sub">{EMPTY_TAB_COPY[activeTab]}</p>
+      </div>
+    );
+  }
+
+  const errorState = loadError && (
+    <div className="mp-empty mp-empty--compact">
+      <p className="mp-empty-sub">{loadError}</p>
+      <button className="mp-btn mp-btn--ghost" onClick={() => setReloadKey(k => k + 1)}>Try again</button>
+    </div>
+  );
 
   return (
     <PrivateLayout>
       <div className="mp-page">
-        {bannerAlert && (
-          <div className="mp-alert-banner">
-            <span className="mp-alert-dot">•</span>
-            <span className="mp-alert-text">
-              <strong>{bannerAlert.productName}</strong> has {bannerAlert.unreadReviews} unread review{bannerAlert.unreadReviews !== 1 ? 's' : ''}
-              {bannerAlert.topThemeCount && bannerAlert.topTheme
-                ? ` — ${bannerAlert.topThemeCount} mention ${bannerAlert.topTheme}`
-                : ''
-              }. Responding within 24h boosts engagement.
-            </span>
-            <button className="mp-alert-view">View</button>
-          </div>
-        )}
-
-        <div className="mp-tabs-bar">
-          <div className="mp-tabs">
+        <div className="mp-toolbar">
+          <div className="mp-tabs" role="tablist" aria-label="Filter products by status">
             {tabs.map(t => (
               <button
                 key={t.id}
+                role="tab"
+                aria-selected={activeTab === t.id}
                 className={`mp-tab ${activeTab === t.id ? 'active' : ''}`}
                 onClick={() => setActiveTab(t.id)}
-              >{t.label}</button>
+              >
+                {t.label}
+                <span className="mp-tab-count">{counts[t.id]}</span>
+              </button>
             ))}
           </div>
-          <div className="mp-topbar-actions">
-            <button className="mp-action-btn-ghost">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-              </svg>
-              Filter
-            </button>
-            {/* <button className="mp-action-btn-ghost">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-              Export
-            </button> */}
-            <button className="mp-action-btn-primary" onClick={() => setSubmissionModal({ product: null })}>
-              + New<span className="mp-btn-label-full"> submission</span>
-            </button>
-          </div>
+          <button className="mp-btn mp-btn--primary mp-new-btn" onClick={openNewSubmission}>
+            <Plus size={15} aria-hidden="true" />
+            <span>New<span className="mp-btn-label-full"> submission</span></span>
+          </button>
         </div>
 
-        <div className="mp-stats-row">
-          <StatCard
-            label="TOTAL PRODUCTS"
-            value={String(stats.totalProducts)}
-            sub={stats.productsThisMonth > 0 ? `+${stats.productsThisMonth} this month` : 'All time'}
-            iconBg="#ede9fe"
-            icon={<CubeIcon />}
+        <div className="mp-stats">
+          <StatCell
+            icon={Package}
+            label="Products"
+            value={stats.totalProducts}
+            sub={productsSub}
           />
-          <StatCard
-            label="TOTAL REVIEWS"
-            value={String(stats.totalReviews)}
-            sub={stats.reviewsThisMonth > 0 ? `+${stats.reviewsThisMonth} this month` : 'Across all products'}
-            iconBg="#d1fae5"
-            icon={<DollarIcon />}
+          <StatCell
+            icon={MessageSquare}
+            label="Reviews"
+            value={stats.totalReviews}
+            sub={hasReviews ? 'Across all products' : 'No reviews yet'}
           />
-          <StatCard
-            label="AVG. RATING"
+          <StatCell
+            icon={Star}
+            label="Avg. rating"
             value={stats.avgRating > 0 ? stats.avgRating.toFixed(1) : '—'}
-            sub={stats.ratingChange ? `↑${stats.ratingChange} vs last round` : 'Across all products'}
-            iconBg="#fef3c7"
-            icon={<StarOutlineIcon />}
+            sub={stats.avgRating > 0 ? 'Out of 5' : 'No ratings yet'}
           />
-          <StatCard
-            label="RESPONSE RATE"
-            value={stats.responseRate > 0 ? `${stats.responseRate}%` : '—'}
-            sub={stats.responseRateChange > 0 ? `↑${stats.responseRateChange}% this week` : 'Coming soon'}
-            iconBg="#ccfbf1"
-            icon={<TrendingUpIcon />}
+          <StatCell
+            icon={Reply}
+            label="Response rate"
+            value={stats.responseRate != null ? `${stats.responseRate}%` : '—'}
+            sub={stats.responseRate != null ? "Reviews you've replied to" : 'No reviews to answer yet'}
           />
         </div>
 
         <div className="mp-table-section">
-        <div className="mp-table-wrap">
           {loading ? (
             <div className="mp-loading">Loading your products…</div>
-          ) : (
+          ) : errorState || emptyState || (
             <table className="mp-table">
               <colgroup>
-                <col /><col /><col /><col /><col /><col />
+                <col className="mp-col-product" />
+                <col className="mp-col-stage" />
+                <col className="mp-col-status" />
+                <col className="mp-col-num" />
+                <col className="mp-col-num" />
+                <col className="mp-col-action" />
               </colgroup>
               <thead>
-                <tr className="mp-thead-row">
-                  <th className="mp-th">PRODUCT</th>
-                  <th className="mp-th">STAGE</th>
-                  <th className="mp-th">STATUS</th>
-                  <th className="mp-th">REVIEWS</th>
-                  <th className="mp-th">RATING</th>
-                  <th className="mp-th">ACTION</th>
+                <tr>
+                  <th className="mp-th">Product</th>
+                  <th className="mp-th">Stage</th>
+                  <th className="mp-th">Status</th>
+                  <th className="mp-th mp-td-num">Reviews</th>
+                  <th className="mp-th mp-td-num">Rating</th>
+                  <th className="mp-th"><span className="mp-sr-only">Actions</span></th>
                 </tr>
               </thead>
               <tbody>
-                {filteredProducts.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="mp-empty-row">No products found.</td>
-                  </tr>
-                ) : filteredProducts.map(p => (
+                {filteredProducts.map(p => (
                   <ProductRow
                     key={p._id}
                     product={p}
@@ -1863,18 +1860,12 @@ export default function MyProductsPage() {
             </table>
           )}
         </div>
-        </div>
 
-        {/* Mobile card list — visible only on small screens */}
+        {/* Card list — replaces the table on tablets and phones */}
         <div className="mp-mobile-list">
           {loading ? (
             <div className="mp-loading">Loading your products…</div>
-          ) : filteredProducts.length === 0 ? (
-            <div className="mp-feedback-empty" style={{ paddingTop: '20px' }}>
-              <span className="mp-feedback-empty-icon">📦</span>
-              <span>No products found.</span>
-            </div>
-          ) : filteredProducts.map(p => (
+          ) : errorState || emptyState || filteredProducts.map(p => (
             <MobileProductCard
               key={p._id}
               product={p}

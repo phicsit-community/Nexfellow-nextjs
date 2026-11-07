@@ -1,15 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useSelector } from "react-redux";
-import api from "../../lib/axios";
 
 import SearchCommand from "../SearchBar/search-command";
-import PlayOnce from "../animatedIcon/PlayOnce";
-import AnimatedNotification from "./animated/notification.json";
-import NotificationModal from "../Notification/NotificationModal";
 import ProfileDropdown from "../ProfileDropdown/ProfileDropdown";
 import nexfellowLogo from "@/assets/NexFellowLogo.svg";
 import nexfellowLogoDark from "@/assets/NexFellowLogoDark.svg";
@@ -35,47 +29,7 @@ function getPageTitle(pathname) {
 
 function PageHeader({ onMenuToggle }) {
   const pathname = usePathname();
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const pageTitle = getPageTitle(pathname);
-
-  // Notification state
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [hoveredIndex, setHoveredIndex] = useState(null);
-
-  // Search dialog state
-  const [searchOpen, setSearchOpen] = useState(false);
-
-  useEffect(() => {
-    if (!isLoggedIn) return;
-
-    const fetchUnreadCount = async () => {
-      try {
-        const res = await api.get("/notifications/unread-count", {
-          suppressErrorLog: true,
-        });
-        setUnreadCount(res.data?.count || 0);
-      } catch (err) {
-        // Silently fail and keep badge at 0 for transient backend issues.
-        setUnreadCount(0);
-      }
-    };
-    fetchUnreadCount();
-  }, [isLoggedIn]);
-
-  // Keyboard shortcut for search
-  useEffect(() => {
-    const down = (e) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setSearchOpen((prev) => !prev);
-      }
-    };
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
-
-  const toggleNotification = () => setIsNotificationOpen((prev) => !prev);
 
   return (
     <div className={styles.pageHeader}>
@@ -108,38 +62,15 @@ function PageHeader({ onMenuToggle }) {
         </Link>
       )}
 
-      {/* Search bar */}
+      {/* Search — full bar from 640px, icon button on phones. SearchCommand
+          owns the ⌘K / Ctrl+K shortcut. */}
       <div className={`${styles.searchWrapper} ${pageTitle ? styles.searchWrapperRight : ''}`}>
         <SearchCommand />
       </div>
 
-      {/* Right section - notification + profile */}
+      {/* Right section. Notifications live in the sidebar ("Notification", with
+          the unread badge), so the header deliberately has no bell (#62). */}
       <div className={styles.rightSection}>
-        {/* Notification bell — hidden on pages that have a page title (e.g. My products) */}
-        {!pageTitle && (
-          <>
-            <div
-              onClick={toggleNotification}
-              className={styles.notificationIcon}
-              onMouseEnter={() => setHoveredIndex(0)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              style={{ cursor: "pointer", position: "relative" }}
-            >
-              <PlayOnce
-                icon={AnimatedNotification}
-                play={hoveredIndex === 0}
-                size={28}
-              />
-              {!isNotificationOpen && unreadCount > 0 && (
-                <span className={styles.notificationBadge}>{unreadCount}</span>
-              )}
-            </div>
-            {isNotificationOpen && (
-              <NotificationModal closeModal={toggleNotification} />
-            )}
-          </>
-        )}
-
         {/* Profile avatar with dropdown — shared with the feed so it looks the same everywhere */}
         <ProfileDropdown />
       </div>

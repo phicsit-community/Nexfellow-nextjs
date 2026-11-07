@@ -217,8 +217,27 @@
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s;
+}
+
+/* Right-hand header buttons (search on small screens + What's New) */
+.headerActions {
   position: absolute;
   right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.feedSearch {
+  display: none;
+}
+
+/* Borderless, to match the What's New button beside it */
+.feedSearch button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
 }
 
 .announcementBtn:hover {
@@ -397,6 +416,29 @@
     grid-template-columns: 1fr;
   }
 
+  .feedSearch {
+    display: flex;
+  }
+
+  /* Search joins What's New on the right. A 1fr | tabs | 1fr grid keeps the
+     tabs centred without letting them slide under those buttons. */
+  .tabsHeader {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    column-gap: 12px;
+  }
+
+  .tabsContainer {
+    grid-column: 2;
+  }
+
+  .headerActions {
+    position: static;
+    grid-column: 3;
+    justify-self: end;
+  }
+
   .suggestionsColumn {
     display: none;
   }
@@ -452,6 +494,7 @@
   }
 
   .tabsHeader {
+    display: flex;
     padding: 8px 12px;
     justify-content: flex-start;
     gap: 4px;
@@ -467,9 +510,10 @@
     flex: 1;
   }
 
-  .announcementBtn {
+  .headerActions {
     position: static;
     flex-shrink: 0;
+    gap: 0;
   }
 
   .tabButton {
@@ -527,5 +571,31 @@
 
   .createPostBox {
     padding: 12px 14px;
+  }
+}
+
+/* Narrow phones: hamburger + 3 tabs + search + What's New must share ~360px,
+   so the decorative tab icons go and the side buttons tighten up. */
+@media (max-width: 420px) {
+  .tabsHeader {
+    padding: 8px;
+  }
+
+  .tabsContainer {
+    gap: 4px;
+  }
+
+  .tabButton {
+    padding: 6px 10px;
+  }
+
+  .tabIcon {
+    display: none;
+  }
+
+  .feedSearch button,
+  .announcementBtn {
+    width: 36px;
+    height: 36px;
   }
 }

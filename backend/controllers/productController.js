@@ -111,7 +111,9 @@ const getDashboardStats = async (req, res) => {
   }).distinct("_id");
 
   if (productIds.length === 0) {
-    return res.status(200).json({ totalProducts: 0, totalReviews: 0, avgRating: 0 });
+    return res
+      .status(200)
+      .json({ totalProducts: 0, totalReviews: 0, avgRating: 0, responseRate: null });
   }
 
   const [stats] = await ProductReview.aggregate([
@@ -121,21 +123,31 @@ const getDashboardStats = async (req, res) => {
         _id: null,
         totalReviews: { $sum: 1 },
         avgRating: { $avg: "$rating" },
+        // Reviews the owner has replied to at least once
+        responded: {
+          $sum: {
+            $cond: [{ $in: [ownerId, { $ifNull: ["$replies.author", []] }] }, 1, 0],
+          },
+        },
       },
     },
     {
       $project: {
         _id: 0,
         totalReviews: 1,
+        responded: 1,
         avgRating: { $round: ["$avgRating", 1] },
       },
     },
   ]);
 
+  const totalReviews = stats?.totalReviews ?? 0;
   res.status(200).json({
     totalProducts,
-    totalReviews: stats?.totalReviews ?? 0,
+    totalReviews,
     avgRating: stats?.avgRating ?? 0,
+    // % of reviews answered by the owner; null when there is nothing to answer
+    responseRate: totalReviews > 0 ? Math.round((stats.responded / totalReviews) * 100) : null,
   });
 };
 

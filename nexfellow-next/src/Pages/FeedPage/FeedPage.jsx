@@ -111,20 +111,27 @@ const FeedPage = () => {
               Following
             </button>
           </div>
-          <div
-            className={styles.announcementBtn}
-            onClick={toggleWhatsNew}
-            onMouseEnter={() => setIsAnnouncementHovered(true)}
-            onMouseLeave={() => setIsAnnouncementHovered(false)}
-            title="What's New"
-          >
-            <PlayOnce
-              icon={announcementAnimated.src || announcementAnimated}
-              play={isAnnouncementHovered}
-              size={25}
-              style={{ width: 25, height: 25 }}
-              staticIcon={announcementIconStatic.src || announcementIconStatic}
-            />
+          <div className={styles.headerActions}>
+            {/* Below 1024px the right column (with the search bar) is hidden,
+                so search moves up here as an icon. */}
+            <div className={styles.feedSearch}>
+              <SearchCommand variant="icon" />
+            </div>
+            <div
+              className={styles.announcementBtn}
+              onClick={toggleWhatsNew}
+              onMouseEnter={() => setIsAnnouncementHovered(true)}
+              onMouseLeave={() => setIsAnnouncementHovered(false)}
+              title="What's New"
+            >
+              <PlayOnce
+                icon={announcementAnimated.src || announcementAnimated}
+                play={isAnnouncementHovered}
+                size={25}
+                style={{ width: 25, height: 25 }}
+                staticIcon={announcementIconStatic.src || announcementIconStatic}
+              />
+            </div>
           </div>
           {isWhatsNewOpen && <WhatsNewModal closeModal={toggleWhatsNew} />}
         </div>
@@ -177,7 +184,7 @@ const FeedPage = () => {
       </div>
       <div className={styles.suggestionsColumn}>
         <div className={styles.searchHeader}>
-          <SearchCommand />
+          <SearchCommand variant="bar" />
           <ProfileDropdown />
         </div>
         <div className={styles.suggestionsContainer}>
